@@ -35,6 +35,13 @@ repositories {
 			includeGroupByRegex("org.parchmentmc.*")
 		}
 	}
+
+	maven {
+		url = "https://server.bbkr.space/artifactory/libs-release"
+		content {
+			includeGroupByRegex("io.github.cottonmc.*")
+		}
+	}
 }
 
 dependencies {
@@ -49,6 +56,10 @@ dependencies {
 
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 	modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+
+	modImplementation "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
+	include "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
+
 
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }

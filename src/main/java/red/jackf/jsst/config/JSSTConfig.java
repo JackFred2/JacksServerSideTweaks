@@ -1,0 +1,74 @@
+package red.jackf.jsst.config;
+
+import blue.endless.jankson.Comment;
+import blue.endless.jankson.Jankson;
+import blue.endless.jankson.JsonGrammar;
+import blue.endless.jankson.api.SyntaxError;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.resources.ResourceLocation;
+import red.jackf.jsst.JSST;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+
+public class JSSTConfig {
+    public PortableCrafting portableCrafting = new PortableCrafting();
+
+    public static class PortableCrafting {
+        public boolean enabled = true;
+
+        @Comment("Valid values: always, sneak_only")
+        public Mode mode = Mode.always;
+
+        @Comment("IDs of items that count as crafting tables")
+        public Set<ResourceLocation> items = new HashSet<>(List.of(new ResourceLocation("minecraft:crafting_table")));
+
+        public enum Mode {
+            always,
+            sneak_only
+        }
+    }
+
+    public static class Handler {
+        private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("jsst.json5");
+
+        private JSSTConfig instance = null;
+
+        public JSSTConfig get() {
+            if (instance == null) load();
+            return instance;
+        }
+
+        public void load() {
+            if (Files.exists(PATH)) {
+                try {
+                    var json = JSSTJankson.INSTANCE.load(PATH.toFile());
+                    instance = JSSTJankson.INSTANCE.fromJson(json, JSSTConfig.class);
+                } catch (IOException e) {
+                    JSST.LOGGER.error("Couldn't read the config file", e);
+                    instance = new JSSTConfig();
+                } catch (SyntaxError e) {
+                    JSST.LOGGER.error(e.getMessage());
+                    JSST.LOGGER.error(e.getLineMessage());
+                    instance = new JSSTConfig();
+                }
+                JSST.LOGGER.info("Loaded config.");
+            } else {
+                instance = new JSSTConfig();
+            }
+            save();
+        }
+
+        public void save() {
+            var config = get();
+            var json = JSSTJankson.INSTANCE.toJson(config);
+            try {
+                Files.writeString(PATH, json.toJson(JsonGrammar.JSON5));
+            } catch (IOException e) {
+                JSST.LOGGER.error("Couldn't save the config file", e);
+            }
+        }
+    }
+}

@@ -18,7 +18,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "red.jackf.jsst.JacksServerSideTweaks"
+      "red.jackf.jsst.JSST"
     ]
   },
   "mixins": [
