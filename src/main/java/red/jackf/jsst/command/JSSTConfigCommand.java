@@ -1,4 +1,4 @@
-package red.jackf.jsst.config;
+package red.jackf.jsst.command;
 
 import blue.endless.jankson.*;
 import com.mojang.brigadier.CommandDispatcher;
@@ -16,6 +16,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import red.jackf.jsst.JSST;
+import red.jackf.jsst.config.JSSTConfig;
+import red.jackf.jsst.config.JSSTJankson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +29,11 @@ import static net.minecraft.ChatFormatting.*;
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
-public class JSSTCommand {
+public class JSSTConfigCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext ignored, Commands.CommandSelection commandSelection) {
         var root = literal("jsst").requires(stack -> stack.hasPermission(4));
+
+        addQuery(root, "JSST Config", JSST.CONFIG_HANDLER::get);
 
         var portableCraftingTable = literal("portableCraftingTable");
         addQuery(portableCraftingTable, "Portable Crafting Table", () -> JSST.CONFIG_HANDLER.get().portableCrafting);
@@ -135,9 +139,9 @@ public class JSSTCommand {
                 var list2 = new ArrayList<Component>();
                 serializeJson(list2, style("", WHITE), listItem, 0, true, false);
                 if (list2.size() == 0) continue;
-                list.add(style("  - ", WHITE).append(list2.get(0)));
+                list.add(style(" ".repeat(indentation) + "  - ", WHITE).append(list2.get(0)));
                 for (int i = 1; i < list2.size(); i++) {
-                    list.add(style("    ", WHITE).append(list2.get(i)));
+                    list.add(style(" ".repeat(indentation) + "    ", WHITE).append(list2.get(i)));
                 }
             }
             return;
@@ -161,7 +165,7 @@ public class JSSTCommand {
                     sendQuiet(ctx, titleComponent);
                 }
                 var list = new ArrayList<Component>();
-                serializeJson(list, style("", WHITE), json, 0, true, true);
+                serializeJson(list, style("", WHITE), json, 2, true, true);
                 for (Component component : list) {
                     sendQuiet(ctx, component);
                 }

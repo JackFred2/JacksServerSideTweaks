@@ -1,12 +1,10 @@
 package red.jackf.jsst.config;
 
 import blue.endless.jankson.Jankson;
+import blue.endless.jankson.JsonGrammar;
 import blue.endless.jankson.JsonPrimitive;
-import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.magic.TypeMagic;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.StringUtil;
-import org.apache.commons.lang3.StringUtils;
 import red.jackf.jsst.JSST;
 
 import java.lang.reflect.Field;
@@ -14,6 +12,11 @@ import java.util.Collection;
 
 public class JSSTJankson {
     public static final Jankson INSTANCE = get();
+    public static final JsonGrammar GRAMMAR = JsonGrammar.builder()
+        .withComments(true)
+        .printTrailingCommas(true)
+        .bareSpecialNumerics(true)
+        .build();
 
     static Jankson get() {
         var builder = Jankson.builder();
@@ -42,9 +45,5 @@ public class JSSTJankson {
             JSST.LOGGER.error("Couldn't create a cleared object", t);
             return null;
         }
-    }
-
-    static String tabToString(String in) {
-        return StringUtils.replace(in, "\t", "  ");
     }
 }
