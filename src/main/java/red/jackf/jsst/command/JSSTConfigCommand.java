@@ -35,6 +35,18 @@ public class JSSTConfigCommand {
 
         addQuery(root, "JSST Config", JSST.CONFIG_HANDLER::get);
 
+        var reload = literal("reload").executes(ctx -> {
+            JSST.CONFIG_HANDLER.load();
+            var text = style("Configuration reloaded. ", YELLOW);
+            text.append(style("Click to print.", Style.EMPTY.withColor(LIGHT_PURPLE)
+                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/jsst"))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("/jsst")))));
+            sendLoud(ctx, text);
+            return 1;
+        });
+
+        root.then(reload);
+
         var portableCraftingTable = literal("portableCraftingTable");
         addQuery(portableCraftingTable, "Portable Crafting Table", () -> JSST.CONFIG_HANDLER.get().portableCrafting);
 
