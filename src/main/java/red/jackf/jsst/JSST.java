@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import red.jackf.jsst.command.JSSTConfigCommand;
 import red.jackf.jsst.config.JSSTConfig;
-import red.jackf.jsst.features.PortableCraftingTable;
+import red.jackf.jsst.features.portablecraftingtable.PortableCraftingTable;
 
 public class JSST implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("jsst");
