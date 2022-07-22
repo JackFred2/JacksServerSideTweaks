@@ -1,5 +1,7 @@
 plugins {
 	id 'fabric-loom' version '0.12-SNAPSHOT'
+	id 'io.github.juuxel.loom-quiltflower' version '1.7.1'
+	id "com.modrinth.minotaur" version "2.+"
 	id 'maven-publish'
 }
 
@@ -83,6 +85,20 @@ java {
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
+	}
+}
+
+modrinth {
+	token = project.findProperty("modrinth.key")
+	projectId = "eiYW74Yj"
+	versionNumber = "mc${project.minecraft_version}-${project.mod_version}"
+	versionType = "alpha"
+	uploadFile = remapJar
+	changelog = "Check the GitHub for changes: https://github.com/JackFred2/JacksServerSideTweaks"
+	gameVersions = project.game_versions.tokenize(",")
+	loaders = ["fabric", "quilt"]
+	dependencies {
+		required.project "fabric-api"
 	}
 }
 

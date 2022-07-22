@@ -9,7 +9,9 @@
     "JackFred"
   ],
   "contact": {
-    "sources": "https://github.com/JackFred2/JacksServerSideTweaks"
+    "homepage": "https://modrinth.com/mod/jsst",
+    "sources": "https://github.com/JackFred2/JacksServerSideTweaks",
+    "issues": "https://github.com/JackFred2/JacksServerSideTweaks/issues"
   },
 
   "license": "MIT",
