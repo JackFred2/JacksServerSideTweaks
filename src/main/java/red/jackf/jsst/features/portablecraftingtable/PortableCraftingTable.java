@@ -22,7 +22,7 @@ public class PortableCraftingTable {
                 if (config.portableCrafting.items.contains(Registry.ITEM.getKey(heldItem.getItem()))) {
                     player.openMenu(new SimpleMenuProvider((i, inventory, ignored) -> {
                         var menu = new CraftingMenu(i, inventory, ContainerLevelAccess.create(level, serverPlayer.blockPosition()));
-                        ((JSSTAlwaysValidable) menu).jsst_setAlwaysValid();
+                        ((JSSTAlwaysValidable) menu).jsst_setAlwaysValid(hand);
                         return menu;
                     }, heldItem.getHoverName()));
                     return InteractionResultHolder.success(ItemStack.EMPTY);

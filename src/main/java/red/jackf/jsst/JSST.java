@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import red.jackf.jsst.command.JSSTConfigCommand;
 import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.features.portablecraftingtable.PortableCraftingTable;
+import red.jackf.jsst.features.portableshulkerbox.PortableShulkerBox;
+import red.jackf.jsst.features.wallediting.WallEditing;
 
 public class JSST implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("jsst");
@@ -17,5 +19,7 @@ public class JSST implements ModInitializer {
         CONFIG_HANDLER.load();
         CommandRegistrationCallback.EVENT.register(JSSTConfigCommand::register);
         PortableCraftingTable.setup();
+        WallEditing.setup();
+        PortableShulkerBox.setup();
     }
 }

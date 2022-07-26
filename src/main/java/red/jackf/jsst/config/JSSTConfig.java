@@ -32,6 +32,28 @@ public class JSSTConfig {
         }
     }
 
+    @Comment("Right clicking walls with a stick lets you change their appearance")
+    public WallEditing wallEditing = new WallEditing();
+
+    public static class WallEditing {
+        public boolean enabled = true;
+    }
+
+    @Comment("Right clicking with a shulker box will open it.")
+    public PortableShulkerBox portableShulkerBox = new PortableShulkerBox();
+
+    public static class PortableShulkerBox {
+        public boolean enabled = true;
+
+        @Comment("Valid values: always, sneak_only")
+        public PortableShulkerBox.Mode mode = PortableShulkerBox.Mode.always;
+
+        public enum Mode {
+            always,
+            sneak_only
+        }
+    }
+
     public static class Handler {
         private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("jsst.json5");
 

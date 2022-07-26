@@ -50,7 +50,7 @@ public class JSSTConfigCommand {
         var portableCraftingTable = literal("portableCraftingTable");
         addQuery(portableCraftingTable, "Portable Crafting Table", () -> JSST.CONFIG_HANDLER.get().portableCrafting);
 
-        addEnabled(portableCraftingTable, "Portable Crafting Table", (enabled) -> {
+        addEnabled(portableCraftingTable, "Portable Crafting Table", enabled -> {
             JSST.CONFIG_HANDLER.get().portableCrafting.enabled = enabled;
             JSST.CONFIG_HANDLER.save();
         });
@@ -80,7 +80,33 @@ public class JSSTConfigCommand {
         portableCraftingTable.then(pctMode);
         portableCraftingTable.then(pctItems);
 
+        var wallEditing = literal("wallEditing");
+        addQuery(wallEditing, "Wall Editing", () -> JSST.CONFIG_HANDLER.get().wallEditing);
+
+        addEnabled(wallEditing, "Wall Editing", enabled -> {
+            JSST.CONFIG_HANDLER.get().wallEditing.enabled = enabled;
+            JSST.CONFIG_HANDLER.save();
+        });
+
+        var portableShulkerBox = literal("portableShulkerBox");
+        addQuery(portableShulkerBox, "Portable Shulker Box", () -> JSST.CONFIG_HANDLER.get().portableShulkerBox);
+
+        addEnabled(portableShulkerBox, "Portable Shulker Box", enabled -> {
+            JSST.CONFIG_HANDLER.get().portableShulkerBox.enabled = enabled;
+            JSST.CONFIG_HANDLER.save();
+        });
+
+        var psbMode = literal("mode");
+        addEnum(psbMode, "PSB Mode", mode -> {
+            JSST.CONFIG_HANDLER.get().portableShulkerBox.mode = mode;
+            JSST.CONFIG_HANDLER.save();
+        }, JSSTConfig.PortableShulkerBox.Mode.class);
+
+        portableShulkerBox.then(psbMode);
+
         root.then(portableCraftingTable);
+        root.then(wallEditing);
+        root.then(portableShulkerBox);
 
         dispatcher.register(root);
     }
@@ -110,7 +136,7 @@ public class JSSTConfigCommand {
     /**
      * Serialize a JsonElement to a List<Component> for use in chat.
      */
-    private static void serializeJson(List<Component> list, Component prefix, JsonElement element, int indentation, boolean flatten, boolean isRoot) {
+    private static void serializeJson(List<Component> list, Component prefix, JsonElement element, int indentation, boolean flatten) {
         var str = style(" ".repeat(indentation), WHITE).append(prefix);
         if (element instanceof JsonNull) {
             list.add(str.append(style("null", RED)));
@@ -137,19 +163,18 @@ public class JSSTConfigCommand {
         } else if (element instanceof JsonObject jsonObject) {
             if (!flatten) list.add(str);
             for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                if (isRoot && entry.getKey().equals("enabled")) continue; // handled in the main title
                 var objPrefix = style(entry.getKey(), YELLOW).append(style(": ", WHITE));
                 if (jsonObject.getComment(entry.getKey()) != null) {
                     objPrefix.withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, style(jsonObject.getComment(entry.getKey()), WHITE))));
                 }
-                serializeJson(list, objPrefix, entry.getValue(), indentation + (flatten ? 0 : 2), false, false);
+                serializeJson(list, objPrefix, entry.getValue(), indentation + (flatten ? 0 : 2), false);
             }
             return;
         } else if (element instanceof JsonArray jsonArray) {
             list.add(str);
             for (JsonElement listItem : jsonArray) {
                 var list2 = new ArrayList<Component>();
-                serializeJson(list2, style("", WHITE), listItem, 0, true, false);
+                serializeJson(list2, style("", WHITE), listItem, 0, true);
                 if (list2.size() == 0) continue;
                 list.add(style(" ".repeat(indentation) + "  - ", WHITE).append(list2.get(0)));
                 for (int i = 1; i < list2.size(); i++) {
@@ -165,19 +190,12 @@ public class JSSTConfigCommand {
     private static <T> void addQuery(LiteralArgumentBuilder<CommandSourceStack> node, String title, Supplier<T> configPart) {
         T part = configPart.get();
         var titleComponent = style(title, YELLOW).append(style(": ", WHITE));
-        var disabledComponent = style("(", WHITE).append(style("disabled", RED)).append(style(")", WHITE));
-        var enabledComponent = style("(", WHITE).append(style("enabled", GREEN)).append(style(")", WHITE));
 
         node.executes(ctx -> {
             if (JSSTJankson.INSTANCE.toJson(part) instanceof JsonObject json) {
-                var enabled = json.get(Boolean.class, "enabled");
-                if (enabled != null) {
-                    sendQuiet(ctx, titleComponent, enabled ? enabledComponent : disabledComponent);
-                } else {
-                    sendQuiet(ctx, titleComponent);
-                }
+                sendQuiet(ctx, titleComponent);
                 var list = new ArrayList<Component>();
-                serializeJson(list, style("", WHITE), json, 2, true, true);
+                serializeJson(list, style("", WHITE), json, 2, true);
                 for (Component component : list) {
                     sendQuiet(ctx, component);
                 }
