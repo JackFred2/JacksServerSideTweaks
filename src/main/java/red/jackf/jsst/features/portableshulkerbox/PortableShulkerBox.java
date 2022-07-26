@@ -5,7 +5,12 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.*;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.ShulkerBoxMenu;
@@ -33,10 +38,10 @@ public class PortableShulkerBox {
                             container.setItem(slot, stack);
                         }
                         var menu = new ShulkerBoxMenu(containerId, inventory, container);
-
                         menu.addSlotListener(new Listener(serverPlayer, menu.slots.stream().filter(slot -> slot.getItem() == heldItem).findFirst().get().index, heldItem));
                         return menu;
                     }, heldItem.getHoverName()));
+                    level.playSound(null, serverPlayer, SoundEvents.SHULKER_BOX_OPEN, SoundSource.PLAYERS, 0.5f, level.random.nextFloat() * 0.1f + 0.9f);
                     return InteractionResultHolder.success(ItemStack.EMPTY);
                 }
             }

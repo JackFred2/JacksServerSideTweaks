@@ -16,6 +16,10 @@ import java.util.Set;
 public class JSSTConfig {
     @Comment("Right clicking with a crafting table in your hand opens the screen, without needing to place it")
     public PortableCrafting portableCrafting = new PortableCrafting();
+    @Comment("Right clicking walls with a stick lets you change their appearance")
+    public WallEditing wallEditing = new WallEditing();
+    @Comment("Right clicking with a shulker box will open it.")
+    public PortableShulkerBox portableShulkerBox = new PortableShulkerBox();
 
     public static class PortableCrafting {
         public boolean enabled = true;
@@ -32,15 +36,9 @@ public class JSSTConfig {
         }
     }
 
-    @Comment("Right clicking walls with a stick lets you change their appearance")
-    public WallEditing wallEditing = new WallEditing();
-
     public static class WallEditing {
         public boolean enabled = true;
     }
-
-    @Comment("Right clicking with a shulker box will open it.")
-    public PortableShulkerBox portableShulkerBox = new PortableShulkerBox();
 
     public static class PortableShulkerBox {
         public boolean enabled = true;

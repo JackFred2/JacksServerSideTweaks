@@ -2,7 +2,6 @@ package red.jackf.jsst.mixins;
 
 import net.minecraft.core.Registry;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingMenu;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,6 +30,7 @@ public class CraftingMenuMixin implements JSSTAlwaysValidable {
 
     @Inject(method = "stillValid", at = @At("HEAD"), cancellable = true)
     private void jsst_stillValid(Player player, CallbackInfoReturnable<Boolean> cir) {
-        if (this.jsst_alwaysValid && JSST.CONFIG_HANDLER.get().portableCrafting.items.contains(Registry.ITEM.getKey(player.getItemInHand(this.jsst_lastUsedHand).getItem()))) cir.setReturnValue(Boolean.TRUE);
+        if (this.jsst_alwaysValid && JSST.CONFIG_HANDLER.get().portableCrafting.items.contains(Registry.ITEM.getKey(player.getItemInHand(this.jsst_lastUsedHand).getItem())))
+            cir.setReturnValue(Boolean.TRUE);
     }
 }
