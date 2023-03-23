@@ -27,6 +27,7 @@ repositories {
 		url = "https://maven.terraformersmc.com"
 		content {
 			includeGroupByRegex("com.terraformersmc.*")
+			includeGroup("dev.emi")
 		}
 	}
 
@@ -57,11 +58,13 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
-	modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+	// modLocalRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+
+	modCompileOnly "dev.emi:emi:${project.emi_version}:api"
+	modLocalRuntime "dev.emi:emi:${project.emi_version}"
 
 	modImplementation "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
 	include "io.github.cottonmc:Jankson-Fabric:${project.jankson_version}"
-
 
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
