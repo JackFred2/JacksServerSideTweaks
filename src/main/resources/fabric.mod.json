@@ -26,6 +26,7 @@
   "mixins": [
     "jsst.mixins.json"
   ],
+  "accessWidener": "jsst.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.14.6",

@@ -21,7 +21,7 @@ public class PortableCrafting implements Feature {
     private static MenuProvider getProvider(InteractionHand hand, Component title) {
         return new SimpleMenuProvider(((i, inventory, player) -> {
             final CraftingMenu menu = new CraftingMenu(i, player.getInventory(), ContainerLevelAccess.create(player.level, player.getOnPos()));
-            ((JSSTInventoryItemValidable) menu).setItemValidation(hand);
+            ((JSSTInventoryItemValidable) menu).jsst_setItemValidation(hand);
             return menu;
         }), title);
     }

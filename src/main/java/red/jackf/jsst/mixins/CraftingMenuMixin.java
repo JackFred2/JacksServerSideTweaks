@@ -11,6 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import red.jackf.jsst.features.portablecrafting.JSSTInventoryItemValidable;
 import red.jackf.jsst.features.portablecrafting.PortableCrafting;
 
+/**
+ * Used by:
+ * PortableCrafting - adds a flag so the GUI doesn't close with no block in world
+ */
 @Mixin(CraftingMenu.class)
 public class CraftingMenuMixin implements JSSTInventoryItemValidable {
 
@@ -20,7 +24,7 @@ public class CraftingMenuMixin implements JSSTInventoryItemValidable {
     private InteractionHand handToCheck = InteractionHand.MAIN_HAND;
 
     @Unique
-    public void setItemValidation(InteractionHand handToCheck) {
+    public void jsst_setItemValidation(InteractionHand handToCheck) {
         this.itemValidation = true;
         this.handToCheck = handToCheck;
     }

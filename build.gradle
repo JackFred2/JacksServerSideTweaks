@@ -1,6 +1,6 @@
 plugins {
-	id 'fabric-loom' version '0.12-SNAPSHOT'
-	id 'io.github.juuxel.loom-quiltflower' version '1.7.1'
+	id 'fabric-loom' version '1.1-snapshot'
+	id 'io.github.juuxel.loom-quiltflower' version '1.9.0'
 	id "com.modrinth.minotaur" version "2.+"
 	id 'maven-publish'
 }
@@ -75,6 +75,10 @@ processResources {
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
 	}
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/jsst.accesswidener")
 }
 
 tasks.withType(JavaCompile).configureEach {
