@@ -15,9 +15,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.tuple.Triple;
+import red.jackf.jsst.command.Response;
 import red.jackf.jsst.features.Feature;
 
-public class WorldContainerNames implements Feature {
+public class WorldContainerNames extends Feature {
     private static final String JSST_TAG = "jsst_world_container_name";
 
     private static final BiMap<BlockEntity, Display.TextDisplay> displayCache = HashBiMap.create();
@@ -51,12 +52,14 @@ public class WorldContainerNames implements Feature {
 
     // Remove a text, updating linked
     private static void removeText(BlockEntity be, ServerLevel level) {
+        level.getProfiler().push("jsst_world_containers");
         var toUpdate = UpdateParser.parse(be);
         var display = displayCache.remove(be);
         if (display != null)
             display.remove(Entity.RemovalReason.DISCARDED);
         for (BlockPos otherPos : toUpdate)
             delayedChecks.put(level.getGameTime() + 1, Triple.of(otherPos, level, false));
+        level.getProfiler().pop();
     }
 
     private static void checkBlockEntity(BlockPos pos, ServerLevel level, Boolean propagate) {
@@ -72,6 +75,7 @@ public class WorldContainerNames implements Feature {
     }
 
     private void checkOrphaned(Display.TextDisplay display, ServerLevel level) {
+        level.getProfiler().push("jsst_world_containers");
         var linkedPos = ((JSSTLinkedToPos) display).getLinked();
         if (linkedPos != null) {
             var linkedBe = level.getBlockEntity(linkedPos);
@@ -81,13 +85,16 @@ public class WorldContainerNames implements Feature {
             }
         }
         display.remove(Entity.RemovalReason.DISCARDED);
+        level.getProfiler().pop();
     }
 
     @Override
     public void init() {
         ServerTickEvents.END_WORLD_TICK.register(level -> {
+            level.getProfiler().push("jsst_world_containers");
             for (Triple<BlockPos, ServerLevel, Boolean> triple : delayedChecks.removeAll(level.getGameTime()))
                 checkBlockEntity(triple.getLeft(), triple.getMiddle(), triple.getRight());
+            level.getProfiler().pop();
         });
 
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
@@ -95,14 +102,53 @@ public class WorldContainerNames implements Feature {
             displayCache.clear();
         });
 
-        ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) -> delayedChecks.put(level.getGameTime() + 1, Triple.of(be.getBlockPos(), level, true)));
+        ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) -> {
+            if (isEnabled())
+                delayedChecks.put(level.getGameTime() + 1, Triple.of(be.getBlockPos(), level, true));
+        });
 
         ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register(WorldContainerNames::removeText);
 
         // Clean orphaned, e.g. if the server crashes, or removal did not happen in any other case.
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            if (entity instanceof Display.TextDisplay display && entity.getTags().contains(JSST_TAG) && !displayCache.containsValue(display))
-                checkOrphaned(display, level);
+            if (entity instanceof Display.TextDisplay display && entity.getTags().contains(JSST_TAG)) {
+                if (!isEnabled())
+                    display.remove(Entity.RemovalReason.DISCARDED);
+                else if (displayCache.containsValue(display))
+                    checkOrphaned(display, level);
+            }
         });
+    }
+
+    @Override
+    public String id() {
+        return "world_container_names";
+    }
+
+    @Override
+    public String prettyName() {
+        return "World Container Names";
+    }
+
+    @Override
+    public Response enable() {
+        var response = super.enable();
+        if (response == Response.OK) {
+            return Response.RESTART_REQUIRED;
+        } else {
+            return response;
+        }
+    }
+
+    @Override
+    public Response disable() {
+        var response = super.disable();
+        if (response == Response.OK) {
+            delayedChecks.clear();
+            for (Display.TextDisplay display : displayCache.values())
+                display.remove(Entity.RemovalReason.DISCARDED);
+            displayCache.clear();
+        }
+        return response;
     }
 }

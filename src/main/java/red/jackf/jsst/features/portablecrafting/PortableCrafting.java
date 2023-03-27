@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.features.Feature;
 
-public class PortableCrafting implements Feature {
+public class PortableCrafting extends Feature {
     public static final TagKey<Item> CRAFTING_TABLES = TagKey.create(Registries.ITEM, JSST.id("crafting_tables"));
 
     private static MenuProvider getProvider(InteractionHand hand, Component title) {
@@ -29,6 +29,7 @@ public class PortableCrafting implements Feature {
     @Override
     public void init() {
         UseItemCallback.EVENT.register((player, level, hand) -> {
+            if (!this.isEnabled()) return InteractionResultHolder.pass(ItemStack.EMPTY);
             final var stack = player.getItemInHand(hand);
             if (stack.is(CRAFTING_TABLES)) {
                 player.openMenu(getProvider(hand, stack.getHoverName()));
@@ -37,5 +38,15 @@ public class PortableCrafting implements Feature {
                 return InteractionResultHolder.pass(ItemStack.EMPTY);
             }
         });
+    }
+
+    @Override
+    public String id() {
+        return "portable_crafting";
+    }
+
+    @Override
+    public String prettyName() {
+        return "Portable Crafting";
     }
 }

@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import red.jackf.jsst.command.JSSTCommand;
 import red.jackf.jsst.features.Feature;
 import red.jackf.jsst.features.worldcontainernames.WorldContainerNames;
 import red.jackf.jsst.features.portablecrafting.PortableCrafting;
@@ -26,5 +27,7 @@ public class JSST implements ModInitializer {
         for (Feature feature : features) {
             feature.init();
         }
+
+        JSSTCommand.register(features);
     }
 }
