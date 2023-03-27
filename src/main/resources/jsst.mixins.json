@@ -4,8 +4,8 @@
   "package": "red.jackf.jsst.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "BlockItemMixin",
-    "CraftingMenuMixin"
+    "CraftingMenuMixin",
+    "TextDisplayMixin"
   ],
   "client": [
   ],

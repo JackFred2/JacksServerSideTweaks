@@ -1,72 +1,108 @@
 package red.jackf.jsst.features.worldcontainernames;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.network.chat.Component;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.apache.commons.lang3.tuple.Triple;
 import red.jackf.jsst.features.Feature;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class WorldContainerNames implements Feature {
     private static final String JSST_TAG = "jsst_world_container_name";
 
-    private static final Map<Nameable, Display.TextDisplay> linked = new HashMap<>();
+    private static final BiMap<BlockEntity, Display.TextDisplay> displayCache = HashBiMap.create();
 
-    public static Display.TextDisplay createText(ServerLevel level) {
-        var entity = new Display.TextDisplay(EntityType.TEXT_DISPLAY, level);
-        entity.addTag(JSST_TAG);
-        entity.setBillboardConstraints(Display.BillboardConstraints.CENTER);
-        return entity;
+    private static final Multimap<Long, Triple<BlockPos, ServerLevel, Boolean>> delayedChecks = HashMultimap.create();
+
+    // Creates or updates a text entity
+    private static void createOrUpdateText(BlockEntity be, ServerLevel level) {
+        var textDisplay = displayCache.get(be);
+        var result = DisplayParser.parse(be);
+        if (result != null) {
+            if (textDisplay == null) {
+                textDisplay = new Display.TextDisplay(EntityType.TEXT_DISPLAY, level);
+                textDisplay.addTag(JSST_TAG);
+                textDisplay.setBillboardConstraints(Display.BillboardConstraints.CENTER);
+                textDisplay.setViewRange(0.2f);
+                textDisplay.setInterpolationDuration(0);
+                displayCache.put(be, textDisplay);
+                ((JSSTLinkedToPos) textDisplay).setLinked(be.getBlockPos());
+                level.addFreshEntity(textDisplay);
+            }
+            if (!result.text().equals(textDisplay.getText()) || !result.pos().closerThan(textDisplay.position(), 0.001)) {
+                textDisplay.setPos(result.pos());
+                textDisplay.setText(result.text());
+            }
+        } else if (textDisplay != null) {
+            displayCache.remove(be);
+            textDisplay.remove(Entity.RemovalReason.DISCARDED);
+        }
     }
 
-    public static void checkBlockEntity(BlockEntity be, ServerLevel level) {
-        System.out.println(be);
-        Component customName;
-        if (be instanceof Nameable nameable && (customName = nameable.getCustomName()) != null) {
-            createOrUpdateText(level, be, nameable, customName);
+    // Remove a text, updating linked
+    private static void removeText(BlockEntity be, ServerLevel level) {
+        var toUpdate = UpdateParser.parse(be);
+        var display = displayCache.remove(be);
+        if (display != null)
+            display.remove(Entity.RemovalReason.DISCARDED);
+        for (BlockPos otherPos : toUpdate)
+            delayedChecks.put(level.getGameTime() + 1, Triple.of(otherPos, level, false));
+    }
+
+    private static void checkBlockEntity(BlockPos pos, ServerLevel level, Boolean propagate) {
+        var be = level.getBlockEntity(pos);
+        if (be != null && !be.isRemoved()) {
+            var toUpdate = propagate ? UpdateParser.parse(be) : null;
+            createOrUpdateText(be, level);
+            if (propagate) {
+                for (BlockPos otherPos : toUpdate)
+                    checkBlockEntity(otherPos, level, false);
+            }
         }
+    }
+
+    private void checkOrphaned(Display.TextDisplay display, ServerLevel level) {
+        var linkedPos = ((JSSTLinkedToPos) display).getLinked();
+        if (linkedPos != null) {
+            var linkedBe = level.getBlockEntity(linkedPos);
+            if (linkedBe != null && displayCache.containsKey(linkedBe)) {
+                displayCache.put(linkedBe, display);
+                return;
+            }
+        }
+        display.remove(Entity.RemovalReason.DISCARDED);
     }
 
     @Override
     public void init() {
-        // Clean orphaned
-        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-            if (entity instanceof Display.TextDisplay && !linked.containsValue(entity) && entity.getTags().contains(JSST_TAG)) {
-                entity.remove(Entity.RemovalReason.DISCARDED);
-            }
-        });
-        
-        // Update on opened (and quick fix for ctrl-clicked blocks
-        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
-            if (level instanceof ServerLevel serverLevel) {
-                var be = level.getBlockEntity(hitResult.getBlockPos());
-                checkBlockEntity(be, serverLevel);
-            }
-            return InteractionResult.PASS;
+        ServerTickEvents.END_WORLD_TICK.register(level -> {
+            for (Triple<BlockPos, ServerLevel, Boolean> triple : delayedChecks.removeAll(level.getGameTime()))
+                checkBlockEntity(triple.getLeft(), triple.getMiddle(), triple.getRight());
         });
 
-        ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register(WorldContainerNames::checkBlockEntity);
-
-        ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register((be, level) -> {
-            if (be instanceof Nameable nameable && linked.containsKey(nameable))
-                linked.remove(nameable).remove(Entity.RemovalReason.DISCARDED);
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+            delayedChecks.clear();
+            displayCache.clear();
         });
-    }
 
-    private static void createOrUpdateText(ServerLevel level, BlockEntity asBe, Nameable asNameable, Component text) {
-        var textDisplay = linked.computeIfAbsent(asNameable, unused -> createText(level));
-        textDisplay.setPos(asBe.getBlockPos().above().getCenter());
-        textDisplay.setText(text);
-        textDisplay.setViewRange(0.125f);
-        level.addFreshEntity(textDisplay);
+        ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) -> delayedChecks.put(level.getGameTime() + 1, Triple.of(be.getBlockPos(), level, true)));
+
+        ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register(WorldContainerNames::removeText);
+
+        // Clean orphaned, e.g. if the server crashes, or removal did not happen in any other case.
+        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
+            if (entity instanceof Display.TextDisplay display && entity.getTags().contains(JSST_TAG) && !displayCache.containsValue(display))
+                checkOrphaned(display, level);
+        });
     }
 }
