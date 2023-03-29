@@ -2,37 +2,41 @@ package red.jackf.jsst.features;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
-import red.jackf.jsst.command.CommandResponse;
+import red.jackf.jsst.command.OptionBuilders;
+import red.jackf.jsst.config.JSSTConfig;
 
 public abstract class Feature<C extends Feature.Config> {
+    /**
+     * Called to set up hooks and events for this feature.
+     */
     public abstract void init();
 
+    /**
+     * Identifier for this feature, used in commands. Should be <code>camelCaseOnly</code>.
+     * @return Feature Identifier
+     */
     public abstract String id();
 
+    /**
+     * Returns this feature's current config from {@link JSSTConfig.Handler#get()}.
+     * @return This feature's current config.
+     */
     public abstract C getConfig();
 
-    public CommandResponse enable() {
-        if (!getConfig().enabled) {
-            getConfig().enabled = true;
-            return CommandResponse.OK;
-        } else {
-            return CommandResponse.NO_CHANGE;
-        }
-    }
+    /**
+     * Called when this feature is enabled.
+     */
+    public void onEnabled() {}
 
-    public CommandResponse disable() {
-        if (getConfig().enabled) {
-            getConfig().enabled = false;
-            return CommandResponse.OK;
-        } else {
-            return CommandResponse.NO_CHANGE;
-        }
-    }
+    /**
+     * Called when this feature is disabled.
+     */
+    public void onDisabled() {}
 
-    public boolean isEnabled() {
-        return getConfig().enabled;
-    }
-
+    /**
+     * Add any config nodes to this feature's command here. Helpers are available in {@link OptionBuilders}.
+     * @param node this feature's root node.
+     */
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {}
 
     public static abstract class Config {

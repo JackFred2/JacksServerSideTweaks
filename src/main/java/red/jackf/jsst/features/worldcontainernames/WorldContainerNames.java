@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 import red.jackf.jsst.JSST;
-import red.jackf.jsst.command.CommandResponse;
 import red.jackf.jsst.command.OptionBuilders;
 import red.jackf.jsst.features.Feature;
 
@@ -109,7 +108,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
         });
 
         ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) -> {
-            if (isEnabled())
+            if (getConfig().enabled)
                 delayedChecks.put(level.getGameTime() + 1, Triple.of(be.getBlockPos(), level, true));
         });
 
@@ -118,7 +117,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
         // Clean orphaned, e.g. if the server crashes, or removal did not happen in any other case.
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof Display.TextDisplay display && entity.getTags().contains(JSST_TAG)) {
-                if (!isEnabled())
+                if (!getConfig().enabled)
                     display.remove(Entity.RemovalReason.DISCARDED);
                 else if (displayCache.containsValue(display))
                     checkOrphaned(display, level);
@@ -137,30 +136,24 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
     }
 
     @Override
-    public CommandResponse enable() {
-        var response = super.enable();
-        if (response == CommandResponse.OK) {
-            return CommandResponse.RESTART_REQUIRED;
-        } else {
-            return response;
-        }
-    }
-
-    @Override
-    public CommandResponse disable() {
-        var response = super.disable();
-        if (response == CommandResponse.OK) {
-            delayedChecks.clear();
-            for (Display.TextDisplay display : displayCache.values())
-                display.remove(Entity.RemovalReason.DISCARDED);
-            displayCache.clear();
-        }
-        return response;
+    public void onDisabled() {
+        delayedChecks.clear();
+        for (Display.TextDisplay display : displayCache.values())
+            display.remove(Entity.RemovalReason.DISCARDED);
+        displayCache.clear();
     }
 
     @Override
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {
-        node.then(OptionBuilders.withEnum("displayMode", DisplayMode.class, () -> getConfig().mode, value -> getConfig().mode = value));
+        node.then(OptionBuilders.withEnum("displayMode", DisplayMode.class, () -> getConfig().mode, value -> {
+            getConfig().mode = value;
+            int i = 0;
+            final int perTick = 20;
+            for (BlockEntity be : displayCache.keySet()) {
+                if (be.getLevel() instanceof ServerLevel serverLevel)
+                    delayedChecks.put(serverLevel.getGameTime() + 1 + (i++ / perTick), Triple.of(be.getBlockPos(), serverLevel, false));
+            }
+        }));
     }
 
     public enum DisplayMode implements StringRepresentable {

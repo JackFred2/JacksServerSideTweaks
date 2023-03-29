@@ -3,6 +3,7 @@ package red.jackf.jsst.command;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import red.jackf.jsst.JSST;
 import red.jackf.jsst.features.Feature;
 
 import java.util.Arrays;
@@ -13,7 +14,7 @@ import static net.minecraft.commands.Commands.literal;
 public class JSSTCommand {
     public static void register(Feature<?>[] features) {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            var root = literal(("jsst"));
+            var root = literal(JSST.ID);
 
             for (Feature<?> feature : features) {
                 var node = literal(feature.id());
@@ -26,7 +27,7 @@ public class JSSTCommand {
             }
 
             root.executes(ctx -> {
-                var map = Arrays.stream(features).collect(Collectors.partitioningBy(Feature::isEnabled));
+                var map = Arrays.stream(features).collect(Collectors.partitioningBy(feature -> feature.getConfig().enabled));
                 var enabled = map.get(true);
                 var disabled = map.get(false);
                 if (enabled.size() > 0) {
@@ -47,6 +48,8 @@ public class JSSTCommand {
                 }
                 return 1;
             });
+
+            root.requires(stack -> stack.isPlayer() && stack.hasPermission(3));
 
             dispatcher.register(root);
         });

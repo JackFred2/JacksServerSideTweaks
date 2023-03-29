@@ -1,6 +1,7 @@
 package red.jackf.jsst.command;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -44,6 +45,15 @@ public class OptionBuilders {
                 .append(": error; check console/logs").withStyle(ChatFormatting.RED);
     }
 
+    /**
+     * Adds an enum option to a node; using each value's {@link StringRepresentable#getSerializedName()} as labels.
+     * @param name Label for this option.
+     * @param enumClass Class for the enum; used to get all values.
+     * @param getter Should return the option's current value.
+     * @param setter Called when a value is <i>changed</i>. This should set the new value in the config, and to update any world state.
+     * @return Created node for the option; use {@link com.mojang.brigadier.builder.ArgumentBuilder#then(ArgumentBuilder)} to add to a node.
+     * @param <E> Enum type to use options for; should be {@link StringRepresentable}
+     */
     public static <E extends Enum<E> & StringRepresentable> LiteralArgumentBuilder<CommandSourceStack> withEnum(String name, Class<E> enumClass, Supplier<E> getter, Consumer<E> setter) {
         assert enumClass.isEnum();
         var node = literal(name);
@@ -70,6 +80,13 @@ public class OptionBuilders {
         return node;
     }
 
+    /**
+     * Adds a boolean option to a node
+     * @param name Label for this option.
+     * @param getter Should return the option's current value.
+     * @param setter Called when a value is <i>changed</i>. This should set the new value in the config, and to update any world state.
+     * @return Created node for the option; use {@link com.mojang.brigadier.builder.ArgumentBuilder#then(ArgumentBuilder)} to add to a node.
+     */
     public static LiteralArgumentBuilder<CommandSourceStack> withBoolean(String name, Supplier<Boolean> getter, Consumer<Boolean> setter) {
         var node = literal(name);
         node.then(argument(name, BoolArgumentType.bool()).executes(ctx -> {
@@ -91,9 +108,9 @@ public class OptionBuilders {
         return node;
     }
 
-    public static void addEnabled(LiteralArgumentBuilder<CommandSourceStack> base, Feature<?> feature) {
+    static void addEnabled(LiteralArgumentBuilder<CommandSourceStack> base, Feature<?> feature) {
         base.then(literal("enable").executes(ctx -> {
-            if (feature.isEnabled()) {
+            if (feature.getConfig().enabled) {
                 ctx.getSource().sendFailure(Component.literal("[-] ").withStyle(ChatFormatting.YELLOW)
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
@@ -107,11 +124,12 @@ public class OptionBuilders {
                         .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(" -> ").withStyle(ChatFormatting.GREEN))
                         .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE)), true);
-                feature.enable();
+                feature.getConfig().enabled = true;
+                feature.onEnabled();
                 return 1;
             }
         })).then(literal("disable").executes(ctx -> {
-            if (!feature.isEnabled()) {
+            if (!feature.getConfig().enabled) {
                 ctx.getSource().sendFailure(Component.literal("[-] ").withStyle(ChatFormatting.YELLOW)
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
@@ -119,20 +137,21 @@ public class OptionBuilders {
                         .append(Component.literal(" (unchanged)").withStyle(ChatFormatting.YELLOW)));
                 return 0;
             } else {
-                ctx.getSource().sendSuccess(Component.literal("[+] ").withStyle(ChatFormatting.DARK_GREEN)
+                ctx.getSource().sendSuccess(Component.literal("[-] ").withStyle(ChatFormatting.DARK_RED)
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
+                        .append(Component.literal(": ").withStyle(ChatFormatting.RED))
                         .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(" -> ").withStyle(ChatFormatting.GREEN))
+                        .append(Component.literal(" -> ").withStyle(ChatFormatting.RED))
                         .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE)), true);
-                feature.disable();
+                feature.getConfig().enabled = false;
+                feature.onDisabled();
                 return 1;
             }
         })).executes(ctx -> {
             ctx.getSource().sendFailure(Component.literal("[-] ").withStyle(ChatFormatting.YELLOW)
                     .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                     .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
-                    .append(Component.literal(feature.isEnabled() ? "enabled" : "disabled").withStyle(ChatFormatting.WHITE)));
+                    .append(Component.literal(feature.getConfig().enabled ? "enabled" : "disabled").withStyle(ChatFormatting.WHITE)));
             return 1;
         });
     }

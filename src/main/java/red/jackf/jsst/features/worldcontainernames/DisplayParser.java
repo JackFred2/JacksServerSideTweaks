@@ -50,7 +50,7 @@ public class DisplayParser {
         });
     }
 
-    // Gets the text and location for a block entity. Returns null if should be removed/not made.
+    // Gets the text and location for a block entity. Returns null if text should be removed/not made.
     @Nullable
     public static DisplayParser.DisplayData parse(BlockEntity be) {
         return parsers.entrySet().stream()

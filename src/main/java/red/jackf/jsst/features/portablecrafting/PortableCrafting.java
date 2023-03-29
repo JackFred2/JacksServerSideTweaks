@@ -32,7 +32,7 @@ public class PortableCrafting extends Feature<PortableCrafting.Config> {
     @Override
     public void init() {
         UseItemCallback.EVENT.register((player, level, hand) -> {
-            if (!this.isEnabled()) return InteractionResultHolder.pass(ItemStack.EMPTY);
+            if (!this.getConfig().enabled) return InteractionResultHolder.pass(ItemStack.EMPTY);
             if (getConfig().sneakOnly && !player.isCrouching()) return InteractionResultHolder.pass(ItemStack.EMPTY);
             final var stack = player.getItemInHand(hand);
             if (stack.is(CRAFTING_TABLES)) {
