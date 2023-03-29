@@ -2,7 +2,6 @@ package red.jackf.jsst.features;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
-import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.CommandResponse;
 
 public abstract class Feature<C extends Feature.Config> {
@@ -31,7 +30,7 @@ public abstract class Feature<C extends Feature.Config> {
     }
 
     public boolean isEnabled() {
-        return JSST.CONFIG.get().portableCrafting.enabled;
+        return getConfig().enabled;
     }
 
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {}

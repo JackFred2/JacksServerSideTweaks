@@ -97,7 +97,8 @@ public class OptionBuilders {
                 ctx.getSource().sendFailure(Component.literal("[-] ").withStyle(ChatFormatting.YELLOW)
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
-                        .append(Component.literal("enabled (unchanged)").withStyle(ChatFormatting.WHITE)));
+                        .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE))
+                        .append(Component.literal(" (unchanged)").withStyle(ChatFormatting.YELLOW)));
                 return 0;
             } else {
                 ctx.getSource().sendSuccess(Component.literal("[+] ").withStyle(ChatFormatting.DARK_GREEN)
@@ -114,7 +115,8 @@ public class OptionBuilders {
                 ctx.getSource().sendFailure(Component.literal("[-] ").withStyle(ChatFormatting.YELLOW)
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
-                        .append(Component.literal("disabled (unchanged)").withStyle(ChatFormatting.WHITE)));
+                        .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE))
+                        .append(Component.literal(" (unchanged)").withStyle(ChatFormatting.YELLOW)));
                 return 0;
             } else {
                 ctx.getSource().sendSuccess(Component.literal("[+] ").withStyle(ChatFormatting.DARK_GREEN)
