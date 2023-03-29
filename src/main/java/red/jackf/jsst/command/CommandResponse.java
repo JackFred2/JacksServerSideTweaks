@@ -1,6 +1,6 @@
 package red.jackf.jsst.command;
 
-public enum Response {
+public enum CommandResponse {
     OK,
     NO_CHANGE,
     RESTART_REQUIRED

@@ -4,21 +4,27 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.tuple.Triple;
-import red.jackf.jsst.command.Response;
+import org.jetbrains.annotations.NotNull;
+import red.jackf.jsst.JSST;
+import red.jackf.jsst.command.CommandResponse;
+import red.jackf.jsst.command.OptionBuilders;
 import red.jackf.jsst.features.Feature;
 
-public class WorldContainerNames extends Feature {
+public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
     private static final String JSST_TAG = "jsst_world_container_name";
 
     private static final BiMap<BlockEntity, Display.TextDisplay> displayCache = HashBiMap.create();
@@ -122,33 +128,60 @@ public class WorldContainerNames extends Feature {
 
     @Override
     public String id() {
-        return "world_container_names";
+        return "worldContainerNames";
     }
 
     @Override
-    public String prettyName() {
-        return "World Container Names";
+    public Config getConfig() {
+        return JSST.CONFIG.get().worldContainerNames;
     }
 
     @Override
-    public Response enable() {
+    public CommandResponse enable() {
         var response = super.enable();
-        if (response == Response.OK) {
-            return Response.RESTART_REQUIRED;
+        if (response == CommandResponse.OK) {
+            return CommandResponse.RESTART_REQUIRED;
         } else {
             return response;
         }
     }
 
     @Override
-    public Response disable() {
+    public CommandResponse disable() {
         var response = super.disable();
-        if (response == Response.OK) {
+        if (response == CommandResponse.OK) {
             delayedChecks.clear();
             for (Display.TextDisplay display : displayCache.values())
                 display.remove(Entity.RemovalReason.DISCARDED);
             displayCache.clear();
         }
         return response;
+    }
+
+    @Override
+    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {
+        node.then(OptionBuilders.withEnum("displayMode", DisplayMode.class, () -> getConfig().mode, value -> getConfig().mode = value));
+    }
+
+    public enum DisplayMode implements StringRepresentable {
+        BILLBOARD("billboard"),
+        FLAT_FRONT("flatFront"),
+        FLAT_TOP("flatTop");
+
+        private final String optionName;
+
+        DisplayMode(String name) {
+            this.optionName = name;
+        }
+
+        @Override
+        @NotNull
+        public String getSerializedName() {
+            return this.optionName;
+        }
+    }
+
+    public static class Config extends Feature.Config {
+        public DisplayMode mode = DisplayMode.BILLBOARD;
     }
 }

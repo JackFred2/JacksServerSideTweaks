@@ -5,9 +5,10 @@ import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import red.jackf.jsst.command.JSSTCommand;
+import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.features.Feature;
-import red.jackf.jsst.features.worldcontainernames.WorldContainerNames;
 import red.jackf.jsst.features.portablecrafting.PortableCrafting;
+import red.jackf.jsst.features.worldcontainernames.WorldContainerNames;
 
 public class JSST implements ModInitializer {
     public static final String ID = "jsst";
@@ -16,18 +17,20 @@ public class JSST implements ModInitializer {
         return new ResourceLocation(ID, path);
     }
 
-    private static final Feature[] features = new Feature[] {
+    public static final JSSTConfig.Handler CONFIG = new JSSTConfig.Handler();
+
+    private static final Feature<?>[] features = new Feature[] {
             new PortableCrafting(),
             new WorldContainerNames()
     };
 
     @Override
     public void onInitialize() {
+        CONFIG.load();
         LOGGER.info(features.length + " features");
-        for (Feature feature : features) {
+        for (Feature<?> feature : features) {
             feature.init();
         }
-
         JSSTCommand.register(features);
     }
 }

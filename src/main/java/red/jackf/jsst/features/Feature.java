@@ -1,35 +1,42 @@
 package red.jackf.jsst.features;
 
-import red.jackf.jsst.command.Response;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.commands.CommandSourceStack;
+import red.jackf.jsst.JSST;
+import red.jackf.jsst.command.CommandResponse;
 
-public abstract class Feature {
-    private boolean enabled = true;
-
+public abstract class Feature<C extends Feature.Config> {
     public abstract void init();
 
     public abstract String id();
 
-    public abstract String prettyName();
+    public abstract C getConfig();
 
-    public Response enable() {
-        if (!this.enabled) {
-            this.enabled = true;
-            return Response.OK;
+    public CommandResponse enable() {
+        if (!getConfig().enabled) {
+            getConfig().enabled = true;
+            return CommandResponse.OK;
         } else {
-            return Response.NO_CHANGE;
+            return CommandResponse.NO_CHANGE;
         }
     }
 
-    public Response disable() {
-        if (this.enabled) {
-            this.enabled = false;
-            return Response.OK;
+    public CommandResponse disable() {
+        if (getConfig().enabled) {
+            getConfig().enabled = false;
+            return CommandResponse.OK;
         } else {
-            return Response.NO_CHANGE;
+            return CommandResponse.NO_CHANGE;
         }
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return JSST.CONFIG.get().portableCrafting.enabled;
+    }
+
+    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {}
+
+    public static abstract class Config {
+        public boolean enabled = true;
     }
 }
