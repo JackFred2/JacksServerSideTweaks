@@ -148,10 +148,17 @@ public class OptionBuilders {
                 return 1;
             }
         })).executes(ctx -> {
-            ctx.getSource().sendFailure(Component.literal("[-] ").withStyle(ChatFormatting.YELLOW)
-                    .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
-                    .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
-                    .append(Component.literal(feature.getConfig().enabled ? "enabled" : "disabled").withStyle(ChatFormatting.WHITE)));
+            if (feature.getConfig().enabled) {
+                ctx.getSource().sendFailure(Component.literal("[+] ").withStyle(ChatFormatting.DARK_GREEN)
+                        .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
+                        .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
+                        .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE)));
+            } else {
+                ctx.getSource().sendFailure(Component.literal("[x] ").withStyle(ChatFormatting.DARK_RED)
+                        .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
+                        .append(Component.literal(": ").withStyle(ChatFormatting.RED))
+                        .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE)));
+            }
             return 1;
         });
     }

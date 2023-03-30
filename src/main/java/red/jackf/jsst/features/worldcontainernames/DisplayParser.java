@@ -28,21 +28,25 @@ public class DisplayParser {
         // Name in-gui pulled from either the half that has a name if only 1, or the side with lower coordinates
         parsers.put(be -> be.getBlockState().getOptionalValue(ChestBlock.TYPE).isPresent(), be -> {
             if (be instanceof Nameable nameable && nameable.hasCustomName()) {
-                var pos = be.getBlockPos();
                 var blockState = be.getBlockState();
                 var level = be.getLevel();
                 if (blockState.getValue(ChestBlock.TYPE) == ChestType.SINGLE || level == null) return DEFAULT.parse(be);
+
+                var pos = be.getBlockPos();
                 var linkedDirection = ChestBlock.getConnectedDirection(blockState);
                 var otherBe = level.getBlockEntity(pos.relative(linkedDirection));
+
+                var resultIfUs = new DisplayData(pos.above().getCenter().relative(linkedDirection, 0.5), nameable.getCustomName());
+
                 if (otherBe instanceof Nameable otherNameable && otherNameable.hasCustomName()) { // could be either, check lowest coord
                     var otherPos = otherBe.getBlockPos();
                     if (pos.getX() < otherPos.getX() || pos.getZ() < otherPos.getZ()) { // use our name
-                        return new DisplayData(pos.above().getCenter().relative(linkedDirection, 0.5), nameable.getCustomName());
+                        return resultIfUs;
                     } else { // use their name
                         return null;
                     }
                 } else { // use our name
-                    return new DisplayData(pos.above().getCenter().relative(linkedDirection, 0.5), nameable.getCustomName());
+                    return resultIfUs;
                 }
             } else { // use no name
                 return null;
@@ -51,8 +55,7 @@ public class DisplayParser {
     }
 
     // Gets the text and location for a block entity. Returns null if text should be removed/not made.
-    @Nullable
-    public static DisplayParser.DisplayData parse(BlockEntity be) {
+    public static @Nullable DisplayData parse(BlockEntity be) {
         return parsers.entrySet().stream()
                 .filter(entry -> entry.getKey().test(be))
                 .findFirst()
