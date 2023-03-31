@@ -11,11 +11,13 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -46,14 +48,9 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
             if (!result.matches(display)) {
                 if (result.isText()) {
                     display = new Display.TextDisplay(EntityType.TEXT_DISPLAY, level);
-                    ((Display.TextDisplay) display).setText(result.text());
                     display.setTransformation(Transformation.identity());
                 } else {
                     display = new Display.ItemDisplay(EntityType.ITEM_DISPLAY, level);
-                    ((Display.ItemDisplay) display).setItemStack(result.stack());
-                    @SuppressWarnings("DataFlowIssue")
-                    var scale = result.stack().getItem() instanceof BlockItem ? 0.4f : 0.6f;
-                    display.setTransformation(new Transformation(null, null, new Vector3f(scale), null));
                 }
                 display.addTag(JSST_TAG);
                 display.setViewRange(BASE_VIEW_RANGE * getConfig().labelRangeMultiplier);
@@ -61,6 +58,14 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
                 displayCache.put(be, display);
                 ((JSSTLinkedToPos) display).setLinked(be.getBlockPos());
                 level.addFreshEntity(display);
+            }
+            if (result.isText()) {
+                ((Display.TextDisplay) display).setText(result.text());
+            } else {
+                @SuppressWarnings("DataFlowIssue")
+                var scale = result.stack().getItem() instanceof BlockItem ? 0.4f : 0.6f;
+                display.setTransformation(new Transformation(null, null, new Vector3f(scale), null));
+                ((Display.ItemDisplay) display).setItemStack(result.stack());
             }
             display.setPos(result.pos());
         } else if (display != null) {
@@ -124,6 +129,15 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
         ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) -> {
             if (getConfig().enabled)
                 delayedChecks.put(level.getGameTime() + 1, Triple.of(be.getBlockPos(), level, true));
+        });
+
+        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
+            if (level instanceof ServerLevel serverLevel) {
+                var be = serverLevel.getBlockEntity(hitResult.getBlockPos());
+                if (be != null)
+                    delayedChecks.put(serverLevel.getGameTime() + 1, Triple.of(hitResult.getBlockPos(), serverLevel, true));
+            }
+            return InteractionResult.PASS;
         });
 
         ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register(this::removeDisplay);

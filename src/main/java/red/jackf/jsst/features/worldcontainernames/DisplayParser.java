@@ -6,8 +6,10 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.Display;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ChestBlock;
@@ -16,6 +18,7 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -25,7 +28,7 @@ public class DisplayParser {
     private static final ItemStack UNKNOWN = new ItemStack(Items.BARRIER);
 
     @Nullable
-    private static ItemStack getItemFromText(@Nullable Component text) {
+    private static ItemStack getItem(BlockEntity be, Component text) {
         if (text == null) return null;
         var rawText = text.getString();
         if (rawText.startsWith("[item:") && rawText.endsWith("]")) {
@@ -46,13 +49,26 @@ public class DisplayParser {
             } catch (CommandSyntaxException ex) {
                 return UNKNOWN;
             }
-        }
-        return null;
+        } else if (rawText.equals("[max-count]")) {
+            if (be instanceof Container container) {
+                var counts = new HashMap<Item, Integer>();
+                // creates a blank display "displaying" air; saves some logic that would otherwise just display "[max-count]"
+                counts.put(Items.AIR, 0);
+                for (int slot = 0; slot < container.getContainerSize(); slot++) {
+                    var stack = container.getItem(slot);
+                    counts.put(stack.getItem(), counts.getOrDefault(stack.getItem(), 0) + stack.getCount());
+                }
+                //noinspection OptionalGetWithoutIsPresent
+                return new ItemStack(counts.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).get().getKey());
+            } else {
+                return UNKNOWN;
+            }
+        } else return null;
     }
 
     private static final Parser DEFAULT = be -> {
         if (be instanceof Nameable nameable && nameable.hasCustomName()) {
-            var item = getItemFromText(nameable.getCustomName());
+            var item = getItem(be, nameable.getCustomName());
             return new DisplayData(be.getBlockPos().above().getCenter(), item == null ? nameable.getCustomName() : null, item);
         } else {
             return null;
@@ -72,7 +88,7 @@ public class DisplayParser {
                 var linkedDirection = ChestBlock.getConnectedDirection(blockState);
                 var otherBe = level.getBlockEntity(pos.relative(linkedDirection));
 
-                var item = getItemFromText(nameable.getCustomName());
+                var item = getItem(be, nameable.getCustomName());
                 var resultIfUs = new DisplayData(pos.above().getCenter().relative(linkedDirection, 0.5), item == null ? nameable.getCustomName() : null, item);
 
                 if (otherBe instanceof Nameable otherNameable && otherNameable.hasCustomName()) { // could be either, check lowest coord

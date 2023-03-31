@@ -28,6 +28,9 @@ To give a name to a container, rename it in an anvil. You can use the format `[i
 - `[item:golden_apple]`
 - `[item:potion{Potion:"night_vision"}]`
 
+If you give a container the name `[max-count]`, the item displayed will update to the highest-count item in the container
+every time it is opened.
+
 To cleanup if you ever remove JSST, you can run the following command to remove lingering entities:
 
 `/kill @e[tag=jsst_world_container_name]`
