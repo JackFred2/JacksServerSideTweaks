@@ -1,7 +1,15 @@
 package red.jackf.jsst.features.worldcontainernames;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -14,10 +22,38 @@ import java.util.function.Predicate;
 
 public class DisplayParser {
     private static final Map<Predicate<BlockEntity>, Parser> parsers = new HashMap<>();
+    private static final ItemStack UNKNOWN = new ItemStack(Items.BARRIER);
+
+    @Nullable
+    private static ItemStack getItemFromText(@Nullable Component text) {
+        if (text == null) return null;
+        var rawText = text.getString();
+        if (rawText.startsWith("[item:") && rawText.endsWith("]")) {
+            var reader = new StringReader(rawText.substring(6, rawText.length() - 1));
+            try {
+                var id = ResourceLocation.read(reader);
+                var item = BuiltInRegistries.ITEM.getOptional(id);
+                if (item.isPresent()) {
+                    var stack = new ItemStack(item.get());
+                    if (reader.canRead() && reader.peek() == '{') {
+                        var tag = new TagParser(reader).readStruct();
+                        stack.setTag(tag);
+                    }
+                    return stack;
+                } else {
+                    return UNKNOWN;
+                }
+            } catch (CommandSyntaxException ex) {
+                return UNKNOWN;
+            }
+        }
+        return null;
+    }
 
     private static final Parser DEFAULT = be -> {
         if (be instanceof Nameable nameable && nameable.hasCustomName()) {
-            return new DisplayData(be.getBlockPos().above().getCenter(), nameable.getCustomName());
+            var item = getItemFromText(nameable.getCustomName());
+            return new DisplayData(be.getBlockPos().above().getCenter(), item == null ? nameable.getCustomName() : null, item);
         } else {
             return null;
         }
@@ -36,7 +72,8 @@ public class DisplayParser {
                 var linkedDirection = ChestBlock.getConnectedDirection(blockState);
                 var otherBe = level.getBlockEntity(pos.relative(linkedDirection));
 
-                var resultIfUs = new DisplayData(pos.above().getCenter().relative(linkedDirection, 0.5), nameable.getCustomName());
+                var item = getItemFromText(nameable.getCustomName());
+                var resultIfUs = new DisplayData(pos.above().getCenter().relative(linkedDirection, 0.5), item == null ? nameable.getCustomName() : null, item);
 
                 if (otherBe instanceof Nameable otherNameable && otherNameable.hasCustomName()) { // could be either, check lowest coord
                     var otherPos = otherBe.getBlockPos();
@@ -64,7 +101,20 @@ public class DisplayParser {
                 .parse(be);
     }
 
-    public record DisplayData(Vec3 pos, Component text) {}
+    public record DisplayData(Vec3 pos, @Nullable Component text, @Nullable ItemStack stack) {
+        public DisplayData {
+            assert (text == null) != (stack == null);
+        }
+
+        public boolean isText() {
+            return text != null;
+        }
+
+        public boolean matches(@Nullable Display display) {
+            if (isText()) return display instanceof Display.TextDisplay;
+            else return display instanceof Display.ItemDisplay;
+        }
+    }
 
     private interface Parser {
         @Nullable

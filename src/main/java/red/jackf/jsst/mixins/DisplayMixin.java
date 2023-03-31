@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import red.jackf.jsst.features.worldcontainernames.JSSTLinkedToPos;
 
-@Mixin(Display.TextDisplay.class)
-public class TextDisplayMixin implements JSSTLinkedToPos {
+@Mixin(Display.class)
+public class DisplayMixin implements JSSTLinkedToPos {
     @Unique
     private BlockPos linked = null;
 

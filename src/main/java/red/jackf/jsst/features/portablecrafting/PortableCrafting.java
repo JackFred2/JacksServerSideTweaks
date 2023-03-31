@@ -1,5 +1,6 @@
 package red.jackf.jsst.features.portablecrafting;
 
+import blue.endless.jankson.Comment;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.commands.CommandSourceStack;
@@ -60,6 +61,7 @@ public class PortableCrafting extends Feature<PortableCrafting.Config> {
     }
 
     public static class Config extends Feature.Config {
+        @Comment("Whether players need to sneak to use crafting tables as items. (Default: false, Options: true, false)")
         public boolean sneakOnly = false;
     }
 }

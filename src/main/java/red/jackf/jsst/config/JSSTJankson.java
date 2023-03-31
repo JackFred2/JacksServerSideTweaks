@@ -16,6 +16,7 @@ public class JSSTJankson {
             .withComments(true)
             .printTrailingCommas(true)
             .bareSpecialNumerics(true)
+            .printUnquotedKeys(true)
             .build();
 
     static Jankson get() {

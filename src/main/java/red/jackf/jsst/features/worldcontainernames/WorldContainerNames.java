@@ -1,54 +1,76 @@
 package red.jackf.jsst.features.worldcontainernames;
 
+import blue.endless.jankson.Comment;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.math.Transformation;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.tuple.Triple;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 import red.jackf.jsst.JSST;
+import red.jackf.jsst.command.OptionBuilders;
 import red.jackf.jsst.features.Feature;
 
 public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
     private static final String JSST_TAG = "jsst_world_container_name";
+    private static final Float BASE_VIEW_RANGE = 0.2f;
+    private static final Float MAX_MULTIPLIER = 4f;
+    private static final Float MIN_MULTIPLIER = 0.25f;
 
-    private final BiMap<BlockEntity, Display.TextDisplay> displayCache = HashBiMap.create();
+    private final BiMap<BlockEntity, Display> displayCache = HashBiMap.create();
 
     private final Multimap<Long, Triple<BlockPos, ServerLevel, Boolean>> delayedChecks = HashMultimap.create();
 
     // Creates or updates a text entity
-    private void createOrUpdateText(BlockEntity be, ServerLevel level) {
-        var textDisplay = displayCache.get(be);
+    private void createOrUpdateDisplay(BlockEntity be, ServerLevel level) {
+        var display = displayCache.get(be);
         var result = DisplayParser.parse(be);
         if (result != null) {
-            if (textDisplay == null) {
-                textDisplay = new Display.TextDisplay(EntityType.TEXT_DISPLAY, level);
-                textDisplay.addTag(JSST_TAG);
-                textDisplay.setViewRange(0.2f);
-                textDisplay.setBillboardConstraints(Display.BillboardConstraints.CENTER);
-                displayCache.put(be, textDisplay);
-                ((JSSTLinkedToPos) textDisplay).setLinked(be.getBlockPos());
-                level.addFreshEntity(textDisplay);
+            if (!result.matches(display)) {
+                if (result.isText()) {
+                    display = new Display.TextDisplay(EntityType.TEXT_DISPLAY, level);
+                    ((Display.TextDisplay) display).setText(result.text());
+                    display.setTransformation(Transformation.identity());
+                } else {
+                    display = new Display.ItemDisplay(EntityType.ITEM_DISPLAY, level);
+                    ((Display.ItemDisplay) display).setItemStack(result.stack());
+                    @SuppressWarnings("DataFlowIssue")
+                    var scale = result.stack().getItem() instanceof BlockItem ? 0.4f : 0.6f;
+                    display.setTransformation(new Transformation(null, null, new Vector3f(scale), null));
+                }
+                display.addTag(JSST_TAG);
+                display.setViewRange(BASE_VIEW_RANGE * getConfig().labelRangeMultiplier);
+                display.setBillboardConstraints(getConfig().facingMode.constraint);
+                displayCache.put(be, display);
+                ((JSSTLinkedToPos) display).setLinked(be.getBlockPos());
+                level.addFreshEntity(display);
             }
-            textDisplay.setPos(result.pos());
-            textDisplay.setText(result.text());
-        } else if (textDisplay != null) {
+            display.setPos(result.pos());
+        } else if (display != null) {
             displayCache.remove(be);
-            textDisplay.remove(Entity.RemovalReason.DISCARDED);
+            display.remove(Entity.RemovalReason.DISCARDED);
         }
     }
 
-    // Remove a text, updating linked
-    private void removeText(BlockEntity be, ServerLevel level) {
+    // Remove a display, updating linked
+    private void removeDisplay(BlockEntity be, ServerLevel level) {
         level.getProfiler().push("jsst_world_containers");
         var toUpdate = UpdateParser.parse(be);
         var display = displayCache.remove(be);
@@ -63,7 +85,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
         var be = level.getBlockEntity(pos);
         if (be != null && !be.isRemoved()) {
             var toUpdate = propagate ? UpdateParser.parse(be) : null;
-            createOrUpdateText(be, level);
+            createOrUpdateDisplay(be, level);
             if (propagate) {
                 for (BlockPos otherPos : toUpdate)
                     checkBlockEntity(otherPos, level, false);
@@ -71,8 +93,8 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
         }
     }
 
-    private void checkOrphaned(Display.TextDisplay display, ServerLevel level) {
-        level.getProfiler().push("jsst_world_containers");
+    private void checkOrphaned(Display display, ServerLevel level) {
+        level.getProfiler().push("jsst_world_container_names");
         var linkedPos = ((JSSTLinkedToPos) display).getLinked();
         if (linkedPos != null) {
             var linkedBe = level.getBlockEntity(linkedPos);
@@ -88,7 +110,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
     @Override
     public void init() {
         ServerTickEvents.END_WORLD_TICK.register(level -> {
-            level.getProfiler().push("jsst_world_containers");
+            level.getProfiler().push("jsst_world_container_names");
             for (Triple<BlockPos, ServerLevel, Boolean> triple : delayedChecks.removeAll(level.getGameTime()))
                 checkBlockEntity(triple.getLeft(), triple.getMiddle(), triple.getRight());
             level.getProfiler().pop();
@@ -104,17 +126,19 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
                 delayedChecks.put(level.getGameTime() + 1, Triple.of(be.getBlockPos(), level, true));
         });
 
-        ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register(this::removeText);
+        ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register(this::removeDisplay);
 
         // Clean orphaned, e.g. if the server crashes, or removal did not happen in any other case.
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            if (entity instanceof Display.TextDisplay display && entity.getTags().contains(JSST_TAG)) {
+            if (entity instanceof Display display && entity.getTags().contains(JSST_TAG)) {
                 if (!getConfig().enabled)
                     display.remove(Entity.RemovalReason.DISCARDED);
                 else if (displayCache.containsValue(display))
                     checkOrphaned(display, level);
             }
         });
+
+        getConfig().labelRangeMultiplier = Mth.clamp(getConfig().labelRangeMultiplier, MIN_MULTIPLIER, MAX_MULTIPLIER);
     }
 
     @Override
@@ -130,18 +154,47 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
     @Override
     public void onDisabled() {
         delayedChecks.clear();
-        for (Display.TextDisplay display : displayCache.values())
+        for (Display display : displayCache.values())
             display.remove(Entity.RemovalReason.DISCARDED);
         displayCache.clear();
     }
 
-    public enum DisplayMode {
-        INVENTORY_NAME,
-        INVENTORY_NAME_WITH_ITEM_PARSING,
-        MOST_COMMON_ITEM
+    @Override
+    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {
+        node.then(OptionBuilders.withFloatRange("labelRangeMultiplier", MIN_MULTIPLIER, MAX_MULTIPLIER, () -> getConfig().labelRangeMultiplier, range -> {
+            getConfig().labelRangeMultiplier = range;
+            for (Display display : displayCache.values())
+                display.setViewRange(BASE_VIEW_RANGE * getConfig().labelRangeMultiplier);
+        }));
+
+        node.then(OptionBuilders.withEnum("facingMode", FacingMode.class, () -> getConfig().facingMode,  mode -> {
+            getConfig().facingMode = mode;
+            for (Display display : displayCache.values())
+                display.setBillboardConstraints(mode.constraint);
+        }));
+    }
+
+    public enum FacingMode implements StringRepresentable {
+        CENTER(Display.BillboardConstraints.CENTER),
+        VERTICAL(Display.BillboardConstraints.VERTICAL);
+
+        private final Display.BillboardConstraints constraint;
+
+        FacingMode(Display.BillboardConstraints constraint) {
+            this.constraint = constraint;
+        }
+
+        @Override
+        @NotNull
+        public String getSerializedName() {
+            return constraint.getSerializedName();
+        }
     }
 
     public static class Config extends Feature.Config {
-        public DisplayMode displayMode = DisplayMode.INVENTORY_NAME;
+        @Comment("How labels should face the player. (Default: center, Options: center, vertical)")
+        public FacingMode facingMode = FacingMode.CENTER;
+        @Comment("Multiplier for the distance labels are shown. (Default: 1, Range: [0.25, 4])")
+        public Float labelRangeMultiplier = 1.0f;
     }
 }

@@ -1,6 +1,7 @@
 package red.jackf.jsst.command;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
@@ -46,7 +47,7 @@ public class OptionBuilders {
     }
 
     /**
-     * Adds an enum option to a node; using each value's {@link StringRepresentable#getSerializedName()} as labels.
+     * Adds an enum's options to a node; using each value's {@link StringRepresentable#getSerializedName()} as labels.
      * @param name Label for this option.
      * @param enumClass Class for the enum; used to get all values.
      * @param getter Should return the option's current value.
@@ -77,6 +78,34 @@ public class OptionBuilders {
             return 1;
         });
 
+        return node;
+    }
+
+    /**
+     * Adds a float range option to a node.
+     * @param name Label for this option.
+     * @param getter Should return the option's current value.
+     * @param setter Called when a value is <i>changed</i>. This should set the new value in the config, and to update any world state.
+     * @return Created node for the option; use {@link com.mojang.brigadier.builder.ArgumentBuilder#then(ArgumentBuilder)} to add to a node.
+     */
+    public static LiteralArgumentBuilder<CommandSourceStack> withFloatRange(String name, Float min, Float max, Supplier<Float> getter, Consumer<Float> setter) {
+        var node = literal(name);
+        node.then(argument(name, FloatArgumentType.floatArg(min, max)).executes(ctx -> {
+            var oldValue = getter.get();
+            var newValue = FloatArgumentType.getFloat(ctx, name);
+            if (oldValue == newValue) {
+                ctx.getSource().sendFailure(unchanged(node.getLiteral(), oldValue.toString()));
+                return 0;
+            } else {
+                setter.accept(newValue);
+                JSST.CONFIG.save();
+                ctx.getSource().sendSuccess(success(node.getLiteral(), oldValue.toString(), String.valueOf(newValue)), true);
+                return 1;
+            }
+        })).executes(ctx -> {
+            ctx.getSource().sendSuccess(display(node.getLiteral(), getter.get().toString()), false);
+            return 1;
+        });
         return node;
     }
 
