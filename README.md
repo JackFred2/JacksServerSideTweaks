@@ -11,7 +11,7 @@ All features can be enabled or disabled using `/jsst <feature> (enable/disable)`
 ### Portable Crafting
 
 Lets you use crafting tables by right-clicking with them. Valid items to check are contained in the
-[jsst:items/crafting_tables](src/main/resources/data/jsst/tags/items/crafting_tables.json) tag.
+[jsst:items/crafting_tables](https://github.com/JackFred2/JacksServerSideTweaks/blob/1.19/src/main/resources/data/jsst/tags/items/crafting_tables.json) tag, which can be extended using data packs.
 
 #### Config
 
