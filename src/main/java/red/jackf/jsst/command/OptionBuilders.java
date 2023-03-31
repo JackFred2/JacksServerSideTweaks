@@ -155,6 +155,7 @@ public class OptionBuilders {
                         .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE)), true);
                 feature.getConfig().enabled = true;
                 feature.onEnabled();
+                JSST.CONFIG.save();
                 return 1;
             }
         })).then(literal("disable").executes(ctx -> {
@@ -174,6 +175,7 @@ public class OptionBuilders {
                         .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE)), true);
                 feature.getConfig().enabled = false;
                 feature.onDisabled();
+                JSST.CONFIG.save();
                 return 1;
             }
         })).executes(ctx -> {

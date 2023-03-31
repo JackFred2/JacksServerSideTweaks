@@ -2,6 +2,7 @@ package red.jackf.jsst.features.nbteditor;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.features.Feature;
 
@@ -15,7 +16,8 @@ public class NBTEditor extends Feature<NBTEditor.Config> {
 
     @Override
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {
-        node.then(literal("hand").executes(ctx -> {
+        node.then(literal("hand").requires(unused -> getConfig().enabled).executes(ctx -> {
+            ctx.getSource().sendSuccess(Component.literal("test"), false);
             return 0;
         }));
     }
