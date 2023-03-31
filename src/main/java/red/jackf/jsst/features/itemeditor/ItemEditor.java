@@ -1,4 +1,4 @@
-package red.jackf.jsst.features.nbteditor;
+package red.jackf.jsst.features.itemeditor;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
@@ -8,7 +8,7 @@ import red.jackf.jsst.features.Feature;
 
 import static net.minecraft.commands.Commands.literal;
 
-public class NBTEditor extends Feature<NBTEditor.Config> {
+public class ItemEditor extends Feature<ItemEditor.Config> {
     @Override
     public void init() {
 
@@ -29,7 +29,7 @@ public class NBTEditor extends Feature<NBTEditor.Config> {
 
     @Override
     public Config getConfig() {
-        return JSST.CONFIG.get().nbtEditor;
+        return JSST.CONFIG.get().itemEditor;
     }
 
     public static class Config extends Feature.Config {

@@ -5,7 +5,7 @@ import blue.endless.jankson.api.SyntaxError;
 import net.fabricmc.loader.api.FabricLoader;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.features.displayitems.DisplayItems;
-import red.jackf.jsst.features.nbteditor.NBTEditor;
+import red.jackf.jsst.features.itemeditor.ItemEditor;
 import red.jackf.jsst.features.portablecrafting.PortableCrafting;
 import red.jackf.jsst.features.worldcontainernames.WorldContainerNames;
 
@@ -17,7 +17,7 @@ public class JSSTConfig {
     public PortableCrafting.Config portableCrafting = new PortableCrafting.Config();
     public WorldContainerNames.Config worldContainerNames = new WorldContainerNames.Config();
     @Comment("UNUSED: In development")
-    public NBTEditor.Config nbtEditor = new NBTEditor.Config();
+    public ItemEditor.Config itemEditor = new ItemEditor.Config();
     public DisplayItems.Config displayItems = new DisplayItems.Config();
 
     public static class Handler {
