@@ -37,6 +37,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
     private static final Float MIN_MULTIPLIER = 0.25f;
 
     private final BiMap<BlockEntity, Display> displayCache = HashBiMap.create();
+    private long nextUpdateSchedulerTick = -1;
 
     private final Multimap<Long, Triple<BlockPos, ServerLevel, Boolean>> delayedChecks = HashMultimap.create();
 
@@ -118,12 +119,22 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
             level.getProfiler().push("jsst_world_container_names");
             for (Triple<BlockPos, ServerLevel, Boolean> triple : delayedChecks.removeAll(level.getGameTime()))
                 checkBlockEntity(triple.getLeft(), triple.getMiddle(), triple.getRight());
+
+            if (nextUpdateSchedulerTick < level.getGameTime()) {
+                var offset = 1L;
+                for (BlockEntity be : displayCache.keySet()) {
+                    delayedChecks.put(level.getGameTime() + offset++, Triple.of(be.getBlockPos(), level, true));
+                }
+
+                nextUpdateSchedulerTick = level.getGameTime() + Math.max(offset, 40L);
+            }
             level.getProfiler().pop();
         });
 
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
             delayedChecks.clear();
             displayCache.clear();
+            nextUpdateSchedulerTick = -1;
         });
 
         ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) -> {

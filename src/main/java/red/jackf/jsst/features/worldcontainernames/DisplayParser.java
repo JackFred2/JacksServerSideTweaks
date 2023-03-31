@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -52,14 +53,18 @@ public class DisplayParser {
         } else if (rawText.equals("[max-count]")) {
             if (be instanceof Container container) {
                 var counts = new HashMap<Item, Integer>();
+                var examples = new HashMap<Item, ItemStack>();
                 // creates a blank display "displaying" air; saves some logic that would otherwise just display "[max-count]"
                 counts.put(Items.AIR, 0);
                 for (int slot = 0; slot < container.getContainerSize(); slot++) {
                     var stack = container.getItem(slot);
                     counts.put(stack.getItem(), counts.getOrDefault(stack.getItem(), 0) + stack.getCount());
+                    examples.put(stack.getItem(), stack);
                 }
+                // get first example for nbt
                 //noinspection OptionalGetWithoutIsPresent
-                return new ItemStack(counts.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).get().getKey());
+                var max = counts.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).get().getKey();
+                return examples.get(max);
             } else {
                 return UNKNOWN;
             }
@@ -104,6 +109,26 @@ public class DisplayParser {
             } else { // use no name
                 return null;
             }
+        });
+
+        // Brewing Stands
+        // Displays the first potion found instead
+        parsers.put(be -> be instanceof BrewingStandBlockEntity, be -> {
+           var brewingBe = (BrewingStandBlockEntity) be;
+           var name = brewingBe.getCustomName();
+           if (name != null && name.getString().equals("[max-count]")) {
+               var stack = ItemStack.EMPTY;
+               for (var slot = 0; slot < 3; slot++) {
+                   var potion = brewingBe.getItem(slot);
+                   if (!potion.isEmpty()) {
+                       stack = potion;
+                       break;
+                   }
+               }
+               return new DisplayData(be.getBlockPos().above().getCenter(), null, stack);
+           } else {
+               return DEFAULT.parse(be);
+           }
         });
     }
 
