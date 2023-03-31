@@ -22,6 +22,7 @@ Lets you use crafting tables by right-clicking with them. Valid items to check a
 ### World Container Names
 
 Adds floating labels above containers from either the container name or item count. Uses the new Display Entities from 23w06a.
+
 ![A collection of named containers with their names floating above, along with a diamond sword above a barrel](https://i.imgur.com/PFrsD9q.png)
 
 To give a name to a container, rename it in an anvil. You can use the format `[item:<ITEM_STACK>]` to display an item instead, using the same syntax as the `/give` command. Examples:
@@ -41,3 +42,17 @@ To clean up if you ever remove JSST, you can run the following command to remove
 |----------------------|-----------------------------------------------|----------|----------------------|
 | facingMode           | How labels should face the player.            | `CENTER` | `CENTER`, `VERTICAL` |
 | labelRangeMultiplier | Multiplier for the distance labels are shown. | `1`      | `[0.25, 4]`          |
+
+### Display Items
+
+Lets you make items for display that don't despawn by renaming them to `[display]` in an anvil. Useful for shops or showcases. Plays a chime sound if a display item is successfully made.
+
+**Warning**: This does not prevent the item from being destroyed in other ways, such as cactus, lava, `/kill`, cleanup plugins, or being moved with hoppers or water.
+
+![A collection of colour wool on pedestals that do not despawn.](https://i.imgur.com/8nFBqdu.png)
+
+#### Config
+
+| Option          | Description                                                             | Default | Valid Options   |
+|-----------------|-------------------------------------------------------------------------|---------|-----------------|
+| ownerPickupOnly | Should only the player who dropped the item be able to pick it back up. | `true`  | `true`, `false` |

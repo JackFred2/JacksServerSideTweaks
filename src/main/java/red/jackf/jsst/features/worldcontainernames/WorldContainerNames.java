@@ -217,7 +217,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
     }
 
     public static class Config extends Feature.Config {
-        @Comment("How labels should face the player. (Default: center, Options: center, vertical)")
+        @Comment("How labels should face the player. (Default: CENTER, Options: CENTER, VERTICAL)")
         public FacingMode facingMode = FacingMode.CENTER;
         @Comment("Multiplier for the distance labels are shown. (Default: 1, Range: [0.25, 4])")
         public Float labelRangeMultiplier = 1.0f;

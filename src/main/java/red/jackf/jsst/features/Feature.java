@@ -35,7 +35,7 @@ public abstract class Feature<C extends Feature.Config> {
     public void onDisabled() {}
 
     /**
-     * Add any config nodes to this feature's command here. Helpers are available in {@link OptionBuilders}.
+     * Add any nodes to this feature's command here. Helpers for config options are available in {@link OptionBuilders}.
      * @param node this feature's root node.
      */
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {}
