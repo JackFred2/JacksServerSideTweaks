@@ -11,6 +11,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import red.jackf.jsst.features.worldcontainernames.JSSTLinkedToPos;
 
+/**
+ * Used by:
+ * World Container Names - to link a display with a position; fixes some bugs with chunk unload/reloads
+ */
 @Mixin(Display.class)
 public class DisplayMixin implements JSSTLinkedToPos {
     @Unique
@@ -20,12 +24,13 @@ public class DisplayMixin implements JSSTLinkedToPos {
     private static final String LINKED_KEY = "jsst_linked_to";
 
     @Override
-    public void setLinked(BlockPos pos) {
+    public void jsst_setLinked(BlockPos pos) {
         this.linked = pos;
     }
 
     @Override
-    public @Nullable BlockPos getLinked() {
+    @Nullable
+    public BlockPos jsst_getLinked() {
         return this.linked;
     }
 

@@ -104,10 +104,13 @@ modrinth {
 	changelog = "Check the GitHub for changes: https://github.com/JackFred2/JacksServerSideTweaks"
 	gameVersions = project.game_versions.tokenize(",")
 	loaders = ["fabric", "quilt"]
+	syncBodyFrom = rootProject.file("README.md").text
 	dependencies {
 		required.project "fabric-api"
 	}
 }
+
+tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 
 publishing {
 	publications {

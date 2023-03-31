@@ -57,7 +57,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
                 display.setViewRange(BASE_VIEW_RANGE * getConfig().labelRangeMultiplier);
                 display.setBillboardConstraints(getConfig().facingMode.constraint);
                 displayCache.put(be, display);
-                ((JSSTLinkedToPos) display).setLinked(be.getBlockPos());
+                ((JSSTLinkedToPos) display).jsst_setLinked(be.getBlockPos());
                 level.addFreshEntity(display);
             }
             if (result.isText()) {
@@ -101,7 +101,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
 
     private void checkOrphaned(Display display, ServerLevel level) {
         level.getProfiler().push("jsst_world_container_names");
-        var linkedPos = ((JSSTLinkedToPos) display).getLinked();
+        var linkedPos = ((JSSTLinkedToPos) display).jsst_getLinked();
         if (linkedPos != null) {
             var linkedBe = level.getBlockEntity(linkedPos);
             if (linkedBe != null && displayCache.containsKey(linkedBe)) {

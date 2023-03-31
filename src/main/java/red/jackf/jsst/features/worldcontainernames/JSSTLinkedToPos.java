@@ -4,8 +4,8 @@ import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 public interface JSSTLinkedToPos {
-    void setLinked(BlockPos pos);
+    void jsst_setLinked(BlockPos pos);
 
     @Nullable
-    BlockPos getLinked();
+    BlockPos jsst_getLinked();
 }
