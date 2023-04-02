@@ -1,6 +1,7 @@
 package red.jackf.jsst;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +9,12 @@ import red.jackf.jsst.command.JSSTCommand;
 import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.features.Feature;
 import red.jackf.jsst.features.displayitems.DisplayItems;
+import red.jackf.jsst.features.itemeditor.ItemEditor;
 import red.jackf.jsst.features.portablecrafting.PortableCrafting;
 import red.jackf.jsst.features.worldcontainernames.WorldContainerNames;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class JSST implements ModInitializer {
     public static final String ID = "jsst";
@@ -20,17 +25,21 @@ public class JSST implements ModInitializer {
 
     public static final JSSTConfig.Handler CONFIG = new JSSTConfig.Handler();
 
-    private static final Feature<?>[] features = new Feature[] {
-            new PortableCrafting(),
-            new WorldContainerNames(),
-            //new NBTEditor(),
-            new DisplayItems()
-    };
+    private static final List<Feature<?>> features = new ArrayList<>();
+    static {
+        features.add(new PortableCrafting());
+        features.add(new WorldContainerNames());
+        features.add(new DisplayItems());
+
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            features.add(new ItemEditor());
+        }
+    }
 
     @Override
     public void onInitialize() {
         CONFIG.load();
-        LOGGER.info(features.length + " features");
+        LOGGER.info(features.size() + " features");
         for (Feature<?> feature : features) {
             feature.init();
         }
