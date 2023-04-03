@@ -4,6 +4,7 @@ import blue.endless.jankson.Comment;
 import blue.endless.jankson.api.SyntaxError;
 import net.fabricmc.loader.api.FabricLoader;
 import red.jackf.jsst.JSST;
+import red.jackf.jsst.features.commanddefineddatapack.CommandDefinedDatapack;
 import red.jackf.jsst.features.displayitems.DisplayItems;
 import red.jackf.jsst.features.itemeditor.ItemEditor;
 import red.jackf.jsst.features.portablecrafting.PortableCrafting;
@@ -19,6 +20,8 @@ public class JSSTConfig {
     @Comment("UNUSED: In development")
     public ItemEditor.Config itemEditor = new ItemEditor.Config();
     public DisplayItems.Config displayItems = new DisplayItems.Config();
+
+    public CommandDefinedDatapack.Config commandDefinedDatapack = new CommandDefinedDatapack.Config();
 
     public static class Handler {
         private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("jsst.json5");

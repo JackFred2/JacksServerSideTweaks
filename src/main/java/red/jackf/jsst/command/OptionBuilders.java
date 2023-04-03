@@ -20,7 +20,7 @@ import static net.minecraft.commands.Commands.literal;
 
 public class OptionBuilders {
     private static Component success(String optName, String oldVal, String newVal) {
-        return Component.literal("[+] ").withStyle(ChatFormatting.DARK_GREEN)
+        return CommandUtils.sucessPrefix()
                 .append(Component.literal(optName).withStyle(ChatFormatting.WHITE))
                 .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
                 .append(Component.literal(oldVal).withStyle(ChatFormatting.WHITE))
@@ -29,7 +29,7 @@ public class OptionBuilders {
     }
 
     private static MutableComponent display(String optName, String value) {
-        return Component.literal("[-] ").withStyle(ChatFormatting.YELLOW)
+        return CommandUtils.infoPrefix()
                 .append(Component.literal(optName).withStyle(ChatFormatting.WHITE))
                 .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
                 .append(Component.literal(value).withStyle(ChatFormatting.WHITE));
@@ -41,7 +41,7 @@ public class OptionBuilders {
 
     @SuppressWarnings("unused")
     private static Component fail(String optName) {
-        return Component.literal("[x] ").withStyle(ChatFormatting.DARK_RED)
+        return CommandUtils.errorPrefix()
                 .append(Component.literal(optName).withStyle(ChatFormatting.WHITE))
                 .append(": error; check console/logs").withStyle(ChatFormatting.RED);
     }
@@ -140,14 +140,14 @@ public class OptionBuilders {
     static void addEnabled(LiteralArgumentBuilder<CommandSourceStack> base, Feature<?> feature) {
         base.then(literal("enable").executes(ctx -> {
             if (feature.getConfig().enabled) {
-                ctx.getSource().sendFailure(Component.literal("[-] ").withStyle(ChatFormatting.YELLOW)
+                ctx.getSource().sendFailure(CommandUtils.infoPrefix()
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
                         .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(" (unchanged)").withStyle(ChatFormatting.YELLOW)));
                 return 0;
             } else {
-                ctx.getSource().sendSuccess(Component.literal("[+] ").withStyle(ChatFormatting.DARK_GREEN)
+                ctx.getSource().sendSuccess(CommandUtils.sucessPrefix()
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
                         .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE))
@@ -160,14 +160,14 @@ public class OptionBuilders {
             }
         })).then(literal("disable").executes(ctx -> {
             if (!feature.getConfig().enabled) {
-                ctx.getSource().sendFailure(Component.literal("[-] ").withStyle(ChatFormatting.YELLOW)
+                ctx.getSource().sendFailure(CommandUtils.infoPrefix()
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
                         .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(" (unchanged)").withStyle(ChatFormatting.YELLOW)));
                 return 0;
             } else {
-                ctx.getSource().sendSuccess(Component.literal("[-] ").withStyle(ChatFormatting.DARK_RED)
+                ctx.getSource().sendSuccess(CommandUtils.errorPrefix()
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.RED))
                         .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE))
@@ -180,12 +180,12 @@ public class OptionBuilders {
             }
         })).executes(ctx -> {
             if (feature.getConfig().enabled) {
-                ctx.getSource().sendFailure(Component.literal("[+] ").withStyle(ChatFormatting.DARK_GREEN)
+                ctx.getSource().sendFailure(CommandUtils.sucessPrefix()
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
                         .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE)));
             } else {
-                ctx.getSource().sendFailure(Component.literal("[x] ").withStyle(ChatFormatting.DARK_RED)
+                ctx.getSource().sendFailure(CommandUtils.errorPrefix()
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.RED))
                         .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE)));

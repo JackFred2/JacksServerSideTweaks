@@ -18,6 +18,10 @@ public abstract class Feature<C extends Feature.Config> {
      */
     public abstract String id();
 
+    public String commandLabel() {
+        return id();
+    }
+
     /**
      * Returns this feature's current config from {@link JSSTConfig.Handler#get()}.
      * @return This feature's current config.

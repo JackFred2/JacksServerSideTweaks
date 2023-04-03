@@ -17,7 +17,7 @@ public class JSSTCommand {
             var root = literal(JSST.ID);
 
             for (Feature<?> feature : features) {
-                var node = literal(feature.id());
+                var node = literal(feature.commandLabel());
 
                 OptionBuilders.addEnabled(node, feature);
 
@@ -31,7 +31,7 @@ public class JSSTCommand {
                 var enabled = map.get(true);
                 var disabled = map.get(false);
                 if (enabled.size() > 0) {
-                    var str = Component.literal("[+] ").withStyle(ChatFormatting.DARK_GREEN);
+                    var str = CommandUtils.sucessPrefix();
                     for (int i = 0; i < enabled.size(); i++) {
                         if (i > 0) str.append(Component.literal(", ").withStyle(ChatFormatting.GREEN));
                         str.append(Component.literal(enabled.get(i).id()).withStyle(ChatFormatting.WHITE));
@@ -39,7 +39,7 @@ public class JSSTCommand {
                     ctx.getSource().sendSuccess(str, false);
                 }
                 if (disabled.size() > 0) {
-                    var str = Component.literal("[x] ").withStyle(ChatFormatting.DARK_RED);
+                    var str = CommandUtils.errorPrefix();
                     for (int i = 0; i < disabled.size(); i++) {
                         if (i > 0) str.append(Component.literal(", ").withStyle(ChatFormatting.RED));
                         str.append(Component.literal(disabled.get(i).id()).withStyle(ChatFormatting.WHITE));
