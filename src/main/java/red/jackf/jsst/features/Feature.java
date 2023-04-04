@@ -2,9 +2,13 @@ package red.jackf.jsst.features;
 
 import blue.endless.jankson.Comment;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import red.jackf.jsst.command.OptionBuilders;
 import red.jackf.jsst.config.JSSTConfig;
+
+import static red.jackf.jsst.command.CommandUtils.errorPrefix;
+import static red.jackf.jsst.command.CommandUtils.text;
 
 public abstract class Feature<C extends Feature.Config> {
     /**
@@ -43,6 +47,14 @@ public abstract class Feature<C extends Feature.Config> {
      * @param node this feature's root node.
      */
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {}
+
+    /**
+     * Utility method for aborting commands if not enabled
+     * @throws CommandRuntimeException Thrown if this feature is not enabled.
+     */
+    public final void assertEnabled() throws CommandRuntimeException {
+        if (!getConfig().enabled) throw new CommandRuntimeException(errorPrefix().append(text("Feature " + id() + " not enabled!")));
+    }
 
     public static abstract class Config {
         @Comment("Is this feature enabled? (Default: true, Options: true, false)")

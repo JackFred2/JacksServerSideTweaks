@@ -7,7 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
 public class CommandUtils {
-    public static MutableComponent sucessPrefix() {
+    public static MutableComponent successPrefix() {
         return Component.literal("[+] ").withStyle(ChatFormatting.DARK_GREEN);
     }
 

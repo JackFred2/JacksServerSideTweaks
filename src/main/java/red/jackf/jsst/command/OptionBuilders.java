@@ -20,7 +20,7 @@ import static net.minecraft.commands.Commands.literal;
 
 public class OptionBuilders {
     private static Component success(String optName, String oldVal, String newVal) {
-        return CommandUtils.sucessPrefix()
+        return CommandUtils.successPrefix()
                 .append(Component.literal(optName).withStyle(ChatFormatting.WHITE))
                 .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
                 .append(Component.literal(oldVal).withStyle(ChatFormatting.WHITE))
@@ -147,7 +147,7 @@ public class OptionBuilders {
                         .append(Component.literal(" (unchanged)").withStyle(ChatFormatting.YELLOW)));
                 return 0;
             } else {
-                ctx.getSource().sendSuccess(CommandUtils.sucessPrefix()
+                ctx.getSource().sendSuccess(CommandUtils.successPrefix()
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
                         .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE))
@@ -180,7 +180,7 @@ public class OptionBuilders {
             }
         })).executes(ctx -> {
             if (feature.getConfig().enabled) {
-                ctx.getSource().sendFailure(CommandUtils.sucessPrefix()
+                ctx.getSource().sendFailure(CommandUtils.successPrefix()
                         .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
                         .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE)));

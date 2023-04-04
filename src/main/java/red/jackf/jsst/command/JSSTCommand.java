@@ -31,7 +31,7 @@ public class JSSTCommand {
                 var enabled = map.get(true);
                 var disabled = map.get(false);
                 if (enabled.size() > 0) {
-                    var str = CommandUtils.sucessPrefix();
+                    var str = CommandUtils.successPrefix();
                     for (int i = 0; i < enabled.size(); i++) {
                         if (i > 0) str.append(Component.literal(", ").withStyle(ChatFormatting.GREEN));
                         str.append(Component.literal(enabled.get(i).id()).withStyle(ChatFormatting.WHITE));
