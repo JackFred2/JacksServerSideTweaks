@@ -37,6 +37,7 @@ public class TagSubcommand {
     private static final DynamicCommandExceptionType ERROR_UNKNOWN_REGISTRY = new DynamicCommandExceptionType(obj -> Component.literal("Unknown registry: " + obj.toString()));
     private static final DynamicCommandExceptionType ERROR_NO_DATAPACK_TAG = new DynamicCommandExceptionType(obj -> Component.literal("No such datapack tag exists: " + obj.toString()));
     private static final DynamicCommandExceptionType ERROR_NO_SUCH_ELEMENT = new DynamicCommandExceptionType(obj -> Component.literal("No such element exists: " + obj.toString()));
+    private static final DynamicCommandExceptionType ERROR_ELEMENT_ALREADY_EXISTS = new DynamicCommandExceptionType(obj -> Component.literal("Element already present: " + obj.toString()));
     private static final SuggestionProvider<CommandSourceStack> SUGGESTIONS_REGISTRY = (ctx, builder) -> SharedSuggestionProvider.suggestResource(BuiltInRegistries.REGISTRY.keySet()
             .stream(), builder);
     private static final SuggestionProvider<CommandSourceStack> SUGGESTIONS_TAGS = (ctx, builder) -> BuiltInRegistries.REGISTRY.getOptional(ctx.getArgument("registry", ResourceLocation.class))
@@ -186,12 +187,13 @@ public class TagSubcommand {
     }
 
     // Add an entry to a datapack tag file
-    private static <T> void addToTag(Registry<T> registry, ResourceLocation tagId, TagEntry entry) throws CommandRuntimeException {
+    private static <T> void addToTag(Registry<T> registry, ResourceLocation tagId, TagEntry newEntry) throws CommandRuntimeException, CommandSyntaxException {
         var state = CommandDefinedDatapack.currentState;
         if (state == null) throw new CommandRuntimeException(errorPrefix().append(text("PackState not loaded!")));
         var tagFile = state.getTags().computeIfAbsent(registry.key(), key -> new HashMap<>())
                 .computeIfAbsent(tagId, resLoc -> new TagFile(new ArrayList<>(), false));
-        tagFile.entries().add(entry);
+        if (tagFile.entries().stream().anyMatch(e -> e.toString().equals(newEntry.toString()))) throw ERROR_ELEMENT_ALREADY_EXISTS.create(newEntry.toString());
+        tagFile.entries().add(newEntry);
         state.save();
     }
 

@@ -34,6 +34,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PackState {
     private static final String FOLDER_NAME = "jsstCDD";
     private static final String PACK_MCMETA_TEMPLATE = "/pack.mcmeta.template";
+    private static final String WARNING_TEXT = """
+            This contents of the 'data' directory are deleted and remade every save; any files not supported may be deleted without warning.
+            For guidance on how to use this, see https://github.com/JackFred2/JacksServerSideTweaks/blob/1.19/README.md#command-defined-datapack""";
 
     private final Map<ResourceKey<? extends Registry<?>>, Map<ResourceLocation, TagFile>> tags = new HashMap<>();
     private final MinecraftServer server;
@@ -103,8 +106,8 @@ public class PackState {
                 copyPackMcmeta(rootDir);
             }
             var dataDir = rootDir.resolve("data");
-            FileUtils.cleanDirectory(dataDir.toFile());
-            FileUtils.writeStringToFile(dataDir.resolve("editing.warning").toFile(), "This pack is deleted and remade every save; any files not supported may be deleted without warning.", "UTF-8");
+            if (Files.exists(dataDir)) FileUtils.cleanDirectory(dataDir.toFile());
+            FileUtils.writeStringToFile(rootDir.resolve("editing.warning").toFile(), WARNING_TEXT, "UTF-8");
             for (var registry : tags.entrySet())
                 for (var tagEntry : registry.getValue().entrySet()) {
                     CommandDefinedDatapack.LOGGER.info(tagEntry.toString());

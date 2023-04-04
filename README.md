@@ -11,7 +11,8 @@ All features can be enabled or disabled using `/jsst <feature> (enable/disable)`
 ### Portable Crafting
 
 Lets you use crafting tables by right-clicking with them. Valid items to check are contained in the
-[jsst:items/crafting_tables](https://github.com/JackFred2/JacksServerSideTweaks/blob/1.19/src/main/resources/data/jsst/tags/items/crafting_tables.json) tag, which can be extended using data packs.
+[jsst:items/crafting_tables](https://github.com/JackFred2/JacksServerSideTweaks/blob/1.19/src/main/resources/data/jsst/tags/items/crafting_tables.json) tag, 
+which can be extended using data packs or the Command Defined Datapack feature below. 
 
 #### Config
 
@@ -56,3 +57,32 @@ Lets you make items for display that don't despawn by renaming them to `[display
 | Option          | Description                                                             | Default | Valid Options   |
 |-----------------|-------------------------------------------------------------------------|---------|-----------------|
 | ownerPickupOnly | Should only the player who dropped the item be able to pick it back up. | `true`  | `true`, `false` |
+
+### Command Defined Datapack
+
+Lets you create and modify a datapack folder via in-game commands. Currently, only supports tags. Designed to help configure mods
+and game features using tags such as `minecraft:enderman_holdable`, or `jsst:crafting_tables`.
+
+`/jsst cdd save` - Manually saves a copy of the current datapack in-memory. Should not be required in most cases as other commands 
+that modify the pack call this directly.
+
+#### Tags
+
+See also: [Tag JSON Format](https://minecraft.fandom.com/wiki/Tag#JSON_format)
+
+Base command: `/jsst cdd tag <registry>` 
+
+`<registry>` defines which registry the tags should be looked up through. For example, you'll want `minecraft:item` to modify item tags or `minecraft:block` for block tags.
+
+- `.. listTags [filter]` - Lists all tags that are registered for this registry.
+- `.. list <tag>` - Lists all elements in a given tag. This is after tags have been 'flattened' i.e. tags referenced by other tags are not shown.
+- `.. add <tag> value <element> [isOptional]` - Adds an element to a `<tag>` in the datapack. 
+- `.. add <tag> tag <newTag> [isOptional]` - Adds a reference to `<newTag>` in `<tag>` in the datapack.
+- `.. remove <tag> <element>` - Removes an element from `<tag>` in the datapack. This does **not** let you remove items from tags defined elsewhere; use `setReplace` below to overwrite them.
+- `.. setReplace <tag> <shouldReplace>` - Marks `<tag>` to overwrite other tags with the same name.
+
+##### Example (Adding nether stars to the crafting table list for Portable Crafting above)
+
+1. `/jsst cdd tag minecraft:item add jsst:crafting_tables value minecraft:nether_star`
+2. `/datapack enable "file/jsstCDD"` on first generation
+3. `/reload`
