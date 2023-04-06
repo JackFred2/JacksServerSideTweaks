@@ -98,7 +98,7 @@ public class PackState {
         }
     }
 
-    public boolean save() throws CommandRuntimeException {
+    public void save() throws CommandRuntimeException {
         try {
             var rootDir = server.getWorldPath(LevelResource.DATAPACK_DIR).resolve(FOLDER_NAME);
             if (!Files.exists(rootDir)) {
@@ -126,10 +126,9 @@ public class PackState {
                 }
 
             CommandDefinedDatapack.LOGGER.info("Saved new Datapack.");
-            return true;
         } catch (IOException e) {
             CommandDefinedDatapack.LOGGER.error("Error saving new datapack", e);
-            throw new CommandRuntimeException(CommandUtils.errorPrefix().append(CommandUtils.text("Error saving datapack, please check console.")));
+            throw new CommandRuntimeException(CommandUtils.line(CommandUtils.TextType.ERROR, CommandUtils.text("Error saving datapack, please check console.")));
         }
     }
 }

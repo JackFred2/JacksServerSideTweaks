@@ -1,11 +1,10 @@
 package red.jackf.jsst.command;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.features.Feature;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,20 +30,21 @@ public class JSSTCommand {
                 var enabled = map.get(true);
                 var disabled = map.get(false);
                 if (enabled.size() > 0) {
-                    var str = CommandUtils.successPrefix();
+                    var str = new ArrayList<CommandUtils.Text>();
                     for (int i = 0; i < enabled.size(); i++) {
-                        if (i > 0) str.append(Component.literal(", ").withStyle(ChatFormatting.GREEN));
-                        str.append(Component.literal(enabled.get(i).id()).withStyle(ChatFormatting.WHITE));
+                        if (i > 0) str.add(CommandUtils.symbol(", "));
+                        str.add(CommandUtils.text(enabled.get(i).id()));
                     }
-                    ctx.getSource().sendSuccess(str, false);
+                    ctx.getSource().sendSuccess(CommandUtils.line(CommandUtils.TextType.SUCCESS, str), false);
                 }
+
                 if (disabled.size() > 0) {
-                    var str = CommandUtils.errorPrefix();
+                    var str = new ArrayList<CommandUtils.Text>();
                     for (int i = 0; i < disabled.size(); i++) {
-                        if (i > 0) str.append(Component.literal(", ").withStyle(ChatFormatting.RED));
-                        str.append(Component.literal(disabled.get(i).id()).withStyle(ChatFormatting.WHITE));
+                        if (i > 0) str.add(CommandUtils.symbol(", "));
+                        str.add(CommandUtils.text(disabled.get(i).id()));
                     }
-                    ctx.getSource().sendSuccess(str, false);
+                    ctx.getSource().sendSuccess(CommandUtils.line(CommandUtils.TextType.ERROR, str), false);
                 }
                 return 1;
             });

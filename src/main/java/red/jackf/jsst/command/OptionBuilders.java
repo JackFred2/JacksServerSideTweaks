@@ -4,10 +4,8 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.StringRepresentable;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.features.Feature;
@@ -17,43 +15,50 @@ import java.util.function.Supplier;
 
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
+import static red.jackf.jsst.command.CommandUtils.*;
 
 public class OptionBuilders {
     private static Component success(String optName, String oldVal, String newVal) {
-        return CommandUtils.successPrefix()
-                .append(Component.literal(optName).withStyle(ChatFormatting.WHITE))
-                .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
-                .append(Component.literal(oldVal).withStyle(ChatFormatting.WHITE))
-                .append(Component.literal(" -> ").withStyle(ChatFormatting.GREEN))
-                .append(Component.literal(newVal).withStyle(ChatFormatting.WHITE));
+        return line(TextType.SUCCESS,
+                variable(optName),
+                symbol(": "),
+                variable(oldVal),
+                symbol(" -> "),
+                variable(newVal));
     }
 
-    private static MutableComponent display(String optName, String value) {
-        return CommandUtils.infoPrefix()
-                .append(Component.literal(optName).withStyle(ChatFormatting.WHITE))
-                .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
-                .append(Component.literal(value).withStyle(ChatFormatting.WHITE));
+    private static Component display(String optName, String value) {
+        return line(TextType.INFO,
+                variable(optName),
+                symbol(": "),
+                variable(value));
     }
 
     private static Component unchanged(String optName, String value) {
-        return display(optName, value).append(Component.literal(" (unchanged) ").withStyle(ChatFormatting.YELLOW));
+        return line(TextType.INFO,
+                variable(optName),
+                symbol(": "),
+                variable(value),
+                text(" (unchanged) "));
     }
 
     @SuppressWarnings("unused")
     private static Component fail(String optName) {
-        return CommandUtils.errorPrefix()
-                .append(Component.literal(optName).withStyle(ChatFormatting.WHITE))
-                .append(": error; check console/logs").withStyle(ChatFormatting.RED);
+        return line(TextType.ERROR,
+                text("Error updating "),
+                variable(optName),
+                text("check console/logs."));
     }
 
     /**
      * Adds an enum's options to a node; using each value's {@link StringRepresentable#getSerializedName()} as labels.
-     * @param name Label for this option.
+     *
+     * @param name      Label for this option.
      * @param enumClass Class for the enum; used to get all values.
-     * @param getter Should return the option's current value.
-     * @param setter Called when a value is <i>changed</i>. This should set the new value in the config, and to update any world state.
+     * @param getter    Should return the option's current value.
+     * @param setter    Called when a value is <i>changed</i>. This should set the new value in the config, and to update any world state.
+     * @param <E>       Enum type to use options for; should be {@link StringRepresentable}
      * @return Created node for the option; use {@link com.mojang.brigadier.builder.ArgumentBuilder#then(ArgumentBuilder)} to add to a node.
-     * @param <E> Enum type to use options for; should be {@link StringRepresentable}
      */
     public static <E extends Enum<E> & StringRepresentable> LiteralArgumentBuilder<CommandSourceStack> withEnum(String name, Class<E> enumClass, Supplier<E> getter, Consumer<E> setter) {
         assert enumClass.isEnum();
@@ -62,7 +67,7 @@ public class OptionBuilders {
             node.then(literal(value.getSerializedName()).executes(ctx -> {
                 var oldValue = getter.get();
                 if (oldValue == value) {
-                    ctx.getSource().sendFailure(unchanged(node.getLiteral(), value.getSerializedName()));
+                    ctx.getSource().sendSuccess(unchanged(node.getLiteral(), value.getSerializedName()), false);
                     return 0;
                 } else {
                     setter.accept(value);
@@ -83,7 +88,8 @@ public class OptionBuilders {
 
     /**
      * Adds a float range option to a node.
-     * @param name Label for this option.
+     *
+     * @param name   Label for this option.
      * @param getter Should return the option's current value.
      * @param setter Called when a value is <i>changed</i>. This should set the new value in the config, and to update any world state.
      * @return Created node for the option; use {@link com.mojang.brigadier.builder.ArgumentBuilder#then(ArgumentBuilder)} to add to a node.
@@ -99,7 +105,8 @@ public class OptionBuilders {
             } else {
                 setter.accept(newValue);
                 JSST.CONFIG.save();
-                ctx.getSource().sendSuccess(success(node.getLiteral(), oldValue.toString(), String.valueOf(newValue)), true);
+                ctx.getSource()
+                        .sendSuccess(success(node.getLiteral(), oldValue.toString(), String.valueOf(newValue)), true);
                 return 1;
             }
         })).executes(ctx -> {
@@ -111,7 +118,8 @@ public class OptionBuilders {
 
     /**
      * Adds a boolean option to a node
-     * @param name Label for this option.
+     *
+     * @param name   Label for this option.
      * @param getter Should return the option's current value.
      * @param setter Called when a value is <i>changed</i>. This should set the new value in the config, and to update any world state.
      * @return Created node for the option; use {@link com.mojang.brigadier.builder.ArgumentBuilder#then(ArgumentBuilder)} to add to a node.
@@ -140,19 +148,19 @@ public class OptionBuilders {
     static void addEnabled(LiteralArgumentBuilder<CommandSourceStack> base, Feature<?> feature) {
         base.then(literal("enable").executes(ctx -> {
             if (feature.getConfig().enabled) {
-                ctx.getSource().sendFailure(CommandUtils.infoPrefix()
-                        .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
-                        .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(" (unchanged)").withStyle(ChatFormatting.YELLOW)));
+                ctx.getSource().sendSuccess(line(TextType.INFO,
+                        text(feature.id()),
+                        symbol(": "),
+                        variable("enabled"),
+                        text(" (unchanged)")), false);
                 return 0;
             } else {
-                ctx.getSource().sendSuccess(CommandUtils.successPrefix()
-                        .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
-                        .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(" -> ").withStyle(ChatFormatting.GREEN))
-                        .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE)), true);
+                ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+                        text(feature.id()),
+                        symbol(": "),
+                        variable("disabled"),
+                        symbol(" -> "),
+                        variable("enabled")), true);
                 feature.getConfig().enabled = true;
                 feature.onEnabled();
                 JSST.CONFIG.save();
@@ -160,19 +168,19 @@ public class OptionBuilders {
             }
         })).then(literal("disable").executes(ctx -> {
             if (!feature.getConfig().enabled) {
-                ctx.getSource().sendFailure(CommandUtils.infoPrefix()
-                        .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(": ").withStyle(ChatFormatting.YELLOW))
-                        .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(" (unchanged)").withStyle(ChatFormatting.YELLOW)));
+                ctx.getSource().sendSuccess(line(TextType.INFO,
+                        text(feature.id()),
+                        symbol(": "),
+                        variable("disabled"),
+                        text(" (unchanged)")), false);
                 return 0;
             } else {
-                ctx.getSource().sendSuccess(CommandUtils.errorPrefix()
-                        .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(": ").withStyle(ChatFormatting.RED))
-                        .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(" -> ").withStyle(ChatFormatting.RED))
-                        .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE)), true);
+                ctx.getSource().sendSuccess(line(TextType.ERROR,
+                        text(feature.id()),
+                        symbol(": "),
+                        variable("enabled"),
+                        symbol(" -> "),
+                        variable("disabled")), true);
                 feature.getConfig().enabled = false;
                 feature.onDisabled();
                 JSST.CONFIG.save();
@@ -180,17 +188,18 @@ public class OptionBuilders {
             }
         })).executes(ctx -> {
             if (feature.getConfig().enabled) {
-                ctx.getSource().sendFailure(CommandUtils.successPrefix()
-                        .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(": ").withStyle(ChatFormatting.GREEN))
-                        .append(Component.literal("enabled").withStyle(ChatFormatting.WHITE)));
+                ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+                        text(feature.id()),
+                        symbol(": "),
+                        text("enabled")), false);
+                return 1;
             } else {
-                ctx.getSource().sendFailure(CommandUtils.errorPrefix()
-                        .append(Component.literal(feature.id()).withStyle(ChatFormatting.WHITE))
-                        .append(Component.literal(": ").withStyle(ChatFormatting.RED))
-                        .append(Component.literal("disabled").withStyle(ChatFormatting.WHITE)));
+                ctx.getSource().sendSuccess(line(TextType.ERROR,
+                        text(feature.id()),
+                        symbol(": "),
+                        text("disabled")), false);
+                return 0;
             }
-            return 1;
         });
     }
 }

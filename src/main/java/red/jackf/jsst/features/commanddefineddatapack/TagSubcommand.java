@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -22,7 +23,6 @@ import net.minecraft.tags.TagFile;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.command.CommandUtils;
-import red.jackf.jsst.command.EnabledWrapper;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -36,6 +36,7 @@ import static red.jackf.jsst.command.CommandUtils.*;
 public class TagSubcommand {
     private static final DynamicCommandExceptionType ERROR_UNKNOWN_REGISTRY = new DynamicCommandExceptionType(obj -> Component.literal("Unknown registry: " + obj.toString()));
     private static final DynamicCommandExceptionType ERROR_NO_DATAPACK_TAG = new DynamicCommandExceptionType(obj -> Component.literal("No such datapack tag exists: " + obj.toString()));
+    private static final SimpleCommandExceptionType ERROR_DATAPACK_NOT_LOADED = new SimpleCommandExceptionType(Component.literal("Internal Datapack not loaded!"));
     private static final DynamicCommandExceptionType ERROR_NO_SUCH_ELEMENT = new DynamicCommandExceptionType(obj -> Component.literal("No such element exists: " + obj.toString()));
     private static final DynamicCommandExceptionType ERROR_ELEMENT_ALREADY_EXISTS = new DynamicCommandExceptionType(obj -> Component.literal("Element already present: " + obj.toString()));
     private static final SuggestionProvider<CommandSourceStack> SUGGESTIONS_REGISTRY = (ctx, builder) -> SharedSuggestionProvider.suggestResource(BuiltInRegistries.REGISTRY.keySet()
@@ -96,7 +97,7 @@ public class TagSubcommand {
 
     // Generate command tree for tag editing
     public static LiteralArgumentBuilder<CommandSourceStack> create(CommandDefinedDatapack cdd) {
-        var wrapper = new EnabledWrapper(cdd);
+        var wrapper = CommandUtils.wrapper(cdd);
         return literal("tag")
                 .then(argument("registry", ResourceLocationArgument.id()).suggests(SUGGESTIONS_REGISTRY)
                         .then(literal("listTags")
@@ -137,7 +138,7 @@ public class TagSubcommand {
 
     private static int setReplace(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         var state = CommandDefinedDatapack.currentState;
-        if (state == null) throw new CommandRuntimeException(errorPrefix().append(text("PackState not loaded!")));
+        if (state == null) throw ERROR_DATAPACK_NOT_LOADED.create();
         var registryId = ctx.getArgument("registry", ResourceLocation.class);
         Registry<?> registry = BuiltInRegistries.REGISTRY.get(registryId);
         if (registry == null) throw ERROR_UNKNOWN_REGISTRY.create(registryId);
@@ -148,7 +149,10 @@ public class TagSubcommand {
         if (tagFile == null) throw ERROR_NO_DATAPACK_TAG.create(tagId);
         var replace = ctx.getArgument("shouldReplace", Boolean.class);
         datapackTagsForRegistry.put(tagId, new TagFile(tagFile.entries(), replace));
-        ctx.getSource().sendSuccess(successPrefix().append(text("Marked ")).append(variable(tagId.toString())).append(text(" to " + (replace ? "" : "not ") + "replace other tags.")), true);
+        ctx.getSource().sendSuccess(list(TextType.SUCCESS,
+                text("Marked "),
+                variable(tagId.toString()),
+                text(" to " + (replace ? "" : "not ") + "replace other tags.")), true);
         state.save();
         return 1;
     }
@@ -166,7 +170,7 @@ public class TagSubcommand {
     // Command: Remove an entry from a datapack tag file
     private static int removeFromTag(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         var state = CommandDefinedDatapack.currentState;
-        if (state == null) throw new CommandRuntimeException(errorPrefix().append(text("PackState not loaded!")));
+        if (state == null) throw ERROR_DATAPACK_NOT_LOADED.create();
         var registryId = ctx.getArgument("registry", ResourceLocation.class);
         Registry<?> registry = BuiltInRegistries.REGISTRY.get(registryId);
         if (registry == null) throw ERROR_UNKNOWN_REGISTRY.create(registryId);
@@ -177,10 +181,17 @@ public class TagSubcommand {
         if (tagFile == null) throw ERROR_NO_DATAPACK_TAG.create(tagId);
         var toRemove = ctx.getArgument("elementToRemove", String.class);
         if (!removeElement(tagFile, toRemove)) throw ERROR_NO_SUCH_ELEMENT.create(toRemove);
-        ctx.getSource().sendSuccess(successPrefix().append(text("Removed ")).append(variable(toRemove)).append(text(" from ")).append(variable(tagId.toString())).append(text(".")), true);
+        ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+                text("Removed "),
+                variable(toRemove),
+                text(" from "),
+                variable(tagId.toString()),
+                text(".")), true);
         if (tagFile.entries().size() == 0) {
             datapackTagsForRegistry.remove(tagId, tagFile);
-            ctx.getSource().sendSuccess(successPrefix().append(variable(tagId.toString())).append(text(" is now empty, removing.")), true);
+            ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+                    variable(tagId.toString()),
+                    text(" is now empty, removing.")), true);
         }
         state.save();
         return 1;
@@ -189,7 +200,7 @@ public class TagSubcommand {
     // Add an entry to a datapack tag file
     private static <T> void addToTag(Registry<T> registry, ResourceLocation tagId, TagEntry newEntry) throws CommandRuntimeException, CommandSyntaxException {
         var state = CommandDefinedDatapack.currentState;
-        if (state == null) throw new CommandRuntimeException(errorPrefix().append(text("PackState not loaded!")));
+        if (state == null) throw ERROR_DATAPACK_NOT_LOADED.create();
         var tagFile = state.getTags().computeIfAbsent(registry.key(), key -> new HashMap<>())
                 .computeIfAbsent(tagId, resLoc -> new TagFile(new ArrayList<>(), false));
         if (tagFile.entries().stream().anyMatch(e -> e.toString().equals(newEntry.toString()))) throw ERROR_ELEMENT_ALREADY_EXISTS.create(newEntry.toString());
@@ -205,8 +216,12 @@ public class TagSubcommand {
         var tagId = ctx.getArgument("to", ResourceLocation.class);
         var newValue = ctx.getArgument("newElement", ResourceLocation.class);
         addToTag(registry, tagId, optional ? TagEntry.optionalElement(newValue) : TagEntry.element(newValue));
-        ctx.getSource().sendSuccess(successPrefix().append(text("Added ")).append(variable(newValue.toString()))
-                .append(text(" to ")).append(variable(tagId.toString())).append(text(".")), true);
+        ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+                text("Added "),
+                variable(newValue.toString()),
+                text(" to "),
+                variable(tagId.toString()),
+                text(".")), true);
         return 0;
     }
 
@@ -218,9 +233,12 @@ public class TagSubcommand {
         var tagId = ctx.getArgument("to", ResourceLocation.class);
         var newTag = ctx.getArgument("newTag", ResourceLocation.class);
         addToTag(registry, tagId, optional ? TagEntry.optionalTag(newTag) : TagEntry.tag(newTag));
-        ctx.getSource()
-                .sendSuccess(successPrefix().append(text("Added ")).append(variable("#" + newTag)).append(text(" to "))
-                        .append(variable(tagId.toString())).append(text(".")), true);
+        ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+                text("Added "),
+                variable("#" + newTag),
+                text(" to "),
+                variable(tagId.toString()),
+                text(".")), true);
         return 0;
     }
 
@@ -240,14 +258,20 @@ public class TagSubcommand {
         var tagId = ctx.getArgument("tag", ResourceLocation.class);
         var tagContents = getTagContents(registry, tagId);
         if (tagContents == null) { // valid, just not made yet
-            ctx.getSource().sendSystemMessage(CommandUtils.errorPrefix().append(text("No tag exists by the name of "))
-                    .append(variable(tagId.toString())));
+            ctx.getSource().sendSystemMessage(CommandUtils.line(TextType.ERROR,
+                    text("No tag exists by the name of "),
+                    variable(tagId.toString())));
         } else {
-            ctx.getSource().sendSystemMessage(CommandUtils.infoPrefix().append(text("Contents of "))
-                    .append(variable(registryId.toString()).withStyle(suggests("/jsst cdd tag " + registryId + " listTags")))
-                    .append(text(" tag ")).append(variable(tagId.toString())).append(symbol(":")));
+            ctx.getSource().sendSystemMessage(CommandUtils.line(TextType.INFO,
+                    text("Contents of "),
+                    variable(registryId.toString(), suggests("/jsst cdd tag " + registryId + " listTags")),
+                    text(" tag "),
+                    variable(tagId.toString()),
+                    symbol(":")));
             tagContents.forEach(resloc -> ctx.getSource()
-                    .sendSystemMessage(symbol("- ").append(text(resloc.toString()))));
+                    .sendSystemMessage(list(TextType.INFO,
+                            symbol("- "),
+                            text(resloc.toString()))));
         }
         return 1;
     }
@@ -257,15 +281,16 @@ public class TagSubcommand {
         var registryId = ctx.getArgument("registry", ResourceLocation.class);
         var registry = BuiltInRegistries.REGISTRY.get(registryId);
         if (registry == null) throw ERROR_UNKNOWN_REGISTRY.create(registryId);
-        var title = CommandUtils.infoPrefix().append(text("Tags in ")).append(variable(registryId.toString()));
-        if (filter != null) title.append(text(" matching ")).append(variable(filter));
-        title.append(symbol(":"));
-        ctx.getSource().sendSystemMessage(title);
+        var text = new ArrayList<>(List.of(text("Tags in "), variable(registryId.toString())));
+        if (filter != null) text.addAll(List.of(text(" matching "), variable(filter)));
+        text.add(symbol(":"));
+        ctx.getSource().sendSystemMessage(CommandUtils.line(TextType.INFO, text));
         var stream = registry.getTagNames();
         if (filter != null) stream = stream.filter(key -> key.location().toString().contains(filter));
         stream.sorted(Comparator.comparing(TagKey::location)).forEach(key -> ctx.getSource()
-                .sendSystemMessage(symbol("- ").append(text(key.location()
-                        .toString()).withStyle(suggests("/jsst cdd tag " + registryId + " list " + key.location())))));
+                .sendSystemMessage(list(TextType.INFO,
+                        symbol("- "),
+                        text(key.location().toString(), suggests("/jsst cdd tag " + registryId + " list " + key.location())))));
         return 1;
     }
 }
