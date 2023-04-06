@@ -99,7 +99,7 @@ modrinth {
 	token = project.findProperty("modrinth.key")
 	projectId = "eiYW74Yj"
 	versionNumber = "mc${project.minecraft_version}-${project.mod_version}"
-	versionType = "alpha"
+	versionType = "beta"
 	uploadFile = remapJar
 	changelog = "Check the GitHub for changes: https://github.com/JackFred2/JacksServerSideTweaks"
 	gameVersions = project.game_versions.tokenize(",")
