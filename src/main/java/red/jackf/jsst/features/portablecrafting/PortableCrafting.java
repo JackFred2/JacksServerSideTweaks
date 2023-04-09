@@ -3,6 +3,7 @@ package red.jackf.jsst.features.portablecrafting;
 import blue.endless.jankson.Comment;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -56,7 +57,7 @@ public class PortableCrafting extends Feature<PortableCrafting.Config> {
     }
 
     @Override
-    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {
+    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node, CommandBuildContext buildContext) {
         node.then(OptionBuilders.withBoolean("sneakOnly", () -> getConfig().sneakOnly, newValue -> getConfig().sneakOnly = newValue));
     }
 

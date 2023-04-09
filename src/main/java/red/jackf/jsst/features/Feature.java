@@ -2,6 +2,7 @@ package red.jackf.jsst.features;
 
 import blue.endless.jankson.Comment;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import red.jackf.jsst.command.OptionBuilders;
 import red.jackf.jsst.config.JSSTConfig;
@@ -42,7 +43,7 @@ public abstract class Feature<C extends Feature.Config> {
      * Add any nodes to this feature's command here. Helpers for config options are available in {@link OptionBuilders}.
      * @param node this feature's root node.
      */
-    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {}
+    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node, CommandBuildContext buildContext) {}
 
     public static abstract class Config {
         @Comment("Is this feature enabled? (Default: true, Options: true, false)")

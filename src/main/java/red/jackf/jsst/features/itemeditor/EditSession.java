@@ -1,170 +1,91 @@
 package red.jackf.jsst.features.itemeditor;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.LecternMenu;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
+import red.jackf.jsst.JSST;
+import red.jackf.jsst.command.CommandUtils;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.HashMap;
 
 import static net.minecraft.network.chat.Component.literal;
 
 public class EditSession {
-    private static final Style TITLE = Style.EMPTY.withBold(true).withColor(0x00137F);
-    private static final Style HEADER = Style.EMPTY.withUnderlined(true).withColor(0x00137F);
-    private static final Style TECHNICAL = Style.EMPTY.withColor(ChatFormatting.DARK_GREEN);
-    private static final Style ERROR = Style.EMPTY.withColor(ChatFormatting.DARK_RED);
-    private static final Style BUTTON = Style.EMPTY.withColor(0x2D5EFF);
-    private static final Style RETURN = Style.EMPTY.withColor(ChatFormatting.RED);
-    private static final Style BASE = Style.EMPTY.withColor(ChatFormatting.BLACK)
-            .withBold(false)
-            .withItalic(false)
-            .withObfuscated(false)
-            .withUnderlined(false)
-            .withStrikethrough(false)
-            .withClickEvent(null)
-            .withHoverEvent(null)
-            .withInsertion(null);
-
-    private static final Component BLANK_LINE = literal("");
-
-    private static final Component RETURN_BUTTON = literal("←").withStyle(RETURN.withClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, "1")).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, literal("Return to title page"))));
-
-    private static final MenuProvider LECTERN_PROVIDER = new MenuProvider() {
-        @Override
-        @NotNull
-        public Component getDisplayName() {
-            return Component.empty();
-        }
-
-        @Override
-        public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-            return new LecternMenu(i);
-        }
-    };
-
+    private final CommandSourceStack source;
     private final ServerPlayer player;
-    private ItemStack stack;
+    private final ItemStack stack;
 
-    private static ItemStack createFauxBook(ListTag pages) {
-        var stack = new ItemStack(Items.WRITTEN_BOOK);
-        var tag = stack.getOrCreateTag();
-        tag.put("pages", pages);
-        tag.put("author", StringTag.valueOf("JSST"));
-        tag.put("title", StringTag.valueOf("JSST Item Editor"));
+    public EditSession(CommandSourceStack source, ServerPlayer player, ItemStack stack) {
+        this.source = source;
+        this.player = player;
+        this.stack = stack;
+    }
+
+    private static ItemStack label(ItemStack stack, String text) {
+        stack.setHoverName(Component.literal(text).withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withItalic(false)));
+        for (ItemStack.TooltipPart part : ItemStack.TooltipPart.values())
+            stack.hideTooltipPart(part);
         return stack;
     }
 
-    private static StringTag toPage(List<Component> lines) {
-        if (lines.size() == 0) return StringTag.valueOf("");
-        var text = literal("");
-        text.append(lines.get(0));
-        for (int i = 1; i < lines.size(); i++) {
-            text.append(literal("\n").withStyle(BASE));
-            text.append(lines.get(i));
+    private void mainMenu() {
+        var buttons = new HashMap<Integer, EditorUtils.ItemButton>();
+        buttons.put(10, new EditorUtils.ItemButton(stack.copy(), this::finish));
+
+        for (var slot : new int[]{3,12,21}) { // divider
+            buttons.put(slot, new EditorUtils.ItemButton(EditorUtils.DIVIDER.copy(), null));
         }
-        return StringTag.valueOf(Component.Serializer.toJson(text));
+
+        var features = new ArrayList<EditorUtils.ItemButton>();
+        features.add(new EditorUtils.ItemButton(label(new ItemStack(Items.NAME_TAG), "Edit Name"), this::editName));
+        features.add(new EditorUtils.ItemButton(label(new ItemStack(Items.WRITABLE_BOOK), "Edit Lore"), this::editLore));
+        features.add(new EditorUtils.ItemButton(label(new ItemStack(Items.LAPIS_LAZULI), "Edit Enchantments"), this::editEnchantments));
+        if (stack.getItem() instanceof PotionItem || stack.is(Items.TIPPED_ARROW))
+            features.add(new EditorUtils.ItemButton(label(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.REGENERATION), "Edit Potion Effects"), this::editPotionEffects));
+
+        for (int i = 0; i < features.size(); i++) { // 3x5 area on the right side
+            var row = i / 5;
+            var column = 4 + (i % 5);
+            buttons.put(row * 9 + column, features.get(i));
+        }
+
+        if (player.openMenu(EditorUtils.makeMenu(literal("Item Editor"), buttons)).isEmpty())
+            source.sendFailure(CommandUtils.line(CommandUtils.TextType.ERROR, CommandUtils.text("Error creating main menu")));
     }
 
-    private StringTag createTitlePage(Map<StackFeature, Integer> otherPages) {
-        var lines = new ArrayList<Component>();
-        lines.add(literal("ITEM EDITOR").withStyle(TITLE));
-        lines.add(literal(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()).withStyle(BASE.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(stack)))));
-        lines.add(BLANK_LINE);
-        otherPages.forEach((feature, pageNo) -> lines.add(literal(feature.label).withStyle(HEADER.withClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(pageNo))))));
-        return toPage(lines);
+    private void editPotionEffects() {
+        JSST.LOGGER.info("Editing potion effects");
     }
 
-    private static Component createTitle(String label, @Nullable String editCommand) {
-        var base = literal("");
-        base.append(RETURN_BUTTON);
-        base.append(literal(" " + label + " ").withStyle(TITLE));
-        if (editCommand != null) base.append(literal("[EDIT]").withStyle(BUTTON.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, editCommand))));
-        return base;
+    private void editName() {
+        JSST.LOGGER.info("Editing name");
     }
 
-    private static StringTag createNamePage(ItemStack stack) {
-        var lines = new ArrayList<Component>();
-        lines.add(createTitle("NAME", "/jsst itemEditor editName"));
-        lines.add(stack.getHoverName());
-        return toPage(lines);
+    private void editLore() {
+        JSST.LOGGER.info("Editing lore");
     }
 
-    private static StringTag createLorePage(ItemStack stack) {
-        var lines = new ArrayList<Component>();
-        lines.add(createTitle("LORE", "/jsst itemEditor editLore"));
-        return toPage(lines);
+    private void editEnchantments() {
+        JSST.LOGGER.info("Editing enchantments");
     }
 
-    private static StringTag createEnchantmentsPage(ItemStack stack) {
-        var lines = new ArrayList<Component>();
-        lines.add(createTitle("ENCHANTMENTS", "/jsst itemEditor editEnchantments"));
-        return toPage(lines);
-    }
-
-    private static StringTag createPotionEffects(ItemStack stack) {
-        var lines = new ArrayList<Component>();
-        lines.add(createTitle("POTION EFFECTS", "/jsst itemEditor editPotionEffects"));
-        return toPage(lines);
-    }
-
-    private ItemStack createBook() {
-        var pages = new ListTag();
-        var page = 2;
-        var otherPages = new LinkedHashMap<StackFeature, Integer>();
-        for (var feature : StackFeature.values())
-            if (feature.applies.test(stack)) otherPages.put(feature, page++);
-        pages.add(createTitlePage(otherPages));
-        otherPages.keySet().forEach(feature -> pages.add(feature.pageSupplier.apply(stack)));
-        return createFauxBook(pages);
-    }
-
-    public EditSession(CommandSourceStack source, ItemStack stack) throws CommandSyntaxException {
-        this.player = source.getPlayerOrException();
-        this.stack = stack.copy();
+    private void finish() {
+        player.playNotifySound(SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS,1f, 1f);
+        if (!player.getInventory().add(stack)) player.drop(stack, false);
+        player.closeContainer();
     }
 
     public void start() {
-        player.openMenu(LECTERN_PROVIDER);
-        player.containerMenu.getSlot(0).set(createBook());
-    }
-
-    private enum StackFeature {
-        NAME("Name", stack -> true, EditSession::createNamePage),
-        LORE("Lore", stack -> true, EditSession::createLorePage),
-        ENCHANTMENTS("Enchantments", stack -> true, EditSession::createEnchantmentsPage),
-        POTION_EFFECTS("Potion Effects", stack -> stack.getItem() instanceof PotionItem || stack.is(Items.TIPPED_ARROW), EditSession::createPotionEffects);
-
-        private final String label;
-        private final Predicate<ItemStack> applies;
-        private final Function<ItemStack, StringTag> pageSupplier;
-
-        StackFeature(String label, Predicate<ItemStack> applies, Function<ItemStack, StringTag> pageSupplier) {
-            this.label = label;
-            this.applies = applies;
-            this.pageSupplier = pageSupplier;
-        }
+        mainMenu();
     }
 }

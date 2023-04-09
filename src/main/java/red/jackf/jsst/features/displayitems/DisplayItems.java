@@ -3,6 +3,7 @@ package red.jackf.jsst.features.displayitems;
 import blue.endless.jankson.Comment;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -50,7 +51,7 @@ public class DisplayItems extends Feature<DisplayItems.Config> {
     }
 
     @Override
-    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {
+    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node, CommandBuildContext buildContext) {
         node.then(
                 OptionBuilders.withBoolean("ownerPickupOnly", () -> getConfig().ownerPickupOnly, value -> getConfig().ownerPickupOnly = value)
         ).then(

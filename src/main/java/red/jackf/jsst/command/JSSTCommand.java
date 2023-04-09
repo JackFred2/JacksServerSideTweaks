@@ -12,7 +12,7 @@ import static net.minecraft.commands.Commands.literal;
 
 public class JSSTCommand {
     public static void register(List<Feature<?>> features) {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, environment) -> {
             var root = literal(JSST.ID);
 
             for (Feature<?> feature : features) {
@@ -20,7 +20,7 @@ public class JSSTCommand {
 
                 OptionBuilders.addEnabled(node, feature);
 
-                feature.setupCommand(node);
+                feature.setupCommand(node, buildContext);
 
                 root.then(node);
             }

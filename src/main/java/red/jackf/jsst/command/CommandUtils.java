@@ -84,6 +84,7 @@ public final class CommandUtils {
         return command -> ctx -> {
             if (!feature.getConfig().enabled) {
                 ctx.getSource().sendFailure(line(TextType.ERROR, text("Feature "), variable(feature.id()), text(" not enabled!")));
+                return 0;
             }
             return command.run(ctx);
         };

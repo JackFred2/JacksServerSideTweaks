@@ -3,6 +3,7 @@ package red.jackf.jsst.features.commanddefineddatapack;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +45,7 @@ public class CommandDefinedDatapack extends Feature<CommandDefinedDatapack.Confi
     }
 
     @Override
-    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {
+    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node, CommandBuildContext buildContext) {
         node.then(
             TagSubcommand.create(this)
         ).then(literal("save").executes(CommandUtils.wrapper(this).wrap(ctx -> {

@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -185,7 +186,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
     }
 
     @Override
-    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node) {
+    public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node, CommandBuildContext buildContext) {
         node.then(OptionBuilders.withFloatRange("labelRangeMultiplier", MIN_MULTIPLIER, MAX_MULTIPLIER, () -> getConfig().labelRangeMultiplier, range -> {
             getConfig().labelRangeMultiplier = range;
             for (Display display : displayCache.values())
