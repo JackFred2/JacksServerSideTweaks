@@ -10,6 +10,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.features.Util;
 import red.jackf.jsst.features.itemeditor.EditorUtils;
 import red.jackf.jsst.features.itemeditor.ItemGuiElement;
 
@@ -28,7 +29,7 @@ public class StyleEditor {
             DyeColor.BLUE, DyeColor.PURPLE, DyeColor.MAGENTA, DyeColor.PINK
     );
 
-    private final ServerPlayer serverPlayer;
+    private final ServerPlayer player;
     private final Component original;
     private final Consumer<Component> callback;
     private final String text;
@@ -40,7 +41,7 @@ public class StyleEditor {
     private boolean obfuscated;
 
     private StyleEditor(ServerPlayer player, Component text, Consumer<Component> callback) {
-        this.serverPlayer = player;
+        this.player = player;
         this.callback = callback;
         this.original = text.copy();
 
@@ -70,9 +71,15 @@ public class StyleEditor {
                 }));
             }
 
-        elements.put(4, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "With Hex Code", "WIP"), () -> TextEditor.create(serverPlayer, "#", hex -> {
+        elements.put(4, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "With Hex Code", "WIP"), () -> EditorUtils.textEditor(player, "#", hex -> {
             var parsed = TextColor.parseColor(hex);
-            colour = new SingleColour(parsed == null ? TextColor.fromLegacyFormat(ChatFormatting.WHITE) : parsed);
+            if (parsed != null) {
+                Util.successSound(player);
+                colour = new SingleColour(parsed);
+            } else {
+                Util.failSound(player);
+                colour = new SingleColour(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
+            }
             open();
         })));
         elements.put(13, new ItemGuiElement(EditorUtils.makeLabel(Items.REDSTONE, "Rainbow"), () -> {
@@ -110,10 +117,16 @@ public class StyleEditor {
             open();
         }));
 
-        elements.put(33, new ItemGuiElement(EditorUtils.makeLabel(Items.WRITTEN_BOOK, build(), "Click to confirm"), () -> callback.accept(build())));
-        elements.put(35, new ItemGuiElement(EditorUtils.makeLabel(Items.BARRIER, "Cancel"), () -> callback.accept(original)));
+        elements.put(33, new ItemGuiElement(EditorUtils.makeLabel(Items.WRITTEN_BOOK, build(), "Click to confirm"), () -> {
+            Util.successSound(player);
+            callback.accept(build());
+        }));
+        elements.put(35, new ItemGuiElement(EditorUtils.makeLabel(Items.BARRIER, "Cancel"), () -> {
+            Util.failSound(player);
+            callback.accept(original);
+        }));
 
-        serverPlayer.openMenu(EditorUtils.make9x4(literal("Editing Style"), elements));
+        player.openMenu(EditorUtils.make9x4(literal("Editing Style"), elements));
     }
 
     private Component build() {

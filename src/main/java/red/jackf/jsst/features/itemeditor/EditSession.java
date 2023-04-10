@@ -1,10 +1,10 @@
 package red.jackf.jsst.features.itemeditor;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
-import red.jackf.jsst.features.itemeditor.editors.*;
+import red.jackf.jsst.features.Util;
+import red.jackf.jsst.features.itemeditor.editors.AdvancedNameEditor;
+import red.jackf.jsst.features.itemeditor.editors.Editor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +48,7 @@ public class EditSession {
     }
 
     private void finish() {
-        player.playNotifySound(SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS, 1f, 1f);
+        Util.successSound(player);
         if (!player.getInventory().add(stack)) player.drop(stack, false);
         player.closeContainer();
     }

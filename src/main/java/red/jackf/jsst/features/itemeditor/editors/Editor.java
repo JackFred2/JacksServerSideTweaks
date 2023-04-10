@@ -2,6 +2,7 @@ package red.jackf.jsst.features.itemeditor.editors;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import red.jackf.jsst.features.Util;
 
 import java.util.function.Consumer;
 
@@ -36,10 +37,12 @@ public abstract class Editor {
     public abstract void open();
 
     protected final void complete() {
+        Util.successSound(player);
         this.completeCallback.accept(stack);
     }
 
     protected final void cancel() {
+        Util.failSound(player);
         this.completeCallback.accept(originalStack);
     }
 

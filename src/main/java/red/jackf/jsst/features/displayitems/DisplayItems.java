@@ -6,14 +6,13 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.OptionBuilders;
 import red.jackf.jsst.features.Feature;
+import red.jackf.jsst.features.Util;
 
 public class DisplayItems extends Feature<DisplayItems.Config> {
     private static final int INFINITE_LIFETIME = -32768;
@@ -32,7 +31,7 @@ public class DisplayItems extends Feature<DisplayItems.Config> {
                 if (item.getAge() == INFINITE_LIFETIME) return; // already done
                 item.setUnlimitedLifetime();
                 item.addTag(JSST_DISPLAY_TAG);
-                level.playSound(null, item, SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.BLOCKS, 1f, 1f);
+                Util.successSound(player);
                 if (getConfig().ownerPickupOnly && item.getOwner() instanceof Player) {
                     item.setTarget(item.getOwner().getUUID());
                 }

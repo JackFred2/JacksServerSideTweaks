@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.features.Util;
 import red.jackf.jsst.features.itemeditor.EditorUtils;
 import red.jackf.jsst.features.itemeditor.ItemGuiElement;
 
@@ -86,7 +87,8 @@ public class AdvancedNameEditor extends Editor {
             var text = components.get(textIndex);
             int finalTextIndex = textIndex;
             // Edit Text Label
-            elements.put(startPos, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Click to edit text"), () -> TextEditor.create(player, text.getString(), newStr -> {
+            elements.put(startPos, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Click to edit text"), () -> EditorUtils.textEditor(player, text.getString(), newStr -> {
+                Util.successSound(player);
                 components.set(finalTextIndex, literal(newStr).setStyle(text.getStyle()));
                 refreshStackName();
             })));
