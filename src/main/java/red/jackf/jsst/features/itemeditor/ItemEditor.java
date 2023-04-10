@@ -22,7 +22,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
     private void startEditor(CommandSourceStack source, ItemStack item) {
         var player = source.getPlayer();
         if (player == null) return;
-        new EditSession(source, player, item.copyWithCount(1)).start();
+        new EditSession(player, item.copyWithCount(1)).start();
     }
 
     @Override

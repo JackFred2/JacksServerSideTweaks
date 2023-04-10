@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import red.jackf.jsst.features.itemeditor.EditorUtils;
+import red.jackf.jsst.features.itemeditor.ItemGuiElement;
 import red.jackf.jsst.features.itemeditor.JSSTSealableMenuWithButtons;
 
 import java.util.Map;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class AbstractContainerMenuMixin implements JSSTSealableMenuWithButtons {
     @Nullable
     @Unique
-    private Map<Integer, EditorUtils.ItemButton> buttons = null;
+    private Map<Integer, ItemGuiElement> buttons = null;
 
     @Inject(method = "doClick(IILnet/minecraft/world/inventory/ClickType;Lnet/minecraft/world/entity/player/Player;)V", at = @At("HEAD"), cancellable = true)
     private void jsst_checkForSlotHooks(int slotId, int button, ClickType clickType, Player player, CallbackInfo ci) {
@@ -36,7 +36,7 @@ public class AbstractContainerMenuMixin implements JSSTSealableMenuWithButtons {
     }
 
     @Override
-    public void jsst_sealWithButtons(Map<Integer, EditorUtils.ItemButton> buttons) {
+    public void jsst_sealWithButtons(Map<Integer, ItemGuiElement> buttons) {
         this.buttons = buttons;
     }
 }
