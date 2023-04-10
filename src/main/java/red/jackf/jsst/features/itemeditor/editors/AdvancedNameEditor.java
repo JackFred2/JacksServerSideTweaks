@@ -57,12 +57,12 @@ public class AdvancedNameEditor extends Editor {
     public void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
         elements.put(10, new ItemGuiElement(EditorUtils.withHint(stack, "Click to finish"), this::complete));
-        elements.put(45, new ItemGuiElement(EditorUtils.makeLabel(Items.WATER_BUCKET, "Clear custom name"), this::clearName)); // TODO: Add confirmation dialogue when modified
-        elements.put(47, new ItemGuiElement(EditorUtils.makeLabel(Items.BARRIER, "Cancel"), this::cancel));
+        elements.put(45, new ItemGuiElement(EditorUtils.makeLabel(Items.WATER_BUCKET, "Clear Custom Name"), this::clearName)); // TODO: Add confirmation dialogue when modified
+        elements.put(47, EditorUtils.cancel(this::cancel));
 
         // Divider
         for (int i = 3; i < 54; i += 9)
-            elements.put(i, new ItemGuiElement(EditorUtils.DIVIDER.copy(), null));
+            elements.put(i, EditorUtils.divider());
 
         // Page Buttons
         var maxPage = components.size() / 5;
@@ -87,7 +87,7 @@ public class AdvancedNameEditor extends Editor {
             var text = components.get(textIndex);
             int finalTextIndex = textIndex;
             // Edit Text Label
-            elements.put(startPos, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Click to edit text"), () -> EditorUtils.textEditor(player, text.getString(), newStr -> {
+            elements.put(startPos, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Edit Text"), () -> EditorUtils.textEditor(player, text.getString(), newStr -> {
                 Util.successSound(player);
                 components.set(finalTextIndex, literal(newStr).setStyle(text.getStyle()));
                 refreshStackName();

@@ -1,10 +1,13 @@
 package red.jackf.jsst.features.itemeditor;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.features.Util;
 import red.jackf.jsst.features.itemeditor.editors.AdvancedNameEditor;
 import red.jackf.jsst.features.itemeditor.editors.Editor;
+import red.jackf.jsst.features.itemeditor.editors.SimpleNameEditor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,15 +16,19 @@ import static net.minecraft.network.chat.Component.literal;
 
 public class EditSession {
     private static final List<Editor.Supplier> EDITORS = List.of(
+            SimpleNameEditor::new,
             AdvancedNameEditor::new
     );
 
     private final ServerPlayer player;
     private ItemStack stack;
+    @Nullable
+    private final EquipmentSlot toReplace;
 
-    public EditSession(ServerPlayer player, ItemStack stack) {
+    public EditSession(ServerPlayer player, ItemStack stack, @Nullable EquipmentSlot toReplace) {
         this.player = player;
         this.stack = stack;
+        this.toReplace = toReplace;
     }
 
     public void mainMenu() {
@@ -29,7 +36,7 @@ public class EditSession {
         elements.put(10, new ItemGuiElement(EditorUtils.withHint(stack, "Click to finish"), this::finish));
 
         for (var slot : new int[]{3, 12, 21}) { // divider
-            elements.put(slot, new ItemGuiElement(EditorUtils.DIVIDER.copy(), null));
+            elements.put(slot, EditorUtils.divider());
         }
 
         var editors = EDITORS.stream().map(b -> b.get(stack.copy(), player, stack -> {
@@ -49,7 +56,11 @@ public class EditSession {
 
     private void finish() {
         Util.successSound(player);
-        if (!player.getInventory().add(stack)) player.drop(stack, false);
+        if (toReplace != null) {
+            player.setItemSlot(toReplace, stack); // replace held item
+        } else {
+            if (!player.getInventory().add(stack)) player.drop(stack, false); // give or drop if full
+        }
         player.closeContainer();
     }
 

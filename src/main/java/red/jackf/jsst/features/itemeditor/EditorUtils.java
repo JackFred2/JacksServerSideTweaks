@@ -31,7 +31,19 @@ import static net.minecraft.network.chat.Component.literal;
 
 public class EditorUtils {
     public static final Style CLEAN = Style.EMPTY.withColor(ChatFormatting.WHITE).withItalic(false);
-    public static final ItemStack DIVIDER = new ItemStack(Items.LIME_STAINED_GLASS_PANE).setHoverName(literal(""));
+    private static final ItemStack DIVIDER = new ItemStack(Items.LIME_STAINED_GLASS_PANE).setHoverName(literal(""));
+
+    public static ItemGuiElement divider() {
+        return new ItemGuiElement(DIVIDER, null);
+    }
+
+    public static ItemGuiElement cancel(Runnable onClick) {
+        return new ItemGuiElement(makeLabel(Items.BARRIER, "Cancel"), onClick);
+    }
+
+    public static MenuProvider make9x1(Component title, Map<Integer, ItemGuiElement> elements) {
+        return make(ChestMenu::oneRow, title, elements);
+    }
 
     public static MenuProvider make9x3(Component title, Map<Integer, ItemGuiElement> elements) {
         return make(ChestMenu::threeRows, title, elements);

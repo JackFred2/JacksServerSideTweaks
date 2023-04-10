@@ -121,7 +121,7 @@ public class StyleEditor {
             Util.successSound(player);
             callback.accept(build());
         }));
-        elements.put(35, new ItemGuiElement(EditorUtils.makeLabel(Items.BARRIER, "Cancel"), () -> {
+        elements.put(35, EditorUtils.cancel(() -> {
             Util.failSound(player);
             callback.accept(original);
         }));
