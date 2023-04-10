@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.OptionBuilders;
 import red.jackf.jsst.features.Feature;
-import red.jackf.jsst.features.Util;
+import red.jackf.jsst.features.Sounds;
 
 public class DisplayItems extends Feature<DisplayItems.Config> {
     private static final int INFINITE_LIFETIME = -32768;
@@ -31,7 +31,7 @@ public class DisplayItems extends Feature<DisplayItems.Config> {
                 if (item.getAge() == INFINITE_LIFETIME) return; // already done
                 item.setUnlimitedLifetime();
                 item.addTag(JSST_DISPLAY_TAG);
-                Util.successSound(player);
+                Sounds.success(player);
                 if (getConfig().ownerPickupOnly && item.getOwner() instanceof Player) {
                     item.setTarget(item.getOwner().getUUID());
                 }

@@ -10,7 +10,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Items;
-import red.jackf.jsst.features.Util;
+import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.EditorUtils;
 import red.jackf.jsst.features.itemeditor.ItemGuiElement;
 
@@ -66,63 +66,75 @@ public class StyleEditor {
                 var dyeColour = DYES.get(row * 4 + col);
                 elements.put(row * 9 + col, new ItemGuiElement(EditorUtils.makeLabel(DyeItem.byColor(dyeColour),
                         translatable("color.minecraft." + dyeColour.getName()).withStyle(EditorUtils.CLEAN.withColor(dyeColour.getTextColor()))), () -> {
+                    Sounds.interact(player);
                     this.colour = new SingleColour(TextColor.fromRgb(dyeColour.getTextColor()));
                     open();
                 }));
             }
 
-        elements.put(4, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "With Hex Code", "WIP"), () -> EditorUtils.textEditor(player, "#", hex -> {
-            var parsed = TextColor.parseColor(hex);
-            if (parsed != null) {
-                Util.successSound(player);
-                colour = new SingleColour(parsed);
-            } else {
-                Util.failSound(player);
-                colour = new SingleColour(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
-            }
-            open();
-        })));
+        elements.put(4, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "With Hex Code", "WIP"), () -> {
+            Sounds.interact(player);
+            EditorUtils.textEditor(player, "#", hex -> {
+                var parsed = TextColor.parseColor(hex);
+                if (parsed != null) {
+                    Sounds.success(player);
+                    colour = new SingleColour(parsed);
+                } else {
+                    Sounds.error(player);
+                    colour = new SingleColour(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
+                }
+                open();
+            });
+        }));
         elements.put(13, new ItemGuiElement(EditorUtils.makeLabel(Items.REDSTONE, "Rainbow"), () -> {
+            Sounds.interact(player);
             colour = new RainbowColour();
             open();
         }));
         elements.put(22, new ItemGuiElement(EditorUtils.makeLabel(Items.GUNPOWDER, "Reset"), () -> {
+            Sounds.interact(player);
             loadFrom(original.getStyle());
             open();
         }));
 
         elements.put(6, new ItemGuiElement(EditorUtils.makeLabel(Items.IRON_INGOT, literal("Bold").withStyle(EditorUtils.CLEAN.withBold(true))), () -> {
+            Sounds.interact(player);
             bold = !bold;
             open();
         }));
         elements.put(7, new ItemGuiElement(EditorUtils.makeLabel(Items.STICK, literal("Italics").withStyle(EditorUtils.CLEAN.withItalic(true)), null), () -> {
+            Sounds.interact(player);
             italic = !italic;
             open();
         }));
         elements.put(8, new ItemGuiElement(EditorUtils.makeLabel(Items.HEAVY_WEIGHTED_PRESSURE_PLATE, literal("Underlined").withStyle(EditorUtils.CLEAN.withUnderlined(true))), () -> {
+            Sounds.interact(player);
             underline = !underline;
             open();
         }));
         elements.put(15, new ItemGuiElement(EditorUtils.makeLabel(Items.STRUCTURE_VOID, literal("Strikethrough").withStyle(EditorUtils.CLEAN.withStrikethrough(true))), () -> {
+            Sounds.interact(player);
             strikethrough = !strikethrough;
             open();
         }));
         elements.put(16, new ItemGuiElement(EditorUtils.makeLabel(Items.SUSPICIOUS_STEW, literal("Obfuscated").withStyle(EditorUtils.CLEAN.withObfuscated(true)), "Obfuscated"), () -> {
+            Sounds.interact(player);
             obfuscated = !obfuscated;
             open();
         }));
         elements.put(17, new ItemGuiElement(EditorUtils.makeLabel(Items.WATER_BUCKET, "Remove Style"), () -> {
+            Sounds.clear(player);
             bold = italic = underline = strikethrough = obfuscated = false;
             colour = new SingleColour(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
             open();
         }));
 
         elements.put(33, new ItemGuiElement(EditorUtils.makeLabel(Items.WRITTEN_BOOK, build(), "Click to confirm"), () -> {
-            Util.successSound(player);
+            Sounds.success(player);
             callback.accept(build());
         }));
         elements.put(35, EditorUtils.cancel(() -> {
-            Util.failSound(player);
+            Sounds.error(player);
             callback.accept(original);
         }));
 

@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import red.jackf.jsst.features.Util;
+import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.EditorUtils;
 import red.jackf.jsst.features.itemeditor.ItemGuiElement;
 
@@ -48,6 +48,7 @@ public class AdvancedNameEditor extends Editor {
     }
 
     private void clearName() {
+        Sounds.clear(player);
         this.stack.resetHoverName();
         parseName();
         open();
@@ -69,6 +70,7 @@ public class AdvancedNameEditor extends Editor {
         if (page > 0)
             elements.put(51, new ItemGuiElement(EditorUtils.makeLabel(Items.RED_CONCRETE, "Previous Page"), () -> {
                 this.page = Math.max(0, page - 1);
+                Sounds.interact(player, 1f + ((float) (page + 1) / (maxPage + 1)) / 2);
                 open();
             }));
         if (maxPage != 0)
@@ -76,6 +78,7 @@ public class AdvancedNameEditor extends Editor {
         if (page < maxPage)
             elements.put(53, new ItemGuiElement(EditorUtils.makeLabel(Items.LIME_CONCRETE, "Next Page"), () -> {
                 this.page = Math.min(components.size() / 5, page + 1);
+                Sounds.interact(player, 1f + ((float) (page + 1) / (maxPage + 1)) / 2);
                 open();
             }));
 
@@ -87,21 +90,28 @@ public class AdvancedNameEditor extends Editor {
             var text = components.get(textIndex);
             int finalTextIndex = textIndex;
             // Edit Text Label
-            elements.put(startPos, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Edit Text"), () -> EditorUtils.textEditor(player, text.getString(), newStr -> {
-                Util.successSound(player);
-                components.set(finalTextIndex, literal(newStr).setStyle(text.getStyle()));
-                refreshStackName();
-            })));
+            elements.put(startPos, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Edit Text"), () -> {
+                Sounds.interact(player);
+                EditorUtils.textEditor(player, text.getString(), newStr -> {
+                    Sounds.success(player);
+                    components.set(finalTextIndex, literal(newStr).setStyle(text.getStyle()));
+                    refreshStackName();
+                });
+            }));
             // Edit Style Label
-            elements.put(startPos + 1, new ItemGuiElement(EditorUtils.makeLabel(EditorUtils.colourToItem(text.getStyle().getColor()), "Change Style"), () -> StyleEditor.create(player, text, c -> {
-                components.remove(finalTextIndex);
-                var parts = c.toFlatList();
-                for (int i = parts.size() - 1; i >= 0; i--)
-                    components.add(finalTextIndex, parts.get(i));
-                refreshStackName();
-            })));
+            elements.put(startPos + 1, new ItemGuiElement(EditorUtils.makeLabel(EditorUtils.colourToItem(text.getStyle().getColor()), "Change Style"), () -> {
+                Sounds.interact(player);
+                StyleEditor.create(player, text, c -> {
+                    components.remove(finalTextIndex);
+                    var parts = c.toFlatList();
+                    for (int i = parts.size() - 1; i >= 0; i--)
+                        components.add(finalTextIndex, parts.get(i));
+                    refreshStackName();
+                });
+            }));
             // Delete
             elements.put(startPos + 4, new ItemGuiElement(EditorUtils.makeLabel(Items.BARRIER, "Delete"), () -> {
+                Sounds.error(player);
                 this.components.remove(finalTextIndex);
                 refreshStackName();
             }));
@@ -110,6 +120,7 @@ public class AdvancedNameEditor extends Editor {
         // New Text Component
         if (page == maxPage)
             elements.put(startPos + 9, new ItemGuiElement(EditorUtils.makeLabel(Items.NETHER_STAR, "Add Component"), () -> {
+                Sounds.interact(player);
                 this.components.add(literal("Text").withStyle(Style.EMPTY.withItalic(false)));
                 refreshStackName();
             }));

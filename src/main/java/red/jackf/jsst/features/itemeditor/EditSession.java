@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import red.jackf.jsst.features.Util;
+import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.editors.AdvancedNameEditor;
 import red.jackf.jsst.features.itemeditor.editors.Editor;
 import red.jackf.jsst.features.itemeditor.editors.SimpleNameEditor;
@@ -48,14 +48,17 @@ public class EditSession {
             var row = i / 5;
             var column = 4 + (i % 5);
             var editor = editors.get(i);
-            elements.put(row * 9 + column, new ItemGuiElement(editor.label(), editor::open));
+            elements.put(row * 9 + column, new ItemGuiElement(editor.label(), () -> {
+                Sounds.interact(player);
+                editor.open();
+            }));
         }
 
         player.openMenu(EditorUtils.make9x3(literal("Item Editor"), elements));
     }
 
     private void finish() {
-        Util.successSound(player);
+        Sounds.success(player);
         if (toReplace != null) {
             player.setItemSlot(toReplace, stack); // replace held item
         } else {
