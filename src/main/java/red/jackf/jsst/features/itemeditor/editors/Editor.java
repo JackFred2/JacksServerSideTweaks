@@ -11,7 +11,7 @@ public abstract class Editor {
     protected ItemStack stack;
     protected final ServerPlayer player;
     private final Consumer<ItemStack> completeCallback;
-    private final ItemStack originalStack;
+    protected final ItemStack originalStack;
 
     public Editor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
         this.stack = stack;

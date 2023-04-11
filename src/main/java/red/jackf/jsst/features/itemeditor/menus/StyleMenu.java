@@ -1,4 +1,4 @@
-package red.jackf.jsst.features.itemeditor.utils.menus;
+package red.jackf.jsst.features.itemeditor.menus;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -74,7 +74,7 @@ public class StyleMenu {
 
         elements.put(4, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "With Hex Code", "WIP"), () -> {
             Sounds.interact(player);
-            Menus.simpleText(player, "#", hex -> {
+            Menus.string(player, "#", hex -> {
                 var parsed = TextColor.parseColor(hex);
                 if (parsed != null) {
                     Sounds.success(player);

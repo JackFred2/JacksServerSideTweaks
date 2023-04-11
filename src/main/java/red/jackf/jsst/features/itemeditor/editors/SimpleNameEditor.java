@@ -5,9 +5,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
+import red.jackf.jsst.features.itemeditor.menus.Menus;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
-import red.jackf.jsst.features.itemeditor.utils.menus.Menus;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -29,7 +29,7 @@ public class SimpleNameEditor extends Editor {
         elements.put(1, EditorUtils.divider());
         elements.put(2, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "Edit Name"), () -> {
             Sounds.interact(player);
-            Menus.simpleText(player, stack.getHoverName().getString(), newStr -> {
+            Menus.string(player, stack.getHoverName().getString(), newStr -> {
                 Sounds.success(player);
                 stack.setHoverName(Component.literal(newStr).setStyle(stack.getHoverName().getStyle()));
                 open();
@@ -42,12 +42,17 @@ public class SimpleNameEditor extends Editor {
                 open();
             });
         }));
-        elements.put(4, new ItemGuiElement(EditorUtils.makeLabel(Items.WATER_BUCKET, "Clear Custom Name"), () -> {  // TODO: Add confirmation dialogue when modified
+
+        elements.put(6, EditorUtils.clear(() -> {
             Sounds.clear(player);
             stack.resetHoverName();
             open();
         }));
-
+        elements.put(7, EditorUtils.reset(() -> {
+            Sounds.clear(player);
+            stack = originalStack.copy();
+            open();
+        }));
         elements.put(8, EditorUtils.cancel(this::cancel));
 
         player.openMenu(EditorUtils.make9x1(Component.literal("Editing Name"), elements));

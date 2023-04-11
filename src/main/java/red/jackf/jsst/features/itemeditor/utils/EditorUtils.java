@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import static net.minecraft.network.chat.Component.literal;
 
@@ -32,6 +33,14 @@ public class EditorUtils {
 
     public static ItemGuiElement divider() {
         return new ItemGuiElement(DIVIDER, null);
+    }
+
+    public static ItemGuiElement reset(Runnable onClick) {
+        return new ItemGuiElement(makeLabel(Items.NAUTILUS_SHELL, "Reset"), onClick);
+    }
+
+    public static ItemGuiElement clear(Runnable onClick) {
+        return new ItemGuiElement(makeLabel(Items.WATER_BUCKET, "Clear"), onClick);
     }
 
     public static ItemGuiElement cancel(Runnable onClick) {
@@ -121,7 +130,7 @@ public class EditorUtils {
      * @param text Name for the label stack
      * @param hintText Green hint text added to this label
      */
-    static ItemStack makeLabel(ItemStack stack, Component text, @Nullable String hintText) {
+    public static ItemStack makeLabel(ItemStack stack, Component text, @Nullable String hintText) {
         var newStack = stack.copy();
         newStack.setHoverName(text);
         for (ItemStack.TooltipPart part : ItemStack.TooltipPart.values())
@@ -159,5 +168,36 @@ public class EditorUtils {
         var start = literal("");
         components.forEach(c -> start.append(c.copy()));
         return start;
+    }
+
+    /**
+     * Creates a page system in the right 5 columns of a 9x6 container. Creates a row of 5 with the bottom row used for
+     * the page buttons and new button.
+     */
+    public static void drawPage(Map<Integer, ItemGuiElement> elements, List<?> items, int page, int maxPage, RowFiller rowFiller, Consumer<Integer> itemRemover, @Nullable Runnable itemAdder, Consumer<Integer> pageChanger) {
+        // Page Buttons
+        if (page > 0)
+            elements.put(51, new ItemGuiElement(EditorUtils.makeLabel(Items.RED_CONCRETE, "Previous Page"), () -> pageChanger.accept(Math.max(0, page - 1))));
+        if (maxPage != 0)
+            elements.put(52, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "Page %s/%s".formatted(page + 1, maxPage + 1)), null));
+        if (page < maxPage)
+            elements.put(53, new ItemGuiElement(EditorUtils.makeLabel(Items.LIME_CONCRETE, "Next Page"), () -> pageChanger.accept(Math.min(maxPage, page + 1))));
+
+        var itemsToDraw = items.subList(page * 5, Math.min(page * 5 + 5, items.size()));
+        int row;
+        for (row = 0; row < itemsToDraw.size(); row++) {
+            var startPos = 4 + (row * 9);
+            var itemIndex = (page * 5) + row;
+            rowFiller.fill(startPos, itemIndex);
+            elements.put(startPos + 4, new ItemGuiElement(makeLabel(Items.BARRIER, "Delete"), () -> itemRemover.accept(itemIndex)));
+        }
+
+        if (page == maxPage && itemAdder != null) {
+            elements.put(row * 9 + 4, new ItemGuiElement(EditorUtils.makeLabel(Items.NETHER_STAR, "Add"), itemAdder));
+        }
+    }
+
+    public interface RowFiller {
+        void fill(Integer slotStartPos, Integer itemIndex);
     }
 }

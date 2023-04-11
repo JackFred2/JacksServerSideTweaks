@@ -1,4 +1,4 @@
-package red.jackf.jsst.features.itemeditor.utils.menus;
+package red.jackf.jsst.features.itemeditor.menus;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -6,19 +6,22 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
 import red.jackf.jsst.features.itemeditor.utils.JSSTSealableMenuWithButtons;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static net.minecraft.network.chat.Component.literal;
 
 public class Menus {
     private Menus() {}
 
-    public static void simpleText(ServerPlayer player, String text, Consumer<String> callback) {
+    public static void string(ServerPlayer player, String text, Consumer<String> callback) {
         player.openMenu(new SimpleMenuProvider(((i, inventory, player1) -> {
             var menu = new AnvilMenu(i, inventory);
             var elements = new HashMap<Integer, ItemGuiElement>();
@@ -40,5 +43,10 @@ public class Menus {
     public static void style(ServerPlayer player, Component preview, Consumer<Component> callback) {
         var selector = new StyleMenu(player, preview, callback);
         selector.open();
+    }
+
+    public static void component(ServerPlayer player, Function<Component, ItemStack> previewBuilder, @Nullable Component original, int maxComponents, CancellableCallback<Component> callback) {
+        var componentMenu = new AdvancedComponentMenu(player, previewBuilder, original, maxComponents, callback);
+        componentMenu.open();
     }
 }

@@ -17,7 +17,7 @@ public class Sounds {
     }
 
     public static void complete(ServerPlayer player) {
-       play(player, SoundEvents.NOTE_BLOCK_CHIME.value(), 1.75f);
+       play(player, SoundEvents.NOTE_BLOCK_CHIME.value(), 2f);
     }
 
     public static void error(ServerPlayer player) {

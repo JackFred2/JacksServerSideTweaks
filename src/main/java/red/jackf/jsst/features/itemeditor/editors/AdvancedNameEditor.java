@@ -1,10 +1,12 @@
 package red.jackf.jsst.features.itemeditor.editors;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.features.itemeditor.menus.Menus;
+import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
-import red.jackf.jsst.features.itemeditor.utils.menus.AdvancedComponentMenu;
 
 import java.util.function.Consumer;
 
@@ -20,9 +22,20 @@ public class AdvancedNameEditor extends Editor {
 
     @Override
     public void open() {
-        new AdvancedComponentMenu(player, stack, stack.hasCustomHoverName() ? stack.getHoverName() : null, AdvancedComponentMenu.BlankBehaviour.SHOW_STACK_NAME, c -> {
-            stack.setHoverName(c);
+        Menus.component(player, this::previewBuilder, stack.hasCustomHoverName() ? stack.getHoverName() : null, 50, CancellableCallback.of(c -> {
+            if (c.getString().isEmpty()) stack.resetHoverName();
+            else stack.setHoverName(c);
             complete();
-        }).open();
+        }, this::cancel));
+    }
+
+    private ItemStack previewBuilder(Component c) {
+        var preview = stack.copy();
+        if (c.getString().isEmpty()) {
+            preview.resetHoverName();
+        } else {
+            preview.setHoverName(c);
+        }
+        return preview;
     }
 }
