@@ -50,7 +50,7 @@ public class SimpleNameEditor extends Editor {
         }));
         elements.put(7, EditorUtils.reset(() -> {
             Sounds.clear(player);
-            stack = originalStack.copy();
+            this.stack = getOriginal();
             open();
         }));
         elements.put(8, EditorUtils.cancel(this::cancel));

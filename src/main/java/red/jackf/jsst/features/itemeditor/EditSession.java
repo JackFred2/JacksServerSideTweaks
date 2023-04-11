@@ -5,10 +5,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.features.Sounds;
-import red.jackf.jsst.features.itemeditor.editors.AdvancedNameEditor;
-import red.jackf.jsst.features.itemeditor.editors.Editor;
-import red.jackf.jsst.features.itemeditor.editors.LoreEditor;
-import red.jackf.jsst.features.itemeditor.editors.SimpleNameEditor;
+import red.jackf.jsst.features.itemeditor.editors.*;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
 
@@ -21,7 +18,8 @@ public class EditSession {
     private static final List<Editor.Supplier> EDITORS = List.of(
             SimpleNameEditor::new,
             AdvancedNameEditor::new,
-            LoreEditor::new
+            LoreEditor::new,
+            BookUnsigner::new
     );
 
     private final ServerPlayer player;
@@ -53,7 +51,7 @@ public class EditSession {
             var column = 4 + (i % 5);
             var editor = editors.get(i);
             elements.put(row * 9 + column, new ItemGuiElement(editor.label(), () -> {
-                Sounds.interact(player);
+                editor.playOpenSound();
                 editor.open();
             }));
         }

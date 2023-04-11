@@ -11,7 +11,7 @@ public abstract class Editor {
     protected ItemStack stack;
     protected final ServerPlayer player;
     private final Consumer<ItemStack> completeCallback;
-    protected final ItemStack originalStack;
+    private final ItemStack originalStack;
 
     public Editor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
         this.stack = stack;
@@ -36,6 +36,10 @@ public abstract class Editor {
 
     public abstract void open();
 
+    protected final ItemStack getOriginal() {
+        return originalStack.copy();
+    }
+
     protected final void complete() {
         Sounds.success(player);
         this.completeCallback.accept(stack);
@@ -44,6 +48,10 @@ public abstract class Editor {
     protected final void cancel() {
         Sounds.error(player);
         this.completeCallback.accept(originalStack);
+    }
+
+    public void playOpenSound() {
+        Sounds.interact(player);
     }
 
     public interface Supplier {

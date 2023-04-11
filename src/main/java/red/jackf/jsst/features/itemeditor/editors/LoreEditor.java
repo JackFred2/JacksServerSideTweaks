@@ -76,7 +76,14 @@ public class LoreEditor extends Editor {
 
     @Override
     public ItemStack label() {
-        return EditorUtils.makeLabel(Items.WRITABLE_BOOK, "Edit Lore");
+        return EditorUtils.makeLabel(Items.PAPER, "Edit Lore");
+    }
+
+    protected void reset() {
+        Sounds.clear(player);
+        this.stack = getOriginal();
+        this.lore = getLore(stack);
+        open();
     }
 
     @Override
@@ -88,11 +95,7 @@ public class LoreEditor extends Editor {
             this.lore.clear();
             open();
         }));
-        elements.put(46, EditorUtils.reset(() -> {
-            Sounds.clear(player);
-            this.stack = originalStack.copy();
-            this.lore = getLore(stack);
-        }));
+        elements.put(46, EditorUtils.reset(this::reset));
         elements.put(47, EditorUtils.cancel(this::cancel));
 
         // Divider
