@@ -5,8 +5,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
-import red.jackf.jsst.features.itemeditor.EditorUtils;
-import red.jackf.jsst.features.itemeditor.ItemGuiElement;
+import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
+import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
+import red.jackf.jsst.features.itemeditor.utils.menus.Menus;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -28,7 +29,7 @@ public class SimpleNameEditor extends Editor {
         elements.put(1, EditorUtils.divider());
         elements.put(2, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "Edit Name"), () -> {
             Sounds.interact(player);
-            EditorUtils.textEditor(player, stack.getHoverName().getString(), newStr -> {
+            Menus.simpleText(player, stack.getHoverName().getString(), newStr -> {
                 Sounds.success(player);
                 stack.setHoverName(Component.literal(newStr).setStyle(stack.getHoverName().getStyle()));
                 open();
@@ -36,7 +37,7 @@ public class SimpleNameEditor extends Editor {
         }));
         elements.put(3, new ItemGuiElement(EditorUtils.makeLabel(EditorUtils.colourToItem(stack.getHoverName().getStyle().getColor()), "Edit Style"), () -> {
             Sounds.interact(player);
-            StyleEditor.create(player, stack.getHoverName(), c -> {
+            Menus.style(player, stack.getHoverName(), c -> {
                 stack.setHoverName(c);
                 open();
             });

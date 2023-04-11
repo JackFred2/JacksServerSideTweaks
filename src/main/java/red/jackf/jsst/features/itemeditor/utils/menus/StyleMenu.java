@@ -1,4 +1,4 @@
-package red.jackf.jsst.features.itemeditor.editors;
+package red.jackf.jsst.features.itemeditor.utils.menus;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -11,8 +11,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
-import red.jackf.jsst.features.itemeditor.EditorUtils;
-import red.jackf.jsst.features.itemeditor.ItemGuiElement;
+import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
+import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
 
-public class StyleEditor {
+public class StyleMenu {
     private static final List<DyeColor> DYES = List.of(
             DyeColor.WHITE, DyeColor.LIGHT_GRAY, DyeColor.GRAY, DyeColor.BLACK,
             DyeColor.BROWN, DyeColor.RED, DyeColor.ORANGE, DyeColor.YELLOW,
@@ -40,7 +40,7 @@ public class StyleEditor {
     private boolean strikethrough;
     private boolean obfuscated;
 
-    private StyleEditor(ServerPlayer player, Component text, Consumer<Component> callback) {
+    protected StyleMenu(ServerPlayer player, Component text, Consumer<Component> callback) {
         this.player = player;
         this.callback = callback;
         this.original = text.copy();
@@ -58,7 +58,7 @@ public class StyleEditor {
         this.colour = new SingleColour(style.getColor());
     }
 
-    private void open() {
+    void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
 
         for (int row = 0; row < 4; row++)
@@ -74,7 +74,7 @@ public class StyleEditor {
 
         elements.put(4, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "With Hex Code", "WIP"), () -> {
             Sounds.interact(player);
-            EditorUtils.textEditor(player, "#", hex -> {
+            Menus.simpleText(player, "#", hex -> {
                 var parsed = TextColor.parseColor(hex);
                 if (parsed != null) {
                     Sounds.success(player);
@@ -151,11 +151,6 @@ public class StyleEditor {
                 .withUnderlined(underline)
                 .withStrikethrough(strikethrough)
                 .withObfuscated(obfuscated);
-    }
-
-    public static void create(ServerPlayer player, Component preview, Consumer<Component> callback) {
-        var selector = new StyleEditor(player, preview, callback);
-        selector.open();
     }
 
     interface Colour {

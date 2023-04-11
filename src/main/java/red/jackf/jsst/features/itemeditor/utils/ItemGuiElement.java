@@ -1,4 +1,4 @@
-package red.jackf.jsst.features.itemeditor;
+package red.jackf.jsst.features.itemeditor.utils;
 
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;

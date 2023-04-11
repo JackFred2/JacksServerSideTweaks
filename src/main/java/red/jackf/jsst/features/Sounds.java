@@ -16,12 +16,12 @@ public class Sounds {
        play(player, SoundEvents.NOTE_BLOCK_CHIME.value(), 1.5f);
     }
 
-    public static void error(ServerPlayer player) {
-        play(player, SoundEvents.NOTE_BLOCK_CHIME.value(), 0.7f);
+    public static void complete(ServerPlayer player) {
+       play(player, SoundEvents.NOTE_BLOCK_CHIME.value(), 1.75f);
     }
 
-    public static void page(ServerPlayer player) {
-        play(player, SoundEvents.BOOK_PAGE_TURN, 1f);
+    public static void error(ServerPlayer player) {
+        play(player, SoundEvents.NOTE_BLOCK_CHIME.value(), 0.7f);
     }
 
     public static void interact(ServerPlayer player) {
@@ -29,7 +29,7 @@ public class Sounds {
     }
 
     public static void interact(ServerPlayer player, float pitch) {
-        play(player, SoundEvents.UI_BUTTON_CLICK.value(), pitch);
+        play(player, SoundEvents.NOTE_BLOCK_CHIME.value(), pitch);
     }
 
     public static void clear(ServerPlayer player) {

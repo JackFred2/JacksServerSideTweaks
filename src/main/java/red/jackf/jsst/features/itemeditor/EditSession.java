@@ -8,6 +8,8 @@ import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.editors.AdvancedNameEditor;
 import red.jackf.jsst.features.itemeditor.editors.Editor;
 import red.jackf.jsst.features.itemeditor.editors.SimpleNameEditor;
+import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
+import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +60,7 @@ public class EditSession {
     }
 
     private void finish() {
-        Sounds.success(player);
+        Sounds.complete(player);
         if (toReplace != null) {
             player.setItemSlot(toReplace, stack); // replace held item
         } else {

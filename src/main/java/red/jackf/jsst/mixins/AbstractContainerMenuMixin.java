@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import red.jackf.jsst.features.itemeditor.ItemGuiElement;
-import red.jackf.jsst.features.itemeditor.JSSTSealableMenuWithButtons;
+import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
+import red.jackf.jsst.features.itemeditor.utils.JSSTSealableMenuWithButtons;
 
 import java.util.Map;
 

@@ -1,19 +1,17 @@
-package red.jackf.jsst.features.itemeditor;
+package red.jackf.jsst.features.itemeditor.utils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
@@ -22,10 +20,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import static net.minecraft.network.chat.Component.literal;
 
@@ -158,22 +155,9 @@ public class EditorUtils {
         return makeLabel(new ItemStack(item), text);
     }
 
-    public static void textEditor(ServerPlayer player, String text, Consumer<String> callback) {
-        player.openMenu(new SimpleMenuProvider(((i, inventory, player1) -> {
-            var menu = new AnvilMenu(i, inventory);
-            var elements = new HashMap<Integer, ItemGuiElement>();
-            elements.put(AnvilMenu.INPUT_SLOT, new ItemGuiElement(makeLabel(Items.PAPER, text, "Click to confirm"), () -> callback.accept(text)));
-            elements.put(AnvilMenu.RESULT_SLOT, new ItemGuiElement(makeLabel(ItemStack.EMPTY, ""), () -> {
-                var item = menu.slots.get(AnvilMenu.RESULT_SLOT).getItem();
-                if (item.isEmpty() || !item.hasCustomHoverName())
-                    callback.accept(text);
-                else
-                    callback.accept(item.getHoverName().getString());
-            }));
-            elements.forEach((slot, label) -> menu.slots.get(slot).set(label.label()));
-            //noinspection DataFlowIssue
-            ((JSSTSealableMenuWithButtons) menu).jsst_sealWithButtons(elements);
-            return menu;
-        }), literal("Editing text")));
+    public static MutableComponent mergeComponents(List<Component> components) {
+        var start = literal("");
+        components.forEach(c -> start.append(c.copy()));
+        return start;
     }
 }
