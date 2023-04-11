@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.editors.AdvancedNameEditor;
 import red.jackf.jsst.features.itemeditor.editors.Editor;
+import red.jackf.jsst.features.itemeditor.editors.LoreEditor;
 import red.jackf.jsst.features.itemeditor.editors.SimpleNameEditor;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
@@ -19,7 +20,8 @@ import static net.minecraft.network.chat.Component.literal;
 public class EditSession {
     private static final List<Editor.Supplier> EDITORS = List.of(
             SimpleNameEditor::new,
-            AdvancedNameEditor::new
+            AdvancedNameEditor::new,
+            LoreEditor::new
     );
 
     private final ServerPlayer player;

@@ -174,7 +174,7 @@ public class EditorUtils {
      * Creates a page system in the right 5 columns of a 9x6 container. Creates a row of 5 with the bottom row used for
      * the page buttons and new button.
      */
-    public static void drawPage(Map<Integer, ItemGuiElement> elements, List<?> items, int page, int maxPage, RowFiller rowFiller, Consumer<Integer> itemRemover, @Nullable Runnable itemAdder, Consumer<Integer> pageChanger) {
+    public static void drawPage(Map<Integer, ItemGuiElement> elements, List<?> items, int page, int maxPage, Consumer<Integer> pageChanger, RowFiller rowFiller, Consumer<Integer> itemRemover, Runnable itemAdder) {
         // Page Buttons
         if (page > 0)
             elements.put(51, new ItemGuiElement(EditorUtils.makeLabel(Items.RED_CONCRETE, "Previous Page"), () -> pageChanger.accept(Math.max(0, page - 1))));
@@ -192,7 +192,7 @@ public class EditorUtils {
             elements.put(startPos + 4, new ItemGuiElement(makeLabel(Items.BARRIER, "Delete"), () -> itemRemover.accept(itemIndex)));
         }
 
-        if (page == maxPage && itemAdder != null) {
+        if (itemsToDraw.size() != 5) {
             elements.put(row * 9 + 4, new ItemGuiElement(EditorUtils.makeLabel(Items.NETHER_STAR, "Add"), itemAdder));
         }
     }

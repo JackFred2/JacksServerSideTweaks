@@ -66,7 +66,11 @@ public class AdvancedComponentMenu {
         this.page = Mth.clamp(this.page, 0, components.size() / 5);
         var maxPage = (components.size() / 5) - (components.size() == maxComponents ? 1 : 0);
 
-        EditorUtils.drawPage(elements, components, this.page, maxPage, (slot, index) -> {
+        EditorUtils.drawPage(elements, components, this.page, maxPage, newPage -> {
+            Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);
+            this.page = newPage;
+            open();
+        }, (slot, index) -> {
             var text = components.get(index);
             elements.put(slot, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Edit Text"), () -> {
                 Sounds.interact(player);
@@ -91,16 +95,12 @@ public class AdvancedComponentMenu {
             Sounds.error(player);
             this.components.remove((int) index);
             open();
-        }, components.size() >= maxComponents ? null : () -> {
+        }, () -> {
             Sounds.interact(player);
             this.components.add(literal("Text").withStyle(Style.EMPTY.withItalic(false)));
             open();
-        }, newPage -> {
-            Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);
-            this.page = newPage;
-            open();
         });
 
-        player.openMenu(EditorUtils.make9x6(literal("Editing Name"), elements));
+        player.openMenu(EditorUtils.make9x6(literal("Editing Component"), elements));
     }
 }
