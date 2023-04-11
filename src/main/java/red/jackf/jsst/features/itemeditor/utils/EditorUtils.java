@@ -94,7 +94,7 @@ public class EditorUtils {
     }
 
     public static ItemStack withLore(ItemStack input, Component component) {
-        var stack = input.copy();
+        var stack = input. copy();
         var display = stack.getOrCreateTagElement("display");
         if (!display.contains(ItemStack.TAG_LORE, Tag.TAG_LIST)) display.put(ItemStack.TAG_LORE, new ListTag());
         var list = display.getList(ItemStack.TAG_LORE, Tag.TAG_LIST);

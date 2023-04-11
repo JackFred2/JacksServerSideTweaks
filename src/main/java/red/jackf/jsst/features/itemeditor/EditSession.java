@@ -19,6 +19,7 @@ public class EditSession {
             SimpleNameEditor::new,
             AdvancedNameEditor::new,
             LoreEditor::new,
+            AuthorEditor::new,
             BookUnsigner::new
     );
 

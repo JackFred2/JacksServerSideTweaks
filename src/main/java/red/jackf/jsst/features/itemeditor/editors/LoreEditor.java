@@ -79,7 +79,7 @@ public class LoreEditor extends Editor {
         return EditorUtils.makeLabel(Items.PAPER, "Edit Lore");
     }
 
-    protected void reset() {
+    private void reset() {
         Sounds.clear(player);
         this.stack = getOriginal();
         this.lore = getLore(stack);
@@ -111,9 +111,7 @@ public class LoreEditor extends Editor {
             var text = lore.get(index);
             elements.put(slot, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Edit Lore"), () -> {
                 Sounds.interact(player);
-                Menus.component(player, c -> {
-                    return new ItemStack(Items.PAPER).setHoverName(c);
-                }, text, 50, CancellableCallback.of(c -> {
+                Menus.component(player, c -> new ItemStack(Items.PAPER).setHoverName(c), text, 50, CancellableCallback.of(c -> {
                     Sounds.success(player);
                     lore.set(index, c);
                     open();
