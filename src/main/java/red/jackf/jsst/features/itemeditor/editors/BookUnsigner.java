@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.WrittenBookItem;
-import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
+import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.function.Consumer;
 
@@ -24,7 +24,7 @@ public class BookUnsigner extends Editor {
 
     @Override
     public ItemStack label() {
-        return EditorUtils.makeLabel(Items.WRITABLE_BOOK, "Unsign Book");
+        return Labels.create(Items.WRITABLE_BOOK).withName("Unsign Book").build();
     }
 
     @Override

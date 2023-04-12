@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
 import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
-import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
+import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.function.Consumer;
 
@@ -17,7 +17,7 @@ public class AdvancedNameEditor extends Editor {
 
     @Override
     public ItemStack label() {
-        return EditorUtils.makeLabel(new ItemStack(Items.ANVIL), "Edit Name (Advanced)");
+        return Labels.create(Items.ANVIL).withName("Edit Name (Advanced)").build();
     }
 
     @Override

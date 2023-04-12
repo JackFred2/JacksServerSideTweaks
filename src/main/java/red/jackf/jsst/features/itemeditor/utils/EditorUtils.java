@@ -1,12 +1,7 @@
 package red.jackf.jsst.features.itemeditor.utils;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,9 +9,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.features.itemeditor.editors.LoreEditor;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,7 +23,6 @@ import java.util.function.Consumer;
 import static net.minecraft.network.chat.Component.literal;
 
 public class EditorUtils {
-    public static final Style CLEAN = Style.EMPTY.withColor(ChatFormatting.WHITE).withItalic(false);
     private static final ItemStack DIVIDER = new ItemStack(Items.LIME_STAINED_GLASS_PANE).setHoverName(literal(""));
 
     public static ItemGuiElement divider() {
@@ -36,15 +30,15 @@ public class EditorUtils {
     }
 
     public static ItemGuiElement reset(Runnable onClick) {
-        return new ItemGuiElement(makeLabel(Items.NAUTILUS_SHELL, "Reset"), onClick);
+        return new ItemGuiElement(Labels.create(Items.NAUTILUS_SHELL).withName("Reset").build(), onClick);
     }
 
     public static ItemGuiElement clear(Runnable onClick) {
-        return new ItemGuiElement(makeLabel(Items.WATER_BUCKET, "Clear"), onClick);
+        return new ItemGuiElement(Labels.create(Items.WATER_BUCKET).withName("Clear").build(), onClick);
     }
 
     public static ItemGuiElement cancel(Runnable onClick) {
-        return new ItemGuiElement(makeLabel(Items.BARRIER, "Cancel"), onClick);
+        return new ItemGuiElement(Labels.create(Items.BARRIER).withName("Cancel").build(), onClick);
     }
 
     public static MenuProvider make9x1(Component title, Map<Integer, ItemGuiElement> elements) {
@@ -57,6 +51,10 @@ public class EditorUtils {
 
     public static MenuProvider make9x4(Component title, Map<Integer, ItemGuiElement> elements) {
         return make(ChestMenu::fourRows, title, elements);
+    }
+
+    public static MenuProvider make9x5(Component title, Map<Integer, ItemGuiElement> elements) {
+        return make(ChestMenu::fiveRows, title, elements);
     }
 
     public static MenuProvider make9x6(Component title, Map<Integer, ItemGuiElement> elements) {
@@ -93,18 +91,8 @@ public class EditorUtils {
         };
     }
 
-    public static ItemStack withLore(ItemStack input, Component component) {
-        var stack = input. copy();
-        var display = stack.getOrCreateTagElement("display");
-        if (!display.contains(ItemStack.TAG_LORE, Tag.TAG_LIST)) display.put(ItemStack.TAG_LORE, new ListTag());
-        var list = display.getList(ItemStack.TAG_LORE, Tag.TAG_LIST);
-        list.add(StringTag.valueOf(Component.Serializer.toJson(component)));
-        return stack;
-    }
-
     public static ItemStack withHint(ItemStack input, String text) {
-        return withLore(input, Component.literal(text)
-                .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#70FF68")).withItalic(false)));
+        return LoreEditor.mergeLore(input, List.of(Component.literal(text).withStyle(Labels.HINT)));
     }
 
     /**
@@ -124,46 +112,6 @@ public class EditorUtils {
         return DyeItem.byColor(closest.orElse(DyeColor.WHITE));
     }
 
-    /**
-     * Creates a label from an ItemStack, named `text` with no italics.
-     * @param stack Stack to make a label of
-     * @param text Name for the label stack
-     * @param hintText Green hint text added to this label
-     */
-    public static ItemStack makeLabel(ItemStack stack, Component text, @Nullable String hintText) {
-        var newStack = stack.copy();
-        newStack.setHoverName(text);
-        for (ItemStack.TooltipPart part : ItemStack.TooltipPart.values())
-            newStack.hideTooltipPart(part);
-        if (hintText != null)
-            return withHint(newStack, hintText);
-        return newStack;
-    }
-
-    public static ItemStack makeLabel(ItemLike stack, Component text, @Nullable String hintText) {
-        return makeLabel(new ItemStack(stack), text, hintText);
-    }
-
-    public static ItemStack makeLabel(ItemLike stack, Component text) {
-        return makeLabel(new ItemStack(stack), text, null);
-    }
-
-    public static ItemStack makeLabel(ItemStack stack, String text, @Nullable String hintText) {
-        return makeLabel(stack, literal(text).withStyle(CLEAN), hintText);
-    }
-
-    public static ItemStack makeLabel(ItemLike item, String text, @Nullable String hintText) {
-        return makeLabel(item, literal(text).withStyle(CLEAN), hintText);
-    }
-
-    public static ItemStack makeLabel(ItemStack stack, String text) {
-        return makeLabel(stack, text, null);
-    }
-
-    public static ItemStack makeLabel(ItemLike item, String text) {
-        return makeLabel(new ItemStack(item), text);
-    }
-
     public static MutableComponent mergeComponents(List<Component> components) {
         var start = literal("");
         components.forEach(c -> start.append(c.copy()));
@@ -177,11 +125,11 @@ public class EditorUtils {
     public static void drawPage(Map<Integer, ItemGuiElement> elements, List<?> items, int page, int maxPage, Consumer<Integer> pageChanger, RowFiller rowFiller, Consumer<Integer> itemRemover, Runnable itemAdder) {
         // Page Buttons
         if (page > 0)
-            elements.put(51, new ItemGuiElement(EditorUtils.makeLabel(Items.RED_CONCRETE, "Previous Page"), () -> pageChanger.accept(Math.max(0, page - 1))));
+            elements.put(51, new ItemGuiElement(Labels.create(Items.RED_CONCRETE).withName("Previous Page").build(), () -> pageChanger.accept(Math.max(0, page - 1))));
         if (maxPage != 0)
-            elements.put(52, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "Page %s/%s".formatted(page + 1, maxPage + 1)), null));
+            elements.put(52, new ItemGuiElement(Labels.create(Items.PAPER).withName("Page %s/%s".formatted(page + 1, maxPage + 1)).build(), null));
         if (page < maxPage)
-            elements.put(53, new ItemGuiElement(EditorUtils.makeLabel(Items.LIME_CONCRETE, "Next Page"), () -> pageChanger.accept(Math.min(maxPage, page + 1))));
+            elements.put(53, new ItemGuiElement(Labels.create(Items.LIME_CONCRETE).withName("Next Page").build(), () -> pageChanger.accept(Math.min(maxPage, page + 1))));
 
         var itemsToDraw = items.subList(page * 5, Math.min(page * 5 + 5, items.size()));
         int row;
@@ -189,11 +137,11 @@ public class EditorUtils {
             var startPos = 4 + (row * 9);
             var itemIndex = (page * 5) + row;
             rowFiller.fill(startPos, itemIndex);
-            elements.put(startPos + 4, new ItemGuiElement(makeLabel(Items.BARRIER, "Delete"), () -> itemRemover.accept(itemIndex)));
+            elements.put(startPos + 4, new ItemGuiElement(Labels.create(Items.BARRIER).withName("Delete").build(), () -> itemRemover.accept(itemIndex)));
         }
 
         if (itemsToDraw.size() != 5) {
-            elements.put(row * 9 + 4, new ItemGuiElement(EditorUtils.makeLabel(Items.NETHER_STAR, "Add"), itemAdder));
+            elements.put(row * 9 + 4, new ItemGuiElement(Labels.create(Items.NETHER_STAR).withName("Add").build(), itemAdder));
         }
     }
 

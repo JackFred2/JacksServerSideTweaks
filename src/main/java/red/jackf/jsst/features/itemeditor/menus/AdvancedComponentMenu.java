@@ -12,6 +12,7 @@ import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
+import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +73,7 @@ public class AdvancedComponentMenu {
             open();
         }, (slot, index) -> {
             var text = components.get(index);
-            elements.put(slot, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Edit Text"), () -> {
+            elements.put(slot, new ItemGuiElement(Labels.create(Items.PAPER).withName(text).withHint("Edit Text").build(), () -> {
                 Sounds.interact(player);
                 Menus.string(player, text.getString(), newStr -> {
                     Sounds.success(player);
@@ -81,7 +82,7 @@ public class AdvancedComponentMenu {
                 });
             }));
             // Edit Style Label
-            elements.put(slot + 1, new ItemGuiElement(EditorUtils.makeLabel(EditorUtils.colourToItem(text.getStyle().getColor()), "Change Style"), () -> {
+            elements.put(slot + 1, new ItemGuiElement(Labels.create(EditorUtils.colourToItem(text.getStyle().getColor())).withName("Change Style").build(), () -> {
                 Sounds.interact(player);
                 Menus.style(player, text, c -> {
                     components.remove((int) index);

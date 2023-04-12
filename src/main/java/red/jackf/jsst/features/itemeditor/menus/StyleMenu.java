@@ -13,6 +13,7 @@ import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
+import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,15 +65,15 @@ public class StyleMenu {
         for (int row = 0; row < 4; row++)
             for (int col = 0; col < 4; col++) {
                 var dyeColour = DYES.get(row * 4 + col);
-                elements.put(row * 9 + col, new ItemGuiElement(EditorUtils.makeLabel(DyeItem.byColor(dyeColour),
-                        translatable("color.minecraft." + dyeColour.getName()).withStyle(EditorUtils.CLEAN.withColor(dyeColour.getTextColor()))), () -> {
+                elements.put(row * 9 + col, new ItemGuiElement(Labels.create(DyeItem.byColor(dyeColour))
+                        .withName(translatable("color.minecraft." + dyeColour.getName()).withStyle(Labels.CLEAN.withColor(dyeColour.getTextColor()))).build(), () -> {
                     Sounds.interact(player);
                     this.colour = new SingleColour(TextColor.fromRgb(dyeColour.getTextColor()));
                     open();
                 }));
             }
 
-        elements.put(4, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "With Hex Code", "WIP"), () -> {
+        elements.put(4, new ItemGuiElement(Labels.create(Items.PAPER).withName("With Hex Code").withHint("WIP").build(), () -> {
             Sounds.interact(player);
             Menus.string(player, "#", hex -> {
                 var parsed = TextColor.parseColor(hex);
@@ -86,50 +87,50 @@ public class StyleMenu {
                 open();
             });
         }));
-        elements.put(13, new ItemGuiElement(EditorUtils.makeLabel(Items.REDSTONE, "Rainbow"), () -> {
+        elements.put(13, new ItemGuiElement(Labels.create(Items.REDSTONE).withName(RainbowColour.create("Rainbow", Labels.CLEAN)).build(), () -> {
             Sounds.interact(player);
             colour = new RainbowColour();
             open();
         }));
-        elements.put(22, new ItemGuiElement(EditorUtils.makeLabel(Items.GUNPOWDER, "Reset"), () -> {
+        elements.put(22, new ItemGuiElement(Labels.create(Items.GUNPOWDER).withName("Reset").build(), () -> {
             Sounds.interact(player);
             loadFrom(original.getStyle());
             open();
         }));
 
-        elements.put(6, new ItemGuiElement(EditorUtils.makeLabel(Items.IRON_INGOT, literal("Bold").withStyle(EditorUtils.CLEAN.withBold(true))), () -> {
+        elements.put(6, new ItemGuiElement(Labels.create(Items.IRON_INGOT).withName("Bold").addStyle(Style.EMPTY.withBold(true)).build(), () -> {
             Sounds.interact(player);
             bold = !bold;
             open();
         }));
-        elements.put(7, new ItemGuiElement(EditorUtils.makeLabel(Items.STICK, literal("Italics").withStyle(EditorUtils.CLEAN.withItalic(true)), null), () -> {
+        elements.put(7, new ItemGuiElement(Labels.create(Items.STICK).withName("Italics").addStyle(Style.EMPTY.withItalic(true)).build(), () -> {
             Sounds.interact(player);
             italic = !italic;
             open();
         }));
-        elements.put(8, new ItemGuiElement(EditorUtils.makeLabel(Items.HEAVY_WEIGHTED_PRESSURE_PLATE, literal("Underlined").withStyle(EditorUtils.CLEAN.withUnderlined(true))), () -> {
+        elements.put(8, new ItemGuiElement(Labels.create(Items.HEAVY_WEIGHTED_PRESSURE_PLATE).withName("Underlined").addStyle(Style.EMPTY.withUnderlined(true)).build(), () -> {
             Sounds.interact(player);
             underline = !underline;
             open();
         }));
-        elements.put(15, new ItemGuiElement(EditorUtils.makeLabel(Items.STRUCTURE_VOID, literal("Strikethrough").withStyle(EditorUtils.CLEAN.withStrikethrough(true))), () -> {
+        elements.put(15, new ItemGuiElement(Labels.create(Items.STRUCTURE_VOID).withName("Strikethrough").addStyle(Style.EMPTY.withStrikethrough(true)).build(), () -> {
             Sounds.interact(player);
             strikethrough = !strikethrough;
             open();
         }));
-        elements.put(16, new ItemGuiElement(EditorUtils.makeLabel(Items.SUSPICIOUS_STEW, literal("Obfuscated").withStyle(EditorUtils.CLEAN.withObfuscated(true)), "Obfuscated"), () -> {
+        elements.put(16, new ItemGuiElement(Labels.create(Items.SUSPICIOUS_STEW).withName("Obfuscated").withHint("Obfuscated").addStyle(Style.EMPTY.withObfuscated(true)).build(), () -> {
             Sounds.interact(player);
             obfuscated = !obfuscated;
             open();
         }));
-        elements.put(17, new ItemGuiElement(EditorUtils.makeLabel(Items.WATER_BUCKET, "Remove Style"), () -> {
+        elements.put(17, new ItemGuiElement(Labels.create(Items.WATER_BUCKET).withName("Remove Style").build(), () -> {
             Sounds.clear(player);
             bold = italic = underline = strikethrough = obfuscated = false;
             colour = new SingleColour(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
             open();
         }));
 
-        elements.put(33, new ItemGuiElement(EditorUtils.makeLabel(Items.WRITTEN_BOOK, build(), "Click to confirm"), () -> {
+        elements.put(33, new ItemGuiElement(Labels.create(Items.WRITTEN_BOOK).withName(build()).withHint("Click to confirm").build(), () -> {
             Sounds.success(player);
             callback.accept(build());
         }));
@@ -167,8 +168,11 @@ public class StyleMenu {
     record RainbowColour() implements Colour {
         @Override
         public MutableComponent set(MutableComponent in, Style style) {
+            return create(in.getString(), style);
+        }
+
+        public static MutableComponent create(String str, Style style) {
             var base = literal("");
-            var str = in.getString();
             for (int i = 0; i < str.length(); i++) {
                 var colour = Mth.hsvToRgb(((float) i)/str.length(), 1f, 1f);
                 base.append(literal(String.valueOf(str.charAt(i))).setStyle(style.withColor(colour)));

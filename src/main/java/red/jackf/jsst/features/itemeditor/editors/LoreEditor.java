@@ -9,6 +9,7 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
@@ -16,6 +17,7 @@ import red.jackf.jsst.features.itemeditor.menus.Menus;
 import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
+import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,28 +57,38 @@ public class LoreEditor extends Editor {
         return list;
     }
 
-    private static ListTag toTag(List<Component> lore) {
-        var list = new ListTag();
+    private static ListTag addToTag(ListTag list, List<Component> lore) {
         for (Component component : lore) {
             list.add(StringTag.valueOf(Component.Serializer.toJson(component)));
         }
         return list;
     }
 
-    private static ItemStack setLore(ItemStack stack, List<Component> lore) {
+    public static ItemStack setLore(ItemStack inputStack, List<Component> lore) {
+        var stack = inputStack.copy();
         var display = stack.getTagElement(ItemStack.TAG_DISPLAY);
         if (lore.size() == 0 && display != null && display.contains(ItemStack.TAG_LORE)) {
             display.remove(ItemStack.TAG_LORE);
         } else {
             if (display == null) display = stack.getOrCreateTagElement(ItemStack.TAG_DISPLAY);
-            display.put(ItemStack.TAG_LORE, toTag(lore));
+            display.put(ItemStack.TAG_LORE, addToTag(new ListTag(), lore));
         }
+        return stack;
+    }
+
+    public static ItemStack mergeLore(ItemStack inputStack, List<Component> lore) {
+        var stack = inputStack.copy();
+        if (lore.size() == 0) return stack;
+        var display = stack.getOrCreateTagElement(ItemStack.TAG_DISPLAY);
+        if (!display.contains(ItemStack.TAG_LORE, Tag.TAG_LIST)) display.put(ItemStack.TAG_LORE, new ListTag());
+        var loreTag = display.getList(ItemStack.TAG_LORE, Tag.TAG_STRING);
+        addToTag(loreTag, lore);
         return stack;
     }
 
     @Override
     public ItemStack label() {
-        return EditorUtils.makeLabel(Items.PAPER, "Edit Lore");
+        return Labels.create(Items.PAPER).withName("Edit Lore").build();
     }
 
     private void reset() {
@@ -89,7 +101,10 @@ public class LoreEditor extends Editor {
     @Override
     public void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
-        elements.put(10, new ItemGuiElement(EditorUtils.makeLabel(setLore(stack, lore), stack.getHoverName(), "Click to finish"), this::complete));
+        elements.put(10, new ItemGuiElement(Labels.create(setLore(stack, lore)).withHint("Click to finish").build(), () -> {
+            stack = setLore(stack, lore);
+            complete();
+        }));
         elements.put(45, EditorUtils.clear(() -> {
             Sounds.clear(player);
             this.lore.clear();
@@ -102,14 +117,15 @@ public class LoreEditor extends Editor {
         for (int i = 3; i < 54; i += 9)
             elements.put(i, EditorUtils.divider());
 
-        var maxPage = (elements.size() / 5)  - (lore.size() == MAX_LORE ? 1 : 0);
+        this.page = Mth.clamp(this.page, 0, lore.size() / 5);
+        var maxPage = (lore.size() / 5)  - (lore.size() == MAX_LORE ? 1 : 0);
         EditorUtils.drawPage(elements, lore, page, maxPage, newPage -> {
             Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);
             this.page = newPage;
             open();
         }, (slot, index) -> {
             var text = lore.get(index);
-            elements.put(slot, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, text, "Edit Lore"), () -> {
+            elements.put(slot, new ItemGuiElement(Labels.create(Items.PAPER).withName(text).withHint("Edit Lore").build(), () -> {
                 Sounds.interact(player);
                 Menus.component(player, c -> new ItemStack(Items.PAPER).setHoverName(c), text, 50, CancellableCallback.of(c -> {
                     Sounds.success(player);

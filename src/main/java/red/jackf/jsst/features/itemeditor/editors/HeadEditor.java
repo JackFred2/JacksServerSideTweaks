@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
-import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
+import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.function.Consumer;
 
@@ -28,7 +28,7 @@ public class HeadEditor extends Editor {
     public ItemStack label() {
         var item = new ItemStack(Items.PLAYER_HEAD);
         item.getOrCreateTag().putString(TAG_SKULL_OWNER, "Chihirios");
-        return EditorUtils.makeLabel(item, "Edit Head Owner");
+        return Labels.create(item).withName("Edit Head Owner").build();
     }
 
     private String getName() {

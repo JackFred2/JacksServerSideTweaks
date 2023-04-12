@@ -8,6 +8,7 @@ import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
+import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -19,7 +20,7 @@ public class SimpleNameEditor extends Editor {
 
     @Override
     public ItemStack label() {
-        return EditorUtils.makeLabel(Items.NAME_TAG, "Edit Name (Simple)");
+        return Labels.create(Items.NAME_TAG).withName("Edit Name (Simple)").build();
     }
 
     @Override
@@ -27,7 +28,7 @@ public class SimpleNameEditor extends Editor {
         var elements = new HashMap<Integer, ItemGuiElement>();
         elements.put(0, new ItemGuiElement(EditorUtils.withHint(stack, "Click to finish"), this::complete));
         elements.put(1, EditorUtils.divider());
-        elements.put(2, new ItemGuiElement(EditorUtils.makeLabel(Items.PAPER, "Edit Name"), () -> {
+        elements.put(2, new ItemGuiElement(Labels.create(Items.PAPER).withName("Edit Name").build(), () -> {
             Sounds.interact(player);
             Menus.string(player, stack.getHoverName().getString(), newStr -> {
                 Sounds.success(player);
@@ -35,7 +36,7 @@ public class SimpleNameEditor extends Editor {
                 open();
             });
         }));
-        elements.put(3, new ItemGuiElement(EditorUtils.makeLabel(EditorUtils.colourToItem(stack.getHoverName().getStyle().getColor()), "Edit Style"), () -> {
+        elements.put(3, new ItemGuiElement(Labels.create(EditorUtils.colourToItem(stack.getHoverName().getStyle().getColor())).withName("Edit Style").build(), () -> {
             Sounds.interact(player);
             Menus.style(player, stack.getHoverName(), c -> {
                 stack.setHoverName(c);

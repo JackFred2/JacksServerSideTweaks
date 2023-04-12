@@ -7,7 +7,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PlayerHeadItem;
 import net.minecraft.world.item.WrittenBookItem;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
-import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
+import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.function.Consumer;
 
@@ -26,7 +26,7 @@ public class AuthorEditor extends Editor {
     public ItemStack label() {
         var item = new ItemStack(Items.PLAYER_HEAD);
         item.getOrCreateTag().putString(PlayerHeadItem.TAG_SKULL_OWNER, "Chihirios");
-        return EditorUtils.makeLabel(item, "Edit Author");
+        return Labels.create(item).withName("Edit Author").build();
     }
 
     @Override
