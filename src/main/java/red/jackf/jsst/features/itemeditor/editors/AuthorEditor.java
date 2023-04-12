@@ -29,21 +29,6 @@ public class AuthorEditor extends Editor {
         return EditorUtils.makeLabel(item, "Edit Author");
     }
 
-    /*private static String getName(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        if (tag != null) {
-            if (tag.contains("SkullOwner", 8)) {
-                return tag.getString("SkullOwner");
-            } else if (tag.contains("SkullOwner", 10)) {
-                CompoundTag ownerTag = tag.getCompound("SkullOwner");
-                if (ownerTag.contains("Name", 8)) {
-                    return ownerTag.getString("Name");
-                }
-            }
-        }
-        return "JackFred";
-    }*/
-
     @Override
     public void open() {
         var stackTag = stack.getTag();

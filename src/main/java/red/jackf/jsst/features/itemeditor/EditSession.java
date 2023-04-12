@@ -19,8 +19,11 @@ public class EditSession {
             SimpleNameEditor::new,
             AdvancedNameEditor::new,
             LoreEditor::new,
-            AuthorEditor::new,
-            BookUnsigner::new
+
+            AuthorEditor::new, // Written Books
+            BookUnsigner::new,
+
+            HeadEditor::new // Player Heads
     );
 
     private final ServerPlayer player;
