@@ -21,8 +21,9 @@ public class EditSession {
             LoreEditor::new,
             EnchantmentEditor::new,
 
-            UnbreakableEditors.MakeUnbreakable::new,
-            UnbreakableEditors.RemoveUnbreakable::new,
+            //UnbreakableEditors.MakeUnbreakable::new, // Unbreakable
+            //UnbreakableEditors.RemoveUnbreakable::new,
+            DurabilityEditor::new,
 
             AuthorEditor::new, // Written Books
             BookUnsigner::new,

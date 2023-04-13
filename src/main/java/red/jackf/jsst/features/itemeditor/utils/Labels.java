@@ -18,7 +18,7 @@ public class Labels {
     public static final Style CLEAN = Style.EMPTY.withColor(ChatFormatting.WHITE).withItalic(false);
 
     public static LabelBuilder create(ItemStack stack) {
-        return new LabelBuilder(stack);
+        return new LabelBuilder(stack.copy());
     }
 
     public static LabelBuilder create(ItemLike item) {
@@ -30,7 +30,7 @@ public class Labels {
     }
 
     public static class LabelBuilder {
-        private final ItemStack stack;
+        private ItemStack stack;
         @Nullable
         private MutableComponent customName = null;
         private final List<String> hints = new ArrayList<>();
@@ -72,13 +72,12 @@ public class Labels {
         }
 
         public ItemStack build() {
-            var result = stack.copy();
-            if (customName != null) result.setHoverName(customName.withStyle(style));
-            if (hints.size() > 0) result = LoreEditor.mergeLore(result, hints.stream().map(s -> (Component) Component.literal(s).withStyle(HINT)).toList());
+            if (customName != null) stack.setHoverName(customName.withStyle(style));
+            if (hints.size() > 0) stack = LoreEditor.mergeLore(stack, hints.stream().map(s -> (Component) Component.literal(s).withStyle(HINT)).toList());
             if (!keepLore)
                 for (ItemStack.TooltipPart part : ItemStack.TooltipPart.values())
-                    result.hideTooltipPart(part);
-            return result;
+                    stack.hideTooltipPart(part);
+            return stack;
         }
     }
 }
