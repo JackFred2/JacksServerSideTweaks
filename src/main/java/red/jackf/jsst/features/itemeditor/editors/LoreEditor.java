@@ -105,16 +105,14 @@ public class LoreEditor extends Editor {
             stack = setLore(stack, lore);
             complete();
         }));
-        elements.put(36, new ItemGuiElement(Labels.create(Items.ENDER_EYE).withName("Toggle Vanilla Lore Visibility").build(), () -> {
-            Menus.loreVisibility(player, stack, CancellableCallback.of(stack -> {
-                Sounds.success(player);
-                this.stack = stack;
-                open();
-            }, () -> {
-                Sounds.error(player);
-                open();
-            }));
-        }));
+        elements.put(36, new ItemGuiElement(Labels.create(Items.ENDER_EYE).withName("Toggle Vanilla Lore Visibility").build(), () -> Menus.loreVisibility(player, stack, CancellableCallback.of(stack -> {
+            Sounds.success(player);
+            this.stack = stack;
+            open();
+        }, () -> {
+            Sounds.error(player);
+            open();
+        }))));
         elements.put(45, EditorUtils.clear(() -> {
             Sounds.clear(player);
             this.lore.clear();
@@ -145,6 +143,16 @@ public class LoreEditor extends Editor {
                     Sounds.error(player);
                     open();
                 }));
+            }));
+            if (index > 0) elements.put(slot + 1, new ItemGuiElement(Labels.create(Items.GUNPOWDER).withName("Move Up").build(), () -> {
+                Sounds.interact(player);
+                lore.add(index - 1, lore.remove((int) index));
+                open();
+            }));
+            if (index < lore.size() - 1) elements.put(slot + 2, new ItemGuiElement(Labels.create(Items.HOPPER).withName("Move Down").build(), () -> {
+                Sounds.interact(player);
+                lore.add(index + 1, lore.remove((int) index));
+                open();
             }));
         }, index -> {
             lore.remove((int) index);

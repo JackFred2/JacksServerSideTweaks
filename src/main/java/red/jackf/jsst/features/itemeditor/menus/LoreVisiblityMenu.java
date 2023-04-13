@@ -56,9 +56,7 @@ public class LoreVisiblityMenu {
 
     protected void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
-        elements.put(0, new ItemGuiElement(Labels.create(stack).withHint("Click to finish").keepLore().build(), () -> {
-            callback.accept(stack);
-        }));
+        elements.put(0, new ItemGuiElement(Labels.create(stack).withHint("Click to finish").keepLore().build(), () -> callback.accept(stack)));
         elements.put(1, EditorUtils.divider());
 
         var hidden = getHidden(stack);
