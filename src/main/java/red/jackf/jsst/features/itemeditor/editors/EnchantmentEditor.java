@@ -4,6 +4,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -104,7 +106,8 @@ public class EnchantmentEditor extends Editor {
     }
 
     private ItemStack build() {
-        var stack = getOriginal();
+        stack.removeTagKey(ItemStack.TAG_ENCH);
+        stack.removeTagKey("StoredEnchantments");
         EnchantmentHelper.setEnchantments(enchantments.stream()
                 .collect(Collectors.<EnchantmentInstance, Enchantment, Integer>toMap(EnchantmentInstance::enchantment, EnchantmentInstance::level, Integer::sum)), stack);
         return stack;
@@ -120,12 +123,18 @@ public class EnchantmentEditor extends Editor {
     @Override
     public void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
-        elements.put(10, new ItemGuiElement(Labels.create(build()).withHint("Click to finish").keepLore()
-                .build(), () -> {
+        elements.put(10, new ItemGuiElement(Labels.create(build()).withHint("Click to finish").keepLore().build(), () -> {
             stack = build();
             complete();
         }));
 
+        elements.put(36, new ItemGuiElement(Labels.create(Items.LECTERN).withName("Add Fake Lore").withHint("Generates fake enchantment tooltips, and disables vanilla enchantment tooltip").withHint("Fixes tooltips for enchantments > 10").build(), () -> {
+            Sounds.write(player);
+            stack.hideTooltipPart(ItemStack.TooltipPart.ENCHANTMENTS);
+            var newLore = enchantments.stream().map(ench -> (Component) ench.getText().withStyle(ChatFormatting.GRAY)).toList();
+            stack = LoreEditor.mergeLore(stack, newLore);
+            open();
+        }));
         elements.put(45, new ItemGuiElement(Labels.create(Items.GRINDSTONE).withName("Clear").build(), () -> {
             Sounds.grind(player);
             this.enchantments.clear();
@@ -190,11 +199,11 @@ public class EnchantmentEditor extends Editor {
     }
 
     private record EnchantmentInstance(Enchantment enchantment, Integer level) {
-        private Component getText() {
+        private MutableComponent getText() {
             var text = Component.translatable(enchantment.getDescriptionId())
                     .setStyle(enchantment.isCurse() ? Labels.CLEAN.withColor(ChatFormatting.RED) : Labels.CLEAN);
             if (level != 1 && enchantment.getMaxLevel() != 1)
-                text.append(CommonComponents.SPACE).append(Component.literal(getNumeral()).setStyle(Labels.CLEAN));
+                text.append(CommonComponents.SPACE).append(Component.literal(getNumeral()).setStyle(Style.EMPTY));
             return text;
         }
 

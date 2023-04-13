@@ -24,6 +24,10 @@ public class Sounds {
         play(player, SoundEvents.NOTE_BLOCK_CHIME.value(), 0.7f);
     }
 
+    public static void write(ServerPlayer player) {
+        play(player, SoundEvents.BOOK_PAGE_TURN, 1f);
+    }
+
     public static void grind(ServerPlayer player) {
         play(player, SoundEvents.GRINDSTONE_USE, 1f);
     }

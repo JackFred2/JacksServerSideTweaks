@@ -124,3 +124,26 @@ modify item tags or `minecraft:block` for block tags.
 3. `/reload`
 
 </details>
+
+### Item Editor
+
+Provides an easy-to-use interface for modifying items.
+
+![A GIF showing a 'Legendary Diamond Pickaxe' being made with enchantments beyond vanilla limits](https://i.imgur.com/FPR6J4R.gif)
+
+<details>
+
+To begin, run the command `/jsst itemEditor hand` to change the item in your hand, or `.. itemEditor item <item>` to use a template.
+
+![An image showing the main menu of the item editor](https://i.imgur.com/GATsFyi.png)
+
+This feature will only show editors possibly usable with the given item, and currently supports the following:
+
+- Name Editors, with a simple and complex version
+- Lore Editor
+- Enchantment Editors,
+- [Written Books] Author Editor
+- [Written Books] Book Unsigner
+- [Player Head] Head Owner Changer
+
+</details>

@@ -88,7 +88,7 @@ public class LoreEditor extends Editor {
 
     @Override
     public ItemStack label() {
-        return Labels.create(Items.PAPER).withName("Edit Lore").build();
+        return Labels.create(Items.LECTERN).withName("Edit Lore").build();
     }
 
     private void reset() {
@@ -101,9 +101,19 @@ public class LoreEditor extends Editor {
     @Override
     public void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
-        elements.put(10, new ItemGuiElement(Labels.create(setLore(stack, lore)).withHint("Click to finish").build(), () -> {
+        elements.put(10, new ItemGuiElement(Labels.create(setLore(stack, lore)).keepLore().withHint("Click to finish").build(), () -> {
             stack = setLore(stack, lore);
             complete();
+        }));
+        elements.put(36, new ItemGuiElement(Labels.create(Items.ENDER_EYE).withName("Toggle Vanilla Lore Visibility").build(), () -> {
+            Menus.loreVisibility(player, stack, CancellableCallback.of(stack -> {
+                Sounds.success(player);
+                this.stack = stack;
+                open();
+            }, () -> {
+                Sounds.error(player);
+                open();
+            }));
         }));
         elements.put(45, EditorUtils.clear(() -> {
             Sounds.clear(player);
@@ -125,7 +135,7 @@ public class LoreEditor extends Editor {
             open();
         }, (slot, index) -> {
             var text = lore.get(index);
-            elements.put(slot, new ItemGuiElement(Labels.create(Items.PAPER).withName(text).withHint("Edit Lore").build(), () -> {
+            elements.put(slot, new ItemGuiElement(Labels.create(Items.WRITABLE_BOOK).withName(text).withHint("Edit Lore").build(), () -> {
                 Sounds.interact(player);
                 Menus.component(player, c -> new ItemStack(Items.PAPER).setHoverName(c), text, 50, CancellableCallback.of(c -> {
                     Sounds.success(player);

@@ -52,4 +52,9 @@ public class Menus {
         var selector = new SelectorMenu<>(player, options, callback);
         selector.open();
     }
+
+    public static void loreVisibility(ServerPlayer player, ItemStack stack, CancellableCallback<ItemStack> callback) {
+        var loreVisiblity = new LoreVisiblityMenu(player, stack, callback);
+        loreVisiblity.open();
+    }
 }

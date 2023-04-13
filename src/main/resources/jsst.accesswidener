@@ -4,3 +4,4 @@ accessible method net/minecraft/world/entity/Display$ItemDisplay setItemStack (L
 accessible method net/minecraft/world/entity/Display setBillboardConstraints (Lnet/minecraft/world/entity/Display$BillboardConstraints;)V
 accessible method net/minecraft/world/entity/Display setViewRange (F)V
 accessible method net/minecraft/world/entity/Display setTransformation (Lcom/mojang/math/Transformation;)V
+accessible method net/minecraft/world/item/ItemStack getHideFlags ()I

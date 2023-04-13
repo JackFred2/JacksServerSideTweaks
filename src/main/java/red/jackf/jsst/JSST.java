@@ -1,7 +1,6 @@
 package red.jackf.jsst;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +31,7 @@ public class JSST implements ModInitializer {
         features.add(new WorldContainerNames());
         features.add(new DisplayItems());
         features.add(new CommandDefinedDatapack());
-
-        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-            features.add(new ItemEditor());
-        }
+        features.add(new ItemEditor());
     }
 
     @Override

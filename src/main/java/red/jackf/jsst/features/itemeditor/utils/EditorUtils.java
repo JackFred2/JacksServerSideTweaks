@@ -45,6 +45,10 @@ public class EditorUtils {
         return make(ChestMenu::oneRow, title, elements);
     }
 
+    public static MenuProvider make9x2(Component title, Map<Integer, ItemGuiElement> elements) {
+        return make(ChestMenu::twoRows, title, elements);
+    }
+
     public static MenuProvider make9x3(Component title, Map<Integer, ItemGuiElement> elements) {
         return make(ChestMenu::threeRows, title, elements);
     }
