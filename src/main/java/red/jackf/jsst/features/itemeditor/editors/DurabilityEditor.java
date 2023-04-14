@@ -2,9 +2,11 @@ package red.jackf.jsst.features.itemeditor.editors;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
+import red.jackf.jsst.features.itemeditor.menus.Menus;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
 import red.jackf.jsst.features.itemeditor.utils.Labels;
@@ -32,12 +34,17 @@ public class DurabilityEditor extends Editor {
 
     private static ItemStack withDamage(ItemStack stack, int damage) {
         var copy = stack.copy();
-        copy.setDamageValue(damage);
+        copy.setDamageValue(Mth.clamp(damage, 0, stack.getMaxDamage() - 1));
         return copy;
     }
 
     private static ItemStack withPercentDamage(ItemStack stack, float percent) {
         return withDamage(stack, (int) (stack.getMaxDamage() * percent));
+    }
+
+    private void interactOpen() {
+        Sounds.interact(player);
+        open();
     }
 
     @Override
@@ -61,78 +68,95 @@ public class DurabilityEditor extends Editor {
             buttons.add(new ItemGuiElement(Labels.create(withDamage(stack, 0)).withName("Full Durability")
                     .build(), () -> {
                 stack = withDamage(stack, 0);
-                open();
+                interactOpen();
             }));
             buttons.add(new ItemGuiElement(Labels.create(withPercentDamage(stack, 0.25f)).withName("75% Durability")
                     .build(), () -> {
                 stack = withPercentDamage(stack, 0.25f);
-                open();
+                interactOpen();
             }));
             buttons.add(new ItemGuiElement(Labels.create(withPercentDamage(stack, 0.5f)).withName("50% Durability")
                     .build(), () -> {
                 stack = withPercentDamage(stack, 0.5f);
-                open();
+                interactOpen();
             }));
             buttons.add(new ItemGuiElement(Labels.create(withPercentDamage(stack, 0.75f)).withName("25% Durability")
                     .build(), () -> {
                 stack = withPercentDamage(stack, 0.75f);
-                open();
+                interactOpen();
             }));
             buttons.add(new ItemGuiElement(Labels.create(withPercentDamage(stack, 0.95f)).withName("5% Durability")
                     .build(), () -> {
                 stack = withPercentDamage(stack, 0.95f);
-                open();
+                interactOpen();
             }));
-            buttons.add(new ItemGuiElement(Labels.create(withPercentDamage(stack, 0.99f)).withName("1% Durability")
+            /*buttons.add(new ItemGuiElement(Labels.create(withPercentDamage(stack, 0.99f)).withName("1% Durability")
                     .build(), () -> {
                 stack = withPercentDamage(stack, 0.99f);
-                open();
-            }));
+                interactOpen();
+            }));*/
             if (stack.getMaxDamage() > 500)
                 buttons.add(new ItemGuiElement(Labels.create(withDamage(stack, stack.getMaxDamage() - 500))
                         .withName("500 Durability").build(), () -> {
                     stack = withDamage(stack, stack.getMaxDamage() - 500);
-                    open();
+                    interactOpen();
                 }));
             if (stack.getMaxDamage() > 250)
                 buttons.add(new ItemGuiElement(Labels.create(withDamage(stack, stack.getMaxDamage() - 250))
                         .withName("250 Durability").build(), () -> {
                     stack = withDamage(stack, stack.getMaxDamage() - 250);
-                    open();
+                    interactOpen();
                 }));
             if (stack.getMaxDamage() > 100)
                 buttons.add(new ItemGuiElement(Labels.create(withDamage(stack, stack.getMaxDamage() - 100))
                         .withName("100 Durability").build(), () -> {
                     stack = withDamage(stack, stack.getMaxDamage() - 100);
-                    open();
+                    interactOpen();
                 }));
             if (stack.getMaxDamage() > 25)
                 buttons.add(new ItemGuiElement(Labels.create(withDamage(stack, stack.getMaxDamage() - 25))
                         .withName("25 Durability").build(), () -> {
                     stack = withDamage(stack, stack.getMaxDamage() - 25);
-                    open();
+                    interactOpen();
                 }));
             if (stack.getMaxDamage() > 5)
                 buttons.add(new ItemGuiElement(Labels.create(withDamage(stack, stack.getMaxDamage() - 5))
                         .withName("5 Durability").build(), () -> {
                     stack = withDamage(stack, stack.getMaxDamage() - 5);
-                    open();
+                    interactOpen();
                 }));
             buttons.add(new ItemGuiElement(Labels.create(withDamage(stack, stack.getMaxDamage() - 1))
                     .withName("1 Durability").build(), () -> {
                 stack = withDamage(stack, stack.getMaxDamage() - 1);
-                open();
+                interactOpen();
             }));
             buttons.add(new ItemGuiElement(Labels.create(Items.STONE_BRICKS).withName("Make Unbreakable").build(), () -> {
                 stack.getOrCreateTag().putBoolean("Unbreakable", true);
-                open();
+                interactOpen();
+            }));
+            buttons.add(new ItemGuiElement(Labels.create(Items.NAME_TAG).withName("Custom Value").withHint("A positive integer or a %").build(), () -> {
+                Sounds.interact(player);
+                Menus.string(player, String.valueOf(stack.getMaxDamage() - stack.getDamageValue()), s -> {
+                    try {
+                        if (s.endsWith("%")) {
+                            stack = withPercentDamage(stack,1f - Float.parseFloat(s.substring(0, s.length() - 1)) / 100f);
+                        } else {
+                            stack = withDamage(stack, stack.getMaxDamage() - Integer.parseInt(s));
+                        }
+                        Sounds.success(player);
+                        open();
+                    } catch (NumberFormatException ex) {
+                        Sounds.error(player);
+                        open();
+                    }
+                });
             }));
         } else {
             buttons.add(new ItemGuiElement(Labels.create(Items.CRACKED_STONE_BRICKS).withName("Remove Unbreakable").build(), () -> {
                 var newTag = stack.getOrCreateTag();
                 newTag.remove("Unbreakable");
                 if (newTag.isEmpty()) stack.setTag(null);
-                open();
+                interactOpen();
             }));
         }
 

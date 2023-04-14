@@ -53,10 +53,6 @@ public class EditorUtils {
         return make(ChestMenu::threeRows, title, elements);
     }
 
-    public static MenuProvider make9x4(Component title, Map<Integer, ItemGuiElement> elements) {
-        return make(ChestMenu::fourRows, title, elements);
-    }
-
     public static MenuProvider make9x5(Component title, Map<Integer, ItemGuiElement> elements) {
         return make(ChestMenu::fiveRows, title, elements);
     }
@@ -104,9 +100,13 @@ public class EditorUtils {
      */
     public static Item colourToItem(@Nullable TextColor colour) {
         if (colour == null) return Items.GUNPOWDER;
-        var r = (colour.getValue() >> 16 & 255);
-        var g = (colour.getValue() >> 8 & 255);
-        var b = colour.getValue() & 255;
+        return colourToItem(colour.getValue());
+    }
+
+    public static Item colourToItem(Integer colour) {
+        var r = (colour >> 16 & 255);
+        var g = (colour >> 8 & 255);
+        var b = colour & 255;
         var closest = Arrays.stream(DyeColor.values()).min(Comparator.comparingInt(dye -> {
             var rDiff = (dye.getTextColor() >> 16 & 255) - r;
             var gDiff = (dye.getTextColor() >> 8 & 255) - g;

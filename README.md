@@ -135,15 +135,18 @@ Provides an easy-to-use interface for modifying items.
 
 To begin, run the command `/jsst itemEditor hand` to change the item in your hand, or `.. itemEditor item <item>` to use a template.
 
-![An image showing the main menu of the item editor](https://i.imgur.com/GATsFyi.png)
+![An gif showing various pages of the item editor](https://i.imgur.com/o9W3oM4.gif)
 
 This feature will only show editors possibly usable with the given item, and currently supports the following:
 
-- Name Editors, with a simple and complex version
-- Lore Editor
-- Enchantment Editors,
+- Name Editor, including multi-component texts and custom gradient support
+- Lore Editor, including all the above
+- Enchantment Editor, with tooltip fix for levels > 10
+- [Damageable Items] Durability Editor, including unbreakable
 - [Written Books] Author Editor
 - [Written Books] Book Unsigner
 - [Player Head] Head Owner Changer
+
+and more soon™.
 
 </details>

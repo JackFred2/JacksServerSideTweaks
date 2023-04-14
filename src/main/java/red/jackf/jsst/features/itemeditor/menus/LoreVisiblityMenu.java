@@ -57,16 +57,16 @@ public class LoreVisiblityMenu {
     protected void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
         elements.put(0, new ItemGuiElement(Labels.create(stack).withHint("Click to finish").keepLore().build(), () -> callback.accept(stack)));
-        elements.put(1, EditorUtils.divider());
 
         var hidden = getHidden(stack);
-        var i = 2;
+        var i = 0;
         for (ItemStack.TooltipPart part : ItemStack.TooltipPart.values()) {
             var icon = getIcon(part).copy();
             var isHidden = hidden.contains(part);
             if (isHidden) EnchantmentHelper.setEnchantments(Map.of(Enchantments.SILK_TOUCH, 1), icon);
             LoreEditor.mergeLore(stack, List.of(Component.literal(isHidden ? "Hidden" : "Shown").withStyle(Labels.HINT)));
-            elements.put(i++, new ItemGuiElement(icon, () -> {
+            var slot = (i % 7) + ((i / 7) * 9) + 2;
+            elements.put(slot, new ItemGuiElement(icon, () -> {
                 if (hidden.contains(part)) { // remove part
                     Sounds.success(player);
                     showTooltipPart(stack, part);
@@ -77,6 +77,7 @@ public class LoreVisiblityMenu {
                     open();
                 }
             }));
+            i++;
         }
 
         elements.put(17, EditorUtils.cancel(callback::cancel));

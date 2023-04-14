@@ -57,4 +57,14 @@ public class Menus {
         var loreVisiblity = new LoreVisiblityMenu(player, stack, callback);
         loreVisiblity.open();
     }
+
+    public static void colour(ServerPlayer player, CancellableCallback<Colour> callback) {
+        var colour = new ColourMenu(player, callback);
+        colour.open();
+    }
+
+    public static void gradient(ServerPlayer player, Gradient start, CancellableCallback<Gradient> callback) {
+        var gradient = new GradientMenu(player, start, callback);
+        gradient.open();
+    }
 }

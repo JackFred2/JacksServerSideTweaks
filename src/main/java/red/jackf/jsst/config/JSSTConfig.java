@@ -1,6 +1,5 @@
 package red.jackf.jsst.config;
 
-import blue.endless.jankson.Comment;
 import blue.endless.jankson.api.SyntaxError;
 import net.fabricmc.loader.api.FabricLoader;
 import red.jackf.jsst.JSST;
@@ -17,10 +16,8 @@ import java.nio.file.Path;
 public class JSSTConfig {
     public PortableCrafting.Config portableCrafting = new PortableCrafting.Config();
     public WorldContainerNames.Config worldContainerNames = new WorldContainerNames.Config();
-    @Comment("UNUSED: In development")
     public ItemEditor.Config itemEditor = new ItemEditor.Config();
     public DisplayItems.Config displayItems = new DisplayItems.Config();
-
     public CommandDefinedDatapack.Config commandDefinedDatapack = new CommandDefinedDatapack.Config();
 
     public static class Handler {

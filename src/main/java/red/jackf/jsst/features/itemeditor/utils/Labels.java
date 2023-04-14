@@ -33,7 +33,7 @@ public class Labels {
         private ItemStack stack;
         @Nullable
         private MutableComponent customName = null;
-        private final List<String> hints = new ArrayList<>();
+        private final List<Component> hints = new ArrayList<>();
         private boolean keepLore = false;
         private Style style = Style.EMPTY;
 
@@ -57,7 +57,12 @@ public class Labels {
         }
 
         public LabelBuilder withHint(String hint) {
-            this.hints.add(hint);
+            this.hints.add(Component.literal(hint).withStyle(HINT));
+            return this;
+        }
+
+        public LabelBuilder withHint(Component hint) {
+            this.hints.add(hint.copy());
             return this;
         }
 
@@ -73,7 +78,7 @@ public class Labels {
 
         public ItemStack build() {
             if (customName != null) stack.setHoverName(customName.withStyle(style));
-            if (hints.size() > 0) stack = LoreEditor.mergeLore(stack, hints.stream().map(s -> (Component) Component.literal(s).withStyle(HINT)).toList());
+            if (hints.size() > 0) stack = LoreEditor.mergeLore(stack, hints);
             if (!keepLore)
                 for (ItemStack.TooltipPart part : ItemStack.TooltipPart.values())
                     stack.hideTooltipPart(part);

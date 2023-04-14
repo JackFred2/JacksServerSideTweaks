@@ -6,35 +6,22 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
-import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
-import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
-import red.jackf.jsst.features.itemeditor.utils.Labels;
+import red.jackf.jsst.features.itemeditor.utils.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Consumer;
 
 import static net.minecraft.network.chat.Component.literal;
-import static net.minecraft.network.chat.Component.translatable;
+import static red.jackf.jsst.features.itemeditor.menus.ColourMenu.COLOURS;
 
 public class StyleMenu {
-    private static final List<DyeColor> DYES = List.of(
-            DyeColor.WHITE, DyeColor.LIGHT_GRAY, DyeColor.GRAY, DyeColor.BLACK,
-            DyeColor.BROWN, DyeColor.RED, DyeColor.ORANGE, DyeColor.YELLOW,
-            DyeColor.LIME, DyeColor.GREEN, DyeColor.CYAN, DyeColor.LIGHT_BLUE,
-            DyeColor.BLUE, DyeColor.PURPLE, DyeColor.MAGENTA, DyeColor.PINK
-    );
-
     private final ServerPlayer player;
     private final Component original;
     private final Consumer<Component> callback;
     private final String text;
-    private Colour colour;
+    private ColourApplicator colour;
     private boolean bold;
     private boolean italic;
     private boolean underline;
@@ -62,18 +49,18 @@ public class StyleMenu {
     void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
 
-        for (int row = 0; row < 4; row++)
-            for (int col = 0; col < 4; col++) {
-                var dyeColour = DYES.get(row * 4 + col);
-                elements.put(row * 9 + col, new ItemGuiElement(Labels.create(DyeItem.byColor(dyeColour))
-                        .withName(translatable("color.minecraft." + dyeColour.getName()).withStyle(Labels.CLEAN.withColor(dyeColour.getTextColor()))).build(), () -> {
-                    Sounds.interact(player);
-                    this.colour = new SingleColour(TextColor.fromRgb(dyeColour.getTextColor()));
-                    open();
-                }));
-            }
+        var colourIndex = 0;
+        for (var entry : COLOURS.entrySet()) {
+            var slot = colourIndex % 4 + ((colourIndex / 4) * 9);
+            elements.put(slot, new ItemGuiElement(entry.getKey(), () -> {
+                Sounds.interact(player);
+                this.colour = new SingleColour(TextColor.fromRgb(entry.getValue()));
+                open();
+            }));
+            colourIndex++;
+        }
 
-        elements.put(4, new ItemGuiElement(Labels.create(Items.PAPER).withName("With Hex Code").withHint("WIP").build(), () -> {
+        elements.put(4, new ItemGuiElement(Labels.create(Items.PAPER).withName("With Hex Code").build(), () -> {
             Sounds.interact(player);
             Menus.string(player, "#", hex -> {
                 var parsed = TextColor.parseColor(hex);
@@ -82,20 +69,26 @@ public class StyleMenu {
                     colour = new SingleColour(parsed);
                 } else {
                     Sounds.error(player);
-                    colour = new SingleColour(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
                 }
                 open();
             });
         }));
-        elements.put(13, new ItemGuiElement(Labels.create(Items.REDSTONE).withName(RainbowColour.create("Rainbow", Labels.CLEAN)).build(), () -> {
+        var rainbow = new GradientColour(new Gradient(Colour.fromRgb(255, 0, 0), Colour.fromRgb(255, 0, 0), Gradient.Mode.HSV_LONG));
+        elements.put(13, new ItemGuiElement(Labels.create(Items.REDSTONE).withName(rainbow.set(literal("Rainbow"), Labels.CLEAN)).build(), () -> {
             Sounds.interact(player);
-            colour = new RainbowColour();
+            colour = rainbow;
             open();
         }));
-        elements.put(22, new ItemGuiElement(Labels.create(Items.GUNPOWDER).withName("Reset").build(), () -> {
+        elements.put(22, new ItemGuiElement(Labels.create(Items.GLOWSTONE_DUST).withName("Custom Gradient").build(), () -> {
             Sounds.interact(player);
-            loadFrom(original.getStyle());
-            open();
+            Menus.gradient(player, colour instanceof GradientColour gradCol ? gradCol.gradient : rainbow.gradient, CancellableCallback.of(g -> {
+                Sounds.success(player);
+                colour = new GradientColour(g);
+                open();
+            }, () -> {
+                Sounds.error(player);
+                open();
+            }));
         }));
 
         elements.put(6, new ItemGuiElement(Labels.create(Items.IRON_INGOT).withName("Bold").addStyle(Style.EMPTY.withBold(true)).build(), () -> {
@@ -113,33 +106,38 @@ public class StyleMenu {
             underline = !underline;
             open();
         }));
-        elements.put(15, new ItemGuiElement(Labels.create(Items.STRUCTURE_VOID).withName("Strikethrough").addStyle(Style.EMPTY.withStrikethrough(true)).build(), () -> {
+        elements.put(16, new ItemGuiElement(Labels.create(Items.STRUCTURE_VOID).withName("Strikethrough").addStyle(Style.EMPTY.withStrikethrough(true)).build(), () -> {
             Sounds.interact(player);
             strikethrough = !strikethrough;
             open();
         }));
-        elements.put(16, new ItemGuiElement(Labels.create(Items.SUSPICIOUS_STEW).withName("Obfuscated").withHint("Obfuscated").addStyle(Style.EMPTY.withObfuscated(true)).build(), () -> {
+        elements.put(17, new ItemGuiElement(Labels.create(Items.SUSPICIOUS_STEW).withName("Obfuscated").withHint("Obfuscated").addStyle(Style.EMPTY.withObfuscated(true)).build(), () -> {
             Sounds.interact(player);
             obfuscated = !obfuscated;
             open();
         }));
-        elements.put(17, new ItemGuiElement(Labels.create(Items.WATER_BUCKET).withName("Remove Style").build(), () -> {
+
+        elements.put(35, new ItemGuiElement(Labels.create(Items.NAUTILUS_SHELL).withName("Reset").build(), () -> {
+            Sounds.clear(player);
+            loadFrom(original.getStyle());
+            open();
+        }));
+        elements.put(44, new ItemGuiElement(Labels.create(Items.WATER_BUCKET).withName("Remove Style").build(), () -> {
             Sounds.clear(player);
             bold = italic = underline = strikethrough = obfuscated = false;
             colour = new SingleColour(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
             open();
         }));
-
-        elements.put(33, new ItemGuiElement(Labels.create(Items.WRITTEN_BOOK).withName(build()).withHint("Click to confirm").build(), () -> {
+        elements.put(51, new ItemGuiElement(Labels.create(Items.WRITTEN_BOOK).withName(build()).withHint("Click to confirm").build(), () -> {
             Sounds.success(player);
             callback.accept(build());
         }));
-        elements.put(35, EditorUtils.cancel(() -> {
+        elements.put(53, EditorUtils.cancel(() -> {
             Sounds.error(player);
             callback.accept(original);
         }));
 
-        player.openMenu(EditorUtils.make9x4(literal("Editing Style"), elements));
+        player.openMenu(EditorUtils.make9x6(literal("Editing Style"), elements));
     }
 
     private Component build() {
@@ -154,28 +152,24 @@ public class StyleMenu {
                 .withObfuscated(obfuscated);
     }
 
-    interface Colour {
+    interface ColourApplicator {
         MutableComponent set(MutableComponent in, Style style);
     }
 
-    record SingleColour(TextColor base) implements Colour {
+    record SingleColour(TextColor base) implements ColourApplicator {
         @Override
         public MutableComponent set(MutableComponent in, Style style) {
             return in.withStyle(style.withColor(base));
         }
     }
 
-    record RainbowColour() implements Colour {
+    record GradientColour(Gradient gradient) implements ColourApplicator {
         @Override
         public MutableComponent set(MutableComponent in, Style style) {
-            return create(in.getString(), style);
-        }
-
-        public static MutableComponent create(String str, Style style) {
             var base = literal("");
+            var str = in.getString();
             for (int i = 0; i < str.length(); i++) {
-                var colour = Mth.hsvToRgb(((float) i)/str.length(), 1f, 1f);
-                base.append(literal(String.valueOf(str.charAt(i))).setStyle(style.withColor(colour)));
+                base.append(literal(String.valueOf(str.charAt(i))).setStyle(gradient.evaluate((float) i / (str.length())).style().applyTo(Labels.CLEAN)));
             }
             return base;
         }
