@@ -129,7 +129,7 @@ modify item tags or `minecraft:block` for block tags.
 
 Provides an easy-to-use interface for modifying items.
 
-![A GIF showing a 'Legendary Diamond Pickaxe' being made with enchantments beyond vanilla limits](https://i.imgur.com/FPR6J4R.gif)
+![A GIF showing a 'Legendary Greataxe' being made with enchantments beyond vanilla limits](https://i.imgur.com/BKxEg3C.gif)
 
 <details>
 
