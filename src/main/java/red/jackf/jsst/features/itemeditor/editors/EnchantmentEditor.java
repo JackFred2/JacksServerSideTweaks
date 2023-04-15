@@ -153,7 +153,7 @@ public class EnchantmentEditor extends Editor {
             Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);
             this.page = newPage;
             open();
-        }, (slot, index) -> {
+        }, 6, (slot, index) -> {
             var instance = enchantments.get(index);
             EnchantmentHelper.setEnchantments(Map.of(instance.enchantment, instance.level), stack);
             var stack = getEnchantmentStack(instance.enchantment);

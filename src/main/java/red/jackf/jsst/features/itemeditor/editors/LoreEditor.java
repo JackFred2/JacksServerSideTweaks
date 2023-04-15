@@ -131,7 +131,7 @@ public class LoreEditor extends Editor {
             Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);
             this.page = newPage;
             open();
-        }, (slot, index) -> {
+        }, 6, (slot, index) -> {
             var text = lore.get(index);
             elements.put(slot, new ItemGuiElement(Labels.create(Items.WRITABLE_BOOK).withName(text).withHint("Edit Lore").build(), () -> {
                 Sounds.interact(player);

@@ -71,7 +71,7 @@ public class AdvancedComponentMenu {
             Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);
             this.page = newPage;
             open();
-        }, (slot, index) -> {
+        }, 6, (slot, index) -> {
             var text = components.get(index);
             elements.put(slot, new ItemGuiElement(Labels.create(Items.PAPER).withName(text).withHint("Edit Text").build(), () -> {
                 Sounds.interact(player);

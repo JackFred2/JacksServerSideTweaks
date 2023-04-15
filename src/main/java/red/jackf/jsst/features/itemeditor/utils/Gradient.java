@@ -1,7 +1,5 @@
 package red.jackf.jsst.features.itemeditor.utils;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -30,28 +28,25 @@ public record Gradient(Colour start, Colour end, Mode mode) {
         }
     }
 
-    public enum Mode {
-        HSV_SHORT(Labels.create(new ItemStack(Items.PAPER)).withName("Mode")
-                .withHint("HSV Short")
-                .withHint(Component.literal("HSV Long").withStyle(ChatFormatting.GRAY))
-                .withHint(Component.literal("RGB").withStyle(ChatFormatting.GRAY)).build()),
-        HSV_LONG(Labels.create(new ItemStack(Items.PAPER)).withName("Mode")
-                .withHint(Component.literal("HSV Short").withStyle(ChatFormatting.GRAY))
-                .withHint("HSV Long")
-                .withHint(Component.literal("RGB").withStyle(ChatFormatting.GRAY)).build()),
-        RGB(Labels.create(new ItemStack(Items.PAPER)).withName("Mode")
-                .withHint(Component.literal("HSV Short").withStyle(ChatFormatting.GRAY))
-                .withHint(Component.literal("HSV Long").withStyle(ChatFormatting.GRAY))
-                .withHint("RGB").build());
+    public enum Mode implements Selector.Labeled {
+        HSV_SHORT("HSV Short", new ItemStack(Items.PAPER)),
+        HSV_LONG("HSV Long", new ItemStack(Items.PAPER, 2)),
+        RGB("RGB", new ItemStack(Items.PAPER, 3));
 
+        private final String settingName;
         private final ItemStack label;
 
-        Mode(ItemStack label) {
+        Mode(String settingName, ItemStack label) {
+            this.settingName = settingName;
             this.label = label;
         }
 
         public ItemStack label() {
             return label;
+        }
+
+        public String settingName() {
+            return settingName;
         }
     }
 }

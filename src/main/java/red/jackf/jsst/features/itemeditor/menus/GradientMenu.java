@@ -49,10 +49,9 @@ public class GradientMenu {
             this.gradient = new Gradient(this.gradient.end(), this.gradient.start(), this.gradient.mode());
             open();
         }));
-        elements.put(7, new ItemGuiElement(this.gradient.mode().label(), () -> {
+        elements.put(7, Selector.create(Gradient.Mode.class, "Mode", this.gradient.mode(), newMode -> {
             Sounds.interact(player);
-            var nextMode = Gradient.Mode.values()[(this.gradient.mode().ordinal() + 1) % Gradient.Mode.values().length];
-            this.gradient = new Gradient(this.gradient.start(), this.gradient.end(), nextMode);
+            this.gradient = new Gradient(this.gradient.start(), this.gradient.end(), newMode);
             open();
         }));
         elements.put(8, EditorUtils.cancel(callback::cancel));

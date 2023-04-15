@@ -3,6 +3,7 @@ package red.jackf.jsst.features.itemeditor.menus;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -66,5 +67,10 @@ public class Menus {
     public static void gradient(ServerPlayer player, Gradient start, CancellableCallback<Gradient> callback) {
         var gradient = new GradientMenu(player, start, callback);
         gradient.open();
+    }
+
+    public static void mobEffect(ServerPlayer player, CancellableCallback<MobEffect> callback) {
+        var mobEffect = new MobEffectMenu(player, callback);
+        mobEffect.open();
     }
 }

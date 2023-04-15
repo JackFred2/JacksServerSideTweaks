@@ -142,7 +142,8 @@ This feature will only show editors possibly usable with the given item, and cur
 - Name Editor, including multi-component texts and custom gradient support
 - Lore Editor, including all the above
 - Enchantment Editor, with tooltip fix for levels > 10
-- [Damageable Items] Durability Editor, including unbreakable
+- Potion Editor (Drinkables, Splash, Lingering, Tipped Arrows)
+- [Damageable Items] Durability Editor, including unbreakable modifiers
 - [Written Books] Author Editor
 - [Written Books] Book Unsigner
 - [Player Head] Head Owner Changer

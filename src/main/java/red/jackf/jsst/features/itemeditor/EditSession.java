@@ -20,6 +20,7 @@ public class EditSession {
             AdvancedNameEditor::new,
             LoreEditor::new,
             EnchantmentEditor::new,
+            PotionEditor::new,
 
             DurabilityEditor::new,
 

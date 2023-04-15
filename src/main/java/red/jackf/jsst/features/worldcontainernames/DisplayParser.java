@@ -112,7 +112,7 @@ public class DisplayParser {
         });
 
         // Brewing Stands
-        // Displays the first potion found instead
+        // Displays the first effects found instead
         parsers.put(be -> be instanceof BrewingStandBlockEntity, be -> {
            var brewingBe = (BrewingStandBlockEntity) be;
            var name = brewingBe.getCustomName();

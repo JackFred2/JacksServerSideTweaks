@@ -126,7 +126,7 @@ public class EditorUtils {
      * Creates a page system in the right 5 columns of a 9x6 container. Creates a row of 5 with the bottom row used for
      * the page buttons and new button.
      */
-    public static void drawPage(Map<Integer, ItemGuiElement> elements, List<?> items, int page, int maxPage, Consumer<Integer> pageChanger, RowFiller rowFiller, Consumer<Integer> itemRemover, Runnable itemAdder) {
+    public static void drawPage(Map<Integer, ItemGuiElement> elements, List<?> items, int page, int maxPage, Consumer<Integer> pageChanger, int rowsFromBottom, RowFiller rowFiller, Consumer<Integer> itemRemover, Runnable itemAdder) {
         // Page Buttons
         if (page > 0)
             elements.put(51, new ItemGuiElement(Labels.create(Items.RED_CONCRETE).withName("Previous Page").build(), () -> pageChanger.accept(Math.max(0, page - 1))));
@@ -135,16 +135,19 @@ public class EditorUtils {
         if (page < maxPage)
             elements.put(53, new ItemGuiElement(Labels.create(Items.LIME_CONCRETE).withName("Next Page").build(), () -> pageChanger.accept(Math.min(maxPage, page + 1))));
 
-        var itemsToDraw = items.subList(page * 5, Math.min(page * 5 + 5, items.size()));
+        var itemsPerPage = rowsFromBottom - 1;
+        var startRow = 6 - rowsFromBottom;
+
+        var itemsToDraw = items.subList(page * itemsPerPage, Math.min(page * itemsPerPage + itemsPerPage, items.size()));
         int row;
-        for (row = 0; row < itemsToDraw.size(); row++) {
+        for (row = startRow; row < itemsToDraw.size() + startRow; row++) {
             var startPos = 4 + (row * 9);
-            var itemIndex = (page * 5) + row;
+            var itemIndex = (page * itemsPerPage) + (row - startRow);
             rowFiller.fill(startPos, itemIndex);
             elements.put(startPos + 4, new ItemGuiElement(Labels.create(Items.BARRIER).withName("Delete").build(), () -> itemRemover.accept(itemIndex)));
         }
 
-        if (itemsToDraw.size() != 5) {
+        if (itemsToDraw.size() != itemsPerPage) {
             elements.put(row * 9 + 4, new ItemGuiElement(Labels.create(Items.NETHER_STAR).withName("Add").build(), itemAdder));
         }
     }
