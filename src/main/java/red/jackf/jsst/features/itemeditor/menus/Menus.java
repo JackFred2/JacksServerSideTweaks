@@ -1,5 +1,6 @@
 package red.jackf.jsst.features.itemeditor.menus;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
@@ -21,6 +22,10 @@ public class Menus {
     private Menus() {}
 
     public static void string(ServerPlayer player, String text, Consumer<String> callback) {
+        string(player, text, "Editing text", callback);
+    }
+
+    public static void string(ServerPlayer player, String text, String title, Consumer<String> callback) {
         player.openMenu(new SimpleMenuProvider(((i, inventory, player1) -> {
             var menu = new AnvilMenu(i, inventory);
             var elements = new HashMap<Integer, ItemGuiElement>();
@@ -36,7 +41,26 @@ public class Menus {
             //noinspection DataFlowIssue
             ((JSSTSealableMenuWithButtons) menu).jsst_sealWithButtons(elements);
             return menu;
-        }), literal("Editing text")));
+        }), literal(title)));
+    }
+
+    // Returns a duration in ticks, from -1 to positive infinity
+    public static void duration(ServerPlayer player, int ticks, CancellableCallback<Integer> callback) {
+        string(player, ticks % SharedConstants.TICKS_PER_SECOND == 0 ? String.valueOf(ticks / 20) : "%dt".formatted(ticks), "Editing Duration", s -> {
+            if ("-1".equals(s) || "-1t".equals(s) || "inf".equals(s) || "infinite".equals(s)) {
+                callback.accept(-1);
+                return;
+            }
+            try {
+                if (s.charAt(s.length() - 1) == 't') {
+                    callback.accept(Integer.parseUnsignedInt(s.substring(0, s.length() - 1)));
+                } else {
+                    callback.accept(Integer.parseUnsignedInt(s) * SharedConstants.TICKS_PER_SECOND);
+                }
+            } catch (NumberFormatException ex) {
+                callback.cancel();
+            }
+        });
     }
 
     public static void style(ServerPlayer player, Component preview, Consumer<Component> callback) {

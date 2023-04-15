@@ -64,8 +64,8 @@ public class AdvancedComponentMenu {
             elements.put(i, EditorUtils.divider());
 
         // Page Buttons
-        this.page = Mth.clamp(this.page, 0, components.size() / 5);
-        var maxPage = (components.size() / 5) - (components.size() == maxComponents ? 1 : 0);
+        var maxPage = (components.size() / 5) - (components.size() >= maxComponents ? 1 : 0);
+        this.page = Mth.clamp(this.page, 0, maxPage);
 
         EditorUtils.drawPage(elements, components, this.page, maxPage, newPage -> {
             Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);

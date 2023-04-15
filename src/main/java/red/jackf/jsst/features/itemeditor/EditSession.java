@@ -21,6 +21,7 @@ public class EditSession {
             LoreEditor::new,
             EnchantmentEditor::new,
             PotionEditor::new,
+            SuspiciousStewEditor::new,
 
             DurabilityEditor::new,
 

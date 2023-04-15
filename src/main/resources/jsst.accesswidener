@@ -5,3 +5,4 @@ accessible method net/minecraft/world/entity/Display setBillboardConstraints (Ln
 accessible method net/minecraft/world/entity/Display setViewRange (F)V
 accessible method net/minecraft/world/entity/Display setTransformation (Lcom/mojang/math/Transformation;)V
 accessible method net/minecraft/world/item/ItemStack getHideFlags ()I
+accessible method net/minecraft/world/item/SuspiciousStewItem listPotionEffects (Lnet/minecraft/world/item/ItemStack;Ljava/util/function/Consumer;)V

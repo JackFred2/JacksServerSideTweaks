@@ -147,8 +147,8 @@ public class EnchantmentEditor extends Editor {
         for (int i = 3; i < 54; i += 9)
             elements.put(i, EditorUtils.divider());
 
-        this.page = Mth.clamp(this.page, 0, enchantments.size() / 5);
-        var maxPage = (enchantments.size() / 5) - (enchantments.size() == MAX_ENCHANTMENTS ? 1 : 0);
+        var maxPage = (enchantments.size() / 5) - (enchantments.size() >= MAX_ENCHANTMENTS ? 1 : 0);
+        this.page = Mth.clamp(this.page, 0, maxPage);
         EditorUtils.drawPage(elements, enchantments, page, maxPage, newPage -> {
             Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);
             this.page = newPage;

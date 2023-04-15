@@ -3,6 +3,7 @@ package red.jackf.jsst.features.itemeditor.utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -150,6 +151,12 @@ public class EditorUtils {
         if (itemsToDraw.size() != itemsPerPage) {
             elements.put(row * 9 + 4, new ItemGuiElement(Labels.create(Items.NETHER_STAR).withName("Add").build(), itemAdder));
         }
+    }
+
+    public static String formatDuration(int ticks) {
+        if (ticks == -1) return "infinite";
+        var formatStr = ticks == 1 ? "%s (%d tick)" : "%s (%d ticks)";
+        return formatStr.formatted(StringUtil.formatTickDuration(ticks), ticks);
     }
 
     public interface RowFiller {

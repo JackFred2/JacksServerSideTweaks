@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -167,8 +166,8 @@ public class PotionEditor extends Editor {
             }));
         }));
 
-        this.page = Mth.clamp(this.page, 0, custom.size() / 3);
         var maxPage = (custom.size() / 3) - (custom.size() >= MAX_EFFECTS ? 1 : 0);
+        this.page = Mth.clamp(this.page, 0, maxPage);
         EditorUtils.drawPage(elements, custom, page, maxPage, newPage -> {
             Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);
             this.page = newPage;
@@ -179,7 +178,7 @@ public class PotionEditor extends Editor {
             // Main preview with effect selector
             elements.put(slot, new ItemGuiElement(Labels.create(MobEffectMenu.potionOf(effect.getEffect()))
                     .withName(effect.getEffect().getDisplayName().copy().withStyle(Labels.CLEAN))
-                    .withHint(MobEffectUtil.formatDuration(effect, 1f).copy().withStyle(Labels.HINT))
+                    .withHint(effect.getEffect().isInstantenous() ? "Instant" : EditorUtils.formatDuration(effect.getDuration()))
                     .build(), () -> {
                 Sounds.interact(player);
                 Menus.mobEffect(player, CancellableCallback.of(newEffect -> {
@@ -197,23 +196,19 @@ public class PotionEditor extends Editor {
                 // Duration Selector
                 elements.put(slot + offset++, new ItemGuiElement(Labels.create(Items.CLOCK).withName("Set Duration").build(), () -> {
                     Sounds.interact(player);
-                    Menus.string(player, String.valueOf(effect.getDuration() / SharedConstants.TICKS_PER_SECOND), s -> {
-                        try {
-                            int parsed = Integer.parseUnsignedInt(s);
-                            if (parsed < -1) {
-                                Sounds.error(player);
-                                custom.remove((int) index);
-                            } else {
-                                Sounds.success(player);
-                                // noone needs a potion longer than a week, right?
-                                custom.set(index, new MobEffectInstance(effect.getEffect(), Math.min(parsed, 7 * 24 * 60 * 60) * SharedConstants.TICKS_PER_SECOND, effect.getAmplifier()));
-                            }
-                            open();
-                        } catch (NumberFormatException ex) {
+                    Menus.duration(player, effect.getDuration(), CancellableCallback.of(newDuration -> {
+                        if (newDuration == 0) {
                             Sounds.error(player);
-                            open();
+                            custom.remove((int) index);
+                        } else {
+                            Sounds.success(player);
+                            custom.set(index, new MobEffectInstance(effect.getEffect(), newDuration, effect.getAmplifier()));
                         }
-                    });
+                        open();
+                    }, () -> {
+                        Sounds.error(player);
+                        open();
+                    }));
                 }));
 
                 // Infinite Duration Button

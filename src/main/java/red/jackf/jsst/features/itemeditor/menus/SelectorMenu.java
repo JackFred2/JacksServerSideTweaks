@@ -2,6 +2,7 @@ package red.jackf.jsst.features.itemeditor.menus;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
@@ -42,6 +43,7 @@ public class SelectorMenu<T> {
         elements.put(44, EditorUtils.cancel(callback::cancel));
         var entries = options.entrySet();
         if (options.size() > SINGLE_PAGE_MAXIMUM) { // multi page
+            this.page = Mth.clamp(page, 0, maxPage);
             var toAdd = entries.stream().skip((long) page * OPTIONS_PER_PAGE).limit(OPTIONS_PER_PAGE).toList();
             var index = 0;
             for (var entry : toAdd) {

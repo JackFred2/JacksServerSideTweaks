@@ -125,8 +125,8 @@ public class LoreEditor extends Editor {
         for (int i = 3; i < 54; i += 9)
             elements.put(i, EditorUtils.divider());
 
-        this.page = Mth.clamp(this.page, 0, lore.size() / 5);
-        var maxPage = (lore.size() / 5)  - (lore.size() == MAX_LORE ? 1 : 0);
+        var maxPage = (lore.size() / 5)  - (lore.size() >= MAX_LORE ? 1 : 0);
+        this.page = Mth.clamp(this.page, 0, maxPage);
         EditorUtils.drawPage(elements, lore, page, maxPage, newPage -> {
             Sounds.interact(player, 1f + ((float) (newPage + 1) / (maxPage + 1)) / 2);
             this.page = newPage;
