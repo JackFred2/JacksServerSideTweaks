@@ -37,13 +37,15 @@ public class BannerEditor extends Editor {
     }
 
     private void parseStack(boolean changeShield) {
-        var tag = BlockItem.getBlockEntityData(stack);
-        var isShield = stack.is(Items.SHIELD);
-        this.base = isShield ? (tag != null ? DyeColor.byId(tag.getInt(ShieldItem.TAG_BASE_COLOR)) : DyeColor.WHITE) : ((BannerItem) stack.getItem()).getColor();
-        var parsedPatterns = BannerBlockEntity.createPatterns(DyeColor.WHITE, BannerBlockEntity.getItemPatterns(stack));
-        parsedPatterns.remove(0); // remove full 'blank' pattern
-        this.patterns = parsedPatterns;
-        if (changeShield) this.itemType = isShield ? ItemType.SHIELD : ItemType.BANNER;
+        if (stack.getItem() instanceof BannerItem bannerItem) {
+            var tag = BlockItem.getBlockEntityData(stack);
+            var isShield = stack.is(Items.SHIELD);
+            this.base = isShield ? (tag != null ? DyeColor.byId(tag.getInt(ShieldItem.TAG_BASE_COLOR)) : DyeColor.WHITE) : bannerItem.getColor();
+            var parsedPatterns = BannerBlockEntity.createPatterns(DyeColor.WHITE, BannerBlockEntity.getItemPatterns(stack));
+            parsedPatterns.remove(0); // remove full 'blank' pattern
+            this.patterns = parsedPatterns;
+            if (changeShield) this.itemType = isShield ? ItemType.SHIELD : ItemType.BANNER;
+        }
     }
 
     private ItemStack build() {
