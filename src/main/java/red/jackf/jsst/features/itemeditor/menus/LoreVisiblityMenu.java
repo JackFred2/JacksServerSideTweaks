@@ -24,7 +24,10 @@ public class LoreVisiblityMenu {
         ICONS.put(ItemStack.TooltipPart.UNBREAKABLE, Labels.create(Items.NETHERITE_BLOCK).withName("Unbreakable").withHint("Mask: " + ItemStack.TooltipPart.UNBREAKABLE.getMask()).build());
         ICONS.put(ItemStack.TooltipPart.CAN_DESTROY, Labels.create(Items.DIAMOND_PICKAXE).withName("Destroyable Blocks").withHint("Mask: " + ItemStack.TooltipPart.CAN_DESTROY.getMask()).build());
         ICONS.put(ItemStack.TooltipPart.CAN_PLACE, Labels.create(Items.OAK_PLANKS).withName("Placeable on Blocks").withHint("Mask: " + ItemStack.TooltipPart.CAN_PLACE.getMask()).build());
-        ICONS.put(ItemStack.TooltipPart.ADDITIONAL, Labels.create(Items.SUSPICIOUS_STEW).withName("Additional").withHint("Potion Effects, Book Information").withHint("Enchantments on Enchanted Books, Firework Info,").withHint("Map Tooltips and Bundle Items").withHint("Mask: " + ItemStack.TooltipPart.ADDITIONAL.getMask()).build());
+        ICONS.put(ItemStack.TooltipPart.ADDITIONAL, Labels.create(Items.SUSPICIOUS_STEW).withName("Additional").withHint("Potion Effects, Book Information")
+                .withHint("Enchantments on Enchanted Books, Firework Info,")
+                .withHint("Map Tooltips, Bundle Items and Banner Info")
+                .withHint("Mask: " + ItemStack.TooltipPart.ADDITIONAL.getMask()).build());
         ICONS.put(ItemStack.TooltipPart.DYE, Labels.create(Items.PINK_DYE).withName("Dye").withHint("Mask: " + ItemStack.TooltipPart.DYE.getMask()).build());
         ICONS.put(ItemStack.TooltipPart.UPGRADES, Labels.create(Items.IRON_CHESTPLATE).withName("Armour Upgrades").withHint("Mask: " + ItemStack.TooltipPart.UPGRADES.getMask()).build());
     }
@@ -40,7 +43,7 @@ public class LoreVisiblityMenu {
     private static void showTooltipPart(ItemStack stack, ItemStack.TooltipPart part) {
         //noinspection DataFlowIssue
         if (!stack.hasTag() || !stack.getTag().contains("HideFlags")) return;
-        stack.getTag().putInt("HideFlags", stack.getTag().getInt("HideFlags") & (255 ^ part.getMask()));
+        stack.getTag().putInt("HideFlags", stack.getTag().getInt("HideFlags") & ~part.getMask());
     }
 
     private static Set<ItemStack.TooltipPart> getHidden(ItemStack stack) {

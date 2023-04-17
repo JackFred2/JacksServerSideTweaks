@@ -101,7 +101,7 @@ curseforge {
 	if (project.hasProperty("cf.key")) {
 		apiKey = project.findProperty("cf.key")
 		project {
-			id = "4491331"
+			id = "850725"
 			changelog = "Check the GitHub for changes: https://github.com/JackFred2/JacksServerSideTweaks"
 			releaseType = "beta"
 

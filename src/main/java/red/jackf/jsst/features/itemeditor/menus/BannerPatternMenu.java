@@ -10,7 +10,6 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BannerPattern;
-import org.apache.commons.lang3.function.TriFunction;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.utils.*;
 
@@ -76,16 +75,21 @@ public class BannerPatternMenu {
 
     public interface PreviewBuilder {
         ItemStack build(Pair<Holder<BannerPattern>, DyeColor> pattern);
+
+        interface Builder {
+            PreviewBuilder build(boolean isShield, DyeColor base, List<Pair<Holder<BannerPattern>, DyeColor>> before, List<Pair<Holder<BannerPattern>, DyeColor>> after);
+        }
     }
 
     public static final PreviewBuilder PATTERN_ONLY = pattern -> BannerUtils.builder(pattern.getSecond() == DyeColor.WHITE ? DyeColor.BLACK : DyeColor.WHITE).add(pattern).build();
-    public static final TriFunction<DyeColor, List<Pair<Holder<BannerPattern>, DyeColor>>, List<Pair<Holder<BannerPattern>, DyeColor>>, PreviewBuilder> SANDWICH = (base, before, after) -> pattern -> {
+    public static final PreviewBuilder.Builder SANDWICH = (isShield, base, before, after) -> pattern -> {
         var builder = BannerUtils.builder(base);
         for (Pair<Holder<BannerPattern>, DyeColor> pair : before)
             builder.add(pair);
         builder.add(pattern);
         for (Pair<Holder<BannerPattern>, DyeColor> pair : after)
             builder.add(pair);
+        builder.setShield(isShield);
         return builder.build();
     };
 }

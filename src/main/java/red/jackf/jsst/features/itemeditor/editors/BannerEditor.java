@@ -33,16 +33,17 @@ public class BannerEditor extends Editor {
     private ViewType viewType = ViewType.INDIVIDUAL;
     public BannerEditor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
         super(stack, player, completeCallback);
-        parseStack();
+        parseStack(true);
     }
 
-    private void parseStack() {
+    private void parseStack(boolean changeShield) {
         var tag = BlockItem.getBlockEntityData(stack);
-        this.itemType = stack.is(Items.SHIELD) ? ItemType.SHIELD : ItemType.BANNER;
-        this.base = this.itemType == ItemType.SHIELD ? (tag != null ? DyeColor.byId(tag.getInt(ShieldItem.TAG_BASE_COLOR)) : DyeColor.WHITE) : ((BannerItem) stack.getItem()).getColor();
+        var isShield = stack.is(Items.SHIELD);
+        this.base = isShield ? (tag != null ? DyeColor.byId(tag.getInt(ShieldItem.TAG_BASE_COLOR)) : DyeColor.WHITE) : ((BannerItem) stack.getItem()).getColor();
         var parsedPatterns = BannerBlockEntity.createPatterns(DyeColor.WHITE, BannerBlockEntity.getItemPatterns(stack));
         parsedPatterns.remove(0); // remove full 'blank' pattern
         this.patterns = parsedPatterns;
+        if (changeShield) this.itemType = isShield ? ItemType.SHIELD : ItemType.BANNER;
     }
 
     private ItemStack build() {
@@ -80,11 +81,12 @@ public class BannerEditor extends Editor {
         elements.put(18, new ItemGuiElement(Labels.create(BannerUtils.PMC_BANNER).withName(Component.literal("Import ").withStyle(Labels.CLEAN)
                 .append(Component.literal("Planet").withStyle(ChatFormatting.GREEN))
                 .append(Component.literal("Minecraft ").withStyle(Style.EMPTY.withColor(0xA3692B)))
-                .append(Component.literal("Banner code")))
+                .append(Component.literal("Banner Code")))
                 .withHint(PMC_BANNER_URL)
-                .withHint("Paste the code at the end of the 'Shareable URL', after the '?b='")
-                .withHint("To import a published banner, click 'Remix Banner'")
-                .withHint(Component.literal("JSST is not affiliated with PMC.").withStyle(ChatFormatting.RED))
+                .withHint("- Paste the code at the end of the 'Shareable URL',")
+                .withHint("  after the '?b='.")
+                .withHint("- To import a published banner, click 'Remix Banner'.")
+                .withHint(Component.literal("- JSST is not affiliated with PMC.").withStyle(ChatFormatting.RED))
                 .build(), () -> {
             Sounds.interact(player);
             Menus.string(player, "", "Import PMC URL", code -> {
@@ -92,7 +94,7 @@ public class BannerEditor extends Editor {
                 if (imported != null) {
                     Sounds.success(player);
                     stack = imported;
-                    parseStack();
+                    parseStack(false);
                 } else {
                     Sounds.error(player);
                 }
@@ -127,7 +129,7 @@ public class BannerEditor extends Editor {
         elements.put(29, EditorUtils.reset(() -> {
             Sounds.clear(player);
             this.stack = getOriginal();
-            parseStack();
+            parseStack(true);
             open();
         }));
 
@@ -139,7 +141,7 @@ public class BannerEditor extends Editor {
             var slot = ((i / 4) * 9) + 5 + (i % 4);
             if (i < this.patterns.size()) {
                 var pattern = this.patterns.get(i);
-                var builder = this.viewType == ViewType.INDIVIDUAL ? BannerPatternMenu.PATTERN_ONLY : BannerPatternMenu.SANDWICH.apply(base, patterns.subList(0, i), Collections.emptyList());
+                var builder = this.viewType == ViewType.INDIVIDUAL ? BannerPatternMenu.PATTERN_ONLY : BannerPatternMenu.SANDWICH.build(itemType == ItemType.SHIELD, base, patterns.subList(0, i), Collections.emptyList());
                 var label = Labels.create(builder.build(pattern))
                         .withName(BannerUtils.getName(pattern).copy().withStyle(Labels.CLEAN))
                         .withHint("Click to change")
@@ -149,7 +151,7 @@ public class BannerEditor extends Editor {
                     Sounds.interact(player);
                     var before = patterns.subList(0, finalIndex);
                     List<Pair<Holder<BannerPattern>, DyeColor>> after = finalIndex != patterns.size() - 1 ? patterns.subList(finalIndex + 1, patterns.size()) : Collections.emptyList();
-                    Menus.bannerPattern(player, BannerPatternMenu.SANDWICH.apply(base, before, after), pattern, CancellableCallback.of(newPattern -> {
+                    Menus.bannerPattern(player, BannerPatternMenu.SANDWICH.build(itemType == ItemType.SHIELD, base, before, after), pattern, CancellableCallback.of(newPattern -> {
                         if (newPattern.isPresent()) {
                             Sounds.success(player);
                             patterns.set(finalIndex, newPattern.get());
