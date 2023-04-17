@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
+import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
 import red.jackf.jsst.features.itemeditor.utils.Labels;
@@ -136,7 +137,7 @@ public class DurabilityEditor extends Editor {
             }));
             buttons.add(new ItemGuiElement(Labels.create(Items.NAME_TAG).withName("Custom Value").withHint("A positive integer or a %").build(), () -> {
                 Sounds.interact(player);
-                Menus.string(player, String.valueOf(stack.getMaxDamage() - stack.getDamageValue()), s -> {
+                Menus.string(player, String.valueOf(stack.getMaxDamage() - stack.getDamageValue()), CancellableCallback.of(s -> {
                     try {
                         if (s.endsWith("%")) {
                             stack = withPercentDamage(stack,1f - Float.parseFloat(s.substring(0, s.length() - 1)) / 100f);
@@ -149,7 +150,10 @@ public class DurabilityEditor extends Editor {
                         Sounds.error(player);
                         open();
                     }
-                });
+                }, () -> {
+                    Sounds.error(player);
+                    open();
+                }));
             }));
         } else {
             buttons.add(new ItemGuiElement(Labels.create(Items.CRACKED_STONE_BRICKS).withName("Remove Unbreakable").build(), () -> {

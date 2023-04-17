@@ -26,21 +26,21 @@ import static net.minecraft.network.chat.Component.literal;
 public class Menus {
     private Menus() {}
 
-    public static void string(ServerPlayer player, String text, Consumer<String> callback) {
+    public static void string(ServerPlayer player, String text, CancellableCallback<String> callback) {
         string(player, text, "Editing text", callback);
     }
 
-    public static void string(ServerPlayer player, String text, String title, Consumer<String> callback) {
+    public static void string(ServerPlayer player, String text, String title, CancellableCallback<String> callback) {
         player.openMenu(new SimpleMenuProvider(((i, inventory, player1) -> {
             var menu = new AnvilMenu(i, inventory);
             var elements = new HashMap<Integer, ItemGuiElement>();
-            elements.put(AnvilMenu.INPUT_SLOT, new ItemGuiElement(Labels.create(Items.PAPER).withName(text).withHint("Click to confirm").build(), () -> callback.accept(text)));
+            elements.put(AnvilMenu.INPUT_SLOT, new ItemGuiElement(Labels.create(Items.PAPER).withName(text).withHint("Click input to cancel").withHint("Click output to confirm").build(), callback::cancel));
             elements.put(AnvilMenu.RESULT_SLOT, new ItemGuiElement(Labels.blank(), () -> {
                 var item = menu.slots.get(AnvilMenu.RESULT_SLOT).getItem();
-                if (item.isEmpty() || !item.hasCustomHoverName())
-                    callback.accept(text);
+                if (item.isEmpty())
+                    callback.cancel();
                 else
-                    callback.accept(item.getHoverName().getString());
+                    callback.accept(item.hasCustomHoverName() ? item.getHoverName().getString() : "");
             }));
             elements.forEach((slot, label) -> menu.slots.get(slot).set(label.label()));
             //noinspection DataFlowIssue
@@ -51,7 +51,7 @@ public class Menus {
 
     // Returns a duration in ticks, from -1 to positive infinity
     public static void duration(ServerPlayer player, int ticks, CancellableCallback<Integer> callback) {
-        string(player, ticks % SharedConstants.TICKS_PER_SECOND == 0 ? String.valueOf(ticks / 20) : "%dt".formatted(ticks), "Editing Duration", s -> {
+        string(player, ticks % SharedConstants.TICKS_PER_SECOND == 0 ? String.valueOf(ticks / 20) : "%dt".formatted(ticks), "Editing Duration", CancellableCallback.of(s -> {
             if ("-1".equals(s) || "-1t".equals(s) || "inf".equals(s) || "infinite".equals(s)) {
                 callback.accept(-1);
                 return;
@@ -65,7 +65,7 @@ public class Menus {
             } catch (NumberFormatException ex) {
                 callback.cancel();
             }
-        });
+        }, callback::cancel));
     }
 
     public static void style(ServerPlayer player, Component preview, Consumer<Component> callback) {

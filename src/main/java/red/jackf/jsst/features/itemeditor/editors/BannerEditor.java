@@ -91,7 +91,7 @@ public class BannerEditor extends Editor {
                 .withHint(Component.literal("- JSST is not affiliated with PMC.").withStyle(ChatFormatting.RED))
                 .build(), () -> {
             Sounds.interact(player);
-            Menus.string(player, "", "Import PMC URL", code -> {
+            Menus.string(player, "", "Import PMC URL", CancellableCallback.of(code -> {
                 var imported = BannerUtils.fromPMCCode(code);
                 if (imported != null) {
                     Sounds.success(player);
@@ -101,7 +101,10 @@ public class BannerEditor extends Editor {
                     Sounds.error(player);
                 }
                 open();
-            });
+            }, () -> {
+                Sounds.error(player);
+                open();
+            }));
         }));
 
         elements.put(19, new ItemGuiElement(Labels.create(BannerUtils.PMC_LINK_BANNER).withName("Open PMC Banner Editor").build(), () -> {

@@ -143,12 +143,13 @@ This feature will only show editors possibly usable with the given item, and cur
 - Lore Editor, including all the above
 - Enchantment Editor, with tooltip fix for levels > 10
 - Potion Editor (Drinkables, Splash, Lingering, Tipped Arrows, Suspicious Stew)
-- [Banners / Shields] Banner Pattern editor, with support for PlanetMinecraft's [Banner Editor](https://www.planetminecraft.com/banner/).
-- [Damageable Items] Durability Editor, including unbreakable modifiers
-- [Written Books] Author Editor
-- [Written Books] Book Unsigner
-- [Player Head] Head Owner Changer
+- Container Lock Editor
+- Banner Pattern editor, with support for PlanetMinecraft's [Banner Editor](https://www.planetminecraft.com/banner/).
+- Durability Editor, including unbreakable modifiers
+- Book Author Editor
+- Book Unsigner
+- Head Owner Changer
 
-and more soon™.
+and more as ideas come in.
 
 </details>

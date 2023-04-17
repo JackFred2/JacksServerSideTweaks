@@ -67,7 +67,7 @@ public class ColourMenu {
 
         elements.put(25, new ItemGuiElement(Labels.create(Items.PAPER).withName("With Hex Code").build(), () -> {
             Sounds.interact(player);
-            Menus.string(player, "#", hex -> {
+            Menus.string(player, "#", CancellableCallback.of(hex -> {
                 var parsed = TextColor.parseColor(hex);
                 if (parsed != null) {
                     callback.accept(new Colour(parsed.getValue()));
@@ -75,7 +75,10 @@ public class ColourMenu {
                     Sounds.error(player);
                     open();
                 }
-            });
+            }, () -> {
+                Sounds.error(player);
+                open();
+            }));
         }));
         elements.put(26, EditorUtils.cancel(callback::cancel));
 

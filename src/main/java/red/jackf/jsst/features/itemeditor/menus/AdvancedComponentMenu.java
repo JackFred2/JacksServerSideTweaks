@@ -75,11 +75,14 @@ public class AdvancedComponentMenu {
             var text = components.get(index);
             elements.put(slot, new ItemGuiElement(Labels.create(Items.PAPER).withName(text).withHint("Edit Text").build(), () -> {
                 Sounds.interact(player);
-                Menus.string(player, text.getString(), newStr -> {
+                Menus.string(player, text.getString(), CancellableCallback.of(newStr -> {
                     Sounds.success(player);
                     components.set(index, literal(newStr).setStyle(text.getStyle()));
                     open();
-                });
+                }, () -> {
+                    Sounds.error(player);
+                    open();
+                }));
             }));
             // Edit Style Label
             elements.put(slot + 1, new ItemGuiElement(Labels.create(EditorUtils.colourToItem(text.getStyle().getColor())).withName("Change Style").build(), () -> {

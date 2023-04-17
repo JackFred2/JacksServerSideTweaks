@@ -167,7 +167,7 @@ public class EnchantmentEditor extends Editor {
                 open();
             }))));
             elements.put(slot + 1, new ItemGuiElement(Labels.create(Items.EXPERIENCE_BOTTLE).withName("Set Level")
-                    .build(), () -> Menus.string(player, instance.level.toString(), newLevel -> {
+                    .build(), () -> Menus.string(player, instance.level.toString(), CancellableCallback.of(newLevel -> {
                         try {
                             var parsed = Integer.parseUnsignedInt(newLevel);
                             if (parsed == 0) {
@@ -181,7 +181,10 @@ public class EnchantmentEditor extends Editor {
                             Sounds.error(player);
                             open();
                         }
-                    })));
+                    }, () -> {
+                        Sounds.error(player);
+                        open();
+            }))));
         }, index -> {
             Sounds.grind(player);
             enchantments.remove((int) index);

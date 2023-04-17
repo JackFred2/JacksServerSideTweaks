@@ -19,6 +19,7 @@ public class EditSession {
             SimpleNameEditor::new,
             AdvancedNameEditor::new,
             LoreEditor::new,
+            InventoryLockEditor::new,
             EnchantmentEditor::new,
             PotionEditor::new,
             SuspiciousStewEditor::new,

@@ -223,7 +223,7 @@ public class PotionEditor extends Editor {
             // Amplifier Selector
             elements.put(slot + offset, new ItemGuiElement(Labels.create(Items.ANVIL).withName("Set Amplifier").build(), () -> {
                 Sounds.interact(player);
-                Menus.string(player, String.valueOf(effect.getAmplifier() + 1), s -> {
+                Menus.string(player, String.valueOf(effect.getAmplifier() + 1), CancellableCallback.of(s -> {
                     try {
                         int parsed = Integer.parseUnsignedInt(s);
                         if (parsed == 0) {
@@ -238,7 +238,10 @@ public class PotionEditor extends Editor {
                         Sounds.error(player);
                         open();
                     }
-                });
+                }, () -> {
+                    Sounds.error(player);
+                    open();
+                }));
             }));
         }, index -> {
             Sounds.error(player);

@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
+import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
 import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.function.Consumer;
@@ -48,9 +49,9 @@ public class PlayerHeadEditor extends Editor {
 
     @Override
     public void open() {
-        Menus.string(player, getName(), newName -> {
+        Menus.string(player, getName(), CancellableCallback.of(newName -> {
             stack.getOrCreateTag().putString(TAG_SKULL_OWNER, newName);
             complete();
-        });
+        }, this::cancel));
     }
 }

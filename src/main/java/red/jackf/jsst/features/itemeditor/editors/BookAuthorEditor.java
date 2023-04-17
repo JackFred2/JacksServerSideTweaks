@@ -7,6 +7,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PlayerHeadItem;
 import net.minecraft.world.item.WrittenBookItem;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
+import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
 import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.function.Consumer;
@@ -33,9 +34,9 @@ public class BookAuthorEditor extends Editor {
     public void open() {
         var stackTag = stack.getTag();
         var author = (stackTag == null || stackTag.contains(WrittenBookItem.TAG_AUTHOR, Tag.TAG_STRING)) ? player.getGameProfile().getName() : stackTag.getString(WrittenBookItem.TAG_AUTHOR);
-        Menus.string(player, author, newAuthor -> {
+        Menus.string(player, author, CancellableCallback.of(newAuthor -> {
             stack.getOrCreateTag().putString(WrittenBookItem.TAG_AUTHOR, newAuthor);
             complete();
-        });
+        }, this::cancel));
     }
 }

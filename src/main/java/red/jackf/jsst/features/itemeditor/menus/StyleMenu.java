@@ -62,7 +62,7 @@ public class StyleMenu {
 
         elements.put(4, new ItemGuiElement(Labels.create(Items.PAPER).withName("With Hex Code").build(), () -> {
             Sounds.interact(player);
-            Menus.string(player, "#", hex -> {
+            Menus.string(player, "#", CancellableCallback.of(hex -> {
                 var parsed = TextColor.parseColor(hex);
                 if (parsed != null) {
                     Sounds.success(player);
@@ -71,7 +71,10 @@ public class StyleMenu {
                     Sounds.error(player);
                 }
                 open();
-            });
+            }, () -> {
+                Sounds.error(player);
+                open();
+            }));
         }));
         var rainbow = new GradientColour(new Gradient(Colour.fromRgb(255, 0, 0), Colour.fromRgb(255, 0, 0), Gradient.Mode.HSV_LONG));
         elements.put(13, new ItemGuiElement(Labels.create(Items.REDSTONE).withName(rainbow.set(literal("Rainbow"), Labels.CLEAN)).build(), () -> {

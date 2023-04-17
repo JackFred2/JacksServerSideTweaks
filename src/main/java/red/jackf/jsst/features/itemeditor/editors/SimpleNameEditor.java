@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
+import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
 import red.jackf.jsst.features.itemeditor.utils.Labels;
@@ -30,11 +31,14 @@ public class SimpleNameEditor extends Editor {
         elements.put(1, EditorUtils.divider());
         elements.put(2, new ItemGuiElement(Labels.create(Items.PAPER).withName("Edit Name").build(), () -> {
             Sounds.interact(player);
-            Menus.string(player, stack.getHoverName().getString(), newStr -> {
+            Menus.string(player, stack.getHoverName().getString(), CancellableCallback.of(newStr -> {
                 Sounds.success(player);
                 stack.setHoverName(Component.literal(newStr).setStyle(stack.getHoverName().getStyle()));
                 open();
-            });
+            }, () -> {
+                Sounds.error(player);
+                open();
+            }));
         }));
         elements.put(3, new ItemGuiElement(Labels.create(EditorUtils.colourToItem(stack.getHoverName().getStyle().getColor())).withName("Edit Style").build(), () -> {
             Sounds.interact(player);
