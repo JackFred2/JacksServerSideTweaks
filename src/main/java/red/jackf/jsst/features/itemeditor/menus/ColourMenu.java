@@ -18,7 +18,7 @@ import java.util.Map;
 import static net.minecraft.network.chat.Component.translatable;
 
 public class ColourMenu {
-    private static Component colourName(String text) {
+    public static Component colourName(String text) {
         return translatable("color.minecraft." + text);
     }
     public static final Map<ItemStack, Integer> COLOURS = new LinkedHashMap<>();

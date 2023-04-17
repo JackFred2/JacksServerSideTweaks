@@ -22,13 +22,11 @@ public class EditSession {
             EnchantmentEditor::new,
             PotionEditor::new,
             SuspiciousStewEditor::new,
-
+            BannerEditor::new,
             DurabilityEditor::new,
-
-            AuthorEditor::new, // Written Books
+            BookAuthorEditor::new,
             BookUnsigner::new,
-
-            HeadEditor::new // Player Heads
+            PlayerHeadEditor::new
     );
 
     private final ServerPlayer player;

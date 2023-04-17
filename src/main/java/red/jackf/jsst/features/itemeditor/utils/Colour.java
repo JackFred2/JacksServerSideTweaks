@@ -4,12 +4,29 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Locale;
 
 public record Colour(Integer value) {
+    public static final DyeColor[] DYE_CANON_ORDER = new DyeColor[]{DyeColor.WHITE,
+            DyeColor.LIGHT_GRAY,
+            DyeColor.GRAY,
+            DyeColor.BLACK,
+            DyeColor.BROWN,
+            DyeColor.RED,
+            DyeColor.ORANGE,
+            DyeColor.YELLOW,
+            DyeColor.LIME,
+            DyeColor.GREEN,
+            DyeColor.CYAN,
+            DyeColor.LIGHT_BLUE,
+            DyeColor.BLUE,
+            DyeColor.PURPLE,
+            DyeColor.MAGENTA,
+            DyeColor.PINK};
     public static Colour fromRgb(int r, int g, int b) {
         return new Colour(FastColor.ARGB32.color(0, r, g, b));
     }

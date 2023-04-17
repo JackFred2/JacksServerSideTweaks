@@ -13,9 +13,9 @@ import java.util.function.Consumer;
 import static net.minecraft.world.item.ItemStack.TAG_DISPLAY_NAME;
 import static net.minecraft.world.item.PlayerHeadItem.TAG_SKULL_OWNER;
 
-public class HeadEditor extends Editor {
+public class PlayerHeadEditor extends Editor {
 
-    public HeadEditor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
+    public PlayerHeadEditor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
         super(stack, player, completeCallback);
     }
 

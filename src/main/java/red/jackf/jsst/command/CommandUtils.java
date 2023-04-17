@@ -55,6 +55,10 @@ public final class CommandUtils {
         return Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));
     }
 
+    public static MutableComponent prefixed(TextType type, Component component) {
+        return type.prefixGetter.get().append(component);
+    }
+
     // Joins a list of Components with a prefix
     public static Component line(TextType type, Text... text) {
         var line = type.prefixGetter.get();

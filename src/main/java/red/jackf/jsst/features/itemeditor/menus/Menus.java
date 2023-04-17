@@ -1,18 +1,23 @@
 package red.jackf.jsst.features.itemeditor.menus;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.SharedConstants;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.features.itemeditor.utils.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -96,5 +101,10 @@ public class Menus {
     public static void mobEffect(ServerPlayer player, CancellableCallback<MobEffect> callback) {
         var mobEffect = new MobEffectMenu(player, callback);
         mobEffect.open();
+    }
+
+    public static void bannerPattern(ServerPlayer player, BannerPatternMenu.PreviewBuilder previewBuilder, Pair<Holder<BannerPattern>, DyeColor> pattern, CancellableCallback<Optional<Pair<Holder<BannerPattern>, DyeColor>>> callback) {
+        var bannerPattern = new BannerPatternMenu(player, previewBuilder, pattern, callback);
+        bannerPattern.open();
     }
 }

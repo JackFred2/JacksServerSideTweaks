@@ -1,5 +1,6 @@
 package red.jackf.jsst.features.itemeditor.utils;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
@@ -14,12 +15,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.features.itemeditor.editors.LoreEditor;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static net.minecraft.network.chat.Component.literal;
 
@@ -52,6 +53,10 @@ public class EditorUtils {
 
     public static MenuProvider make9x3(Component title, Map<Integer, ItemGuiElement> elements) {
         return make(ChestMenu::threeRows, title, elements);
+    }
+
+    public static MenuProvider make9x4(Component title, Map<Integer, ItemGuiElement> elements) {
+        return make(ChestMenu::fourRows, title, elements);
     }
 
     public static MenuProvider make9x5(Component title, Map<Integer, ItemGuiElement> elements) {
@@ -151,6 +156,14 @@ public class EditorUtils {
         if (itemsToDraw.size() != itemsPerPage) {
             elements.put(row * 9 + 4, new ItemGuiElement(Labels.create(Items.NETHER_STAR).withName("Add").build(), itemAdder));
         }
+    }
+
+    public static <T, K, V> Collector<T, ?, LinkedHashMap<K, V>> linkedMapCollector(Function<? super T, ? extends K> keyFunc, Function<? super T, ? extends V> valueFunc) {
+        return Collectors.toMap(keyFunc, valueFunc, (p1, p2) -> p2, LinkedHashMap::new);
+    }
+
+    public static <K, V> Collector<Pair<K, V>, ?, LinkedHashMap<K, V>> pairLinkedMapCollector() {
+        return Collectors.toMap(Pair::getFirst, Pair::getSecond, (p1, p2) -> p2, LinkedHashMap::new);
     }
 
     public static String formatDuration(int ticks) {

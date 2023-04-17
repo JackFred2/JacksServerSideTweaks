@@ -21,23 +21,25 @@ import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
 import red.jackf.jsst.features.itemeditor.utils.Labels;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class SuspiciousStewEditor extends Editor {
     private static final Integer MAX_EFFECTS = 10;
     private static final Map<Item, SuspiciousEffectHolder> EFFECT_ITEMS = BuiltInRegistries.ITEM.stream()
             .map(item -> Pair.of(item, SuspiciousEffectHolder.tryGet(item)))
             .filter(pair -> pair.right() != null)
-            .collect(Collectors.toMap(Pair::left, Pair::right, (p1, p2) -> p2, LinkedHashMap::new));
+            .collect(EditorUtils.linkedMapCollector(Pair::left, Pair::right));
     private static final Map<SuspiciousEffectHolder, ItemStack> PRESETS = EFFECT_ITEMS.entrySet().stream()
             .map(entry -> {
                 var hint = entry.getValue().getSuspiciousEffect().getDisplayName().copy().setStyle(Labels.HINT)
                         .append(Component.literal(": " + EditorUtils.formatDuration(entry.getValue().getEffectDuration())).withStyle(Labels.HINT));
                 return Pair.of(entry.getValue(), Labels.create(entry.getKey()).withHint(hint).build());
             })
-            .collect(Collectors.toMap(Pair::left, Pair::right, (p1, p2) -> p2, LinkedHashMap::new));
+            .collect(EditorUtils.linkedMapCollector(Pair::left, Pair::right));
 
     private final List<MobEffectInstance> effects = new ArrayList<>();
 

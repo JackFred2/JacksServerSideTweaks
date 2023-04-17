@@ -11,9 +11,9 @@ import red.jackf.jsst.features.itemeditor.utils.Labels;
 
 import java.util.function.Consumer;
 
-public class AuthorEditor extends Editor {
+public class BookAuthorEditor extends Editor {
 
-    public AuthorEditor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
+    public BookAuthorEditor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
         super(stack, player, completeCallback);
     }
 
