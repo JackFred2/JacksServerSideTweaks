@@ -3,10 +3,12 @@ package red.jackf.jsst.features.itemeditor.menus;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -15,6 +17,7 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.features.itemeditor.utils.*;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,15 +29,15 @@ import static net.minecraft.network.chat.Component.literal;
 public class Menus {
     private Menus() {}
 
-    public static void string(ServerPlayer player, String text, CancellableCallback<String> callback) {
-        string(player, text, "Editing text", callback);
+    public static void string(ServerPlayer player, String baseText, CancellableCallback<String> callback) {
+        string(player, baseText, "Editing text", callback);
     }
 
-    public static void string(ServerPlayer player, String text, String title, CancellableCallback<String> callback) {
+    public static void string(ServerPlayer player, String baseText, String title, CancellableCallback<String> callback) {
         player.openMenu(new SimpleMenuProvider(((i, inventory, player1) -> {
             var menu = new AnvilMenu(i, inventory);
             var elements = new HashMap<Integer, ItemGuiElement>();
-            elements.put(AnvilMenu.INPUT_SLOT, new ItemGuiElement(Labels.create(Items.PAPER).withName(text).withHint("Click input to cancel").withHint("Click output to confirm").build(), callback::cancel));
+            elements.put(AnvilMenu.INPUT_SLOT, new ItemGuiElement(Labels.create(Items.PAPER).withName(baseText).withHint("Click input to cancel").withHint("Click output to confirm").build(), callback::cancel));
             elements.put(AnvilMenu.RESULT_SLOT, new ItemGuiElement(Labels.blank(), () -> {
                 var item = menu.slots.get(AnvilMenu.RESULT_SLOT).getItem();
                 if (item.isEmpty())
@@ -61,6 +64,22 @@ public class Menus {
                     callback.accept(Integer.parseUnsignedInt(s.substring(0, s.length() - 1)));
                 } else {
                     callback.accept(Integer.parseUnsignedInt(s) * SharedConstants.TICKS_PER_SECOND);
+                }
+            } catch (NumberFormatException ex) {
+                callback.cancel();
+            }
+        }, callback::cancel));
+    }
+
+    // Returns a double that is non-infinite and non-NaN
+    public static void decimal(ServerPlayer player, double value, CancellableCallback<Double> callback) {
+        string(player, "%.2f".formatted(value), CancellableCallback.of(d -> {
+            try {
+                var newValue = Double.valueOf(d);
+                if (!newValue.isInfinite() && !newValue.isNaN()) {
+                    callback.accept(newValue);
+                } else {
+                    callback.cancel();
                 }
             } catch (NumberFormatException ex) {
                 callback.cancel();
@@ -106,5 +125,13 @@ public class Menus {
     public static void bannerPattern(ServerPlayer player, BannerPatternMenu.PreviewBuilder previewBuilder, Pair<Holder<BannerPattern>, DyeColor> pattern, CancellableCallback<Optional<Pair<Holder<BannerPattern>, DyeColor>>> callback) {
         var bannerPattern = new BannerPatternMenu(player, previewBuilder, pattern, callback);
         bannerPattern.open();
+    }
+
+    public static void attribute(ServerPlayer player, CancellableCallback<Attribute> callback) {
+        var options = BuiltInRegistries.ATTRIBUTE.stream()
+                .sorted(Comparator.comparing(Attribute::getDescriptionId))
+                .map(attribute -> Pair.of(attribute, Labels.create(Items.BOOK).withName(attribute.getDescriptionId()).build()))
+                .collect(EditorUtils.pairLinkedMapCollector());
+        selector(player, options, callback);
     }
 }

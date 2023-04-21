@@ -40,6 +40,10 @@ public class Sounds {
         play(player, SoundEvents.NOTE_BLOCK_CHIME.value(), pitch);
     }
 
+    public static void page(ServerPlayer player, int page, int maxPage) {
+        interact(player, 1f + ((float) (page + 1) / (maxPage + 1)) / 2);
+    }
+
     public static void clear(ServerPlayer player) {
         play(player, SoundEvents.BUCKET_EMPTY, 1f);
     }

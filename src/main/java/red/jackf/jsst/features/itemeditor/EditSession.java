@@ -22,6 +22,7 @@ public class EditSession {
             InventoryLockEditor::new,
             EnchantmentEditor::new,
             PotionEditor::new,
+            AttributeModifierEditor::new,
             SuspiciousStewEditor::new,
             BannerEditor::new,
             DurabilityEditor::new,

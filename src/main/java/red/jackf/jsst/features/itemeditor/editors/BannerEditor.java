@@ -88,7 +88,7 @@ public class BannerEditor extends Editor {
                 .withHint("- Paste the code at the end of the 'Shareable URL',")
                 .withHint("  after the '?b='.")
                 .withHint("- To import a published banner, click 'Remix Banner'.")
-                .withHint(Component.literal("- JSST is not affiliated with PMC.").withStyle(ChatFormatting.RED))
+                .withHint(Component.literal("- JSST is not affiliated with PMC.").withStyle(Labels.WARNING))
                 .build(), () -> {
             Sounds.interact(player);
             Menus.string(player, "", "Import PMC URL", CancellableCallback.of(code -> {
