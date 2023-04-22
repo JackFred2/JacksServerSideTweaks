@@ -8,6 +8,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.JSST;
 import red.jackf.jsst.features.itemeditor.editors.LoreEditor;
 
 import java.util.ArrayList;
@@ -59,6 +60,11 @@ public class Labels {
 
         public LabelBuilder withHint(String hint) {
             this.hints.add(Component.literal(hint).withStyle(HINT));
+            return this;
+        }
+
+        public LabelBuilder withDebugHint(String hint) {
+            if (JSST.CONFIG.get().itemEditor.enabledDevTools) return withHint(hint);
             return this;
         }
 

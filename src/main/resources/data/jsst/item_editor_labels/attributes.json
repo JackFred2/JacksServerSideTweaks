@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": {
+    "attribute.name.generic.armor": "iron_chestplate",
+    "attribute.name.generic.armor_toughness": "diamond_chestplate",
+    "attribute.name.generic.attack_damage": "magma_cream",
+    "attribute.name.generic.attack_knockback": "piston",
+    "attribute.name.generic.attack_speed": "sugar",
+    "attribute.name.generic.flying_speed": "elytra",
+    "attribute.name.generic.follow_range": "zombie_head",
+    "attribute.name.generic.knockback_resistance": "slime_block",
+    "attribute.name.generic.luck": "lapis_lazuli",
+    "attribute.name.generic.max_health": "golden_apple",
+    "attribute.name.generic.movement_speed": "sugar",
+    "attribute.name.horse.jump_strength": "saddle",
+    "attribute.name.zombie.spawn_reinforcements": "zombie_spawn_egg"
+  }
+}

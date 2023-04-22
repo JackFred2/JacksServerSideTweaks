@@ -8,6 +8,61 @@ All features can be configured via the `/jsst` command.
 
 All features can be enabled or disabled using `/jsst <feature> (enable/disable)`.
 
+### Item Editor
+
+By far the largest feature, this provides an easy-to-use, extensive interface for modifying items.
+
+![A GIF showing a 'Legendary Greataxe' being made with enchantments beyond vanilla limits](https://i.imgur.com/BKxEg3C.gif)
+
+Currently supports the following:
+
+- Names, including multi-component texts and custom gradient support
+- Lores, with the same features
+- Enchantment, with tooltip fix for levels > 10
+- Potions (Drinkable, Splash, Lingering, Tipped Arrows, Suspicious Stew)
+- [Attribute Modifiers](https://minecraft.fandom.com/wiki/Attribute)
+- Container Locks
+- Banner/Shields, with support for PlanetMinecraft's [Banner Editor](https://www.planetminecraft.com/banner/).
+- Durability Editor, including unbreakable modifiers
+- Book Author Editor
+- Book Unsigner
+- Head Owner Changer
+
+and more as ideas come in.
+
+<details>
+
+To begin, run the command `/jsst itemEditor hand` to change the item in your hand, or `.. itemEditor item <item>` to use a template.
+
+![An gif showing various pages of the item editor](https://i.imgur.com/o9W3oM4.gif)
+
+This feature will only show editors possibly usable with the given item.
+
+#### Labels
+
+Enchantments, Potion Effects and Attribute Modifiers have been given custom labels to help see them at a glance; however I can not
+provide defaults to every modded enchantment out there. If you want to add your own (either in your mod or a datapack), you can create
+a corresponding JSON file under `data/jsst/item_editor_labels/<category>.json`.
+
+In this JSON file, there is a single JSON object with another JSON object under the key `values`. In this values object, there
+should be a list of **ID**: **LabelDefinition** pairs; you can find the ID by enabling `enabledDevTools` and browsing said
+menu.
+
+**LabelDefinition** is defined as either a minecraft item ID such as `minecraft:diamond_pickaxe`, or a full ItemStack JSON
+which you can get from an existing stack by the `enabledDevTools`-only Stack JSON Printer.
+
+You can replace the entire vanilla set by adding `replace: true` alongside the `values` tag at the top level.
+
+For a better explained example, see [JSST's base files](https://github.com/JackFred2/JacksServerSideTweaks/tree/1.19/src/main/resources/data/jsst/item_editor_labels).
+
+#### Config
+
+| Option          | Description                  | Default | Valid Options   |
+|-----------------|------------------------------|---------|-----------------|
+| enabledDevTools | Enable dev-specific editors. | `true`  | `true`, `false` |
+
+</details>
+
 ### Portable Crafting
 
 Lets you use crafting tables by right-clicking with them.
@@ -122,34 +177,5 @@ modify item tags or `minecraft:block` for block tags.
 1. `/jsst cdd tag minecraft:item add jsst:crafting_tables value minecraft:nether_star`
 2. `/datapack enable "file/jsstCDD"` on first generation
 3. `/reload`
-
-</details>
-
-### Item Editor
-
-Provides an easy-to-use interface for modifying items.
-
-![A GIF showing a 'Legendary Greataxe' being made with enchantments beyond vanilla limits](https://i.imgur.com/BKxEg3C.gif)
-
-<details>
-
-To begin, run the command `/jsst itemEditor hand` to change the item in your hand, or `.. itemEditor item <item>` to use a template.
-
-![An gif showing various pages of the item editor](https://i.imgur.com/o9W3oM4.gif)
-
-This feature will only show editors possibly usable with the given item, and currently supports the following:
-
-- Name Editor, including multi-component texts and custom gradient support
-- Lore Editor, including all the above
-- Enchantment Editor, with tooltip fix for levels > 10
-- Potion Editor (Drinkables, Splash, Lingering, Tipped Arrows, Suspicious Stew)
-- Container Lock Editor
-- Banner Pattern editor, with support for PlanetMinecraft's [Banner Editor](https://www.planetminecraft.com/banner/).
-- Durability Editor, including unbreakable modifiers
-- Book Author Editor
-- Book Unsigner
-- Head Owner Changer
-
-and more as ideas come in.
 
 </details>

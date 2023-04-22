@@ -8,6 +8,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
@@ -20,7 +21,6 @@ import net.minecraft.world.item.alchemy.Potions;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
-import red.jackf.jsst.features.itemeditor.menus.MobEffectMenu;
 import red.jackf.jsst.features.itemeditor.utils.*;
 
 import java.util.*;
@@ -44,6 +44,13 @@ public class PotionEditor extends Editor {
     public PotionEditor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
         super(stack, player, completeCallback);
         readStack();
+    }
+
+    public static ItemStack potionOf(MobEffect effect) {
+        var stack = new ItemStack(Items.POTION);
+        PotionUtils.setPotion(stack, Potions.WATER);
+        PotionUtils.setCustomEffects(stack, List.of(new MobEffectInstance(effect, 1, 0)));
+        return stack;
     }
 
     @Override
@@ -176,7 +183,7 @@ public class PotionEditor extends Editor {
             var effect = custom.get(index);
 
             // Main preview with effect selector
-            elements.put(slot, new ItemGuiElement(Labels.create(MobEffectMenu.potionOf(effect.getEffect()))
+            elements.put(slot, new ItemGuiElement(Labels.create(potionOf(effect.getEffect()))
                     .withName(effect.getEffect().getDisplayName().copy().withStyle(Labels.CLEAN))
                     .withHint(effect.getEffect().isInstantenous() ? "Instant" : EditorUtils.formatDuration(effect.getDuration()))
                     .build(), () -> {
