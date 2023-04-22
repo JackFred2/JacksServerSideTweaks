@@ -13,11 +13,11 @@ import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.features.itemeditor.utils.*;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -118,8 +118,7 @@ public class Menus {
     }
 
     public static void mobEffect(ServerPlayer player, CancellableCallback<MobEffect> callback) {
-        var mobEffect = new MobEffectMenu(player, callback);
-        mobEffect.open();
+        selector(player, LabelData.MOB_EFFECTS.getIconList(BuiltInRegistries.MOB_EFFECT), callback);
     }
 
     public static void bannerPattern(ServerPlayer player, BannerPatternMenu.PreviewBuilder previewBuilder, Pair<Holder<BannerPattern>, DyeColor> pattern, CancellableCallback<Optional<Pair<Holder<BannerPattern>, DyeColor>>> callback) {
@@ -128,10 +127,10 @@ public class Menus {
     }
 
     public static void attribute(ServerPlayer player, CancellableCallback<Attribute> callback) {
-        var options = BuiltInRegistries.ATTRIBUTE.stream()
-                .sorted(Comparator.comparing(Attribute::getDescriptionId))
-                .map(attribute -> Pair.of(attribute, Labels.create(Items.BOOK).withName(attribute.getDescriptionId()).build()))
-                .collect(EditorUtils.pairLinkedMapCollector());
-        selector(player, options, callback);
+        selector(player, LabelData.ATTRIBUTES.getIconList(BuiltInRegistries.ATTRIBUTE), callback);
+    }
+
+    public static void enchantment(ServerPlayer player, CancellableCallback<Enchantment> callback) {
+        selector(player, LabelData.ENCHANTMENTS.getIconList(BuiltInRegistries.ENCHANTMENT), callback);
     }
 }

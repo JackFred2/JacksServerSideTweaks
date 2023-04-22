@@ -106,7 +106,8 @@ public class AttributeModifierEditor extends Editor {
             var instance = modifiers.get(index);
 
             // Main Icon
-            var label = Labels.create(Items.PAPER).withName(Component.translatable(instance.attribute.getDescriptionId()).withStyle(Labels.CLEAN));
+            var label = Labels.create(LabelData.ATTRIBUTES.get(instance.attribute))
+                    .withName(Component.translatable(instance.attribute.getDescriptionId()).withStyle(Labels.CLEAN));
             var amount = instance.modifier.getAmount() * (instance.modifier.getOperation() == AttributeModifier.Operation.ADDITION ? (instance.attribute == Attributes.KNOCKBACK_RESISTANCE ? 10 : 1) : 100);
             if (instance.slot != null) label.withHint(Component.translatable("item.modifiers." + instance.slot.getName()).withStyle(Labels.HINT));
             label.withHint(Component.translatable("attribute.modifier." + (amount >= 0 ? "plus." : "take.") + instance.modifier.getOperation().toValue(),

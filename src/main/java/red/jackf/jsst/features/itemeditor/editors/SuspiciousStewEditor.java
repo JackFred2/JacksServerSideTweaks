@@ -15,7 +15,6 @@ import net.minecraft.world.item.SuspiciousStewItem;
 import net.minecraft.world.level.block.SuspiciousEffectHolder;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
-import red.jackf.jsst.features.itemeditor.menus.MobEffectMenu;
 import red.jackf.jsst.features.itemeditor.utils.CancellableCallback;
 import red.jackf.jsst.features.itemeditor.utils.EditorUtils;
 import red.jackf.jsst.features.itemeditor.utils.ItemGuiElement;
@@ -120,7 +119,7 @@ public class SuspiciousStewEditor extends Editor {
             var effect = effects.get(index);
 
             // main effect preview
-            elements.put(slot, new ItemGuiElement(Labels.create(MobEffectMenu.potionOf(effect.getEffect()))
+            elements.put(slot, new ItemGuiElement(Labels.create(PotionEditor.potionOf(effect.getEffect()))
                     .withName(effect.getEffect().getDisplayName().copy().withStyle(Labels.CLEAN))
                     .withHint(EditorUtils.formatDuration(effect.getDuration()))
                     .withHint("Click to change effect")

@@ -72,6 +72,6 @@ public class SelectorMenu<T> {
             }
         }
 
-        player.openMenu(EditorUtils.make9x5(Component.literal("Select an item"), elements));
+        player.openMenu(EditorUtils.make9x5(Component.literal("Select an option"), elements));
     }
 }

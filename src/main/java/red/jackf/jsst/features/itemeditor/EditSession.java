@@ -28,7 +28,8 @@ public class EditSession {
             DurabilityEditor::new,
             BookAuthorEditor::new,
             BookUnsigner::new,
-            PlayerHeadEditor::new
+            PlayerHeadEditor::new,
+            StackJSONPrinter::new
     );
 
     private final ServerPlayer player;
