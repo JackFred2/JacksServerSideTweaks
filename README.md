@@ -179,3 +179,22 @@ modify item tags or `minecraft:block` for block tags.
 3. `/reload`
 
 </details>
+
+### Banner Writing
+
+Easily write sentences with a stack of blank banners and a command.
+
+![Running a command and writing 'kingdom' effortlessly.](https://i.imgur.com/msoN0cH.gif)
+
+<details>
+
+To start, simply use the command `/jsst bannerWriter start <text>`. This will add a tag to the banners you are
+holding, which lets the mod know what to replace.
+
+Uses the letters and numbers from https://www.gamergeeks.net/apps/minecraft/banners/.
+
+Supported letters:
+
+`abcdefghijklmnopqrstuvwxyz0123456789 .,+-*/'"=!:`
+
+</details>
