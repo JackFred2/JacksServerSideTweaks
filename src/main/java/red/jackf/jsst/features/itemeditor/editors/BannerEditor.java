@@ -71,7 +71,7 @@ public class BannerEditor extends Editor {
             complete();
         }));
 
-        elements.put(3, new ItemGuiElement(Labels.create(BannerUtils.Builder.BY_COLOUR.get(base)).withName("Set Base Colour").build(), () -> Menus.selector(player, BannerUtils.Builder.ICONS, CancellableCallback.of(newColour -> {
+        elements.put(5, new ItemGuiElement(Labels.create(BannerUtils.Builder.BY_COLOUR.get(base)).withName("Set Base Colour").build(), () -> Menus.selector(player, BannerUtils.Builder.ICONS, CancellableCallback.of(newColour -> {
             Sounds.success(player);
             this.base = newColour;
             open();
@@ -80,7 +80,7 @@ public class BannerEditor extends Editor {
             open();
         }))));
 
-        elements.put(18, new ItemGuiElement(Labels.create(BannerUtils.PMC_BANNER).withName(Component.literal("Import ").withStyle(Labels.CLEAN)
+        elements.put(36, new ItemGuiElement(Labels.create(BannerUtils.PMC_BANNER).withName(Component.literal("Import ").withStyle(Labels.CLEAN)
                 .append(Component.literal("Planet").withStyle(ChatFormatting.GREEN))
                 .append(Component.literal("Minecraft ").withStyle(Style.EMPTY.withColor(0xA3692B)))
                 .append(Component.literal("Banner Code")))
@@ -107,43 +107,44 @@ public class BannerEditor extends Editor {
             }));
         }));
 
-        elements.put(19, new ItemGuiElement(Labels.create(BannerUtils.PMC_LINK_BANNER).withName("Open PMC Banner Editor").build(), () -> {
+        elements.put(37, new ItemGuiElement(Labels.create(BannerUtils.PMC_LINK_BANNER).withName("Open PMC Banner Editor").build(), () -> {
             player.closeContainer();
             var link = PMC_BANNER_URL + "?e=" + BannerUtils.toPMCCode(base, patterns);
             player.sendSystemMessage(CommandUtils.prefixed(CommandUtils.TextType.INFO, Component.literal(link).withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link)))));
         }));
 
-        elements.put(20, Selector.create(ViewType.class, "Pattern View Type", this.viewType, newType -> {
+        elements.put(38, Selector.create(ViewType.class, "Pattern View Type", this.viewType, newType -> {
             Sounds.interact(player);
             this.viewType = newType;
             open();
         }));
 
-        elements.put(27, Selector.create(ItemType.class, "Item Type", this.itemType, newType -> {
+        elements.put(45, Selector.create(ItemType.class, "Item Type", this.itemType, newType -> {
             Sounds.success(player);
             this.itemType = newType;
             open();
         }));
 
-        elements.put(28, EditorUtils.clear(() -> {
+        elements.put(46, EditorUtils.clear(() -> {
             Sounds.clear(player);
             this.patterns.clear();
             open();
         }));
 
-        elements.put(29, EditorUtils.reset(() -> {
+        elements.put(47, EditorUtils.reset(() -> {
             Sounds.clear(player);
             this.stack = getOriginal();
             parseStack(true);
             open();
         }));
 
-        elements.put(30, EditorUtils.cancel(this::cancel));
+        elements.put(48, EditorUtils.cancel(this::cancel));
 
-        for (int i = 4; i < 36; i += 9) elements.put(i, EditorUtils.divider());
+        for (int i = 4; i < 54; i += 9) elements.put(i, EditorUtils.divider());
+        for (int i = 14; i < 18; i++) elements.put(i, EditorUtils.divider());
 
         for (int i = 0; i < Math.min(this.patterns.size() + 1, MAX_PATTERNS); i++) {
-            var slot = ((i / 4) * 9) + 5 + (i % 4);
+            var slot = 23 + ((i / 4) * 9) + (i % 4);
             if (i < this.patterns.size()) {
                 var pattern = this.patterns.get(i);
                 var builder = this.viewType == ViewType.INDIVIDUAL ? BannerPatternMenu.PATTERN_ONLY : BannerPatternMenu.SANDWICH.build(itemType == ItemType.SHIELD, base, patterns.subList(0, i), Collections.emptyList());
@@ -180,7 +181,7 @@ public class BannerEditor extends Editor {
             }
         }
 
-        player.openMenu(EditorUtils.make9x4(Component.literal("Editing Banner"), elements));
+        player.openMenu(EditorUtils.make9x6(Component.literal("Editing Banner"), elements));
     }
 
     public enum ItemType implements Selector.Labeled {
