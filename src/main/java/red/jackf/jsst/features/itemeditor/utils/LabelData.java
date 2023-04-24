@@ -20,6 +20,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.JSST;
+import red.jackf.jsst.command.CommandUtils;
 import red.jackf.jsst.features.itemeditor.ItemEditor;
 import red.jackf.jsst.features.itemeditor.editors.PotionEditor;
 
@@ -103,7 +104,7 @@ public class LabelData {
             return registry.stream()
                     .sorted(Comparator.comparing(keyGetter))
                     .map(t -> Pair.of(t, Labels.create(get(t))
-                            .withName(Component.translatable(keyGetter.apply(t)).withStyle(Labels.CLEAN))
+                            .withName(Component.translatable(keyGetter.apply(t)).withStyle(CommandUtils.CLEAN))
                             .withDebugHint(keyGetter.apply(t))
                             .build()))
                     .collect(EditorUtils.pairLinkedMapCollector());

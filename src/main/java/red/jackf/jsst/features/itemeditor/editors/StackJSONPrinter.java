@@ -45,7 +45,7 @@ public class StackJSONPrinter extends Editor {
             cancel();
         }).ifPresentOrElse(json -> {
             var str = GSON.toJson(json);
-            var style = Labels.CLEAN.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to copy")))
+            var style = CommandUtils.CLEAN.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to copy")))
                             .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, str));
             player.sendSystemMessage(CommandUtils.line(CommandUtils.TextType.SUCCESS, CommandUtils.text(str.length() > MAX_PRINTED ? str.substring(0, MAX_PRINTED) + "..." : str, style)));
             complete();

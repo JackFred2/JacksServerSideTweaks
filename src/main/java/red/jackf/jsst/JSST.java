@@ -7,11 +7,13 @@ import org.slf4j.LoggerFactory;
 import red.jackf.jsst.command.JSSTCommand;
 import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.features.Feature;
+import red.jackf.jsst.features.bannerwriter.BannerWriter;
 import red.jackf.jsst.features.commanddefineddatapack.CommandDefinedDatapack;
 import red.jackf.jsst.features.displayitems.DisplayItems;
 import red.jackf.jsst.features.itemeditor.ItemEditor;
 import red.jackf.jsst.features.portablecrafting.PortableCrafting;
 import red.jackf.jsst.features.worldcontainernames.WorldContainerNames;
+import red.jackf.jsst.util.DelayedRunnables;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public class JSST implements ModInitializer {
         features.add(new DisplayItems());
         features.add(new CommandDefinedDatapack());
         features.add(new ItemEditor());
+        features.add(new BannerWriter());
     }
 
     @Override
@@ -42,5 +45,6 @@ public class JSST implements ModInitializer {
             feature.init();
         }
         JSSTCommand.register(features);
+        DelayedRunnables.setup();
     }
 }

@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public final class CommandUtils {
+    public static final Style CLEAN = Style.EMPTY.withColor(ChatFormatting.WHITE).withItalic(false);
+
     private CommandUtils() {}
 
     /**

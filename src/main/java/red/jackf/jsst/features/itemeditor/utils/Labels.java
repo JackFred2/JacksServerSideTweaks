@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.JSST;
+import red.jackf.jsst.command.CommandUtils;
 import red.jackf.jsst.features.itemeditor.editors.LoreEditor;
 
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import java.util.List;
 public class Labels {
     public static final Style HINT = Style.EMPTY.withColor(TextColor.parseColor("#70FF68")).withItalic(false);
     public static final Style WARNING = Style.EMPTY.withColor(ChatFormatting.RED).withItalic(false);
-    public static final Style CLEAN = Style.EMPTY.withColor(ChatFormatting.WHITE).withItalic(false);
 
     public static LabelBuilder create(ItemStack stack) {
         return new LabelBuilder(stack.copy());
@@ -54,7 +54,7 @@ public class Labels {
         }
 
         public LabelBuilder withName(String name) {
-            this.customName = Component.literal(name).withStyle(CLEAN);
+            this.customName = Component.literal(name).withStyle(CommandUtils.CLEAN);
             return this;
         }
 

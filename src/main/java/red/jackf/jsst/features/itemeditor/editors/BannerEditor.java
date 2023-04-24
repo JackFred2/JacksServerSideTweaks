@@ -80,7 +80,7 @@ public class BannerEditor extends Editor {
             open();
         }))));
 
-        elements.put(36, new ItemGuiElement(Labels.create(BannerUtils.PMC_BANNER).withName(Component.literal("Import ").withStyle(Labels.CLEAN)
+        elements.put(36, new ItemGuiElement(Labels.create(BannerUtils.PMC_BANNER).withName(Component.literal("Import ").withStyle(CommandUtils.CLEAN)
                 .append(Component.literal("Planet").withStyle(ChatFormatting.GREEN))
                 .append(Component.literal("Minecraft ").withStyle(Style.EMPTY.withColor(0xA3692B)))
                 .append(Component.literal("Banner Code")))
@@ -149,7 +149,7 @@ public class BannerEditor extends Editor {
                 var pattern = this.patterns.get(i);
                 var builder = this.viewType == ViewType.INDIVIDUAL ? BannerPatternMenu.PATTERN_ONLY : BannerPatternMenu.SANDWICH.build(itemType == ItemType.SHIELD, base, patterns.subList(0, i), Collections.emptyList());
                 var label = Labels.create(builder.build(pattern))
-                        .withName(BannerUtils.getName(pattern).copy().withStyle(Labels.CLEAN))
+                        .withName(BannerUtils.getName(pattern).copy().withStyle(CommandUtils.CLEAN))
                         .withHint("Click to change")
                         .build();
                 int finalIndex = i;

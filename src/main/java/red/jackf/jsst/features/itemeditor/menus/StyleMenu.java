@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.command.CommandUtils;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.utils.*;
 
@@ -77,7 +78,7 @@ public class StyleMenu {
             }));
         }));
         var rainbow = new GradientColour(new Gradient(Colour.fromRgb(255, 0, 0), Colour.fromRgb(255, 0, 0), Gradient.Mode.HSV_LONG));
-        elements.put(13, new ItemGuiElement(Labels.create(Items.REDSTONE).withName(rainbow.set(literal("Rainbow"), Labels.CLEAN)).build(), () -> {
+        elements.put(13, new ItemGuiElement(Labels.create(Items.REDSTONE).withName(rainbow.set(literal("Rainbow"), CommandUtils.CLEAN)).build(), () -> {
             Sounds.interact(player);
             colour = rainbow;
             open();
@@ -172,7 +173,7 @@ public class StyleMenu {
             var base = literal("");
             var str = in.getString();
             for (int i = 0; i < str.length(); i++) {
-                base.append(literal(String.valueOf(str.charAt(i))).setStyle(gradient.evaluate((float) i / (str.length())).style().applyTo(Labels.CLEAN)));
+                base.append(literal(String.valueOf(str.charAt(i))).setStyle(gradient.evaluate((float) i / (str.length())).style().applyTo(CommandUtils.CLEAN)));
             }
             return base;
         }

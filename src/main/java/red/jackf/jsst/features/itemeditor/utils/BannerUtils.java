@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.command.CommandUtils;
 import red.jackf.jsst.features.itemeditor.menus.ColourMenu;
 
 import java.util.ArrayList;
@@ -130,6 +131,21 @@ public class BannerUtils {
                 .orElseGet(() -> Component.literal("unknown"));
     }
 
+    // Translates a PMC banner code, changing colours in `translation`
+    public static String colourSwapPMC(String from, Map<DyeColor, DyeColor> translation) {
+        var builder = new StringBuilder();
+        for (int i = 0; i < from.length(); i++) {
+            if (i > 0 && i % 2 == 0) {
+                builder.append(from.charAt(i));
+            } else {
+                var colour = PMC_COLOURS.get(from.charAt(i));
+                var translated = translation.getOrDefault(colour, colour);
+                builder.append(PMC_COLOURS.inverse().get(translated));
+            }
+        }
+        return builder.toString();
+    }
+
     @Nullable
     public static ItemStack fromPMCCode(String code) {
         if ((code.length() & 1) == 0) return null;
@@ -170,7 +186,7 @@ public class BannerUtils {
             BY_COLOUR.put(DyeColor.PINK, Items.PINK_BANNER);
         }
         public static final Map<DyeColor, ItemStack> ICONS = Builder.BY_COLOUR.entrySet().stream()
-                .map(entry -> Pair.of(entry.getKey(), Labels.create(entry.getValue()).withName(ColourMenu.colourName(entry.getKey().getName()).copy().withStyle(Labels.CLEAN)).build()))
+                .map(entry -> Pair.of(entry.getKey(), Labels.create(entry.getValue()).withName(ColourMenu.colourName(entry.getKey().getName()).copy().withStyle(CommandUtils.CLEAN)).build()))
                 .collect(EditorUtils.linkedMapCollector(Pair::getFirst, Pair::getSecond));
         private final DyeColor colour;
         private List<Pair<Holder<BannerPattern>, DyeColor>> patterns = new ArrayList<>();

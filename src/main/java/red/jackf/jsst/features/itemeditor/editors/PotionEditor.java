@@ -19,6 +19,7 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.command.CommandUtils;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
 import red.jackf.jsst.features.itemeditor.utils.*;
@@ -184,7 +185,7 @@ public class PotionEditor extends Editor {
 
             // Main preview with effect selector
             elements.put(slot, new ItemGuiElement(Labels.create(potionOf(effect.getEffect()))
-                    .withName(effect.getEffect().getDisplayName().copy().withStyle(Labels.CLEAN))
+                    .withName(effect.getEffect().getDisplayName().copy().withStyle(CommandUtils.CLEAN))
                     .withHint(effect.getEffect().isInstantenous() ? "Instant" : EditorUtils.formatDuration(effect.getDuration()))
                     .build(), () -> {
                 Sounds.interact(player);

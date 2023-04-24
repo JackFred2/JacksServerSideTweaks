@@ -3,6 +3,7 @@ package red.jackf.jsst.features.itemeditor.menus;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.command.CommandUtils;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.utils.*;
 
@@ -32,7 +33,7 @@ public class GradientMenu {
         }))));
 
         var applicator = new StyleMenu.GradientColour(gradient);
-        elements.put(2, new ItemGuiElement(Labels.create(Items.GLOWSTONE_DUST).withName(applicator.set(Component.literal("|".repeat(50)), Labels.CLEAN)).withHint("Click to finish").build(), () -> callback.accept(this.gradient)));
+        elements.put(2, new ItemGuiElement(Labels.create(Items.GLOWSTONE_DUST).withName(applicator.set(Component.literal("|".repeat(50)), CommandUtils.CLEAN)).withHint("Click to finish").build(), () -> callback.accept(this.gradient)));
 
         elements.put(4, new ItemGuiElement(EditorUtils.withHint(gradient.end().label(), "Click to change"), () -> Menus.colour(player, CancellableCallback.of(colour -> {
             Sounds.success(player);

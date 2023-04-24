@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import red.jackf.jsst.command.CommandUtils;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
 import red.jackf.jsst.features.itemeditor.utils.*;
@@ -147,7 +148,7 @@ public class EnchantmentEditor extends Editor {
     private record EnchantmentInstance(Enchantment enchantment, Integer level) {
         private MutableComponent getText() {
             var text = Component.translatable(enchantment.getDescriptionId())
-                    .setStyle(enchantment.isCurse() ? Labels.CLEAN.withColor(ChatFormatting.RED) : Labels.CLEAN);
+                    .setStyle(enchantment.isCurse() ? CommandUtils.CLEAN.withColor(ChatFormatting.RED) : CommandUtils.CLEAN);
             if (level != 1 && enchantment.getMaxLevel() != 1)
                 text.append(CommonComponents.SPACE).append(Component.literal(getNumeral()).setStyle(Style.EMPTY));
             return text;

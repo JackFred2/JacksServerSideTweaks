@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -72,7 +73,7 @@ public class DisplayParser {
     }
 
     private static final Parser DEFAULT = be -> {
-        if (be instanceof Nameable nameable && nameable.hasCustomName()) {
+        if (!(be instanceof BannerBlockEntity) && be instanceof Nameable nameable && nameable.hasCustomName()) {
             var item = getItem(be, nameable.getCustomName());
             return new DisplayData(be.getBlockPos().above().getCenter(), item == null ? nameable.getCustomName() : null, item);
         } else {

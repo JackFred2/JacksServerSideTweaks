@@ -1,9 +1,13 @@
 accessWidener   v1  named
+# world container names
 accessible method net/minecraft/world/entity/Display$TextDisplay setText (Lnet/minecraft/network/chat/Component;)V
 accessible method net/minecraft/world/entity/Display$ItemDisplay setItemStack (Lnet/minecraft/world/item/ItemStack;)V
 accessible method net/minecraft/world/entity/Display setBillboardConstraints (Lnet/minecraft/world/entity/Display$BillboardConstraints;)V
 accessible method net/minecraft/world/entity/Display setViewRange (F)V
 accessible method net/minecraft/world/entity/Display setTransformation (Lcom/mojang/math/Transformation;)V
+# item editor
 accessible method net/minecraft/world/item/ItemStack getHideFlags ()I
 accessible method net/minecraft/world/item/SuspiciousStewItem listPotionEffects (Lnet/minecraft/world/item/ItemStack;Ljava/util/function/Consumer;)V
 accessible field net/minecraft/world/level/block/entity/BlockEntityType validBlocks Ljava/util/Set;
+# bannerwriter convenience
+accessible field net/minecraft/world/item/StandingAndWallBlockItem wallBlock Lnet/minecraft/world/level/block/Block;

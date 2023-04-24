@@ -9,6 +9,7 @@ public class Sounds {
     private Sounds() {}
 
     private static void play(ServerPlayer player, SoundEvent sound, float pitch) {
+        if (player == null) return;
         player.playNotifySound(sound, SoundSource.PLAYERS, 1f, pitch);
     }
 
