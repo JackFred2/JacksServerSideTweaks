@@ -162,7 +162,7 @@ public class BannerWriter extends Feature<Feature.Config> {
         if (!player.gameMode.isCreative() && stack.getCount() < str.length())
             ctx.getSource().sendSuccess(CommandUtils.line(TextType.INFO, text("warning: you have less banners than characters")), false);
         var unknown = new StringBuilder();
-        for (var c : str.toCharArray()) {
+        for (var c : str.toLowerCase().toCharArray()) {
             if (!ALPHABET.containsKey(c)) {
                 unknown.append(c);
             }
