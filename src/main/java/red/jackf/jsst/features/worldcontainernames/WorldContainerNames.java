@@ -40,6 +40,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
     private final BiMap<BlockEntity, Display> displayCache = HashBiMap.create();
     private long nextUpdateSchedulerTick = -1;
 
+    // TODO: migrate to DelayedRunnables
     private final Multimap<Long, Triple<BlockPos, ServerLevel, Boolean>> delayedChecks = HashMultimap.create();
 
     // Creates or updates a text entity

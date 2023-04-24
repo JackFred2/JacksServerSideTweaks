@@ -106,6 +106,7 @@ public class BannerWriter extends Feature<Feature.Config> {
         ALPHABET.put('"', "g131D1p161t");
         ALPHABET.put('=', "g131v1o1t");
         ALPHABET.put('!', "g131s1u1t1o");
+        ALPHABET.put(':', "g1t1s1u1o1v");
     }
     private static final String TAG = "jsst_banner_writer_text";
 
@@ -133,7 +134,19 @@ public class BannerWriter extends Feature<Feature.Config> {
                             ctx.getSource().sendSuccess(line(TextType.INFO, variable(builder.toString())), false);
                             return 0;
                         })
-        );
+        ).then(Commands.literal("stop")
+                .executes(ctx -> {
+                    var stack = getValidBannerStack(ctx.getSource().getPlayer());
+                    var tag = stack.getTag();
+                    if (tag != null && tag.contains(TAG, Tag.TAG_STRING)) {
+                        tag.remove(TAG);
+                        ctx.getSource().sendSuccess(line(TextType.SUCCESS, text("removed banner mark")), false);
+                        return 1;
+                    } else {
+                        ctx.getSource().sendFailure(line(TextType.ERROR, text("banner not marked for writing")));
+                        return 0;
+                    }
+                }));
     }
 
     private static int start(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
