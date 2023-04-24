@@ -112,6 +112,11 @@ public class Menus {
         colour.open();
     }
 
+    public static void colourSwap(ServerPlayer player, ColourSwapMenu.PreviewBuilder builder, CancellableCallback<Pair<DyeColor, DyeColor>> callback) {
+        var colourSwap = new ColourSwapMenu(player, builder, callback);
+        colourSwap.open();
+    }
+
     public static void gradient(ServerPlayer player, Gradient start, CancellableCallback<Gradient> callback) {
         var gradient = new GradientMenu(player, start, callback);
         gradient.open();

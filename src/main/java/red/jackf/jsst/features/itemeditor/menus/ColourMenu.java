@@ -2,6 +2,7 @@ package red.jackf.jsst.features.itemeditor.menus;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,7 +19,7 @@ import java.util.Map;
 import static net.minecraft.network.chat.Component.translatable;
 
 public class ColourMenu {
-    public static Component colourName(String text) {
+    public static MutableComponent colourName(String text) {
         return translatable("color.minecraft." + text);
     }
     public static final Map<ItemStack, Integer> COLOURS = new LinkedHashMap<>();

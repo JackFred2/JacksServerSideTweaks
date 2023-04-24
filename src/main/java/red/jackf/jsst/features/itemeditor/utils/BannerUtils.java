@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.command.CommandUtils;
+import red.jackf.jsst.features.itemeditor.editors.BannerEditor;
 import red.jackf.jsst.features.itemeditor.menus.ColourMenu;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BannerUtils {
+    public static final String PMC_DEFAULT = "g";
     private static final BiMap<Character, DyeColor> PMC_COLOURS = HashBiMap.create(16);
     static {
         PMC_COLOURS.put('1', DyeColor.BLACK);
@@ -111,7 +113,7 @@ public class BannerUtils {
     }
 
     public static String toPMCCode(DyeColor baseColour, List<Pair<Holder<BannerPattern>, DyeColor>> patterns) {
-        if (baseColour == null) return "g";
+        if (baseColour == null) return PMC_DEFAULT;
         var builder = new StringBuilder(1 + patterns.size() * 2);
         builder.append(PMC_COLOURS.inverse().get(baseColour));
         for (Pair<Holder<BannerPattern>, DyeColor> pattern : patterns) {
@@ -131,11 +133,19 @@ public class BannerUtils {
                 .orElseGet(() -> Component.literal("unknown"));
     }
 
+    public static BannerEditor.PatternDescription colourSwap(BannerEditor.PatternDescription description , Map<DyeColor, DyeColor> translation) {
+        var base = translation.getOrDefault(description.base(), description.base());
+        var patterns = new ArrayList<Pair<Holder<BannerPattern>, DyeColor>>();
+        description.patterns().forEach(pair ->
+                patterns.add(Pair.of(pair.getFirst(), translation.getOrDefault(pair.getSecond(), pair.getSecond()))));
+        return new BannerEditor.PatternDescription(base, patterns, description.isShield());
+    }
+
     // Translates a PMC banner code, changing colours in `translation`
     public static String colourSwapPMC(String from, Map<DyeColor, DyeColor> translation) {
         var builder = new StringBuilder();
         for (int i = 0; i < from.length(); i++) {
-            if (i > 0 && i % 2 == 0) {
+            if (i > 0 && i % 2 == 0) { // pattern designs
                 builder.append(from.charAt(i));
             } else {
                 var colour = PMC_COLOURS.get(from.charAt(i));

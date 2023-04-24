@@ -12,16 +12,15 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatterns;
+import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.command.CommandUtils;
 import red.jackf.jsst.features.Sounds;
 import red.jackf.jsst.features.itemeditor.menus.BannerPatternMenu;
+import red.jackf.jsst.features.itemeditor.menus.ColourSwapMenu;
 import red.jackf.jsst.features.itemeditor.menus.Menus;
 import red.jackf.jsst.features.itemeditor.utils.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class BannerEditor extends Editor {
@@ -37,10 +36,10 @@ public class BannerEditor extends Editor {
     }
 
     private void parseStack(boolean changeShield) {
-        if (stack.getItem() instanceof BannerItem bannerItem) {
+        if (stack.getItem() instanceof BannerItem || stack.getItem() == Items.SHIELD) {
             var tag = BlockItem.getBlockEntityData(stack);
             var isShield = stack.is(Items.SHIELD);
-            this.base = isShield ? (tag != null ? DyeColor.byId(tag.getInt(ShieldItem.TAG_BASE_COLOR)) : DyeColor.WHITE) : bannerItem.getColor();
+            this.base = isShield ? (tag != null ? DyeColor.byId(tag.getInt(ShieldItem.TAG_BASE_COLOR)) : DyeColor.WHITE) : ((BannerItem) stack.getItem()).getColor();
             var parsedPatterns = BannerBlockEntity.createPatterns(DyeColor.WHITE, BannerBlockEntity.getItemPatterns(stack));
             parsedPatterns.remove(0); // remove full 'blank' pattern
             this.patterns = parsedPatterns;
@@ -117,6 +116,20 @@ public class BannerEditor extends Editor {
             Sounds.interact(player);
             this.viewType = newType;
             open();
+        }));
+
+        elements.put(39, new ItemGuiElement(Labels.create(Items.GLOWSTONE_DUST).withName("Swap Colours").build(), () -> {
+            Sounds.interact(player);
+            Menus.colourSwap(player, ColourSwapMenu.BANNER.apply(build()), CancellableCallback.of(swap -> {
+                Sounds.success(player);
+                var translated = BannerUtils.colourSwap(new PatternDescription(base, patterns, itemType == ItemType.SHIELD), Map.of(swap.getFirst(), swap.getSecond()));
+                this.base = translated.base;
+                this.patterns = translated.patterns;
+                open();
+            }, () -> {
+                Sounds.error(player);
+                open();
+            }));
         }));
 
         elements.put(45, Selector.create(ItemType.class, "Item Type", this.itemType, newType -> {
@@ -227,6 +240,31 @@ public class BannerEditor extends Editor {
         @Override
         public String settingName() {
             return settingName;
+        }
+    }
+
+    public record PatternDescription(DyeColor base, List<Pair<Holder<BannerPattern>, DyeColor>> patterns, boolean isShield) {
+        @Nullable
+        public static PatternDescription from(ItemStack stack) {
+            var item = stack.getItem();
+            var patterns = BannerBlockEntity.createPatterns(DyeColor.BLACK, BannerBlockEntity.getItemPatterns(stack));
+            patterns.remove(0);
+            if (item instanceof BannerItem banner) {
+                return new PatternDescription(banner.getColor(), patterns, false);
+            } else if (item == Items.SHIELD) {
+                var tag = BlockItem.getBlockEntityData(stack);
+                var colour = DyeColor.WHITE;
+                if (tag != null) {
+                    colour = DyeColor.byId(tag.getInt(ShieldItem.TAG_BASE_COLOR));
+                }
+                return new PatternDescription(colour, patterns, true);
+            }
+
+            return null;
+        }
+
+        public ItemStack build() {
+            return BannerUtils.builder(base).set(patterns).setShield(isShield).build();
         }
     }
 }

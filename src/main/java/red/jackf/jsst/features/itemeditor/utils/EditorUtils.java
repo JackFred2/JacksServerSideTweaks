@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.HopperMenu;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +44,10 @@ public class EditorUtils {
         return new ItemGuiElement(Labels.create(Items.BARRIER).withName("Cancel").build(), onClick);
     }
 
+    public static MenuProvider make5x1(Component title, Map<Integer, ItemGuiElement> elements) {
+        return make(HopperMenu::new, title, elements);
+    }
+
     public static MenuProvider make9x1(Component title, Map<Integer, ItemGuiElement> elements) {
         return make(ChestMenu::oneRow, title, elements);
     }
@@ -55,6 +60,7 @@ public class EditorUtils {
         return make(ChestMenu::threeRows, title, elements);
     }
 
+    @SuppressWarnings("unused")
     public static MenuProvider make9x4(Component title, Map<Integer, ItemGuiElement> elements) {
         return make(ChestMenu::fourRows, title, elements);
     }
@@ -67,7 +73,7 @@ public class EditorUtils {
         return make(ChestMenu::sixRows, title, elements);
     }
 
-    private static MenuProvider make(BiFunction<Integer, Inventory, ChestMenu> menuFunc, Component title, Map<Integer, ItemGuiElement> elements) {
+    private static MenuProvider make(BiFunction<Integer, Inventory, AbstractContainerMenu> menuFunc, Component title, Map<Integer, ItemGuiElement> elements) {
         return new MenuProvider() {
             @NotNull
             @Override
@@ -79,12 +85,10 @@ public class EditorUtils {
             public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
                 var menu = menuFunc.apply(i, inventory);
                 for (var slot : menu.slots) {
-                    if (slot.container != menu.getContainer()) continue;
+                    if (slot.container == inventory) continue;
                     if (elements.containsKey(slot.index)) {
                         slot.set(elements.get(slot.index).label());
-                    } /*else {
-                        slot.set(BLANK.copy());
-                    }*/
+                    }
                 }
                 ((JSSTSealableMenuWithButtons) menu).jsst_sealWithButtons(elements);
                 return menu;
