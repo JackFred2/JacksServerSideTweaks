@@ -12,6 +12,7 @@ import red.jackf.jsst.features.commanddefineddatapack.CommandDefinedDatapack;
 import red.jackf.jsst.features.displayitems.DisplayItems;
 import red.jackf.jsst.features.itemeditor.ItemEditor;
 import red.jackf.jsst.features.portablecrafting.PortableCrafting;
+import red.jackf.jsst.features.saplingsreplant.SaplingsReplant;
 import red.jackf.jsst.features.worldcontainernames.WorldContainerNames;
 import red.jackf.jsst.util.DelayedRunnables;
 
@@ -35,6 +36,7 @@ public class JSST implements ModInitializer {
         features.add(new CommandDefinedDatapack());
         features.add(new ItemEditor());
         features.add(new BannerWriter());
+        features.add(new SaplingsReplant());
     }
 
     @Override

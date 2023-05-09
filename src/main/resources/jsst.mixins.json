@@ -8,6 +8,7 @@
     "AbstractContainerMenuMixin",
     "CraftingMenuMixin",
     "DisplayMixin",
+    "ItemEntityMixin",
     "MobMixin"
   ],
   "client": [

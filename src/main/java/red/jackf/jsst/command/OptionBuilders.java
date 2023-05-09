@@ -2,6 +2,7 @@ package red.jackf.jsst.command;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
@@ -99,6 +100,36 @@ public class OptionBuilders {
         node.then(argument(name, FloatArgumentType.floatArg(min, max)).executes(ctx -> {
             var oldValue = getter.get();
             var newValue = FloatArgumentType.getFloat(ctx, name);
+            if (oldValue == newValue) {
+                ctx.getSource().sendFailure(unchanged(node.getLiteral(), oldValue.toString()));
+                return 0;
+            } else {
+                setter.accept(newValue);
+                JSST.CONFIG.save();
+                ctx.getSource()
+                        .sendSuccess(success(node.getLiteral(), oldValue.toString(), String.valueOf(newValue)), true);
+                return 1;
+            }
+        })).executes(ctx -> {
+            ctx.getSource().sendSuccess(display(node.getLiteral(), getter.get().toString()), false);
+            return 1;
+        });
+        return node;
+    }
+
+    /**
+     * Adds an integer range option to a node.
+     *
+     * @param name   Label for this option.
+     * @param getter Should return the option's current value.
+     * @param setter Called when a value is <i>changed</i>. This should set the new value in the config, and to update any world state.
+     * @return Created node for the option; use {@link com.mojang.brigadier.builder.ArgumentBuilder#then(ArgumentBuilder)} to add to a node.
+     */
+    public static LiteralArgumentBuilder<CommandSourceStack> withIntRange(String name, Integer min, Integer max, Supplier<Integer> getter, Consumer<Integer> setter) {
+        var node = literal(name);
+        node.then(argument(name, IntegerArgumentType.integer(min, max)).executes(ctx -> {
+            var oldValue = getter.get();
+            var newValue = IntegerArgumentType.getInteger(ctx, name);
             if (oldValue == newValue) {
                 ctx.getSource().sendFailure(unchanged(node.getLiteral(), oldValue.toString()));
                 return 0;

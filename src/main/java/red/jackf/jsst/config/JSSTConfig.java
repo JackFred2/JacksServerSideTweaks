@@ -8,6 +8,7 @@ import red.jackf.jsst.features.commanddefineddatapack.CommandDefinedDatapack;
 import red.jackf.jsst.features.displayitems.DisplayItems;
 import red.jackf.jsst.features.itemeditor.ItemEditor;
 import red.jackf.jsst.features.portablecrafting.PortableCrafting;
+import red.jackf.jsst.features.saplingsreplant.SaplingsReplant;
 import red.jackf.jsst.features.worldcontainernames.WorldContainerNames;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class JSSTConfig {
     public DisplayItems.Config displayItems = new DisplayItems.Config();
     public CommandDefinedDatapack.Config commandDefinedDatapack = new CommandDefinedDatapack.Config();
     public BannerWriter.Config bannerWriter = new BannerWriter.Config();
+    public SaplingsReplant.Config saplingsReplant = new SaplingsReplant.Config();
 
     public static class Handler {
         private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("jsst.json5");

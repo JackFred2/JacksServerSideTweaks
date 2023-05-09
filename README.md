@@ -198,3 +198,22 @@ Supported letters:
 `abcdefghijklmnopqrstuvwxyz0123456789 .,+-*/'"=!:`
 
 </details>
+
+### Sapling Replanter
+
+#### Config
+
+Sapling items try to plant themselves instead of de-spawning. Tries to space them out, and includes support for dark oak saplings.
+
+![Example of replanted saplings, spaced out by a block.](https://i.imgur.com/J6R5cwf.png)
+
+<details>
+
+| Option          | Description                                                                                                     | Default | Valid Options   |
+|-----------------|-----------------------------------------------------------------------------------------------------------------|---------|-----------------|
+| spacingEnabled  | Should saplings try to space themself out?                                                                      | `true`  | `true`, `false` |
+| minimumDistance | Minimum blocks between saplings. Requires `spacingEnabled`. Dark Oak has it's own handling.                     | `1`     | `[1, 3]`        |
+| searchRange     | Horizontal distance that saplings search for a valid position. Vertically, always checks layer above and below. | `3`     | `[1, 4]`        |
+| maxPerStack     | Maximum number of saplings to plant per dropped stack; the rest are discarded.                                  | `5`     | `[1, 64]`       |
+
+</details>
