@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
     private static final int[] verticalOffsets = new int[]{0, 1, -1};
 
+    // Generates a spiral outwards from Vec3i.ZERO, but not including ZERO.
     private static List<Vec3i> getSpiral(int radius) {
         var size = radius * 2 + 1;
         size *= size;
@@ -52,6 +53,7 @@ public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
         return list;
     }
 
+    // Checks if this sapling is far away enough from other saplings in the configured radius. Assumes spacing is enabled
     private static boolean isClear(ServerLevel level, BlockPos pos) {
         var range = JSST.CONFIG.get().saplingsReplant.minimumDistance;
         for (int x = -range; x < range + 1; x++)
@@ -60,6 +62,11 @@ public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
         return true;
     }
 
+    // checks if the border of a suspected 2x2 is clear:
+    // ? ? ? ?   ?: checked block
+    // . x x ?   x: suspected 2x2
+    // . o x ?   o: base pos
+    // . . . ?
     private static boolean is2x2BorderClear(ServerLevel level, BlockPos base, SaplingBlock block, int xMin, int xMax, int zMin, int zMax) {
         for (int x = xMin; x <= xMax; x++) {
             for (int z = zMin; z <= zMax; z++) {
@@ -72,6 +79,7 @@ public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
         return true;
     }
 
+    // checks if placing a sapling at a given position could plausibly complete a 2x2 without touching another
     private static boolean couldComplete2x2(ServerLevel level, BlockPos base, SaplingBlock block) {
         var neighbours = getSpiral(1).stream().filter(p -> level.getBlockState(base.offset(p)).is(block)).collect(Collectors.toList());
         if (neighbours.size() > 3) return false;
@@ -92,6 +100,8 @@ public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
         // . . # #
         // # . . .
         // # # . .
+        // this is ran when the one neighbour is directly adjacent to base; 2x2 could theoretically be either side, so try
+        // both
         if (neighbours.size() == 1) {
             if (xRange == 0) {
                 return is2x2BorderClear(level, base, block, xMin - 1, xMax, zMin, zMax)
@@ -105,6 +115,7 @@ public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
         return is2x2BorderClear(level, base, block, xMin, xMax, zMin, zMax);
     }
 
+    // Obtains a valid position for a sapling to be placed
     private static @Nullable BlockPos getValidPos(ServerLevel level, BlockPos base, SaplingBlock sapling) {
         var spiral = getSpiral(JSST.CONFIG.get().saplingsReplant.searchRange);
         spiral.add(0, Vec3i.ZERO);
@@ -136,6 +147,7 @@ public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
         return null;
     }
 
+    // Called when an itemstack is about to despawn
     public static void onItemDespawn(ItemEntity item) {
         if (!JSST.CONFIG.get().saplingsReplant.enabled) return;
         if (item.level instanceof ServerLevel level && item.getItem().getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof SaplingBlock sapling) {
