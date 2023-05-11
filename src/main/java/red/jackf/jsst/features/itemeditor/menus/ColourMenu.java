@@ -16,10 +16,12 @@ import red.jackf.jsst.features.itemeditor.utils.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static net.minecraft.network.chat.Component.translatable;
 
 public class ColourMenu {
+
     public static MutableComponent colourName(String text) {
         return translatable("color.minecraft." + text);
     }
@@ -59,11 +61,13 @@ public class ColourMenu {
     }
 
     private final ServerPlayer player;
-    private final CancellableCallback<Colour> callback;
+    private final CancellableCallback<Optional<Colour>> callback;
+    private final boolean withRemove;
 
-    protected ColourMenu(ServerPlayer player, CancellableCallback<Colour> callback) {
+    protected ColourMenu(ServerPlayer player, CancellableCallback<Optional<Colour>> callback, boolean withRemove) {
         this.player = player;
         this.callback = callback;
+        this.withRemove = withRemove;
     }
 
     protected void open() {
@@ -71,14 +75,18 @@ public class ColourMenu {
 
         var slot = 0;
         for (var colour : COLOURS.entrySet())
-            elements.put(slot++, new ItemGuiElement(colour.getKey(), () -> callback.accept(new Colour(colour.getValue()))));
+            elements.put(slot++, new ItemGuiElement(colour.getKey(), () -> callback.accept(Optional.of(new Colour(colour.getValue())))));
+
+        if (withRemove) elements.put(24, new ItemGuiElement(Labels.create(Items.GUNPOWDER).withName("No Colour").build(), () -> {
+            callback.accept(Optional.empty());
+        }));
 
         elements.put(25, new ItemGuiElement(Labels.create(Items.PAPER).withName("With Hex Code").build(), () -> {
             Sounds.interact(player);
             Menus.string(player, "#", CancellableCallback.of(hex -> {
                 var parsed = TextColor.parseColor(hex);
                 if (parsed != null) {
-                    callback.accept(new Colour(parsed.getValue()));
+                    callback.accept(Optional.of(new Colour(parsed.getValue())));
                 } else {
                     Sounds.error(player);
                     open();

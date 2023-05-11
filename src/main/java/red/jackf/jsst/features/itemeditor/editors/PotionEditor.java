@@ -141,21 +141,37 @@ public class PotionEditor extends Editor {
             this.customColour = null;
             open();
         }));
-        if (customColour != null) elements.put(38, new ItemGuiElement(Labels.create(Items.GUNPOWDER).withName("Clear Custom Colour").build(), () -> {
+        /*if (customColour != null) elements.put(38, new ItemGuiElement(Labels.create(Items.GUNPOWDER).withName("Clear Custom Colour").build(), () -> {
             Sounds.clear(player);
             this.customColour = null;
             open();
-        }));
+        }));*/
         elements.put(45, new ItemGuiElement(Labels.create(Items.GLOWSTONE_DUST).withName("Custom Colour").build(), () -> {
             Sounds.interact(player);
-            Menus.colour(player, CancellableCallback.of(newColour -> {
-                Sounds.success(player);
-                this.customColour = newColour;
-                open();
-            }, () -> {
-                Sounds.error(player);
-                open();
-            }));
+            if (this.customColour == null)
+                Menus.colour(player, CancellableCallback.of(newColour -> {
+                    Sounds.success(player);
+                    this.customColour = newColour;
+                    open();
+                }, () -> {
+                    Sounds.error(player);
+                    open();
+                }));
+            else
+                Menus.removeableColour(player, CancellableCallback.of(opt -> {
+                    if (opt.isPresent()) {
+                        Sounds.success(player);
+                        this.customColour = opt.get();
+                        open();
+                    } else {
+                        Sounds.clear(player);
+                        this.customColour = null;
+                        open();
+                    }
+                }, () -> {
+                    Sounds.error(player);
+                    open();
+                }));
         }));
         elements.put(46, EditorUtils.reset(this::reset));
         elements.put(47, EditorUtils.cancel(this::cancel));

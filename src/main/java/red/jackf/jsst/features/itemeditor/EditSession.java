@@ -30,6 +30,8 @@ public class EditSession {
             BookAuthorEditor::new,
             BookUnsigner::new,
             PlayerHeadEditor::new,
+            FireworkStarEditor::new,
+
             StackJSONPrinter::new
     );
 

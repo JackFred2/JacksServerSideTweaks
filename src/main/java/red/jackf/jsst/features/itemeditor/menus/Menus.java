@@ -108,7 +108,15 @@ public class Menus {
     }
 
     public static void colour(ServerPlayer player, CancellableCallback<Colour> callback) {
-        var colour = new ColourMenu(player, callback);
+        var colour = new ColourMenu(player, CancellableCallback.of(opt -> {
+            if (opt.isPresent()) callback.accept(opt.get());
+            else callback.cancel();
+        }, callback::cancel), false);
+        colour.open();
+    }
+
+    public static void removeableColour(ServerPlayer player, CancellableCallback<Optional<Colour>> callback) {
+        var colour = new ColourMenu(player, callback, true);
         colour.open();
     }
 
