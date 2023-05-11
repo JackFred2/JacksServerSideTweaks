@@ -27,6 +27,7 @@ Currently supports the following:
 - Book Author Editor
 - Book Unsigner
 - Head Owner Changer
+- Leather Armour Colour Editor
 
 and more as ideas come in.
 
