@@ -24,7 +24,11 @@ public class ColourEditor extends Editor {
 
     public ColourEditor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
         super(stack, player, completeCallback);
-        this.item = ((DyeableLeatherItem) stack.getItem());
+        if (stack.getItem() instanceof DyeableLeatherItem dyeable) {
+            this.item = dyeable;
+        } else {
+            this.item = null;
+        }
     }
 
     @Override
