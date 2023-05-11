@@ -24,6 +24,7 @@ public class EditSession {
             PotionEditor::new,
             AttributeModifierEditor::new,
             SuspiciousStewEditor::new,
+            ColourEditor::new,
             BannerEditor::new,
             DurabilityEditor::new,
             BookAuthorEditor::new,

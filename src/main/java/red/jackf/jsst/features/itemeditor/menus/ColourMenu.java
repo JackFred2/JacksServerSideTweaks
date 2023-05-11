@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.features.Sounds;
@@ -23,6 +24,8 @@ public class ColourMenu {
         return translatable("color.minecraft." + text);
     }
     public static final Map<ItemStack, Integer> COLOURS = new LinkedHashMap<>();
+
+    public static final Map<ItemStack, DyeColor> DYES = new LinkedHashMap<>(16);
     private static void put(ItemStack stack, Integer colour) {
         if (colour != null) stack.setHoverName(stack.getHoverName().copy().withStyle(Style.EMPTY.withColor(colour).withItalic(false)));
         COLOURS.put(stack, colour);
@@ -49,6 +52,10 @@ public class ColourMenu {
         put(Labels.create(Items.GOLDEN_APPLE).withName("Rare").build(), ChatFormatting.AQUA.getColor());
         put(Labels.create(Items.ENCHANTED_GOLDEN_APPLE).withName("Epic").build(), ChatFormatting.LIGHT_PURPLE.getColor());
         put(Labels.create(Items.NAME_TAG).withName("Tooltip").build(), ChatFormatting.BLUE.getColor());
+
+        COLOURS.forEach((stack, integer) -> {
+            if (stack.getItem() instanceof DyeItem item) DYES.put(stack, item.getDyeColor());
+        });
     }
 
     private final ServerPlayer player;
@@ -81,6 +88,7 @@ public class ColourMenu {
                 open();
             }));
         }));
+
         elements.put(26, EditorUtils.cancel(callback::cancel));
 
         player.openMenu(EditorUtils.make9x3(Component.literal("Select a colour"), elements));
