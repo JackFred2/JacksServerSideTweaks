@@ -28,6 +28,7 @@ Currently supports the following:
 - Book Unsigner
 - Head Owner Changer
 - Leather Armour Colour Editor
+- Firework & Firework Star Editors
 
 and more as ideas come in.
 
