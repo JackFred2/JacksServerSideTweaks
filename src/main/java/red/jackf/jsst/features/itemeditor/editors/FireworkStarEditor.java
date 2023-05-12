@@ -68,10 +68,6 @@ public class FireworkStarEditor extends Editor {
         return stack;
     }
 
-    private static int getSlot(int i) {
-        return (i / 4) * 9 + 5 + (i % 4);
-    }
-
     @Override
     public void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
@@ -93,13 +89,13 @@ public class FireworkStarEditor extends Editor {
             open();
         }));
 
-        elements.put(28, Selector.create(TrailToggle.class, "Trail Toggle", this.hasTrail, newType -> {
+        elements.put(12, Selector.create(TrailToggle.class, "Trail Toggle", this.hasTrail, newType -> {
             Sounds.interact(player);
             this.hasTrail = newType;
             open();
         }));
 
-        elements.put(29, Selector.create(TwinkleToggle.class, "Twinkle Toggle", this.hasTwinkle, newType -> {
+        elements.put(21, Selector.create(TwinkleToggle.class, "Twinkle Toggle", this.hasTwinkle, newType -> {
             Sounds.interact(player);
             this.hasTwinkle = newType;
             open();
@@ -110,10 +106,9 @@ public class FireworkStarEditor extends Editor {
         int i;
         var list = colourView == ColourView.COLOURS ? this.colours : this.fadeColours;
         for (i = 0; i < Math.min(MAX_COLOURS, list.size() + 1); i++) {
-            var slot = getSlot(i);
+            var slot = (i / 4) * 9 + 5 + (i % 4);
             if (i < list.size()) {
                 var colour = list.get(i);
-                var dyeColour = DyeColor.byFireworkColor(colour.value());
                 var title = Component.literal(colour.formatString());
                 int finalI = i;
                 elements.put(slot, new ItemGuiElement(Labels.create(EditorUtils.colourToItem(colour.value()))
@@ -135,12 +130,25 @@ public class FireworkStarEditor extends Editor {
                 }));
             } else {
                 elements.put(slot, new ItemGuiElement(Labels.create(Items.NETHER_STAR).withName("Add new colour").build(), () -> {
-                Sounds.success(player);
-                list.add(Colour.fromHsv(new Random().nextFloat(), 1, 1));
-                open();
-            }));
+                    Sounds.success(player);
+                    list.add(Colour.fromHsv(new Random().nextFloat(), 1, 1));
+                    open();
+                }));
             }
         }
+
+        elements.put(28, EditorUtils.clear(() -> {
+            Sounds.clear(player);
+            (this.colourView == ColourView.COLOURS ? this.colours : this.fadeColours).clear();
+            open();
+        }));
+
+        elements.put(29, EditorUtils.reset(() -> {
+            Sounds.clear(player);
+            this.stack = getOriginal();
+            parseStar();
+            open();
+        }));
 
         elements.put(30, EditorUtils.cancel(this::cancel));
 

@@ -77,9 +77,7 @@ public class ColourMenu {
         for (var colour : COLOURS.entrySet())
             elements.put(slot++, new ItemGuiElement(colour.getKey(), () -> callback.accept(Optional.of(new Colour(colour.getValue())))));
 
-        if (withRemove) elements.put(24, new ItemGuiElement(Labels.create(Items.GUNPOWDER).withName("No Colour").build(), () -> {
-            callback.accept(Optional.empty());
-        }));
+        if (withRemove) elements.put(24, new ItemGuiElement(Labels.create(Items.GUNPOWDER).withName("No Colour").build(), () -> callback.accept(Optional.empty())));
 
         elements.put(25, new ItemGuiElement(Labels.create(Items.PAPER).withName("With Hex Code").build(), () -> {
             Sounds.interact(player);

@@ -14,8 +14,8 @@ public abstract class Editor {
     private final ItemStack originalStack;
 
     public Editor(ItemStack stack, ServerPlayer player, Consumer<ItemStack> completeCallback) {
-        this.stack = stack;
-        this.originalStack = stack.copy();
+        this.stack = stack.copy();
+        this.originalStack = stack;
         this.player = player;
         this.completeCallback = completeCallback;
     }

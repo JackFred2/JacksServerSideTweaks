@@ -73,7 +73,7 @@ public class Menus {
 
     // Returns a double that is non-infinite and non-NaN
     public static void decimal(ServerPlayer player, double value, CancellableCallback<Double> callback) {
-        string(player, "%.2f".formatted(value), CancellableCallback.of(d -> {
+        string(player, "%.2f".formatted(value), "Input decimal", CancellableCallback.of(d -> {
             try {
                 var newValue = Double.valueOf(d);
                 if (!newValue.isInfinite() && !newValue.isNaN()) {
@@ -81,6 +81,17 @@ public class Menus {
                 } else {
                     callback.cancel();
                 }
+            } catch (NumberFormatException ex) {
+                callback.cancel();
+            }
+        }, callback::cancel));
+    }
+
+    // Returns a double that is non-infinite and non-NaN
+    public static void integer(ServerPlayer player, int value, CancellableCallback<Integer> callback) {
+        string(player, String.valueOf(value), "Input integer", CancellableCallback.of(i -> {
+            try {
+                callback.accept(Integer.valueOf(i));
             } catch (NumberFormatException ex) {
                 callback.cancel();
             }
