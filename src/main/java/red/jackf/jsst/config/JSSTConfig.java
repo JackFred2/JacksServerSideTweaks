@@ -4,6 +4,7 @@ import blue.endless.jankson.api.SyntaxError;
 import net.fabricmc.loader.api.FabricLoader;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.features.bannerwriter.BannerWriter;
+import red.jackf.jsst.features.beaconrangemodifier.BeaconRangeModifier;
 import red.jackf.jsst.features.commanddefineddatapack.CommandDefinedDatapack;
 import red.jackf.jsst.features.displayitems.DisplayItems;
 import red.jackf.jsst.features.itemeditor.ItemEditor;
@@ -23,6 +24,7 @@ public class JSSTConfig {
     public CommandDefinedDatapack.Config commandDefinedDatapack = new CommandDefinedDatapack.Config();
     public BannerWriter.Config bannerWriter = new BannerWriter.Config();
     public SaplingsReplant.Config saplingsReplant = new SaplingsReplant.Config();
+    public BeaconRangeModifier.Config beaconRangeModifier = new BeaconRangeModifier.Config();
 
     public static class Handler {
         private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("jsst.json5");

@@ -203,13 +203,13 @@ Supported letters:
 
 ### Sapling Replanter
 
-#### Config
-
 Sapling items try to plant themselves instead of de-spawning. Tries to space them out, and includes support for dark oak saplings.
 
 ![Example of replanted saplings, spaced out by a block.](https://i.imgur.com/J6R5cwf.png)
 
 <details>
+
+#### Config
 
 | Option          | Description                                                                                                     | Default | Valid Options   |
 |-----------------|-----------------------------------------------------------------------------------------------------------------|---------|-----------------|
@@ -217,5 +217,30 @@ Sapling items try to plant themselves instead of de-spawning. Tries to space the
 | minimumDistance | Minimum blocks between saplings. Requires `spacingEnabled`. Dark Oak has it's own handling.                     | `1`     | `[1, 3]`        |
 | searchRange     | Horizontal distance that saplings search for a valid position. Vertically, always checks layer above and below. | `3`     | `[1, 4]`        |
 | maxPerStack     | Maximum number of saplings to plant per dropped stack; the rest are discarded.                                  | `5`     | `[1, 64]`       |
+
+</details>
+
+### Beacon Range Multiplier
+
+Beacons can have a multiplier to their range added.
+
+![A beacon granting it's effect well over the vanilla 20 block range](https://i.imgur.com/74TE08q.png)
+
+<details>
+
+For reference, various ranges for beacons are:
+
+| Level | Vanilla Range in Blocks | 1.5x (mod default) | 4x  | 8x  |
+|-------|-------------------------|--------------------|-----|-----|
+| 1     | 20                      | 30                 | 80  | 160 |
+| 2     | 30                      | 45                 | 120 | 240 |
+| 3     | 40                      | 60                 | 160 | 320 |
+| 4     | 50                      | 75                 | 200 | 400 |
+
+#### Config
+
+| Option          | Description                                            | Default | Valid Options |
+|-----------------|--------------------------------------------------------|---------|---------------|
+| rangeMultiplier | What multiplier should be given to the beacon's range? | `1.5`   | [0.5, 8]      |
 
 </details>

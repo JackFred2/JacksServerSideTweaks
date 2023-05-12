@@ -8,6 +8,7 @@ import red.jackf.jsst.command.JSSTCommand;
 import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.features.Feature;
 import red.jackf.jsst.features.bannerwriter.BannerWriter;
+import red.jackf.jsst.features.beaconrangemodifier.BeaconRangeModifier;
 import red.jackf.jsst.features.commanddefineddatapack.CommandDefinedDatapack;
 import red.jackf.jsst.features.displayitems.DisplayItems;
 import red.jackf.jsst.features.itemeditor.ItemEditor;
@@ -37,6 +38,7 @@ public class JSST implements ModInitializer {
         features.add(new ItemEditor());
         features.add(new BannerWriter());
         features.add(new SaplingsReplant());
+        features.add(new BeaconRangeModifier());
     }
 
     @Override

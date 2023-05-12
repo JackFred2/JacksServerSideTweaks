@@ -6,6 +6,7 @@
   "mixins": [
     "AbstractBannerBlockMixin",
     "AbstractContainerMenuMixin",
+    "BeaconBlockEntityMixin",
     "CraftingMenuMixin",
     "DisplayMixin",
     "ItemEntityMixin",
