@@ -1,9 +1,11 @@
 package red.jackf.jsst.features.itemeditor.editors;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.ItemStack;
@@ -72,7 +74,7 @@ public class FireworkStarEditor extends Editor {
     public void open() {
         var elements = new HashMap<Integer, ItemGuiElement>();
 
-        elements.put(10, new ItemGuiElement(Labels.create(build()).keepLore().withHint("Click to finish").build(), () -> {
+        elements.put(0, new ItemGuiElement(Labels.create(build()).keepLore().withHint("Click to finish").build(), () -> {
             this.stack = build();
             complete();
         }));
@@ -83,13 +85,13 @@ public class FireworkStarEditor extends Editor {
             open();
         }));
 
-        elements.put(27, Selector.create(FireworkType.class, "Firework Shape", this.fireworkType, newType -> {
+        elements.put(19, Selector.create(FireworkType.class, "Firework Shape", this.fireworkType, newType -> {
             Sounds.interact(player);
             this.fireworkType = newType;
             open();
         }));
 
-        elements.put(12, Selector.create(TrailToggle.class, "Trail Toggle", this.hasTrail, newType -> {
+        elements.put(20, Selector.create(TrailToggle.class, "Trail Toggle", this.hasTrail, newType -> {
             Sounds.interact(player);
             this.hasTrail = newType;
             open();
@@ -136,6 +138,26 @@ public class FireworkStarEditor extends Editor {
                 }));
             }
         }
+
+        elements.put(27, new ItemGuiElement(Labels.create(Items.FIREWORK_ROCKET).withName("Finish and make rocket").build(), () -> {
+            Sounds.interact(player);
+            Menus.integer(player, 0, CancellableCallback.of(length -> {
+                length = Mth.clamp(length, 1, 127);
+                var rocketStack = new ItemStack(Items.FIREWORK_ROCKET);
+                var tag = rocketStack.getOrCreateTag();
+                var fireworkTag = new CompoundTag();
+                var listTag = new ListTag();
+                listTag.add(build().getOrCreateTag().getCompound(FireworkRocketItem.TAG_EXPLOSION));
+                fireworkTag.put(FireworkRocketItem.TAG_EXPLOSIONS, listTag);
+                fireworkTag.putByte(FireworkRocketItem.TAG_FLIGHT, length.byteValue());
+                tag.put(FireworkRocketItem.TAG_FIREWORKS, fireworkTag);
+                this.stack = rocketStack;
+                complete();
+            }, () -> {
+                Sounds.error(player);
+                open();
+            }));
+        }));
 
         elements.put(28, EditorUtils.clear(() -> {
             Sounds.clear(player);
