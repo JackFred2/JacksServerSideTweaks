@@ -149,7 +149,7 @@ public class TagSubcommand {
         if (tagFile == null) throw ERROR_NO_DATAPACK_TAG.create(tagId);
         var replace = ctx.getArgument("shouldReplace", Boolean.class);
         datapackTagsForRegistry.put(tagId, new TagFile(tagFile.entries(), replace));
-        ctx.getSource().sendSuccess(list(TextType.SUCCESS,
+        ctx.getSource().sendSuccess(() -> list(TextType.SUCCESS,
                 text("Marked "),
                 variable(tagId.toString()),
                 text(" to " + (replace ? "" : "not ") + "replace other tags.")), true);
@@ -181,7 +181,7 @@ public class TagSubcommand {
         if (tagFile == null) throw ERROR_NO_DATAPACK_TAG.create(tagId);
         var toRemove = ctx.getArgument("elementToRemove", String.class);
         if (!removeElement(tagFile, toRemove)) throw ERROR_NO_SUCH_ELEMENT.create(toRemove);
-        ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+        ctx.getSource().sendSuccess(() -> line(TextType.SUCCESS,
                 text("Removed "),
                 variable(toRemove),
                 text(" from "),
@@ -189,7 +189,7 @@ public class TagSubcommand {
                 text(".")), true);
         if (tagFile.entries().size() == 0) {
             datapackTagsForRegistry.remove(tagId, tagFile);
-            ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+            ctx.getSource().sendSuccess(() -> line(TextType.SUCCESS,
                     variable(tagId.toString()),
                     text(" is now empty, removing.")), true);
         }
@@ -216,7 +216,7 @@ public class TagSubcommand {
         var tagId = ctx.getArgument("to", ResourceLocation.class);
         var newValue = ctx.getArgument("newElement", ResourceLocation.class);
         addToTag(registry, tagId, optional ? TagEntry.optionalElement(newValue) : TagEntry.element(newValue));
-        ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+        ctx.getSource().sendSuccess(() -> line(TextType.SUCCESS,
                 text("Added "),
                 variable(newValue.toString()),
                 text(" to "),
@@ -233,7 +233,7 @@ public class TagSubcommand {
         var tagId = ctx.getArgument("to", ResourceLocation.class);
         var newTag = ctx.getArgument("newTag", ResourceLocation.class);
         addToTag(registry, tagId, optional ? TagEntry.optionalTag(newTag) : TagEntry.tag(newTag));
-        ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+        ctx.getSource().sendSuccess(() -> line(TextType.SUCCESS,
                 text("Added "),
                 variable("#" + newTag),
                 text(" to "),

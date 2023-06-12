@@ -68,19 +68,19 @@ public class OptionBuilders {
             node.then(literal(value.getSerializedName()).executes(ctx -> {
                 var oldValue = getter.get();
                 if (oldValue == value) {
-                    ctx.getSource().sendSuccess(unchanged(node.getLiteral(), value.getSerializedName()), false);
+                    ctx.getSource().sendSuccess(() -> unchanged(node.getLiteral(), value.getSerializedName()), false);
                     return 0;
                 } else {
                     setter.accept(value);
                     JSST.CONFIG.save();
-                    ctx.getSource().sendSuccess(success(node.getLiteral(), oldValue.getSerializedName(), value.getSerializedName()), true);
+                    ctx.getSource().sendSuccess(() -> success(node.getLiteral(), oldValue.getSerializedName(), value.getSerializedName()), true);
                     return 1;
                 }
             }));
         }
 
         node.executes(ctx -> {
-            ctx.getSource().sendSuccess(display(node.getLiteral(), getter.get().getSerializedName()), false);
+            ctx.getSource().sendSuccess(() -> display(node.getLiteral(), getter.get().getSerializedName()), false);
             return 1;
         });
 
@@ -107,11 +107,11 @@ public class OptionBuilders {
                 setter.accept(newValue);
                 JSST.CONFIG.save();
                 ctx.getSource()
-                        .sendSuccess(success(node.getLiteral(), oldValue.toString(), String.valueOf(newValue)), true);
+                        .sendSuccess(() -> success(node.getLiteral(), oldValue.toString(), String.valueOf(newValue)), true);
                 return 1;
             }
         })).executes(ctx -> {
-            ctx.getSource().sendSuccess(display(node.getLiteral(), getter.get().toString()), false);
+            ctx.getSource().sendSuccess(() -> display(node.getLiteral(), getter.get().toString()), false);
             return 1;
         });
         return node;
@@ -137,11 +137,11 @@ public class OptionBuilders {
                 setter.accept(newValue);
                 JSST.CONFIG.save();
                 ctx.getSource()
-                        .sendSuccess(success(node.getLiteral(), oldValue.toString(), String.valueOf(newValue)), true);
+                        .sendSuccess(() -> success(node.getLiteral(), oldValue.toString(), String.valueOf(newValue)), true);
                 return 1;
             }
         })).executes(ctx -> {
-            ctx.getSource().sendSuccess(display(node.getLiteral(), getter.get().toString()), false);
+            ctx.getSource().sendSuccess(() -> display(node.getLiteral(), getter.get().toString()), false);
             return 1;
         });
         return node;
@@ -166,11 +166,11 @@ public class OptionBuilders {
             } else {
                 setter.accept(newValue);
                 JSST.CONFIG.save();
-                ctx.getSource().sendSuccess(success(node.getLiteral(), oldValue.toString(), newValue.toString()), true);
+                ctx.getSource().sendSuccess(() -> success(node.getLiteral(), oldValue.toString(), newValue.toString()), true);
                 return 1;
             }
         })).executes(ctx -> {
-            ctx.getSource().sendSuccess(display(node.getLiteral(), getter.get().toString()), false);
+            ctx.getSource().sendSuccess(() -> display(node.getLiteral(), getter.get().toString()), false);
             return 1;
         });
         return node;
@@ -179,14 +179,14 @@ public class OptionBuilders {
     static void addEnabled(LiteralArgumentBuilder<CommandSourceStack> base, Feature<?> feature) {
         base.then(literal("enable").executes(ctx -> {
             if (feature.getConfig().enabled) {
-                ctx.getSource().sendSuccess(line(TextType.INFO,
+                ctx.getSource().sendSuccess(() -> line(TextType.INFO,
                         text(feature.id()),
                         symbol(": "),
                         variable("enabled"),
                         text(" (unchanged)")), false);
                 return 0;
             } else {
-                ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+                ctx.getSource().sendSuccess(() -> line(TextType.SUCCESS,
                         text(feature.id()),
                         symbol(": "),
                         variable("disabled"),
@@ -199,14 +199,14 @@ public class OptionBuilders {
             }
         })).then(literal("disable").executes(ctx -> {
             if (!feature.getConfig().enabled) {
-                ctx.getSource().sendSuccess(line(TextType.INFO,
+                ctx.getSource().sendSuccess(() -> line(TextType.INFO,
                         text(feature.id()),
                         symbol(": "),
                         variable("disabled"),
                         text(" (unchanged)")), false);
                 return 0;
             } else {
-                ctx.getSource().sendSuccess(line(TextType.ERROR,
+                ctx.getSource().sendSuccess(() -> line(TextType.ERROR,
                         text(feature.id()),
                         symbol(": "),
                         variable("enabled"),
@@ -219,13 +219,13 @@ public class OptionBuilders {
             }
         })).executes(ctx -> {
             if (feature.getConfig().enabled) {
-                ctx.getSource().sendSuccess(line(TextType.SUCCESS,
+                ctx.getSource().sendSuccess(() -> line(TextType.SUCCESS,
                         text(feature.id()),
                         symbol(": "),
                         text("enabled")), false);
                 return 1;
             } else {
-                ctx.getSource().sendSuccess(line(TextType.ERROR,
+                ctx.getSource().sendSuccess(() -> line(TextType.ERROR,
                         text(feature.id()),
                         symbol(": "),
                         text("disabled")), false);

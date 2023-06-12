@@ -25,7 +25,7 @@ public class PortableCrafting extends Feature<PortableCrafting.Config> {
 
     private static MenuProvider getProvider(InteractionHand hand, Component title) {
         return new SimpleMenuProvider(((i, inventory, player) -> {
-            final CraftingMenu menu = new CraftingMenu(i, player.getInventory(), ContainerLevelAccess.create(player.level, player.getOnPos()));
+            final CraftingMenu menu = new CraftingMenu(i, player.getInventory(), ContainerLevelAccess.create(player.level(), player.getOnPos()));
             ((JSSTInventoryItemValidable) menu).jsst_setItemValidation(hand);
             return menu;
         }), title);

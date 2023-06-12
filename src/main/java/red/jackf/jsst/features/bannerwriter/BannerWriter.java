@@ -131,7 +131,7 @@ public class BannerWriter extends Feature<Feature.Config> {
                         .executes(ctx -> {
                             var builder = new StringBuilder();
                             ALPHABET.keySet().forEach(builder::append);
-                            ctx.getSource().sendSuccess(line(TextType.INFO, variable(builder.toString())), false);
+                            ctx.getSource().sendSuccess(() -> line(TextType.INFO, variable(builder.toString())), false);
                             return 0;
                         })
         ).then(Commands.literal("stop")
@@ -140,7 +140,7 @@ public class BannerWriter extends Feature<Feature.Config> {
                     var tag = stack.getTag();
                     if (tag != null && tag.contains(TAG, Tag.TAG_STRING)) {
                         tag.remove(TAG);
-                        ctx.getSource().sendSuccess(line(TextType.SUCCESS, text("removed banner mark")), false);
+                        ctx.getSource().sendSuccess(() -> line(TextType.SUCCESS, text("removed banner mark")), false);
                         return 1;
                     } else {
                         ctx.getSource().sendFailure(line(TextType.ERROR, text("banner not marked for writing")));
@@ -157,10 +157,10 @@ public class BannerWriter extends Feature<Feature.Config> {
         }
         var str = ctx.getArgument("text", String.class).trim();
         stack.getOrCreateTag().putString(TAG, str);
-        ctx.getSource().sendSuccess(CommandUtils.line(TextType.SUCCESS, text("marked banners to write "), variable(str)), false);
+        ctx.getSource().sendSuccess(() -> CommandUtils.line(TextType.SUCCESS, text("marked banners to write "), variable(str)), false);
         var player = ctx.getSource().getPlayerOrException();
         if (!player.gameMode.isCreative() && stack.getCount() < str.length())
-            ctx.getSource().sendSuccess(CommandUtils.line(TextType.INFO, text("warning: you have less banners than characters")), false);
+            ctx.getSource().sendSuccess(() -> CommandUtils.line(TextType.INFO, text("warning: you have less banners than characters")), false);
         var unknown = new StringBuilder();
         for (var c : str.toLowerCase().toCharArray()) {
             if (!ALPHABET.containsKey(c)) {
@@ -169,7 +169,7 @@ public class BannerWriter extends Feature<Feature.Config> {
         }
         var unknownStr = unknown.toString();
         if (unknownStr.length() > 0) {
-            ctx.getSource().sendSuccess(CommandUtils.line(TextType.INFO, text("unmapped characters, will be replaced with blank space: "), variable(unknownStr)), false);
+            ctx.getSource().sendSuccess(() -> CommandUtils.line(TextType.INFO, text("unmapped characters, will be replaced with blank space: "), variable(unknownStr)), false);
         }
         Sounds.success(ctx.getSource().getPlayer());
         return 1;

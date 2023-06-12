@@ -150,7 +150,7 @@ public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
     // Called when an itemstack is about to despawn
     public static void onItemDespawn(ItemEntity item) {
         if (!JSST.CONFIG.get().saplingsReplant.enabled) return;
-        if (item.level instanceof ServerLevel level && item.getItem().getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof SaplingBlock sapling) {
+        if (item.level() instanceof ServerLevel level && item.getItem().getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof SaplingBlock sapling) {
             for (int i = 0; i <  Math.min(JSST.CONFIG.get().saplingsReplant.maxPerStack, item.getItem().getCount()); i++) {
                 var pos = getValidPos(level, item.blockPosition(), sapling);
                 if (pos == null) return;

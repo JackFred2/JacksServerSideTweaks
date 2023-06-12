@@ -35,7 +35,7 @@ public class JSSTCommand {
                         if (i > 0) str.add(CommandUtils.symbol(", "));
                         str.add(CommandUtils.text(enabled.get(i).id()));
                     }
-                    ctx.getSource().sendSuccess(CommandUtils.line(CommandUtils.TextType.SUCCESS, str), false);
+                    ctx.getSource().sendSuccess(() -> CommandUtils.line(CommandUtils.TextType.SUCCESS, str), false);
                 }
 
                 if (disabled.size() > 0) {
@@ -44,7 +44,7 @@ public class JSSTCommand {
                         if (i > 0) str.add(CommandUtils.symbol(", "));
                         str.add(CommandUtils.text(disabled.get(i).id()));
                     }
-                    ctx.getSource().sendSuccess(CommandUtils.line(CommandUtils.TextType.ERROR, str), false);
+                    ctx.getSource().sendSuccess(() -> CommandUtils.line(CommandUtils.TextType.ERROR, str), false);
                 }
                 return 1;
             });
