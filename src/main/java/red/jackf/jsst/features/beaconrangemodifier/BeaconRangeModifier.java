@@ -7,9 +7,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.util.Mth;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.OptionBuilders;
-import red.jackf.jsst.features.Feature;
+import red.jackf.jsst.features.ToggleableFeature;
 
-public class BeaconRangeModifier extends Feature<BeaconRangeModifier.Config> {
+public class BeaconRangeModifier extends ToggleableFeature<BeaconRangeModifier.Config> {
 
     @Override
     public void init() {
@@ -32,7 +32,7 @@ public class BeaconRangeModifier extends Feature<BeaconRangeModifier.Config> {
         return JSST.CONFIG.get().beaconRangeModifier;
     }
 
-    public static class Config extends Feature.Config {
+    public static class Config extends ToggleableFeature.Config {
         @Comment("Multiplier for the range on beacons. (Default: 1.5, Range: [0.5, 8])")
         public float rangeMultiplier = 1.5f;
     }

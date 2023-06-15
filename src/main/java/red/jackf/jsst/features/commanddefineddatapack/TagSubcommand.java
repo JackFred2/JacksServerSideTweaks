@@ -96,44 +96,43 @@ public class TagSubcommand {
     }
 
     // Generate command tree for tag editing
-    public static LiteralArgumentBuilder<CommandSourceStack> create(CommandDefinedDatapack cdd) {
-        var wrapper = CommandUtils.wrapper(cdd);
+    public static LiteralArgumentBuilder<CommandSourceStack> create() {
         return literal("tag")
                 .then(argument("registry", ResourceLocationArgument.id()).suggests(SUGGESTIONS_REGISTRY)
                         .then(literal("listTags")
-                                .executes(wrapper.wrap(ctx -> listTagsForRegistry(ctx, null)))
+                                .executes(ctx -> listTagsForRegistry(ctx, null))
                                 .then(argument("filter", StringArgumentType.greedyString())
-                                        .executes(wrapper.wrap(ctx -> listTagsForRegistry(ctx, ctx.getArgument("filter", String.class))))))
+                                        .executes(ctx -> listTagsForRegistry(ctx, ctx.getArgument("filter", String.class)))))
                         .then(literal("list")
                                 .then(argument("tag", ResourceLocationArgument.id())
                                         .suggests(SUGGESTIONS_TAGS)
-                                        .executes(wrapper.wrap(TagSubcommand::listTagContents))))
+                                        .executes(TagSubcommand::listTagContents)))
                         .then(literal("add")
                                 .then(argument("to", ResourceLocationArgument.id())
                                         .suggests(SUGGESTIONS_TAGS)
                                         .then(literal("value")
                                                 .then(argument("newElement", ResourceLocationArgument.id())
                                                         .suggests(TagSubcommand::getElementSuggestions)
-                                                        .executes(wrapper.wrap(ctx -> TagSubcommand.addElementToTag(ctx, false)))
+                                                        .executes(ctx -> TagSubcommand.addElementToTag(ctx, false))
                                                         .then(literal("optional")
-                                                                .executes(wrapper.wrap(ctx -> TagSubcommand.addElementToTag(ctx, true))))))
+                                                                .executes(ctx -> TagSubcommand.addElementToTag(ctx, true)))))
                                         .then(literal("tag")
                                                 .then(argument("newTag", ResourceLocationArgument.id())
                                                         .suggests(TagSubcommand::getTagSuggestions)
-                                                        .executes(wrapper.wrap(ctx -> TagSubcommand.addTagToTag(ctx, false)))
+                                                        .executes(ctx -> TagSubcommand.addTagToTag(ctx, false))
                                                         .then(literal("optional")
-                                                                .executes(wrapper.wrap(ctx -> TagSubcommand.addTagToTag(ctx, true))))))))
+                                                                .executes(ctx -> TagSubcommand.addTagToTag(ctx, true)))))))
                         .then(literal("remove")
                                 .then(argument("datapackTag", ResourceLocationArgument.id())
                                         .suggests(SUGGESTIONS_DATAPACK_TAGS)
                                         .then(argument("elementToRemove", StringArgumentType.greedyString())
                                                 .suggests(TagSubcommand::getDatapackElementSuggestions)
-                                                .executes(wrapper.wrap(TagSubcommand::removeFromTag)))))
+                                                .executes(TagSubcommand::removeFromTag))))
                         .then(literal("setReplace")
                                 .then(argument("datapackTag", ResourceLocationArgument.id())
                                         .suggests(SUGGESTIONS_DATAPACK_TAGS)
                                         .then(argument("shouldReplace", BoolArgumentType.bool())
-                                                .executes(wrapper.wrap(TagSubcommand::setReplace))))));
+                                                .executes(TagSubcommand::setReplace)))));
     }
 
     private static int setReplace(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

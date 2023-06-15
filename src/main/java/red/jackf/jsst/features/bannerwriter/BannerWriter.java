@@ -120,11 +120,10 @@ public class BannerWriter extends Feature<Feature.Config> {
 
     @Override
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node, CommandBuildContext buildContext) {
-        var wrapper = CommandUtils.wrapper(this);
         node.then(
                 Commands.literal("start").then(
                         Commands.argument("text", StringArgumentType.greedyString())
-                                .executes(wrapper.wrap(BannerWriter::start))
+                                .executes(BannerWriter::start)
                 )
         ).then(
                 Commands.literal("supported")
@@ -187,7 +186,6 @@ public class BannerWriter extends Feature<Feature.Config> {
 
     // Called on banner place
     public static void onBannerPlaced(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        if (!JSST.CONFIG.get().bannerWriter.enabled) return;
         var tag = stack.getTag();
         if (tag == null || !tag.contains(TAG, Tag.TAG_STRING)) return;
         var str = tag.getString(TAG);

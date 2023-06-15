@@ -7,7 +7,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import red.jackf.jsst.features.Feature;
+import red.jackf.jsst.features.ToggleableFeature;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -86,7 +86,7 @@ public final class CommandUtils {
     }
 
     // Wrapper around a brigadier command that fails if the feature is not enabled.
-    public static EnabledWrapper wrapper(Feature<?> feature) {
+    public static EnabledWrapper wrapper(ToggleableFeature<?> feature) {
         return command -> ctx -> {
             if (!feature.getConfig().enabled) {
                 ctx.getSource().sendFailure(line(TextType.ERROR, text("Feature "), variable(feature.id()), text(" not enabled!")));

@@ -47,13 +47,13 @@ public class CommandDefinedDatapack extends Feature<CommandDefinedDatapack.Confi
     @Override
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node, CommandBuildContext buildContext) {
         node.then(
-            TagSubcommand.create(this)
-        ).then(literal("save").executes(CommandUtils.wrapper(this).wrap(ctx -> {
+            TagSubcommand.create()
+        ).then(literal("save").executes(ctx -> {
             if (currentState == null) throw ERROR_DATAPACK_NOT_LOADED.create();
             currentState.save();
             CommandUtils.line(CommandUtils.TextType.SUCCESS, CommandUtils.text("Saved new datapack state."));
             return 1;
-        })));
+        }));
     }
 
     public static class Config extends Feature.Config {

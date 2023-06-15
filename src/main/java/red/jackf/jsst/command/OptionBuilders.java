@@ -9,7 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringRepresentable;
 import red.jackf.jsst.JSST;
-import red.jackf.jsst.features.Feature;
+import red.jackf.jsst.features.ToggleableFeature;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -176,7 +176,7 @@ public class OptionBuilders {
         return node;
     }
 
-    static void addEnabled(LiteralArgumentBuilder<CommandSourceStack> base, Feature<?> feature) {
+    static void addEnabled(LiteralArgumentBuilder<CommandSourceStack> base, ToggleableFeature<?> feature) {
         base.then(literal("enable").executes(ctx -> {
             if (feature.getConfig().enabled) {
                 ctx.getSource().sendSuccess(() -> line(TextType.INFO,

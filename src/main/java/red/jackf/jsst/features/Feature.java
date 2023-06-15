@@ -1,6 +1,5 @@
 package red.jackf.jsst.features;
 
-import blue.endless.jankson.Comment;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -30,23 +29,11 @@ public abstract class Feature<C extends Feature.Config> {
     public abstract C getConfig();
 
     /**
-     * Called when this feature is enabled.
-     */
-    public void onEnabled() {}
-
-    /**
-     * Called when this feature is disabled.
-     */
-    public void onDisabled() {}
-
-    /**
      * Add any nodes to this feature's command here. Helpers for config options are available in {@link OptionBuilders}.
      * @param node this feature's root node.
      */
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node, CommandBuildContext buildContext) {}
 
     public static abstract class Config {
-        @Comment("Is this feature enabled? (Default: true, Options: true, false)")
-        public boolean enabled = true;
     }
 }

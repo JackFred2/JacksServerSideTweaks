@@ -18,9 +18,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.OptionBuilders;
-import red.jackf.jsst.features.Feature;
+import red.jackf.jsst.features.ToggleableFeature;
 
-public class PortableCrafting extends Feature<PortableCrafting.Config> {
+public class PortableCrafting extends ToggleableFeature<PortableCrafting.Config> {
     public static final TagKey<Item> CRAFTING_TABLES = TagKey.create(Registries.ITEM, JSST.id("crafting_tables"));
 
     private static MenuProvider getProvider(InteractionHand hand, Component title) {
@@ -61,7 +61,7 @@ public class PortableCrafting extends Feature<PortableCrafting.Config> {
         node.then(OptionBuilders.withBoolean("sneakOnly", () -> getConfig().sneakOnly, newValue -> getConfig().sneakOnly = newValue));
     }
 
-    public static class Config extends Feature.Config {
+    public static class Config extends ToggleableFeature.Config {
         @Comment("Whether players need to sneak to use crafting tables as items. (Default: false, Options: true, false)")
         public boolean sneakOnly = false;
     }

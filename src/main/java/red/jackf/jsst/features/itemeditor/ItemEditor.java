@@ -35,8 +35,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
 
     @Override
     public void setupCommand(LiteralArgumentBuilder<CommandSourceStack> node, CommandBuildContext buildContext) {
-        var wrapper = CommandUtils.wrapper(this);
-        node.then(literal("hand").executes(wrapper.wrap(ctx -> {
+        node.then(literal("hand").executes(ctx -> {
             var player = ctx.getSource().getPlayerOrException();
             var item = player.getMainHandItem();
             if (item.isEmpty()) item = player.getOffhandItem();
@@ -46,7 +45,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
             }
             startEditor(ctx.getSource(), item, player.getMainHandItem().isEmpty() ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
             return 1;
-        }))).then(literal("item").then(argument("item", ItemArgument.item(buildContext)).executes(wrapper.wrap(ctx -> {
+        })).then(literal("item").then(argument("item", ItemArgument.item(buildContext)).executes(ctx -> {
             var item = ItemArgument.getItem(ctx, "item").createItemStack(1, false);
             if (item.isEmpty()) {
                 ctx.getSource().sendFailure(CommandUtils.line(CommandUtils.TextType.ERROR, CommandUtils.text("empty item")));
@@ -55,7 +54,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
                 startEditor(ctx.getSource(), item, null);
                 return 1;
             }
-        }))));
+        })));
 
         node.then(
                 OptionBuilders.withBoolean("enabledDevTools", () -> getConfig().enabledDevTools, newVal -> getConfig().enabledDevTools = newVal)

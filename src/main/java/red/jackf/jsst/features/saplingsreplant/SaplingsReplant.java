@@ -17,13 +17,13 @@ import net.minecraft.world.level.block.SaplingBlock;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.OptionBuilders;
-import red.jackf.jsst.features.Feature;
+import red.jackf.jsst.features.ToggleableFeature;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
+public class SaplingsReplant extends ToggleableFeature<SaplingsReplant.Config> {
     private static final int[] verticalOffsets = new int[]{0, 1, -1};
 
     // Generates a spiral outwards from Vec3i.ZERO, but not including ZERO.
@@ -186,7 +186,7 @@ public class SaplingsReplant extends Feature<SaplingsReplant.Config> {
                 .then(OptionBuilders.withBoolean("spacingEnabled", () -> getConfig().spacingEnabled, b -> getConfig().spacingEnabled = b));
     }
 
-    public static class Config extends Feature.Config {
+    public static class Config extends ToggleableFeature.Config {
         @Comment("Should saplings try to space themself out? (Default: true, Options: true, false)")
         public boolean spacingEnabled = true;
 

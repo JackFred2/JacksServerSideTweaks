@@ -11,10 +11,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.OptionBuilders;
-import red.jackf.jsst.features.Feature;
 import red.jackf.jsst.features.Sounds;
+import red.jackf.jsst.features.ToggleableFeature;
 
-public class DisplayItems extends Feature<DisplayItems.Config> {
+public class DisplayItems extends ToggleableFeature<DisplayItems.Config> {
     private static final int INFINITE_LIFETIME = -32768;
     private static final String JSST_DISPLAY_TAG = "jsst_display_item";
 
@@ -58,7 +58,7 @@ public class DisplayItems extends Feature<DisplayItems.Config> {
         );
     }
 
-    public static class Config extends Feature.Config {
+    public static class Config extends ToggleableFeature.Config {
         @Comment("Should only the owner be allowed to pick up display items? (Default: true, Options: true, false)")
         public boolean ownerPickupOnly = true;
         @Comment("Should only server operators be allowed to create display items? Does not apply in single player. Recommended to enable ownerPickupOnly if this is true. (Default: true, Options: true, false)")

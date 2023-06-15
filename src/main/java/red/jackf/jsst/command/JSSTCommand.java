@@ -3,6 +3,7 @@ package red.jackf.jsst.command;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.features.Feature;
+import red.jackf.jsst.features.ToggleableFeature;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +19,19 @@ public class JSSTCommand {
             for (Feature<?> feature : features) {
                 var node = literal(feature.commandLabel());
 
-                OptionBuilders.addEnabled(node, feature);
+                if (feature instanceof ToggleableFeature<?> toggleable)
+                    OptionBuilders.addEnabled(node, toggleable);
 
                 feature.setupCommand(node, buildContext);
 
                 root.then(node);
             }
 
+            // display enabled/disabled features
             root.executes(ctx -> {
-                var map = features.stream().collect(Collectors.partitioningBy(feature -> feature.getConfig().enabled));
+                var map = features.stream().filter(ToggleableFeature.class::isInstance)
+                        .map(ToggleableFeature.class::cast)
+                        .collect(Collectors.partitioningBy(feature -> feature.getConfig().enabled));
                 var enabled = map.get(true);
                 var disabled = map.get(false);
                 if (enabled.size() > 0) {

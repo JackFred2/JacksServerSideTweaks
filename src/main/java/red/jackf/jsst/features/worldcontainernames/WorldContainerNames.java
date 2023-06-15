@@ -29,9 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.OptionBuilders;
-import red.jackf.jsst.features.Feature;
+import red.jackf.jsst.features.ToggleableFeature;
 
-public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
+public class WorldContainerNames extends ToggleableFeature<WorldContainerNames.Config> {
     private static final String JSST_TAG = "jsst_world_container_name";
     private static final Float BASE_VIEW_RANGE = 0.2f;
     private static final Float MAX_MULTIPLIER = 4f;
@@ -218,7 +218,7 @@ public class WorldContainerNames extends Feature<WorldContainerNames.Config> {
         }
     }
 
-    public static class Config extends Feature.Config {
+    public static class Config extends ToggleableFeature.Config {
         @Comment("How labels should face the player. (Default: CENTER, Options: CENTER, VERTICAL)")
         public FacingMode facingMode = FacingMode.CENTER;
         @Comment("Multiplier for the distance labels are shown. (Default: 1, Range: [0.25, 4])")
