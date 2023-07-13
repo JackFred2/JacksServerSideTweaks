@@ -32,6 +32,7 @@ public class EditSession {
             PlayerHeadEditor::new,
             FireworkStarEditor::new,
             FireworkEditor::new,
+            ArmourTrimEditor::new,
 
             StackJSONPrinter::new
     );
