@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "jsst",
+	"version": "${version}",
+	"name": "Jack's Server Side Tweaks",
+	"description": "Gameplay Tweaks & Tools that aren't needed on the client.",
+	"authors": [
+		"JackFred"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/jsst",
+		"sources": "https://github.com/JackFred2/JacksServerSideTweaks",
+		"issues": "https://github.com/JackFred2/JacksServerSideTweaks/issues",
+		"wiki": "https://github.com/JackFred2/JacksServerSideTweaks/wiki"
+	},
+	"license": "LGPL-3.0-only",
+	"icon": "assets/jsst/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"red.jackf.jsst.JSST"
+		]
+	},
+	"mixins": [
+		"jsst.mixins.json"
+	],
+	"suggests": {
+		"amecs": "*"
+	},
+	"depends": {
+		"fabricloader": ">=0.15.0",
+		"minecraft": ">=1.20.3",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}
