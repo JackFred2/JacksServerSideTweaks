@@ -53,7 +53,7 @@
     </Appenders>
     <Loggers>
         <Logger level="${sys:fabric.log.level:-info}" name="net.minecraft"/>
-        <Logger level="debug" name="red.jackf.eyespy" additivity="false">
+        <Logger level="debug" name="red.jackf.jsst" additivity="false">
             <AppenderRef ref="DebugFile"/>
             <AppenderRef ref="SysOut"/>
             <AppenderRef ref="LatestFile"/>
