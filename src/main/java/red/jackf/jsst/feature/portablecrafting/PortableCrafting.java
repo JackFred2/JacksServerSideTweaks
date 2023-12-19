@@ -18,7 +18,7 @@ import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.ToggleFeature;
 
 public class PortableCrafting extends ToggleFeature<PortableCrafting.Config> {
-    public static PortableCrafting INSTANCE = new PortableCrafting();
+    public static final PortableCrafting INSTANCE = new PortableCrafting();
     private TagKey<Item> tag;
 
     private PortableCrafting() {}

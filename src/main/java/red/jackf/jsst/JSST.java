@@ -9,6 +9,7 @@ import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.config.JSSTConfigMigrator;
 import red.jackf.jsst.feature.Feature;
 import red.jackf.jsst.feature.ToggleFeature;
+import red.jackf.jsst.feature.beaconrange.ExtendedBeaconRange;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 
 import java.util.List;
@@ -32,7 +33,8 @@ public class JSST implements ModInitializer {
             .build();
 
     private static final List<Feature<?>> FEATURES = List.of(
-            PortableCrafting.INSTANCE
+            PortableCrafting.INSTANCE,
+            ExtendedBeaconRange.INSTANCE
     );
 
     @Override
@@ -41,6 +43,6 @@ public class JSST implements ModInitializer {
         for (Feature<?> feature : FEATURES) {
             feature.setup();
         }
-        CONFIG.save();
+        CONFIG.instance();
     }
 }
