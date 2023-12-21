@@ -3,7 +3,8 @@
   "package": "red.jackf.jsst.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "beaconrange.BeaconBlockEntityMixin"
+    "beaconrange.BeaconBlockEntityMixin",
+    "containernames.ServerLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

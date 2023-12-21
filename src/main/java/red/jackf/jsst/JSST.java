@@ -10,7 +10,9 @@ import red.jackf.jsst.config.JSSTConfigMigrator;
 import red.jackf.jsst.feature.Feature;
 import red.jackf.jsst.feature.ToggleFeature;
 import red.jackf.jsst.feature.beaconrange.ExtendedBeaconRange;
+import red.jackf.jsst.feature.containernames.WorldContainerNames;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
+import red.jackf.jsst.util.Scheduler;
 
 import java.util.List;
 
@@ -34,7 +36,8 @@ public class JSST implements ModInitializer {
 
     private static final List<Feature<?>> FEATURES = List.of(
             PortableCrafting.INSTANCE,
-            ExtendedBeaconRange.INSTANCE
+            ExtendedBeaconRange.INSTANCE,
+            WorldContainerNames.INSTANCE
     );
 
     @Override
@@ -44,5 +47,6 @@ public class JSST implements ModInitializer {
             feature.setup();
         }
         CONFIG.instance();
+        Scheduler.INSTANCE.setup();
     }
 }
