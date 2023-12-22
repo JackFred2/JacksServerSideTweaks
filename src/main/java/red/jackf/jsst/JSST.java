@@ -13,6 +13,7 @@ import red.jackf.jsst.feature.beaconrange.ExtendedBeaconRange;
 import red.jackf.jsst.feature.containernames.WorldContainerNames;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 import red.jackf.jsst.util.Scheduler;
+import red.jackf.jsst.util.ServerTracker;
 
 import java.util.List;
 
@@ -48,5 +49,6 @@ public class JSST implements ModInitializer {
         }
         CONFIG.instance();
         Scheduler.INSTANCE.setup();
+        ServerTracker.setup();
     }
 }
