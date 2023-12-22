@@ -53,7 +53,7 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
     /**
      * Get the label list for a level
      */
-    private static Map<BlockPos, EntityLie<? extends Display>> getLabels(ServerLevel level) {
+    private static Map<BlockPos, LabelLie> getLabels(ServerLevel level) {
         return ((ContainerLabelTracker) level).jsst$containernames$getLabels();
     }
 
@@ -91,6 +91,7 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
     }
 
     private void updateLabel(ServerLevel level, BaseContainerBlockEntity cbe, boolean isRemoval) {
+        // remove old lie at position(s)
         List<BlockPos> connected = gatherConnected(cbe.getBlockState(), cbe.getBlockPos());
 
         for (BlockPos pos : connected) {
@@ -102,6 +103,7 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
 
         if (connected.isEmpty()) return;
 
+        // change the position and block entity to work with if needed (double chests)
         BlockPos basePosition = connected.get(0);
         Optional<BaseContainerBlockEntity> baseBlockEntity = connected.stream()
                                                                       .filter(level::isLoaded) // don't re-load chunks when the level is unloaded
@@ -111,36 +113,33 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
                                                                       .findFirst();
 
         if (baseBlockEntity.isEmpty()) return;
-
         cbe = baseBlockEntity.get();
 
+        // create label
         Vec3 position = getLabelPositionFor(connected);
-
-        Display.TextDisplay labelEntity = EntityBuilders.textDisplay(level)
+        Display labelEntity = EntityBuilders.textDisplay(level)
                                                         .text(cbe.getCustomName())
                                                         .position(position)
                                                         .billboard(Display.BillboardConstraints.CENTER)
                                                         .viewRangeModifier((float) (config().viewRange / 64))
                                                         .build();
 
-        EntityLie<Display.TextDisplay> lie = EntityLie.builder(labelEntity)
+        EntityLie<Display> lie = EntityLie.builder(labelEntity)
                                                       .createAndShow();
 
-        getLabels(level).put(basePosition, lie);
+        Tracker<EntityLie<? extends Display>> tracker = Tracker.<EntityLie<? extends Display>>builder(level)
+                                                               .addLie(lie)
+                                                               .setFocus(position, 6 * config().viewRange) // just over the limit for client modifier
+                                                               .setUpdateInterval(5 * SharedConstants.TICKS_PER_SECOND)
+                                                               .build(true);
 
-        Tracker.<EntityLie<Display.TextDisplay>>builder(level)
-               .addLie(lie)
-               .setFocus(position, 6 * config().viewRange) // just over the limit for client modifier
-               .setUpdateInterval(5 * SharedConstants.TICKS_PER_SECOND)
-               .build(true);
+        getLabels(level).put(basePosition, new LabelLie(tracker, position));
     }
 
     @Override
     public void disable() {
         for (ServerLevel level : ServerTracker.eachLoadedLevel()) {
-            for (EntityLie<? extends Display> lie : getLabels(level).values()) {
-                lie.fade();
-            }
+            getLabels(level).values().forEach(LabelLie::fade);
             getLabels(level).clear();
         }
     }
@@ -168,8 +167,12 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
         super.reload(current, old);
         if (old == null || current.viewRange != old.viewRange) {
             for (ServerLevel level : ServerTracker.eachLoadedLevel()) {
-                for (EntityLie<? extends Display> lie : getLabels(level).values()) {
-                    EntityUtils.setDisplayViewRange(lie.entity(), (float) (current.viewRange / 64));
+                for (LabelLie label : getLabels(level).values()) {
+                    label.tracker().setFocus(label.position(), 6 * config().viewRange);
+
+                    for (EntityLie<? extends Display> lie : label.tracker().getManagedLies()) {
+                        EntityUtils.setDisplayViewRange(lie.entity(), (float) (current.viewRange / 64));
+                    }
                 }
             }
         }
