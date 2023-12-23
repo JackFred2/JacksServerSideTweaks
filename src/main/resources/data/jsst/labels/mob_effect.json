@@ -1,0 +1,6 @@
+{
+  "default": "minecraft:potion",
+  "labels": {
+    "minecraft:speed": "minecraft:sugar"
+  }
+}
