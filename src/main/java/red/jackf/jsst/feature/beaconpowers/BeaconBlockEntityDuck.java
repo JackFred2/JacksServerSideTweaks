@@ -17,9 +17,21 @@ public interface BeaconBlockEntityDuck {
         return ((BeaconBlockEntityDuck) beaconBlockEntity).jsst$getSecondaryPower();
     }
 
+    static void setPrimaryPower(BeaconBlockEntity beaconBlockEntity, MobEffect effect) {
+        ((BeaconBlockEntityDuck) beaconBlockEntity).jsst$setPrimaryPower(effect);
+    }
+
+    static void setSecondaryPower(BeaconBlockEntity beaconBlockEntity, MobEffect effect) {
+        ((BeaconBlockEntityDuck) beaconBlockEntity).jsst$setSecondaryPower(effect);
+    }
+
     int jsst$getPowerLevel();
 
     @Nullable MobEffect jsst$getPrimaryPower();
 
     @Nullable MobEffect jsst$getSecondaryPower();
+
+    void jsst$setPrimaryPower(MobEffect effect);
+
+    void jsst$setSecondaryPower(MobEffect effect);
 }

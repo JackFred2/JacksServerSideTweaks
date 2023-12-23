@@ -7,7 +7,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -22,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExpandedBeaconScreen extends SimpleGui {
@@ -38,7 +41,10 @@ public class ExpandedBeaconScreen extends SimpleGui {
             return 1;
         }
     };
+    private final PaymentSlot paymentSlot = new PaymentSlot(this.paymentInv, 0);
+
     private final BeaconBlockEntity beacon;
+    private final ServerLevel level;
     @Nullable
     private MobEffect primary;
     @Nullable
@@ -48,6 +54,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
         super(MenuType.GENERIC_9x6, player, false);
         this.setTitle(Component.translatable("container.beacon"));
 
+        this.level = player.serverLevel();
         this.beacon = beacon;
         this.primary = BeaconBlockEntityDuck.getPrimaryPower(beacon);
         this.secondary = BeaconBlockEntityDuck.getSecondaryPower(beacon);
@@ -61,12 +68,12 @@ public class ExpandedBeaconScreen extends SimpleGui {
             return;
         }
 
-        if (this.beacon.getLevel().getGameTime() % 80L == 1) {
+        if (this.level.getGameTime() % 80L == 1) {
             this.drawDynamic();
         }
 
         // update button
-        if (this.paymentInv.hasAnyMatching(stack -> stack.is(ItemTags.BEACON_PAYMENT_ITEMS))) {
+        if (this.hasPaymentItem() && this.hasDifferentResults() && this.primary != null) {
             this.setSlot(GuiUtil.slot(2, 5), GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))
                                                               .setName(Component.translatable("jsst.common.confirm"))
                                                               .addLoreLine(Hints.leftClick())
@@ -76,8 +83,25 @@ public class ExpandedBeaconScreen extends SimpleGui {
         }
     }
 
-    private void confirmUpdate() {
+    private boolean hasPaymentItem() {
+        return this.paymentInv.hasAnyMatching(stack -> stack.is(ItemTags.BEACON_PAYMENT_ITEMS));
+    }
 
+    private boolean hasDifferentResults() {
+        return this.primary != BeaconBlockEntityDuck.getPrimaryPower(this.beacon) || this.secondary != BeaconBlockEntityDuck.getSecondaryPower(this.beacon);
+    }
+
+    private void confirmUpdate() {
+        if (!this.hasPaymentItem() || !this.hasDifferentResults() || this.primary == null) return;
+
+        if (!this.level.isClientSide && !this.beacon.getBeamSections().isEmpty()) {
+            BeaconBlockEntity.playSound(this.level, this.beacon.getBlockPos(), SoundEvents.BEACON_POWER_SELECT);
+        }
+
+        BeaconBlockEntityDuck.setPrimaryPower(this.beacon, this.primary);
+        BeaconBlockEntityDuck.setSecondaryPower(this.beacon, this.secondary);
+        this.paymentSlot.remove(1);
+        this.close();
     }
 
     private void openPrimary() {
@@ -91,7 +115,8 @@ public class ExpandedBeaconScreen extends SimpleGui {
 
     private void openSecondary() {
         final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
-        List<MobEffect> options = MoreBeaconPowers.INSTANCE.config().powers.getSecondaries(beaconLevel);
+        List<MobEffect> options = new ArrayList<>(MoreBeaconPowers.INSTANCE.config().powers.getSecondaries(beaconLevel));
+        if (this.primary != null) options.add(this.primary);
         Menus.selector(player, Component.translatable("block.minecraft.beacon.secondary"), options, LabelMaps.MOB_EFFECTS, selection -> {
             if (selection.hasResult()) this.secondary = selection.result();
             this.open();
@@ -119,7 +144,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
                           .saveItemStack();
         }
         this.setSlot(GuiUtil.slot(0, 5), paymentBuilder.build());
-        this.setSlotRedirect(GuiUtil.slot(1, 5), new PaymentSlot(this.paymentInv, 0));
+        this.setSlotRedirect(GuiUtil.slot(1, 5), this.paymentSlot);
         this.setSlot(GuiUtil.slot(4, 5), CommonLabels.divider());
         this.setSlot(GuiUtil.slot(6, 5), CommonLabels.divider());
         this.setSlot(GuiUtil.slot(7, 5), CommonLabels.divider());

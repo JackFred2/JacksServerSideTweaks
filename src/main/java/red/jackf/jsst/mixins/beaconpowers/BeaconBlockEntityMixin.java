@@ -32,4 +32,14 @@ public class BeaconBlockEntityMixin implements BeaconBlockEntityDuck {
     public @Nullable MobEffect jsst$getSecondaryPower() {
         return this.secondaryPower;
     }
+
+    @Override
+    public void jsst$setPrimaryPower(MobEffect effect) {
+        this.primaryPower = effect;
+    }
+
+    @Override
+    public void jsst$setSecondaryPower(MobEffect effect) {
+        this.secondaryPower = effect;
+    }
 }
