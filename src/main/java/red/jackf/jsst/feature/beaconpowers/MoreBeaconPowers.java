@@ -29,7 +29,7 @@ public class MoreBeaconPowers extends ToggleFeature<MoreBeaconPowers.Config> {
     }
 
     @Override
-    protected Config config() {
+    public Config config() {
         return JSST.CONFIG.instance().moreBeaconPowers;
     }
 

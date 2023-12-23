@@ -58,6 +58,10 @@ public class BeaconPowers {
         return effects;
     }
 
+    public boolean isValid(MobEffect effect) {
+        return this.powers.containsValue(effect);
+    }
+
     public static class Serializer {
         public static BeaconPowers deserialize(JsonObject obj, Marshaller marshaller) throws DeserializationException {
             BeaconPowers powers = new BeaconPowers();

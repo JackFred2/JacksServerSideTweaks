@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExpandedBeaconScreen extends SimpleGui {
-    private static final int MAX_POWER = 4;
     private static final int SECONDARY_MINIMUM = 4;
     private final Container paymentInv = new SimpleContainer(1) {
         @Override
@@ -158,11 +157,11 @@ public class ExpandedBeaconScreen extends SimpleGui {
         // TODO add labels saying what you unlock in lore for each level
         for (int level = 0; level < 6; level++) {
             ItemStack label;
-            if (level < MAX_POWER) {
+            if (level < MoreBeaconPowers.INSTANCE.config().maxBeaconLevel) {
                 if (level < beaconLevel) {
-                    label = CommonLabels.simple(Items.LIME_STAINED_GLASS_PANE, Component.translatable("jsst.beaconpowers.beacon_level", beaconLevel, MAX_POWER));
+                    label = CommonLabels.simple(Items.LIME_STAINED_GLASS_PANE, Component.translatable("jsst.beaconpowers.beacon_level", beaconLevel, MoreBeaconPowers.INSTANCE.config().maxBeaconLevel));
                 } else {
-                    label = CommonLabels.simple(Items.RED_STAINED_GLASS_PANE, Component.translatable("jsst.beaconpowers.beacon_level", beaconLevel, MAX_POWER));
+                    label = CommonLabels.simple(Items.RED_STAINED_GLASS_PANE, Component.translatable("jsst.beaconpowers.beacon_level", beaconLevel, MoreBeaconPowers.INSTANCE.config().maxBeaconLevel));
                 }
             } else {
                 label = CommonLabels.simple(Items.BLUE_STAINED_GLASS_PANE, CommonComponents.EMPTY);
@@ -189,7 +188,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
                                                               .addLoreLine(Hints.leftClick(Component.translatable("jsst.common.change")))
                                                               .setCallback(this::openSecondary));
         } else {
-            GuiUtil.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement_secondary", MAX_POWER))
+            GuiUtil.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement_secondary", SECONDARY_MINIMUM))
                                            .getItemStack(), 6, 9, 0, 4);
         }
     }
