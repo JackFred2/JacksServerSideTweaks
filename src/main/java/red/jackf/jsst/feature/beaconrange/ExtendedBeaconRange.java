@@ -23,7 +23,7 @@ public class ExtendedBeaconRange extends ToggleFeature<ExtendedBeaconRange.Confi
 
     public static class Config extends ToggleFeature.Config {
         @Comment("""
-                Multiplier for the beacon's range. For reference, a max level beacon in vanilla is 50 blocks radius.
+                Multiplier for the beacon's range. For reference, a level 4 beacon in vanilla is 50 blocks radius.
                 Options: [0.5, 8]
                 Default: 1.5""")
         public double rangeMultiplier = 1.5;
