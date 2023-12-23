@@ -1,3 +1,8 @@
 {
-  "jsst.title": "Jack's Server Side Tweaks"
+  "jsst.title": "Jack's Server Side Tweaks",
+  "jsst.beaconpowers.beacon_level": "Beacon Level: %d/%d",
+  "jsst.beaconpowers.beacon_requirement_primary": "Requires a beacon level of at least 1",
+  "jsst.beaconpowers.beacon_requirement_secondary": "Requires a beacon level of at least %d",
+  "jsst.beaconpowers.beacon_payment": "Place payment item to the right",
+  "jsst.beaconpowers.beacon_confirm": "Confirm"
 }

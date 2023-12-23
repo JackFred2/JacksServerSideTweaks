@@ -1,9 +1,9 @@
-package red.jackf.jsst.util.gui.selector;
+package red.jackf.jsst.util.sgui.selector;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
-import red.jackf.jsst.util.gui.LabelMap;
+import red.jackf.jsst.util.sgui.LabelMap;
 
 import java.util.Collection;
 import java.util.List;

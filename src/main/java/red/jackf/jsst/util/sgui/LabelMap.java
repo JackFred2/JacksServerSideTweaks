@@ -1,4 +1,4 @@
-package red.jackf.jsst.util.gui;
+package red.jackf.jsst.util.sgui;
 
 import net.minecraft.world.item.ItemStack;
 

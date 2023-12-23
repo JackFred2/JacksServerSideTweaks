@@ -1,8 +1,8 @@
-package red.jackf.jsst.util.gui;
+package red.jackf.jsst.util.sgui;
 
 import net.minecraft.server.level.ServerPlayer;
-import red.jackf.jsst.util.gui.selector.PaginatedSelectorMenu;
-import red.jackf.jsst.util.gui.selector.SinglePageSelectorMenu;
+import red.jackf.jsst.util.sgui.selector.PaginatedSelectorMenu;
+import red.jackf.jsst.util.sgui.selector.SinglePageSelectorMenu;
 
 import java.util.Collection;
 import java.util.function.Consumer;
