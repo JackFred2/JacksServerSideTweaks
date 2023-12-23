@@ -1,5 +1,6 @@
 package red.jackf.jsst.util.sgui;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import red.jackf.jsst.util.sgui.selector.PaginatedSelectorMenu;
 import red.jackf.jsst.util.sgui.selector.SinglePageSelectorMenu;
@@ -14,11 +15,11 @@ public class Menus {
      * Allows a user to select one of a collection of options. Will resize itself if needed, and will paginate. If paginated,
      * a search bar will also be available. Does not close itself; you'll need to do this in the callback.
      */
-    public static <T> void selector(ServerPlayer player, Collection<T> options, LabelMap<T> labelMap, Consumer<PaginatedSelectorMenu.Selection<T>> onSelect) {
+    public static <T> void selector(ServerPlayer player, Component title, Collection<T> options, LabelMap<T> labelMap, Consumer<PaginatedSelectorMenu.Selection<T>> onSelect) {
         if (options.size() > PAGINATION_THRESHOLD) {
-            new PaginatedSelectorMenu<>(player, options, onSelect, labelMap).open();
+            new PaginatedSelectorMenu<>(player, title, options, onSelect, labelMap).open();
         } else {
-            new SinglePageSelectorMenu<>(player, options, onSelect, labelMap).open();
+            new SinglePageSelectorMenu<>(player, title, options, onSelect, labelMap).open();
         }
     }
 }

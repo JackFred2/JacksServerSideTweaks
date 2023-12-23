@@ -67,10 +67,11 @@ public class ExpandedBeaconScreen extends SimpleGui {
         // update button
         if (this.paymentInv.hasAnyMatching(stack -> stack.is(ItemTags.BEACON_PAYMENT_ITEMS))) {
             this.setSlot(GuiUtil.slot(2, 5), GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))
-                                                              .setName(Component.translatable("jsst.beaconpowers.beacon_confirm"))
+                                                              .setName(Component.translatable("jsst.common.confirm"))
+                                                              .addLoreLine(Hints.leftClick())
                                                               .setCallback(this::confirmUpdate));
         } else {
-            this.setSlot(GuiUtil.slot(2, 5), CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.beaconpowers.beacon_confirm")));
+            this.setSlot(GuiUtil.slot(2, 5), CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.common.confirm")));
         }
     }
 
@@ -80,7 +81,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
 
     private void openPrimary() {
         List<MobEffect> options = BuiltInRegistries.MOB_EFFECT.stream().toList();
-        Menus.selector(player, options, LabelMaps.MOB_EFFECTS, selection -> {
+        Menus.selector(player, Component.translatable("block.minecraft.beacon.primary"), options, LabelMaps.MOB_EFFECTS, selection -> {
             if (selection.hasResult()) this.primary = selection.result();
             this.open();
         });
@@ -88,7 +89,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
 
     private void openSecondary() {
         List<MobEffect> options = BuiltInRegistries.MOB_EFFECT.stream().toList();
-        Menus.selector(player, options, LabelMaps.MOB_EFFECTS, selection -> {
+        Menus.selector(player, Component.translatable("block.minecraft.beacon.secondary"), options, LabelMaps.MOB_EFFECTS, selection -> {
             if (selection.hasResult()) this.secondary = selection.result();
             this.open();
         });
@@ -146,7 +147,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
             GuiUtil.fill(this, ItemStack.EMPTY, 0, 3, 0, 4);
             this.setSlot(GuiUtil.slot(1, 1), CommonLabels.simple(Items.APPLE, Component.translatable("block.minecraft.beacon.primary")));
             this.setSlot(GuiUtil.slot(1, 2), GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(primary))
-                                                              .addLoreLine(Hints.leftClick(Component.literal("Change")))
+                                                              .addLoreLine(Hints.leftClick(Component.translatable("jsst.common.change")))
                                                               .setCallback(this::openPrimary));
         } else {
             GuiUtil.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement_primary"))
@@ -157,7 +158,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
             GuiUtil.fill(this, ItemStack.EMPTY, 6, 9, 0, 4);
             this.setSlot(GuiUtil.slot(7, 1), CommonLabels.simple(Items.GOLDEN_APPLE, Component.translatable("block.minecraft.beacon.secondary")));
             this.setSlot(GuiUtil.slot(7, 2), GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(secondary))
-                                                              .addLoreLine(Hints.leftClick(Component.literal("Change")))
+                                                              .addLoreLine(Hints.leftClick(Component.translatable("jsst.common.change")))
                                                               .setCallback(this::openSecondary));
         } else {
             GuiUtil.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement_secondary", MAX_POWER))

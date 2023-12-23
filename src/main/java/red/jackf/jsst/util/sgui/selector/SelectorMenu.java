@@ -1,6 +1,7 @@
 package red.jackf.jsst.util.sgui.selector;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import red.jackf.jsst.util.sgui.LabelMap;
@@ -15,8 +16,9 @@ public abstract class SelectorMenu<T> extends SimpleGui {
     protected final LabelMap<T> labelMap;
     private boolean hasRanCallback = false;
 
-    public SelectorMenu(MenuType<?> type, ServerPlayer player, Collection<T> options, Consumer<Selection<T>> onSelect, LabelMap<T> labelMap) {
+    public SelectorMenu(MenuType<?> type, Component title, ServerPlayer player, Collection<T> options, Consumer<Selection<T>> onSelect, LabelMap<T> labelMap) {
         super(type, player, false);
+        this.setTitle(title);
         this.options = List.copyOf(options);
         this.onSelect = onSelect;
         this.labelMap = labelMap;
