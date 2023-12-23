@@ -57,6 +57,7 @@ repositories {
 		content {
 			includeGroup("fr.catcore")
 			includeGroup("xyz.nucleoid")
+			includeGroup("eu.pb4")
 		}
 	}
 
@@ -131,6 +132,9 @@ dependencies {
 	modImplementation("net.fabricmc:fabric-loader:${properties["loader_version"]}")
 
 	include(modImplementation("xyz.nucleoid:server-translations-api:${properties["server_translations_api_version"]}")!!)
+	include(modImplementation("eu.pb4:sgui:${properties["sgui_version"]}") {
+		exclude(group = "net.fabricmc", module = "fabric-loader")
+	})
 
 	include(modImplementation("red.jackf.jackfredlib:jackfredlib-base:${properties["jflib_base_version"]}")!!)
     include(modImplementation("red.jackf.jackfredlib:jackfredlib-config:${properties["jflib_config_version"]}")!!)
