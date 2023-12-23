@@ -26,6 +26,10 @@ public class BeaconPowers {
         def.addPower(2, MobEffects.JUMP);
         def.addPower(3, MobEffects.DAMAGE_BOOST);
         def.addPower(4, MobEffects.REGENERATION);
+        def.addPower(5, MobEffects.SLOW_FALLING);
+        def.addPower(5, MobEffects.NIGHT_VISION);
+        def.addPower(6, MobEffects.FIRE_RESISTANCE);
+        def.addPower(6, MobEffects.HEALTH_BOOST);
         return def;
     }
 

@@ -43,15 +43,15 @@ public class MoreBeaconPowers extends ToggleFeature<MoreBeaconPowers.Config> {
                 This feature can optionally increase the maximum level of the beacon. This allows you to limit more powerful effects
                 to higher levels.
                 Options: [4, 6]
-                Default: 4 (same as vanilla)""")
-        public int maxBeaconLevel = 4;
+                Default: 6 (same as vanilla)""")
+        public int maxBeaconLevel = 6;
 
         @Comment("""
                 List of powers available at each tier of the beacon. Valid levels are 1 to 6, and any effects in multiple levels will
                 be forced to their lowest. Primary powers are anything in levels 1 to 3, while secondary powers are 4 to 6 or a higher
                 level of the primary.
-                Options: A map of beacon levels to a set of status effects.
-                Default: Same as vanilla's beacon.""")
+                Options: A map of beacon levels to a set of available status effects.
+                Default: Same as vanilla's beacon up to 4; slow falling and night vision at 5; fire resistance and health boost at 6""")
         public BeaconPowers powers = BeaconPowers.getDefault();
 
         public void validate() {
