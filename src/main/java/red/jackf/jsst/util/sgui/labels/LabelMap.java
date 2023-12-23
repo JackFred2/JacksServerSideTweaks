@@ -1,4 +1,4 @@
-package red.jackf.jsst.util.sgui;
+package red.jackf.jsst.util.sgui.labels;
 
 import net.minecraft.world.item.ItemStack;
 

@@ -1,5 +1,6 @@
 package red.jackf.jsst;
 
+import blue.endless.jankson.JsonObject;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.config.JSSTConfigMigrator;
 import red.jackf.jsst.feature.Feature;
 import red.jackf.jsst.feature.ToggleFeature;
+import red.jackf.jsst.feature.beaconpowers.BeaconPowers;
 import red.jackf.jsst.feature.beaconpowers.MoreBeaconPowers;
 import red.jackf.jsst.feature.beaconrange.ExtendedBeaconRange;
 import red.jackf.jsst.feature.containernames.WorldContainerNames;
@@ -34,6 +36,10 @@ public class JSST implements ModInitializer {
             .withFileWatcher()
             .withLogger(getLogger("Config"))
             .withMigrator(JSSTConfigMigrator.get())
+            .modifyJankson(builder -> {
+                builder.registerDeserializer(JsonObject.class, BeaconPowers.class, BeaconPowers.Serializer::deserialize);
+                builder.registerSerializer(BeaconPowers.class, BeaconPowers.Serializer::serialize);
+            })
             .build();
 
     private static final List<Feature<?>> FEATURES = List.of(

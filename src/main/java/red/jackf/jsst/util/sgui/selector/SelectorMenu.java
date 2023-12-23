@@ -4,7 +4,7 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
-import red.jackf.jsst.util.sgui.LabelMap;
+import red.jackf.jsst.util.sgui.labels.LabelMap;
 
 import java.util.Collection;
 import java.util.List;

@@ -17,6 +17,7 @@ public class JSSTConfig implements Config<JSSTConfig> {
     public void validate() {
         extendedBeaconRange.validate();
         worldContainerNames.validate();
+        moreBeaconPowers.validate();
     }
 
     @Override

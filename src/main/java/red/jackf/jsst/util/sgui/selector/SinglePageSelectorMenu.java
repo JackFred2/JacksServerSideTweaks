@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import red.jackf.jsst.util.sgui.CommonLabels;
 import red.jackf.jsst.util.sgui.Hints;
-import red.jackf.jsst.util.sgui.LabelMap;
+import red.jackf.jsst.util.sgui.labels.LabelMap;
 
 import java.util.Collection;
 import java.util.function.Consumer;

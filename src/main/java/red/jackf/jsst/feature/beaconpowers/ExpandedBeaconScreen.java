@@ -20,6 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.labels.LabelMaps;
 
 import java.util.List;
 
@@ -80,7 +81,8 @@ public class ExpandedBeaconScreen extends SimpleGui {
     }
 
     private void openPrimary() {
-        List<MobEffect> options = BuiltInRegistries.MOB_EFFECT.stream().toList();
+        final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
+        List<MobEffect> options = MoreBeaconPowers.INSTANCE.config().powers.getPrimaries(beaconLevel);
         Menus.selector(player, Component.translatable("block.minecraft.beacon.primary"), options, LabelMaps.MOB_EFFECTS, selection -> {
             if (selection.hasResult()) this.primary = selection.result();
             this.open();
@@ -88,7 +90,8 @@ public class ExpandedBeaconScreen extends SimpleGui {
     }
 
     private void openSecondary() {
-        List<MobEffect> options = BuiltInRegistries.MOB_EFFECT.stream().toList();
+        final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
+        List<MobEffect> options = MoreBeaconPowers.INSTANCE.config().powers.getSecondaries(beaconLevel);
         Menus.selector(player, Component.translatable("block.minecraft.beacon.secondary"), options, LabelMaps.MOB_EFFECTS, selection -> {
             if (selection.hasResult()) this.secondary = selection.result();
             this.open();

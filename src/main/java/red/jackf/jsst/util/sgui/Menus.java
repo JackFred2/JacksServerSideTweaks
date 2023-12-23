@@ -2,6 +2,7 @@ package red.jackf.jsst.util.sgui;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.selector.PaginatedSelectorMenu;
 import red.jackf.jsst.util.sgui.selector.SinglePageSelectorMenu;
 
