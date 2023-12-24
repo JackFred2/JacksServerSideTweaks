@@ -2,6 +2,7 @@ package red.jackf.jsst.feature.beaconenhancement;
 
 import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -12,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.effect.MobEffect;
@@ -54,6 +56,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
 
     private final BeaconBlockEntity beacon;
     private final ServerLevel level;
+    private boolean lastWasMax;
     @Nullable
     private MobEffect primary;
     @Nullable
@@ -67,6 +70,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
         this.beacon = beacon;
         this.primary = BeaconBlockEntityDuck.getPrimaryPower(beacon);
         this.secondary = BeaconBlockEntityDuck.getSecondaryPower(beacon);
+        this.lastWasMax = BeaconBlockEntityDuck.getPowerLevel(this.beacon) == BeaconEnhancement.INSTANCE.config().maxBeaconLevel;
     }
 
     private static ItemStack getSecondTierLabel(MobEffect effect) {
@@ -87,6 +91,11 @@ public class ExpandedBeaconScreen extends SimpleGui {
 
         if (this.level.getGameTime() % 80L == 1) {
             this.drawDynamic();
+            boolean isMax = BeaconBlockEntityDuck.getPowerLevel(beacon) == BeaconEnhancement.INSTANCE.config().maxBeaconLevel;
+            if (isMax != lastWasMax) {
+                this.drawBeaconOutline();
+                this.lastWasMax = isMax;
+            }
         }
 
         // update button
@@ -154,20 +163,24 @@ public class ExpandedBeaconScreen extends SimpleGui {
         });
     }
 
+    private static GuiElementInterface createPowered(int offset) {
+        final int SPACING = 3;
+
+        var builder = new AnimatedGuiElementBuilder();
+        builder.setInterval(8);
+
+        offset = Mth.positiveModulo(offset, SPACING);
+
+        for (int i = 0; i < SPACING; i++) {
+            builder.setItem(i == offset ? Items.MAGENTA_STAINED_GLASS_PANE : Items.PURPLE_STAINED_GLASS_PANE);
+            builder.setName(Component.empty());
+            builder.saveItemStack();
+        }
+
+        return builder.build();
+    }
+
     private void drawStatic() {
-        for (int row = 0; row < 6; row++) {
-            this.setSlot(GuiUtil.slot(3, row), CommonLabels.divider());
-            this.setSlot(GuiUtil.slot(5, row), CommonLabels.divider());
-        }
-
-        for (int col = 0; col < 4; col++) {
-            this.setSlot(GuiUtil.slot(col, 4), CommonLabels.divider());
-        }
-
-        for (int col = 5; col < 9; col++) {
-            this.setSlot(GuiUtil.slot(col, 4), CommonLabels.divider());
-        }
-
         var paymentBuilder = new AnimatedGuiElementBuilder().setInterval(20);
         for (Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.BEACON_PAYMENT_ITEMS)) {
             paymentBuilder.setItem(item.value())
@@ -176,10 +189,45 @@ public class ExpandedBeaconScreen extends SimpleGui {
         }
         this.setSlot(GuiUtil.slot(0, 5), paymentBuilder.build());
         this.setSlotRedirect(GuiUtil.slot(1, 5), this.paymentSlot);
+        this.setSlot(GuiUtil.slot(3, 5), CommonLabels.divider());
         this.setSlot(GuiUtil.slot(4, 5), CommonLabels.divider());
+        this.setSlot(GuiUtil.slot(5, 5), CommonLabels.divider());
         this.setSlot(GuiUtil.slot(6, 5), CommonLabels.divider());
         this.setSlot(GuiUtil.slot(7, 5), CommonLabels.divider());
         this.setSlot(GuiUtil.slot(8, 5), CommonLabels.close(this::close));
+    }
+
+    private void drawBeaconOutline() {
+        final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
+
+        // beacon borders
+        if (beaconLevel == BeaconEnhancement.INSTANCE.config().maxBeaconLevel) {
+            for (int row = 0; row < 5; row++) {
+                this.setSlot(GuiUtil.slot(3, row), createPowered( 7 - row));
+                this.setSlot(GuiUtil.slot(5, row), createPowered(7 - row));
+            }
+
+            for (int col = 0; col < 4; col++) {
+                this.setSlot(GuiUtil.slot(col, 4), createPowered(col));
+            }
+
+            for (int col = 5; col < 9; col++) {
+                this.setSlot(GuiUtil.slot(col, 4), createPowered(8 - col));
+            }
+        } else {
+            for (int row = 0; row < 5; row++) {
+                this.setSlot(GuiUtil.slot(3, row), CommonLabels.divider());
+                this.setSlot(GuiUtil.slot(5, row), CommonLabels.divider());
+            }
+
+            for (int col = 0; col < 4; col++) {
+                this.setSlot(GuiUtil.slot(col, 4), CommonLabels.divider());
+            }
+
+            for (int col = 5; col < 9; col++) {
+                this.setSlot(GuiUtil.slot(col, 4), CommonLabels.divider());
+            }
+        }
     }
 
     private void drawDynamic() {
@@ -244,6 +292,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
         super.onOpen();
 
         this.drawStatic();
+        this.drawBeaconOutline();
         this.drawDynamic();
     }
 
