@@ -23,15 +23,15 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.util.Streams;
 import red.jackf.jsst.util.sgui.CommonLabels;
 import red.jackf.jsst.util.sgui.GuiUtil;
 import red.jackf.jsst.util.sgui.Hints;
 import red.jackf.jsst.util.sgui.Menus;
+import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ExpandedBeaconScreen extends SimpleGui {
     private static final ItemStack NO_EFFECT = GuiElementBuilder.from(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER))
@@ -115,7 +115,10 @@ public class ExpandedBeaconScreen extends SimpleGui {
 
     private void openPrimary() {
         final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
+
         List<MobEffect> options = MoreBeaconPowers.INSTANCE.config().powers.getPrimaries(beaconLevel);
+        options.sort(Streams.comparingComponent(MobEffect::getDisplayName));
+
         Menus.selector(player, Component.translatable("block.minecraft.beacon.primary"), options, LabelMaps.MOB_EFFECTS, selection -> {
             if (selection.hasResult()) this.primary = selection.result();
             this.open();
@@ -132,14 +135,17 @@ public class ExpandedBeaconScreen extends SimpleGui {
 
     private void openSecondary() {
         final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
+
         List<MobEffect> options = new ArrayList<>(MoreBeaconPowers.INSTANCE.config().powers.getSecondaries(beaconLevel));
-        var map = LabelMaps.MOB_EFFECTS;
+        options.sort(Streams.comparingComponent(MobEffect::getDisplayName));
+
+        LabelMap<MobEffect> map = LabelMaps.MOB_EFFECTS;
         if (this.primary != null) {
             map = map.withAdditional(Map.of(
                     this.primary,
                     getSecondTierLabel(this.primary)
             ));
-            options.add(this.primary);
+            options.add(0, this.primary);
         }
 
         Menus.selector(player, Component.translatable("block.minecraft.beacon.secondary"), options, map, selection -> {
