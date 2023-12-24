@@ -4,7 +4,19 @@
   "jsst.common.confirm": "Confirm",
   "jsst.beaconpowers.beacon_level_active": "Beacon Level %d (active)",
   "jsst.beaconpowers.beacon_level_inactive": "Beacon Level %d (inactive)",
-  "jsst.beaconpowers.beacon_requirement_primary": "Requires a beacon level of at least 1",
-  "jsst.beaconpowers.beacon_requirement_secondary": "Requires a beacon level of at least %d",
-  "jsst.beaconpowers.beacon_payment": "Place payment item to the right"
+  "jsst.beaconpowers.beacon_requirement": "Requires a beacon level of at least %d",
+  "jsst.beaconpowers.beacon_payment": "Place payment item to the right",
+
+  "jsst.command.config.open_wiki": "Click to open the wiki page for this option",
+  "jsst.command.config.check": "%s: %s",
+  "jsst.command.config.change": "%s: %s -> %s",
+  "jsst.command.config.unchanged": "%s: %s (unchanged)",
+  "jsst.command.config.list.empty": "(empty)",
+  "jsst.command.config.list.alreadyContains": "%s: Already contains %s",
+  "jsst.command.config.list.doesNotContain": "%s: Does not contain %s",
+  "jsst.command.config.unknownId": "Unknown ID: %s",
+  "jsst.command.config.list.added": "%s: Added %s",
+  "jsst.command.config.list.removed": "%s: Removed %s",
+
+  "jsst.command.config.power_list_header": "Level %d"
 }

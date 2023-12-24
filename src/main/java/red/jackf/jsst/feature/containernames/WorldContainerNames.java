@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import red.jackf.jackfredlib.api.lying.Tracker;
 import red.jackf.jackfredlib.api.lying.entity.EntityLie;
@@ -163,9 +162,9 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
     }
 
     @Override
-    public void reload(Config current, @Nullable Config old) {
-        super.reload(current, old);
-        if (old == null || current.viewRange != old.viewRange) {
+    public void reload(Config current) {
+        super.reload(current);
+        if (current.enabled) {
             for (ServerLevel level : ServerTracker.eachLoadedLevel()) {
                 for (LabelLie label : getLabels(level).values()) {
                     label.tracker().setFocus(label.position(), 6 * config().viewRange);

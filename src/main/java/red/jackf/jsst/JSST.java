@@ -2,17 +2,18 @@ package red.jackf.jsst;
 
 import blue.endless.jankson.JsonObject;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import red.jackf.jackfredlib.api.config.ConfigHandler;
+import red.jackf.jsst.command.JSSTCommand;
 import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.config.JSSTConfigMigrator;
 import red.jackf.jsst.feature.Feature;
 import red.jackf.jsst.feature.ToggleFeature;
-import red.jackf.jsst.feature.beaconpowers.BeaconPowerSet;
-import red.jackf.jsst.feature.beaconpowers.MoreBeaconPowers;
-import red.jackf.jsst.feature.beaconrange.ExtendedBeaconRange;
+import red.jackf.jsst.feature.beaconenhancement.BeaconPowerSet;
+import red.jackf.jsst.feature.beaconenhancement.BeaconEnhancement;
 import red.jackf.jsst.feature.containernames.WorldContainerNames;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 import red.jackf.jsst.util.Scheduler;
@@ -45,9 +46,8 @@ public class JSST implements ModInitializer {
 
     private static final List<Feature<?>> FEATURES = List.of(
             PortableCrafting.INSTANCE,
-            ExtendedBeaconRange.INSTANCE,
             WorldContainerNames.INSTANCE,
-            MoreBeaconPowers.INSTANCE
+            BeaconEnhancement.INSTANCE
     );
 
     @Override
@@ -60,5 +60,7 @@ public class JSST implements ModInitializer {
         Scheduler.INSTANCE.setup();
         ServerTracker.setup();
         LabelMaps.touch();
+
+        CommandRegistrationCallback.EVENT.register(JSSTCommand::create);
     }
 }

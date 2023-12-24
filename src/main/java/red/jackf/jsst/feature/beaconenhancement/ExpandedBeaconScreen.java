@@ -1,4 +1,4 @@
-package red.jackf.jsst.feature.beaconpowers;
+package red.jackf.jsst.feature.beaconenhancement;
 
 import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
@@ -124,7 +124,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
     private void openPrimary() {
         final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
 
-        List<MobEffect> options = MoreBeaconPowers.INSTANCE.config().powers.getPrimaries(beaconLevel);
+        List<MobEffect> options = BeaconEnhancement.INSTANCE.config().powers.getPrimaries(beaconLevel);
         options.sort(Streams.comparingComponent(MobEffect::getDisplayName));
 
         Menus.selector(player, Component.translatable("block.minecraft.beacon.primary"), options, LabelMaps.MOB_EFFECTS, selection -> {
@@ -136,7 +136,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
     private void openSecondary() {
         final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
 
-        List<MobEffect> options = new ArrayList<>(MoreBeaconPowers.INSTANCE.config().powers.getSecondaries(beaconLevel));
+        List<MobEffect> options = new ArrayList<>(BeaconEnhancement.INSTANCE.config().powers.getSecondaries(beaconLevel));
         options.sort(Streams.comparingComponent(MobEffect::getDisplayName));
 
         LabelMap<MobEffect> map = LabelMaps.MOB_EFFECTS;
@@ -186,16 +186,15 @@ public class ExpandedBeaconScreen extends SimpleGui {
         final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
 
         // power level bar
-        // TODO add labels saying what you unlock in lore for each level
         for (int level = 1; level <= 6; level++) {
             ItemStack label;
-            if (level <= MoreBeaconPowers.INSTANCE.config().maxBeaconLevel) {
+            if (level <= BeaconEnhancement.INSTANCE.config().maxBeaconLevel) {
                 boolean active = level <= beaconLevel;
                 Component title = Component.translatable(active ? "jsst.beaconpowers.beacon_level_active" : "jsst.beaconpowers.beacon_level_inactive", level)
                         .setStyle(Style.EMPTY.withColor(active ? 0x7FFF7F : 0xFF7F7F));
                 var builder = GuiElementBuilder.from(new ItemStack(active ? Items.LIME_STAINED_GLASS_PANE : Items.RED_STAINED_GLASS_PANE))
                                                .setName(title);
-                for (MobEffect effect : MoreBeaconPowers.INSTANCE.config().powers.getAtLevel(level)) {
+                for (MobEffect effect : BeaconEnhancement.INSTANCE.config().powers.getAtLevel(level)) {
                     builder.addLoreLine(Component.empty().withStyle(Styles.LIST_ITEM).append(effect.getDisplayName()));
                 }
 
@@ -206,7 +205,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
             this.setSlot(GuiUtil.slot(4, 6 - level), GuiElementBuilder.from(label));
         }
 
-        // power change buttons
+        // primary power
         if (beaconLevel >= 1) {
             GuiUtil.fill(this, ItemStack.EMPTY, 0, 3, 0, 4);
             this.setSlot(GuiUtil.slot(1, 1), CommonLabels.simple(Items.APPLE, Component.translatable("block.minecraft.beacon.primary")));
@@ -214,10 +213,11 @@ public class ExpandedBeaconScreen extends SimpleGui {
                                                               .addLoreLine(Hints.leftClick(Component.translatable("jsst.common.change")))
                                                               .setCallback(this::openPrimary));
         } else {
-            GuiUtil.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement_primary"))
+            GuiUtil.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement", 1))
                                            .getItemStack(), 0, 3, 0, 4);
         }
 
+        // secondary power
         if (beaconLevel >= SECONDARY_MINIMUM) {
             GuiUtil.fill(this, ItemStack.EMPTY, 6, 9, 0, 4);
             this.setSlot(GuiUtil.slot(7, 1), CommonLabels.simple(Items.GOLDEN_APPLE, Component.translatable("block.minecraft.beacon.secondary")));
@@ -234,7 +234,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
                                                               .addLoreLine(Hints.leftClick(Component.translatable("jsst.common.change")))
                                                               .setCallback(this::openSecondary));
         } else {
-            GuiUtil.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement_secondary", SECONDARY_MINIMUM))
+            GuiUtil.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement", SECONDARY_MINIMUM))
                                            .getItemStack(), 6, 9, 0, 4);
         }
     }

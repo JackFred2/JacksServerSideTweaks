@@ -1,4 +1,4 @@
-package red.jackf.jsst.feature.beaconpowers;
+package red.jackf.jsst.feature.beaconenhancement;
 
 import blue.endless.jankson.JsonArray;
 import blue.endless.jankson.JsonElement;
@@ -6,17 +6,19 @@ import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.JsonPrimitive;
 import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.api.Marshaller;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class BeaconPowerSet {
-    private final Multimap<Integer, MobEffect> powers = MultimapBuilder.treeKeys().hashSetValues().build();
+    private final SetMultimap<Integer, MobEffect> powers = MultimapBuilder.treeKeys().hashSetValues().build();
 
     public static BeaconPowerSet getDefault() {
         var def = new BeaconPowerSet();
@@ -33,16 +35,23 @@ public class BeaconPowerSet {
         return def;
     }
 
+    public void removePower(int level, MobEffect effect) {
+        this.powers.entries().removeIf(entry -> {
+            if (effect != entry.getValue()) return false;
+            return level <= 3 ? entry.getKey() <= 3 : entry.getKey() >= 4;
+        });
+    }
+
     public void addPower(int level, MobEffect effect) {
         if (level < 1 || level > 6) return;
 
-        for (Iterator<Map.Entry<Integer, MobEffect>> iterator = this.powers.entries().iterator(); iterator.hasNext(); ) {
-            Map.Entry<Integer, MobEffect> entry = iterator.next();
-            if (entry.getValue() == effect) {
-                if (entry.getKey() > level) iterator.remove();
-                else return;
-            }
-        }
+        if (level <= 3)
+            for (int i = 1; i <= 3; i++)
+                this.getAtLevel(i).remove(effect);
+        else
+            for (int i = 4; i <= 6; i++)
+                this.getAtLevel(i).remove(effect);
+
         this.powers.put(level, effect);
     }
 
