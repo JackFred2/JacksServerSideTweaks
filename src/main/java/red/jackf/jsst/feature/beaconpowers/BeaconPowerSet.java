@@ -15,11 +15,11 @@ import net.minecraft.world.effect.MobEffects;
 
 import java.util.*;
 
-public class BeaconPowers {
+public class BeaconPowerSet {
     private final Multimap<Integer, MobEffect> powers = MultimapBuilder.treeKeys().hashSetValues().build();
 
-    public static BeaconPowers getDefault() {
-        var def = new BeaconPowers();
+    public static BeaconPowerSet getDefault() {
+        var def = new BeaconPowerSet();
         def.addPower(1, MobEffects.MOVEMENT_SPEED);
         def.addPower(1, MobEffects.DIG_SPEED);
         def.addPower(2, MobEffects.DAMAGE_RESISTANCE);
@@ -62,13 +62,17 @@ public class BeaconPowers {
         return effects;
     }
 
+    public Collection<MobEffect> getAtLevel(int level) {
+        return this.powers.get(level);
+    }
+
     public boolean isValid(MobEffect effect) {
         return this.powers.containsValue(effect);
     }
 
     public static class Serializer {
-        public static BeaconPowers deserialize(JsonObject obj, Marshaller marshaller) throws DeserializationException {
-            BeaconPowers powers = new BeaconPowers();
+        public static BeaconPowerSet deserialize(JsonObject obj, Marshaller marshaller) throws DeserializationException {
+            BeaconPowerSet powers = new BeaconPowerSet();
             for (String key : obj.keySet()) {
                 try {
                     int level = Integer.parseInt(key);
@@ -103,11 +107,11 @@ public class BeaconPowers {
             return powers;
         }
 
-        public static JsonElement serialize(BeaconPowers beaconPowers, Marshaller marshaller) {
+        public static JsonElement serialize(BeaconPowerSet beaconPowerSet, Marshaller marshaller) {
             var root = new JsonObject();
-            for (Integer level : beaconPowers.powers.keySet()) {
+            for (Integer level : beaconPowerSet.powers.keySet()) {
                 var set = new JsonArray();
-                for (MobEffect effect : beaconPowers.powers.get(level)) {
+                for (MobEffect effect : beaconPowerSet.powers.get(level)) {
                     ResourceLocation id = BuiltInRegistries.MOB_EFFECT.getKey(effect);
                     if (id == null) continue;
                     set.add(marshaller.serialize(id));

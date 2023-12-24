@@ -10,7 +10,7 @@ import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.config.JSSTConfigMigrator;
 import red.jackf.jsst.feature.Feature;
 import red.jackf.jsst.feature.ToggleFeature;
-import red.jackf.jsst.feature.beaconpowers.BeaconPowers;
+import red.jackf.jsst.feature.beaconpowers.BeaconPowerSet;
 import red.jackf.jsst.feature.beaconpowers.MoreBeaconPowers;
 import red.jackf.jsst.feature.beaconrange.ExtendedBeaconRange;
 import red.jackf.jsst.feature.containernames.WorldContainerNames;
@@ -38,8 +38,8 @@ public class JSST implements ModInitializer {
             .withLogger(getLogger("Config"))
             .withMigrator(JSSTConfigMigrator.get())
             .modifyJankson(builder -> {
-                builder.registerDeserializer(JsonObject.class, BeaconPowers.class, BeaconPowers.Serializer::deserialize);
-                builder.registerSerializer(BeaconPowers.class, BeaconPowers.Serializer::serialize);
+                builder.registerDeserializer(JsonObject.class, BeaconPowerSet.class, BeaconPowerSet.Serializer::deserialize);
+                builder.registerSerializer(BeaconPowerSet.class, BeaconPowerSet.Serializer::serialize);
             })
             .build();
 

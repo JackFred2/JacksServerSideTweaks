@@ -7,6 +7,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -24,14 +25,13 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.util.Streams;
-import red.jackf.jsst.util.sgui.CommonLabels;
-import red.jackf.jsst.util.sgui.GuiUtil;
-import red.jackf.jsst.util.sgui.Hints;
-import red.jackf.jsst.util.sgui.Menus;
+import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ExpandedBeaconScreen extends SimpleGui {
     private static final ItemStack NO_EFFECT = GuiElementBuilder.from(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER))
@@ -67,6 +67,14 @@ public class ExpandedBeaconScreen extends SimpleGui {
         this.beacon = beacon;
         this.primary = BeaconBlockEntityDuck.getPrimaryPower(beacon);
         this.secondary = BeaconBlockEntityDuck.getSecondaryPower(beacon);
+    }
+
+    private static ItemStack getSecondTierLabel(MobEffect effect) {
+        return GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(effect))
+                                .setName(Component.translatable("potion.withAmplifier",
+                                                                effect.getDisplayName(),
+                                                                Component.translatable("potion.potency.1")))
+                                .asStack();
     }
 
     @Override
@@ -125,14 +133,6 @@ public class ExpandedBeaconScreen extends SimpleGui {
         });
     }
 
-    private static ItemStack getSecondTierLabel(MobEffect effect) {
-        return GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(effect))
-                .setName(Component.translatable("potion.withAmplifier",
-                                                effect.getDisplayName(),
-                                                Component.translatable("potion.potency.1")))
-                .asStack();
-    }
-
     private void openSecondary() {
         final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
 
@@ -187,18 +187,23 @@ public class ExpandedBeaconScreen extends SimpleGui {
 
         // power level bar
         // TODO add labels saying what you unlock in lore for each level
-        for (int level = 0; level < 6; level++) {
+        for (int level = 1; level <= 6; level++) {
             ItemStack label;
-            if (level < MoreBeaconPowers.INSTANCE.config().maxBeaconLevel) {
-                if (level < beaconLevel) {
-                    label = CommonLabels.simple(Items.LIME_STAINED_GLASS_PANE, Component.translatable("jsst.beaconpowers.beacon_level", beaconLevel, MoreBeaconPowers.INSTANCE.config().maxBeaconLevel));
-                } else {
-                    label = CommonLabels.simple(Items.RED_STAINED_GLASS_PANE, Component.translatable("jsst.beaconpowers.beacon_level", beaconLevel, MoreBeaconPowers.INSTANCE.config().maxBeaconLevel));
+            if (level <= MoreBeaconPowers.INSTANCE.config().maxBeaconLevel) {
+                boolean active = level <= beaconLevel;
+                Component title = Component.translatable(active ? "jsst.beaconpowers.beacon_level_active" : "jsst.beaconpowers.beacon_level_inactive", level)
+                        .setStyle(Style.EMPTY.withColor(active ? 0x7FFF7F : 0xFF7F7F));
+                var builder = GuiElementBuilder.from(new ItemStack(active ? Items.LIME_STAINED_GLASS_PANE : Items.RED_STAINED_GLASS_PANE))
+                                               .setName(title);
+                for (MobEffect effect : MoreBeaconPowers.INSTANCE.config().powers.getAtLevel(level)) {
+                    builder.addLoreLine(Component.empty().withStyle(Styles.LIST_ITEM).append(effect.getDisplayName()));
                 }
+
+                label = builder.asStack();
             } else {
                 label = CommonLabels.simple(Items.BLUE_STAINED_GLASS_PANE, CommonComponents.EMPTY);
             }
-            this.setSlot(GuiUtil.slot(4, 5 - level), GuiElementBuilder.from(label));
+            this.setSlot(GuiUtil.slot(4, 6 - level), GuiElementBuilder.from(label));
         }
 
         // power change buttons
