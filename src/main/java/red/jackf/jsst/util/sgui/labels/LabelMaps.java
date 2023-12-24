@@ -9,7 +9,9 @@ import net.minecraft.world.item.alchemy.Potions;
 
 public interface LabelMaps {
     //LabelMap<MobEffect> MOB_EFFECTS = createMobEffects();
-    LabelMap<MobEffect> MOB_EFFECTS = LabelMap.createDataManaged(BuiltInRegistries.MOB_EFFECT, PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER));
+    LabelMap<MobEffect> MOB_EFFECTS = LabelMap.createDataManaged(BuiltInRegistries.MOB_EFFECT,
+                                                                 effect -> PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER),
+                                                                 MobEffect::getDisplayName);
 
     static void touch() {}
 }

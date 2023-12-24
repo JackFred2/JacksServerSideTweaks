@@ -19,15 +19,25 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import org.jetbrains.annotations.Nullable;
-import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.CommonLabels;
+import red.jackf.jsst.util.sgui.GuiUtil;
+import red.jackf.jsst.util.sgui.Hints;
+import red.jackf.jsst.util.sgui.Menus;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ExpandedBeaconScreen extends SimpleGui {
+    private static final ItemStack NO_EFFECT = GuiElementBuilder.from(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER))
+                                                                .setName(Component.translatable("effect.none"))
+                                                                .hideFlags()
+                                                                .asStack();
     private static final int SECONDARY_MINIMUM = 4;
     private final Container paymentInv = new SimpleContainer(1) {
         @Override
@@ -112,11 +122,27 @@ public class ExpandedBeaconScreen extends SimpleGui {
         });
     }
 
+    private static ItemStack getSecondTierLabel(MobEffect effect) {
+        return GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(effect))
+                .setName(Component.translatable("potion.withAmplifier",
+                                                effect.getDisplayName(),
+                                                Component.translatable("potion.potency.1")))
+                .asStack();
+    }
+
     private void openSecondary() {
         final int beaconLevel = BeaconBlockEntityDuck.getPowerLevel(beacon);
         List<MobEffect> options = new ArrayList<>(MoreBeaconPowers.INSTANCE.config().powers.getSecondaries(beaconLevel));
-        if (this.primary != null) options.add(this.primary);
-        Menus.selector(player, Component.translatable("block.minecraft.beacon.secondary"), options, LabelMaps.MOB_EFFECTS, selection -> {
+        var map = LabelMaps.MOB_EFFECTS;
+        if (this.primary != null) {
+            map = map.withAdditional(Map.of(
+                    this.primary,
+                    getSecondTierLabel(this.primary)
+            ));
+            options.add(this.primary);
+        }
+
+        Menus.selector(player, Component.translatable("block.minecraft.beacon.secondary"), options, map, selection -> {
             if (selection.hasResult()) this.secondary = selection.result();
             this.open();
         });
@@ -173,7 +199,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
         if (beaconLevel >= 1) {
             GuiUtil.fill(this, ItemStack.EMPTY, 0, 3, 0, 4);
             this.setSlot(GuiUtil.slot(1, 1), CommonLabels.simple(Items.APPLE, Component.translatable("block.minecraft.beacon.primary")));
-            this.setSlot(GuiUtil.slot(1, 2), GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(primary))
+            this.setSlot(GuiUtil.slot(1, 2), GuiElementBuilder.from(primary != null ? LabelMaps.MOB_EFFECTS.getLabel(primary) : NO_EFFECT)
                                                               .addLoreLine(Hints.leftClick(Component.translatable("jsst.common.change")))
                                                               .setCallback(this::openPrimary));
         } else {
@@ -184,7 +210,16 @@ public class ExpandedBeaconScreen extends SimpleGui {
         if (beaconLevel >= SECONDARY_MINIMUM) {
             GuiUtil.fill(this, ItemStack.EMPTY, 6, 9, 0, 4);
             this.setSlot(GuiUtil.slot(7, 1), CommonLabels.simple(Items.GOLDEN_APPLE, Component.translatable("block.minecraft.beacon.secondary")));
-            this.setSlot(GuiUtil.slot(7, 2), GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(secondary))
+
+            ItemStack label;
+            if (secondary == null) {
+                label = NO_EFFECT;
+            } else if (secondary == primary) {
+                label = getSecondTierLabel(secondary);
+            } else {
+                label = LabelMaps.MOB_EFFECTS.getLabel(secondary);
+            }
+            this.setSlot(GuiUtil.slot(7, 2), GuiElementBuilder.from(label)
                                                               .addLoreLine(Hints.leftClick(Component.translatable("jsst.common.change")))
                                                               .setCallback(this::openSecondary));
         } else {
