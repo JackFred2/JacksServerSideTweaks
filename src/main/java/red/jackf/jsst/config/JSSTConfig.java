@@ -4,12 +4,14 @@ import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.config.Config;
 import red.jackf.jsst.feature.beaconenhancement.BeaconEnhancement;
 import red.jackf.jsst.feature.containernames.WorldContainerNames;
+import red.jackf.jsst.feature.qualityoflife.QualityOfLife;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 
 public class JSSTConfig implements Config<JSSTConfig> {
     public PortableCrafting.Config portableCrafting = new PortableCrafting.Config();
     public WorldContainerNames.Config worldContainerNames = new WorldContainerNames.Config();
     public BeaconEnhancement.Config beaconEnhancement = new BeaconEnhancement.Config();
+    public QualityOfLife.Config qol = new QualityOfLife.Config();
 
     @Override
     public void validate() {
@@ -22,5 +24,6 @@ public class JSSTConfig implements Config<JSSTConfig> {
         PortableCrafting.INSTANCE.reload(this.portableCrafting);
         WorldContainerNames.INSTANCE.reload(this.worldContainerNames);
         BeaconEnhancement.INSTANCE.reload(this.beaconEnhancement);
+        QualityOfLife.INSTANCE.reload(this.qol);
     }
 }

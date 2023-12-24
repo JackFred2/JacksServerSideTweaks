@@ -5,7 +5,8 @@
   "mixins": [
     "beaconenhancement.BeaconBlockEntityMixin",
     "containernames.ChunkMapAccessor",
-    "containernames.ServerLevelMixin"
+    "containernames.ServerLevelMixin",
+    "itemmovement.BlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1

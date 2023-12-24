@@ -317,6 +317,7 @@ public class CommandConfig {
         root.then(makePortableCraftingNode());
         root.then(makeBeaconEnhancementNode(context));
         root.then(makeWorldContainerNamesNode());
+        root.then(makeQolNode());
 
         return root;
     }
@@ -533,9 +534,22 @@ public class CommandConfig {
         return root;
     }
 
+    private static ArgumentBuilder<CommandSourceStack, ?> makeQolNode() {
+        var root = Commands.literal("qol");
+
+        root.then(makeBoolean("minedItemsShiftUp",
+                              "qol.minedItemsShiftUp",
+                              WikiPage.QOL,
+                              config -> config.qol.minedItemsShiftUp,
+                              (config, newVal) -> config.qol.minedItemsShiftUp = newVal));
+
+        return root;
+    }
+
     private interface WikiPage {
         String PORTABLE_CRAFTING = "Portable-Crafting";
         String BEACON_ENHANCEMENT = "Beacon-Enhancement";
         String WORLD_CONTAINER_NAMES = "World-Container-Names";
+        String QOL = "Mining-Quality-Of-Life";
     }
 }
