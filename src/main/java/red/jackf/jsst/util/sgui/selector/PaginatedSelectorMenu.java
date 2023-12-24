@@ -23,7 +23,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
         super(MenuType.GENERIC_9x6, title, player, options, onSelect, labelMap);
         this.maxPage = (options.size() - 1) / PER_PAGE;
 
-        this.setSlot(53, CommonLabels.close(this::close));
+        this.setSlot(53, CommonLabels.close(() -> finish(new Selection<>(false, null))));
 
         this.refresh();
     }

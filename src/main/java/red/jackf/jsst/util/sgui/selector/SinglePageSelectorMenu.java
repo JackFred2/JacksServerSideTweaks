@@ -24,7 +24,7 @@ public class SinglePageSelectorMenu<T> extends SelectorMenu<T> {
                                              .setCallback(() -> this.finish(new Selection<>(true, option))));
         }
 
-        this.setSlot(getSmallestFitting(this.options.size()).getSecond() - 1, CommonLabels.close(this::close));
+        this.setSlot(getSmallestFitting(this.options.size()).getSecond() - 1, CommonLabels.close(() -> finish(new Selection<>(false, null))));
     }
 
     private static Pair<MenuType<? extends AbstractContainerMenu>, Integer> getSmallestFitting(int options) {
