@@ -1,5 +1,6 @@
 package red.jackf.jsst.feature.beaconenhancement;
 
+import net.minecraft.world.LockCode;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,10 @@ public interface BeaconBlockEntityDuck {
         ((BeaconBlockEntityDuck) beaconBlockEntity).jsst$beaconEnhancement$setSecondaryPower(effect);
     }
 
+    static LockCode getLock(BeaconBlockEntity beaconBlockEntity) {
+        return ((BeaconBlockEntityDuck) beaconBlockEntity).jsst$beaconEnhancement$getLock();
+    }
+
     int jsst$beaconEnhancement$getPowerLevel();
 
     @Nullable MobEffect jsst$beaconEnhancement$getPrimaryPower();
@@ -34,4 +39,6 @@ public interface BeaconBlockEntityDuck {
     void jsst$beaconEnhancement$setPrimaryPower(MobEffect effect);
 
     void jsst$beaconEnhancement$setSecondaryPower(MobEffect effect);
+
+    LockCode jsst$beaconEnhancement$getLock();
 }

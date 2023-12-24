@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import red.jackf.jsst.JSST;
@@ -20,8 +21,12 @@ public class BeaconEnhancement extends ToggleFeature<BeaconEnhancement.Config> {
             if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.PASS;
             BlockEntity be = level.getBlockEntity(hitResult.getBlockPos());
             if (be instanceof BeaconBlockEntity bbe && config().enabled) {
-                new ExpandedBeaconScreen(serverPlayer, bbe).open();
-                return InteractionResult.SUCCESS;
+                if (BaseContainerBlockEntity.canUnlock(player, BeaconBlockEntityDuck.getLock(bbe), bbe.getDisplayName())) {
+                    new ExpandedBeaconScreen(serverPlayer, bbe).open();
+                    return InteractionResult.SUCCESS;
+                } else {
+                    return InteractionResult.FAIL;
+                }
             } else {
                 return InteractionResult.PASS;
             }

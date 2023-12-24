@@ -61,7 +61,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
 
     public ExpandedBeaconScreen(ServerPlayer player, BeaconBlockEntity beacon) {
         super(MenuType.GENERIC_9x6, player, false);
-        this.setTitle(Component.translatable("container.beacon"));
+        this.setTitle(beacon.getDisplayName());
 
         this.level = player.serverLevel();
         this.beacon = beacon;

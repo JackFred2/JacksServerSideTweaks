@@ -48,6 +48,7 @@ public interface LabelMap<T> {
             return GuiElementBuilder.from(base)
                     .setName(nameGetter.apply(key))
                     .addLoreLine(Component.literal(String.valueOf(this.registry.getKey(key))).setStyle(Styles.ID))
+                    .hideFlags()
                     .asStack();
         }
 

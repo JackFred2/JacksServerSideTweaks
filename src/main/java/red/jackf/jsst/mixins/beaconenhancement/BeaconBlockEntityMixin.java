@@ -1,6 +1,7 @@
 package red.jackf.jsst.mixins.beaconenhancement;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import net.minecraft.world.LockCode;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,8 @@ public class BeaconBlockEntityMixin implements BeaconBlockEntityDuck {
 
     @Shadow
     @Nullable MobEffect secondaryPower;
+
+    @Shadow private LockCode lockKey;
 
     @Override
     public int jsst$beaconEnhancement$getPowerLevel() {
@@ -47,6 +50,11 @@ public class BeaconBlockEntityMixin implements BeaconBlockEntityDuck {
     @Override
     public void jsst$beaconEnhancement$setSecondaryPower(MobEffect effect) {
         this.secondaryPower = effect;
+    }
+
+    @Override
+    public LockCode jsst$beaconEnhancement$getLock() {
+        return this.lockKey;
     }
 
     @Inject(method = "filterEffect", at = @At("HEAD"), cancellable = true)
