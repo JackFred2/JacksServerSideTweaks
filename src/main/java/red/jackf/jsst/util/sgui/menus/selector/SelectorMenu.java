@@ -4,6 +4,7 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
+import red.jackf.jsst.util.sgui.Sounds;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 
 import java.util.Collection;
@@ -25,17 +26,20 @@ public abstract class SelectorMenu<T> extends SimpleGui {
     }
 
     protected void finish(Selection<T> selection) {
-        if (hasRanCallback) return;
-        this.hasRanCallback = true;
-        this.onSelect.accept(selection);
+        if (!hasRanCallback) {
+            this.hasRanCallback = true;
+            if (selection.hasResult()) {
+                Sounds.click(player);
+            } else {
+                Sounds.close(player);
+            }
+            this.onSelect.accept(selection);
+        }
     }
 
     @Override
     public void onClose() {
-        if (!hasRanCallback) {
-            hasRanCallback = true;
-            this.onSelect.accept(new Selection<>(false, null));
-        }
+        finish(new Selection<>(false, null));
     }
 
     public record Selection<T>(boolean hasResult, T result) {}

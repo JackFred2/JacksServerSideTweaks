@@ -6,8 +6,8 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public class GuiUtil {
-    public static void returnItems(ServerPlayer player, Container container) {
+public interface Util {
+    static void returnItems(ServerPlayer player, Container container) {
         if (!player.isAlive() || player.hasDisconnected()) {
             for(int i = 0; i < container.getContainerSize(); ++i) {
                 player.drop(container.removeItemNoUpdate(i), false);
@@ -22,11 +22,11 @@ public class GuiUtil {
         }
     }
 
-    public static int slot(int column, int row) {
+    static int slot(int column, int row) {
         return row * 9 + column;
     }
 
-    public static void fill(SlotHolder holder, ItemStack stack, int colFrom, int colTo, int rowFrom, int rowTo) {
+    static void fill(SlotHolder holder, ItemStack stack, int colFrom, int colTo, int rowFrom, int rowTo) {
         for (int col = colFrom; col < colTo; col++) {
             for (int row = rowFrom; row < rowTo; row++) {
                 holder.setSlot(slot(col, row), stack);

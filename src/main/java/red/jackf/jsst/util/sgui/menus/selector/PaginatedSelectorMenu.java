@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.util.sgui.CommonLabels;
 import red.jackf.jsst.util.sgui.Hints;
+import red.jackf.jsst.util.sgui.Sounds;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 
 import java.util.Collection;
@@ -69,11 +70,13 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
 
     private void previousPage() {
         this.page = Math.max(0, this.page - 1);
+        Sounds.scroll(player, (float) this.page / this.maxPage);
         this.refresh();
     }
 
     private void nextPage() {
         this.page = Math.min(maxPage, this.page + 1);
+        Sounds.scroll(player, (float) this.page / this.maxPage);
         this.refresh();
     }
 }
