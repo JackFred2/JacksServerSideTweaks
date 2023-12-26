@@ -23,6 +23,12 @@ public class QualityOfLife extends Feature<QualityOfLife.Config> {
                 Whether blocks mined will be moved up enough to be picked up from above. Convenient for Skyblocks.
                 Options: true, false
                 Default: true""")
-        public boolean minedItemsShiftUp = true;
+        public boolean doMinedItemsShiftUp = true;
+
+        @Comment("""
+                Whether blocks mined will move towards.
+                Options: true, false
+                Default: true""")
+        public boolean doMinedItemsShiftTowardsPlayer = true;
     }
 }

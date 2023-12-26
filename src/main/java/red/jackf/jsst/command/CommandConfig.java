@@ -65,65 +65,70 @@ public class CommandConfig {
             String baseWikiPage,
             Function<JSSTConfig, Boolean> get,
             BiConsumer<JSSTConfig, Boolean> set) {
-        return Commands.literal(name)
-                       .executes(ctx -> {
-                           ctx.getSource().sendSuccess(() -> Formatting.infoLine(
-                                   translatable("jsst.command.config.check",
-                                                makeHover(name, fullName, baseWikiPage),
-                                                Formatting.bool(get.apply(getConfig())))
-                           ), false);
+        var root = Commands.literal(name)
+                           .executes(ctx -> {
+                               ctx.getSource().sendSuccess(() -> Formatting.infoLine(
+                                       translatable("jsst.command.config.check",
+                                                    makeHover(name, fullName, baseWikiPage),
+                                                    Formatting.bool(get.apply(getConfig())))
+                               ), false);
 
-                           return 1;
-                       }).then(Commands.literal("true")
-                                       .executes(ctx -> {
-                                                     if (get.apply(getConfig())) {
-                                                         ctx.getSource().sendFailure(Formatting.infoLine(
-                                                                 translatable("jsst.command.config.unchanged",
-                                                                              makeHover(name, fullName, baseWikiPage),
-                                                                              Formatting.bool(true))
-                                                         ));
+                               return 1;
+                           });
 
-                                                         return 0;
-                                                     } else {
-                                                         set.accept(getConfig(), true);
-                                                         verifySafeAndLoad();
-                                                         ctx.getSource().sendSuccess(() -> Formatting.infoLine(
-                                                                 translatable("jsst.command.config.change",
-                                                                              makeHover(name, fullName, baseWikiPage),
-                                                                              Formatting.bool(false),
-                                                                              Formatting.bool(true))
-                                                         ), true);
+        root.then(Commands.literal("true")
+                          .executes(ctx -> {
+                                        if (get.apply(getConfig())) {
+                                            ctx.getSource().sendFailure(Formatting.infoLine(
+                                                    translatable("jsst.command.config.unchanged",
+                                                                 makeHover(name, fullName, baseWikiPage),
+                                                                 Formatting.bool(true))
+                                            ));
 
-                                                         return 1;
-                                                     }
-                                                 }
-                                       )).then(Commands.literal("false")
-                                                       .executes(ctx -> {
-                                                                     if (!get.apply(getConfig())) {
-                                                                         ctx.getSource().sendFailure(Formatting.infoLine(
-                                                                                 translatable("jsst.command.config.unchanged",
-                                                                                              makeHover(name, fullName, baseWikiPage),
-                                                                                              Formatting.bool(false))
-                                                                         ));
+                                            return 0;
+                                        } else {
+                                            set.accept(getConfig(), true);
+                                            verifySafeAndLoad();
+                                            ctx.getSource().sendSuccess(() -> Formatting.infoLine(
+                                                    translatable("jsst.command.config.change",
+                                                                 makeHover(name, fullName, baseWikiPage),
+                                                                 Formatting.bool(false),
+                                                                 Formatting.bool(true))
+                                            ), true);
 
-                                                                         return 0;
-                                                                     } else {
-                                                                         set.accept(getConfig(), false);
-                                                                         verifySafeAndLoad();
-                                                                         ctx.getSource().sendSuccess(() -> Formatting.infoLine(
-                                                                                 translatable("jsst.command.config.change",
-                                                                                              makeHover(name, fullName, baseWikiPage),
-                                                                                              Formatting.bool(true),
-                                                                                              Formatting.bool(false))
-                                                                         ), true);
+                                            return 1;
+                                        }
+                                    }
+                          ));
 
-                                                                         return 1;
-                                                                     }
-                                                                 }
-                                                       ));
+        root.then(Commands.literal("false")
+                          .executes(ctx -> {
+                                        if (!get.apply(getConfig())) {
+                                            ctx.getSource().sendFailure(Formatting.infoLine(
+                                                    translatable("jsst.command.config.unchanged",
+                                                                 makeHover(name, fullName, baseWikiPage),
+                                                                 Formatting.bool(false))
+                                            ));
+
+                                            return 0;
+                                        } else {
+                                            set.accept(getConfig(), false);
+                                            verifySafeAndLoad();
+                                            ctx.getSource().sendSuccess(() -> Formatting.infoLine(
+                                                    translatable("jsst.command.config.change",
+                                                                 makeHover(name, fullName, baseWikiPage),
+                                                                 Formatting.bool(true),
+                                                                 Formatting.bool(false))
+                                            ), true);
+
+                                            return 1;
+                                        }
+                                    }
+                          ));
+
+        return root;
     }
 
-    /*
     private static <E extends Enum<E>> LiteralArgumentBuilder<CommandSourceStack> makeEnum(
             String name,
             String fullName,
@@ -171,7 +176,7 @@ public class CommandConfig {
         }
 
         return node;
-    }*/
+    }
 
     private static LiteralArgumentBuilder<CommandSourceStack> makeIntRange(
             String name,
@@ -537,11 +542,17 @@ public class CommandConfig {
     private static ArgumentBuilder<CommandSourceStack, ?> makeQolNode() {
         var root = Commands.literal("qol");
 
-        root.then(makeBoolean("minedItemsShiftUp",
-                              "qol.minedItemsShiftUp",
+        root.then(makeBoolean("doMinedItemsShiftUp",
+                              "qol.doMinedItemsShiftUp",
                               WikiPage.QOL,
-                              config -> config.qol.minedItemsShiftUp,
-                              (config, newVal) -> config.qol.minedItemsShiftUp = newVal));
+                              config -> config.qol.doMinedItemsShiftUp,
+                              (config, newVal) -> config.qol.doMinedItemsShiftUp = newVal));
+
+        root.then(makeBoolean("doMinedItemsShiftTowardsPlayer",
+                              "qol.doMinedItemsShiftTowardsPlayer",
+                              WikiPage.QOL,
+                              config -> config.qol.doMinedItemsShiftTowardsPlayer,
+                              (config, newVal) -> config.qol.doMinedItemsShiftTowardsPlayer = newVal));
 
         return root;
     }
@@ -550,6 +561,6 @@ public class CommandConfig {
         String PORTABLE_CRAFTING = "Portable-Crafting";
         String BEACON_ENHANCEMENT = "Beacon-Enhancement";
         String WORLD_CONTAINER_NAMES = "World-Container-Names";
-        String QOL = "Mining-Quality-Of-Life";
+        String QOL = "Quality-Of-Life";
     }
 }

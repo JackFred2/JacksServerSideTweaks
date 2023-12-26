@@ -6,7 +6,7 @@
     "beaconenhancement.BeaconBlockEntityMixin",
     "containernames.ChunkMapAccessor",
     "containernames.ServerLevelMixin",
-    "itemmovement.BlockMixin"
+    "qualityoflife.BlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
