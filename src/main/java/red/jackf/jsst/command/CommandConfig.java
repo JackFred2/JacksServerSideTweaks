@@ -561,6 +561,7 @@ public class CommandConfig {
         String PORTABLE_CRAFTING = "Portable-Crafting";
         String BEACON_ENHANCEMENT = "Beacon-Enhancement";
         String WORLD_CONTAINER_NAMES = "World-Container-Names";
+        String ITEM_EDITOR = "Item-Editor";
         String QOL = "Quality-Of-Life";
     }
 }

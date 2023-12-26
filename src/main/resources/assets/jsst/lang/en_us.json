@@ -7,6 +7,8 @@
   "jsst.beaconpowers.beacon_requirement": "Requires a beacon level of at least %d",
   "jsst.beaconpowers.beacon_payment": "Place payment item to the right",
 
+  "jsst.itemEditor.selectBaseItem": "Select a base item",
+
   "jsst.command.config.open_wiki": "Click to open the wiki page for this option",
   "jsst.command.config.check": "%s: %s",
   "jsst.command.config.change": "%s: %s -> %s",

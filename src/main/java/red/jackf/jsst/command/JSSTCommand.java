@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import red.jackf.jsst.feature.itemeditor.ItemEditorCommand;
 
 public class JSSTCommand {
     public static void create(
@@ -15,6 +16,7 @@ public class JSSTCommand {
         root.requires(ctx -> ctx.hasPermission(4));
 
         root.then(CommandConfig.createCommandNode(buildContext));
+        root.then(ItemEditorCommand.create(buildContext));
 
         dispatcher.register(root);
     }

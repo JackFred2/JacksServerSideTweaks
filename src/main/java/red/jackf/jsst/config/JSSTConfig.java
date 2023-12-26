@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.config.Config;
 import red.jackf.jsst.feature.beaconenhancement.BeaconEnhancement;
 import red.jackf.jsst.feature.containernames.WorldContainerNames;
+import red.jackf.jsst.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.feature.qualityoflife.QualityOfLife;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 
@@ -22,6 +23,10 @@ public class JSSTConfig implements Config<JSSTConfig> {
     @Comment("""
             Allows beacon effects and maximum level to be customized. Replaces the vanilla Beacon GUI to accommodate this.""")
     public BeaconEnhancement.Config beaconEnhancement = new BeaconEnhancement.Config();
+
+    @Comment("""
+            Adds a powerful in-game item editor""")
+    public ItemEditor.Config itemEditor = new ItemEditor.Config();
 
     @Comment("""
             Tiny gameplay mechanics tweaks to reduce frustration when playing.""")

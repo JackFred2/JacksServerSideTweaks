@@ -64,11 +64,11 @@ public interface LabelMap<T> {
     }
 
     class Static<T> implements LabelMap<T> {
-        private final ItemStack defaultLabel;
+        private final Function<T, ItemStack> defaultLabel;
         private final Map<T, ItemStack> labels = new HashMap<>();
 
-        public Static(ItemStack defaultLabel) {
-            this.defaultLabel = defaultLabel;
+        public Static(Function<T, ItemStack> defaultGetter) {
+            this.defaultLabel = defaultGetter;
         }
 
         public LabelMap<T> addLabel(T key, ItemStack label) {
@@ -78,7 +78,7 @@ public interface LabelMap<T> {
 
         @Override
         public ItemStack getLabel(T key) {
-            return this.labels.getOrDefault(key, defaultLabel);
+            return this.labels.getOrDefault(key, defaultLabel.apply(key));
         }
     }
 
