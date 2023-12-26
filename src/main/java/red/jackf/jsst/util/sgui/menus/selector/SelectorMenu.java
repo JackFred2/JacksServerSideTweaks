@@ -1,4 +1,4 @@
-package red.jackf.jsst.util.sgui.selector;
+package red.jackf.jsst.util.sgui.menus.selector;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;

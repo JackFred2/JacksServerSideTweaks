@@ -1,10 +1,10 @@
-package red.jackf.jsst.util.sgui;
+package red.jackf.jsst.util.sgui.menus;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
-import red.jackf.jsst.util.sgui.selector.PaginatedSelectorMenu;
-import red.jackf.jsst.util.sgui.selector.SinglePageSelectorMenu;
+import red.jackf.jsst.util.sgui.menus.selector.PaginatedSelectorMenu;
+import red.jackf.jsst.util.sgui.menus.selector.SinglePageSelectorMenu;
 
 import java.util.Collection;
 import java.util.function.Consumer;

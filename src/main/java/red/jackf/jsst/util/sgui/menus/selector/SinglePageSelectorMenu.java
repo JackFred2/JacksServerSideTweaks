@@ -1,4 +1,4 @@
-package red.jackf.jsst.util.sgui.selector;
+package red.jackf.jsst.util.sgui.menus.selector;
 
 import com.mojang.datafixers.util.Pair;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;

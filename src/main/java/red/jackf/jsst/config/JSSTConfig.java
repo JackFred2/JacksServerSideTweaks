@@ -1,5 +1,6 @@
 package red.jackf.jsst.config;
 
+import blue.endless.jankson.Comment;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.config.Config;
 import red.jackf.jsst.feature.beaconenhancement.BeaconEnhancement;
@@ -8,9 +9,22 @@ import red.jackf.jsst.feature.qualityoflife.QualityOfLife;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 
 public class JSSTConfig implements Config<JSSTConfig> {
+    @Comment("""
+            Allows players to right click with a crafting table in-hand to open it, instead of needing to place it down. Configurable
+            using a tag representing crafting table items.""")
     public PortableCrafting.Config portableCrafting = new PortableCrafting.Config();
+
+    @Comment("""
+            Gives all named containers (chests, barrels, shulker boxes) a visible name in-world. Can optionally display an item stack
+            instead.""")
     public WorldContainerNames.Config worldContainerNames = new WorldContainerNames.Config();
+
+    @Comment("""
+            Allows beacon effects and maximum level to be customized. Replaces the vanilla Beacon GUI to accommodate this.""")
     public BeaconEnhancement.Config beaconEnhancement = new BeaconEnhancement.Config();
+
+    @Comment("""
+            Tiny gameplay mechanics tweaks to reduce frustration when playing.""")
     public QualityOfLife.Config qol = new QualityOfLife.Config();
 
     @Override

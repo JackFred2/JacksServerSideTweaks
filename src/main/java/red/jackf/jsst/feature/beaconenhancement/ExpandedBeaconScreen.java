@@ -30,6 +30,7 @@ import red.jackf.jsst.util.Streams;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
+import red.jackf.jsst.util.sgui.menus.Menus;
 
 import java.util.ArrayList;
 import java.util.List;
