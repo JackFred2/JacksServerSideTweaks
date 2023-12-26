@@ -15,7 +15,7 @@ public interface CommonLabels {
         return GuiElementBuilder.from(new ItemStack(Items.BARRIER))
                 .setName(Component.translatable("mco.selectServer.close"))
                 .addLoreLine(Hints.leftClick())
-                .setCallback(closeCallback)
+                .setCallback(Inputs.leftClick(closeCallback))
                 .build();
     }
 

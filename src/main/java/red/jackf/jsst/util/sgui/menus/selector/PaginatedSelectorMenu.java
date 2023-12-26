@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.util.sgui.CommonLabels;
 import red.jackf.jsst.util.sgui.Hints;
+import red.jackf.jsst.util.sgui.Inputs;
 import red.jackf.jsst.util.sgui.Sounds;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 
@@ -40,7 +41,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
                 ItemStack label = labelMap.getLabel(option);
                 this.setSlot(slot, GuiElementBuilder.from(label)
                                                     .addLoreLine(Hints.leftClick(Component.translatable("mco.template.button.select")))
-                                                    .setCallback(() -> this.finish(new Selection<>(true, option))));
+                                                    .setCallback(Inputs.leftClick(() -> this.finish(new Selection<>(true, option)))));
             } else {
                 this.setSlot(slot, ItemStack.EMPTY);
             }
@@ -51,7 +52,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
             this.setSlot(8, GuiElementBuilder.from(new ItemStack(Items.RED_CONCRETE))
                                              .setName(Component.translatable("spectatorMenu.previous_page"))
                                              .addLoreLine(Hints.leftClick())
-                                             .setCallback(this::previousPage));
+                                             .setCallback(Inputs.leftClick(this::previousPage)));
         } else {
             this.setSlot(8, ItemStack.EMPTY);
         }
@@ -62,7 +63,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
             this.setSlot(26, GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))
                                               .setName(Component.translatable("spectatorMenu.next_page"))
                                               .addLoreLine(Hints.leftClick())
-                                              .setCallback(this::nextPage));
+                                              .setCallback(Inputs.leftClick(this::nextPage)));
         } else {
             this.setSlot(26, ItemStack.EMPTY);
         }
