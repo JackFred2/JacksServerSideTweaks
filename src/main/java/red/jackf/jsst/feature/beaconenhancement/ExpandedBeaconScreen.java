@@ -102,11 +102,11 @@ public class ExpandedBeaconScreen extends SimpleGui {
         // update button
         if (this.hasPaymentItem() && this.hasDifferentResults() && this.primary != null) {
             this.setSlot(Util.slot(2, 5), GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))
-                                                           .setName(Component.translatable("jsst.common.confirm"))
+                                                           .setName(Translations.confirm())
                                                            .addLoreLine(Hints.leftClick())
                                                            .setCallback(Inputs.leftClick(this::confirmUpdate)));
         } else {
-            this.setSlot(Util.slot(2, 5), CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.common.confirm")));
+            this.setSlot(Util.slot(2, 5), CommonLabels.simple(Items.GRAY_CONCRETE, Translations.confirm()));
         }
     }
 
@@ -264,7 +264,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
             Util.fill(this, ItemStack.EMPTY, 0, 3, 0, 4);
             this.setSlot(Util.slot(1, 1), CommonLabels.simple(Items.APPLE, Component.translatable("block.minecraft.beacon.primary")));
             this.setSlot(Util.slot(1, 2), GuiElementBuilder.from(primary != null ? LabelMaps.MOB_EFFECTS.getLabel(primary) : NO_EFFECT)
-                                                           .addLoreLine(Hints.leftClick(Component.translatable("jsst.common.change")))
+                                                           .addLoreLine(Hints.leftClick(Translations.change()))
                                                            .setCallback(Inputs.leftClick(this::openPrimary)));
         } else {
             Util.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement", 1))
@@ -285,7 +285,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
                 label = LabelMaps.MOB_EFFECTS.getLabel(secondary);
             }
             this.setSlot(Util.slot(7, 2), GuiElementBuilder.from(label)
-                                                           .addLoreLine(Hints.leftClick(Component.translatable("jsst.common.change")))
+                                                           .addLoreLine(Hints.leftClick(Translations.change()))
                                                            .setCallback(Inputs.leftClick(this::openSecondary)));
         } else {
             Util.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement", SECONDARY_MINIMUM))

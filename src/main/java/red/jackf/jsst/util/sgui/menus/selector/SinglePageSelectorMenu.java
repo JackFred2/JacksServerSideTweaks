@@ -9,6 +9,7 @@ import net.minecraft.world.inventory.MenuType;
 import red.jackf.jsst.util.sgui.CommonLabels;
 import red.jackf.jsst.util.sgui.Hints;
 import red.jackf.jsst.util.sgui.Inputs;
+import red.jackf.jsst.util.sgui.Sounds;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 
 import java.util.Collection;
@@ -22,10 +23,16 @@ public class SinglePageSelectorMenu<T> extends SelectorMenu<T> {
             T option = this.options.get(i);
             this.setSlot(i, GuiElementBuilder.from(labelMap.getLabel(option))
                                              .addLoreLine(Hints.leftClick(Component.translatable("mco.template.button.select")))
-                                             .setCallback(Inputs.leftClick(() -> this.finish(new Selection<>(true, option)))));
+                                             .setCallback(Inputs.leftClick(() -> {
+                                                 Sounds.click(player);
+                                                 this.finish(new Selection<>(true, option));
+                                             })));
         }
 
-        this.setSlot(getSmallestFitting(this.options.size()).getSecond() - 1, CommonLabels.close(() -> finish(new Selection<>(false, null))));
+        this.setSlot(getSmallestFitting(this.options.size()).getSecond() - 1, CommonLabels.close(() -> {
+            Sounds.close(player);
+            this.finish(new Selection<>(false, null));
+        }));
     }
 
     private static Pair<MenuType<? extends AbstractContainerMenu>, Integer> getSmallestFitting(int options) {

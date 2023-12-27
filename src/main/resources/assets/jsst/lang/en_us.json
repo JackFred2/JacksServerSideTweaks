@@ -2,6 +2,10 @@
   "jsst.title": "Jack's Server Side Tweaks",
   "jsst.common.change": "Change",
   "jsst.common.confirm": "Confirm",
+  "jsst.common.clear": "Clear",
+  "jsst.common.searchFilter": "Current Search Filter: \"%s\"",
+  "jsst.common.invalid": "Invalid",
+
   "jsst.beaconpowers.beacon_level_active": "Beacon Level %d (active)",
   "jsst.beaconpowers.beacon_level_inactive": "Beacon Level %d (inactive)",
   "jsst.beaconpowers.beacon_requirement": "Requires a beacon level of at least %d",

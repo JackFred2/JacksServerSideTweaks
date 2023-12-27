@@ -19,6 +19,10 @@ public interface Sounds {
         playSound(player, SoundEvents.UI_BUTTON_CLICK, VOLUME, 0.85f);
     }
 
+    static void clear(ServerPlayer player) {
+        playSound(player, SoundEvents.BUCKET_EMPTY, VOLUME, 1f);
+    }
+
     static void scroll(ServerPlayer player, float progress) {
         playSound(player, SoundEvents.UI_BUTTON_CLICK, VOLUME, 0.7f + progress * 0.6f);
     }

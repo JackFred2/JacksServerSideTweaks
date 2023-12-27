@@ -6,5 +6,7 @@ import net.minecraft.network.chat.Style;
 public interface Styles {
     Style LABEL = Style.EMPTY.withColor(ChatFormatting.WHITE);
     Style LIST_ITEM = Style.EMPTY.withColor(ChatFormatting.GRAY);
-    Style ID = Style.EMPTY.withColor(ChatFormatting.YELLOW);
+    Style ID = Style.EMPTY.withColor(ChatFormatting.GOLD);
+    Style VARIABLE = Style.EMPTY.withColor(ChatFormatting.YELLOW);
+    Style INPUT_HINT = Style.EMPTY.withColor(ChatFormatting.AQUA);
 }

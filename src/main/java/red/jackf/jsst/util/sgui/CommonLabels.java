@@ -13,7 +13,7 @@ import java.util.Arrays;
 public interface CommonLabels {
     static GuiElementInterface close(Runnable closeCallback) {
         return GuiElementBuilder.from(new ItemStack(Items.BARRIER))
-                .setName(Component.translatable("mco.selectServer.close"))
+                .setName(Translations.close())
                 .addLoreLine(Hints.leftClick())
                 .setCallback(Inputs.leftClick(closeCallback))
                 .build();

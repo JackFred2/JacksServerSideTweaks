@@ -2,11 +2,14 @@ package red.jackf.jsst.util.sgui.menus;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.selector.PaginatedSelectorMenu;
 import red.jackf.jsst.util.sgui.menus.selector.SinglePageSelectorMenu;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class Menus {
@@ -22,5 +25,9 @@ public class Menus {
         } else {
             new SinglePageSelectorMenu<>(player, title, options, onSelect, labelMap).open();
         }
+    }
+
+    public static void string(ServerPlayer player, Component title, String initial, @Nullable ItemStack hint, Consumer<Optional<String>> onFinish) {
+        new StringInputMenu(player, title, initial, hint, onFinish).open();
     }
 }
