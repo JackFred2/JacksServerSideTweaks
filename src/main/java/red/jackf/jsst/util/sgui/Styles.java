@@ -5,8 +5,13 @@ import net.minecraft.network.chat.Style;
 
 public interface Styles {
     Style LABEL = Style.EMPTY.withColor(ChatFormatting.WHITE);
-    Style LIST_ITEM = Style.EMPTY.withColor(ChatFormatting.GRAY);
-    Style ID = Style.EMPTY.withColor(ChatFormatting.GOLD);
-    Style VARIABLE = Style.EMPTY.withColor(ChatFormatting.YELLOW);
-    Style INPUT_HINT = Style.EMPTY.withColor(ChatFormatting.AQUA);
+    Style MINOR_LABEL = Style.EMPTY.withColor(ChatFormatting.GRAY);
+    Style ID = Style.EMPTY.withColor(ChatFormatting.DARK_GRAY); // copying F3 + h
+    Style VARIABLE = Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE);
+    Style INPUT_HINT = Style.EMPTY.withColor(ChatFormatting.GREEN);
+    Style INPUT = Style.EMPTY.withColor(ChatFormatting.AQUA);
+    Style INPUT_LABEL = Style.EMPTY.withColor(ChatFormatting.WHITE);
+
+    Style POSITIVE = Style.EMPTY.withColor(0x7FFF7F);
+    Style NEGATIVE = Style.EMPTY.withColor(0xFF7F7F);
 }

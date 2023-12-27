@@ -15,6 +15,7 @@ import red.jackf.jsst.feature.ToggleFeature;
 import red.jackf.jsst.feature.beaconenhancement.BeaconPowerSet;
 import red.jackf.jsst.feature.beaconenhancement.BeaconEnhancement;
 import red.jackf.jsst.feature.containernames.WorldContainerNames;
+import red.jackf.jsst.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.feature.qualityoflife.QualityOfLife;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 import red.jackf.jsst.util.Scheduler;
@@ -49,6 +50,7 @@ public class JSST implements ModInitializer {
             PortableCrafting.INSTANCE,
             WorldContainerNames.INSTANCE,
             BeaconEnhancement.INSTANCE,
+            ItemEditor.INSTANCE,
             QualityOfLife.INSTANCE
     );
 

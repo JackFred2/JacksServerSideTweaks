@@ -13,10 +13,18 @@ import java.util.Arrays;
 public interface CommonLabels {
     static GuiElementInterface close(Runnable closeCallback) {
         return GuiElementBuilder.from(new ItemStack(Items.BARRIER))
-                .setName(Translations.close())
-                .addLoreLine(Hints.leftClick())
-                .setCallback(Inputs.leftClick(closeCallback))
-                .build();
+                                .setName(Translations.close().withStyle(Styles.INPUT_HINT))
+                                .addLoreLine(Hints.leftClick())
+                                .setCallback(Inputs.leftClick(closeCallback))
+                                .build();
+    }
+
+    static GuiElementInterface cancel(Runnable cancelCallback) {
+        return GuiElementBuilder.from(new ItemStack(Items.BARRIER))
+                                .setName(Translations.cancel().withStyle(Styles.INPUT_HINT))
+                                .addLoreLine(Hints.leftClick())
+                                .setCallback(Inputs.leftClick(cancelCallback))
+                                .build();
     }
 
     static GuiElementInterface divider() {

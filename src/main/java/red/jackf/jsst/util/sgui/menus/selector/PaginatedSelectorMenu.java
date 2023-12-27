@@ -27,7 +27,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
         super(MenuType.GENERIC_9x6, title, player, options, onSelect, labelMap);
         this.filteredOptions = new ArrayList<>(this.options.size());
 
-        this.setSlot(53, CommonLabels.close(() -> {
+        this.setSlot(53, CommonLabels.cancel(() -> {
             Sounds.close(player);
             this.finish(new Selection<>(false, null));
         }));
@@ -71,7 +71,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
         // refresh scroll
         if (this.page > 0) {
             this.setSlot(8, GuiElementBuilder.from(new ItemStack(Items.RED_CONCRETE))
-                                             .setName(Component.translatable("spectatorMenu.previous_page"))
+                                             .setName(Component.translatable("spectatorMenu.previous_page").withStyle(Styles.INPUT_HINT))
                                              .addLoreLine(Hints.leftClick())
                                              .setCallback(Inputs.leftClick(this::previousPage)));
         } else {
@@ -82,7 +82,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
 
         if (this.page < maxPage) {
             this.setSlot(26, GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))
-                                              .setName(Component.translatable("spectatorMenu.next_page"))
+                                              .setName(Component.translatable("spectatorMenu.next_page").withStyle(Styles.INPUT_HINT))
                                               .addLoreLine(Hints.leftClick())
                                               .setCallback(Inputs.leftClick(this::nextPage)));
         } else {

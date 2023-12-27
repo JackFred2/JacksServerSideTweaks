@@ -390,7 +390,7 @@ public class CommandConfig {
                 int finalLevel = level;
                 ctx.getSource().sendSuccess(() -> Formatting.infoLine(
                         Component.literal("  ")
-                                 .append(translatable("jsst.command.config.power_list_header", finalLevel))
+                                 .append(translatable("jsst.command.config.powerListHeader", finalLevel))
                                  .append(":")
                 ), false);
 
@@ -422,7 +422,7 @@ public class CommandConfig {
             levelNode.executes(ctx -> {
                 ctx.getSource().sendSuccess(() -> Formatting.infoLine(
                         Component.empty()
-                                 .append(translatable("jsst.command.config.power_list_header", finalLevel))
+                                 .append(translatable("jsst.command.config.powerListHeader", finalLevel))
                                  .append(":")
                 ), false);
 

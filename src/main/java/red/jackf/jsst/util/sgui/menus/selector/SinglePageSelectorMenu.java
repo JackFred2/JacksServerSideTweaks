@@ -29,7 +29,7 @@ public class SinglePageSelectorMenu<T> extends SelectorMenu<T> {
                                              })));
         }
 
-        this.setSlot(getSmallestFitting(this.options.size()).getSecond() - 1, CommonLabels.close(() -> {
+        this.setSlot(getSmallestFitting(this.options.size()).getSecond() - 1, CommonLabels.cancel(() -> {
             Sounds.close(player);
             this.finish(new Selection<>(false, null));
         }));

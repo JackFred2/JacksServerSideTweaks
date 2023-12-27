@@ -8,7 +8,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -99,27 +98,33 @@ public class ExpandedBeaconScreen extends SimpleGui {
             }
         }
 
-        // update button
-        if (this.hasPaymentItem() && this.hasDifferentResults() && this.primary != null) {
-            this.setSlot(Util.slot(2, 5), GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))
-                                                           .setName(Translations.confirm())
-                                                           .addLoreLine(Hints.leftClick())
-                                                           .setCallback(Inputs.leftClick(this::confirmUpdate)));
+        GuiElementBuilder item;
+
+        if (this.hasNoChanges()) {
+            item = GuiElementBuilder.from(CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.beaconPowers.error.noChanges").withStyle(Styles.NEGATIVE)));
+        } else if (this.primary == null) {
+            item = GuiElementBuilder.from(CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.beaconPowers.error.needsPrimary").withStyle(Styles.NEGATIVE)));
+        } else if (this.hasNoPayment()) {
+            item = GuiElementBuilder.from(CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.beaconPowers.error.beaconPayment").withStyle(Styles.NEGATIVE)));
         } else {
-            this.setSlot(Util.slot(2, 5), CommonLabels.simple(Items.GRAY_CONCRETE, Translations.confirm()));
+            item = GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))
+                                    .setName(Translations.confirm().withStyle(Styles.INPUT_HINT))
+                                    .addLoreLine(Hints.leftClick())
+                                    .setCallback(Inputs.leftClick(this::confirmUpdate));
         }
+        this.setSlot(Util.slot(2, 5), item);
     }
 
-    private boolean hasPaymentItem() {
-        return this.paymentInv.hasAnyMatching(stack -> stack.is(ItemTags.BEACON_PAYMENT_ITEMS));
+    private boolean hasNoPayment() {
+        return !this.paymentInv.hasAnyMatching(stack -> stack.is(ItemTags.BEACON_PAYMENT_ITEMS));
     }
 
-    private boolean hasDifferentResults() {
-        return this.primary != BeaconBlockEntityDuck.getPrimaryPower(this.beacon) || this.secondary != BeaconBlockEntityDuck.getSecondaryPower(this.beacon);
+    private boolean hasNoChanges() {
+        return this.primary == BeaconBlockEntityDuck.getPrimaryPower(this.beacon) && this.secondary == BeaconBlockEntityDuck.getSecondaryPower(this.beacon);
     }
 
     private void confirmUpdate() {
-        if (!this.hasPaymentItem() || !this.hasDifferentResults() || this.primary == null) return;
+        if (this.hasNoPayment() || this.hasNoChanges() || this.primary == null) return;
 
         if (!this.level.isClientSide && !this.beacon.getBeamSections().isEmpty()) {
             BeaconBlockEntity.playSound(this.level, this.beacon.getBlockPos(), SoundEvents.BEACON_POWER_SELECT);
@@ -186,9 +191,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
     private void drawStatic() {
         var paymentBuilder = new AnimatedGuiElementBuilder().setInterval(20);
         for (Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.BEACON_PAYMENT_ITEMS)) {
-            paymentBuilder.setItem(item.value())
-                          .setName(Component.translatable("jsst.beaconpowers.beacon_payment"))
-                          .saveItemStack();
+            paymentBuilder.setItem(item.value()).saveItemStack();
         }
         this.setSlot(Util.slot(0, 5), paymentBuilder.build());
         this.setSlotRedirect(Util.slot(1, 5), this.paymentSlot);
@@ -244,12 +247,12 @@ public class ExpandedBeaconScreen extends SimpleGui {
             ItemStack label;
             if (level <= BeaconEnhancement.INSTANCE.config().maxBeaconLevel) {
                 boolean active = level <= beaconLevel;
-                Component title = Component.translatable(active ? "jsst.beaconpowers.beacon_level_active" : "jsst.beaconpowers.beacon_level_inactive", level)
-                        .setStyle(Style.EMPTY.withColor(active ? 0x7FFF7F : 0xFF7F7F));
+                Component title = Component.translatable(active ? "jsst.beaconPowers.beaconLevelActive" : "jsst.beaconPowers.beaconLevelInactive", level)
+                        .setStyle(active ? Styles.POSITIVE : Styles.NEGATIVE);
                 var builder = GuiElementBuilder.from(new ItemStack(active ? Items.LIME_STAINED_GLASS_PANE : Items.RED_STAINED_GLASS_PANE))
                                                .setName(title);
                 for (MobEffect effect : BeaconEnhancement.INSTANCE.config().powers.getAtLevel(level)) {
-                    builder.addLoreLine(Component.empty().withStyle(Styles.LIST_ITEM).append(effect.getDisplayName()));
+                    builder.addLoreLine(Component.empty().withStyle(Styles.MINOR_LABEL).append(effect.getDisplayName()));
                 }
 
                 label = builder.asStack();
@@ -267,7 +270,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
                                                            .addLoreLine(Hints.leftClick(Translations.change()))
                                                            .setCallback(Inputs.leftClick(this::openPrimary)));
         } else {
-            Util.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement", 1))
+            Util.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconPowers.beaconRequirement", 1))
                                         .getItemStack(), 0, 3, 0, 4);
         }
 
@@ -288,7 +291,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
                                                            .addLoreLine(Hints.leftClick(Translations.change()))
                                                            .setCallback(Inputs.leftClick(this::openSecondary)));
         } else {
-            Util.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconpowers.beacon_requirement", SECONDARY_MINIMUM))
+            Util.fill(this, CommonLabels.disabled(Component.translatable("jsst.beaconPowers.beaconRequirement", SECONDARY_MINIMUM))
                                         .getItemStack(), 6, 9, 0, 4);
         }
     }

@@ -10,10 +10,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import red.jackf.jsst.util.sgui.Hints;
-import red.jackf.jsst.util.sgui.Inputs;
-import red.jackf.jsst.util.sgui.Sounds;
-import red.jackf.jsst.util.sgui.Translations;
+import red.jackf.jsst.util.sgui.*;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -74,7 +71,7 @@ public class StringInputMenu extends SimpleGui {
         if (this.text.equals(initial)) {
             this.setSlot(OUTPUT, GuiElementBuilder.from(new ItemStack(INVALID))
                                                   .setName(Component.literal(this.text))
-                                                  .addLoreLine(Component.translatable("jsst.common.invalid"))
+                                                  .addLoreLine(Component.translatable("jsst.common.invalid").setStyle(Styles.NEGATIVE))
                                                   .setCallback(this::sendGui)); // if a player clicks on the output with empty text it all vanishes
         } else {
             this.setSlot(OUTPUT, GuiElementBuilder.from(new ItemStack(VALID))
