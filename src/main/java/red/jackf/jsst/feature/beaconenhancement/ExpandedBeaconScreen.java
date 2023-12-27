@@ -101,7 +101,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
         GuiElementBuilder item;
 
         if (this.hasNoChanges()) {
-            item = GuiElementBuilder.from(CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.beaconPowers.error.noChanges").withStyle(Styles.NEGATIVE)));
+            item = GuiElementBuilder.from(CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.common.noChanges").withStyle(Styles.NEGATIVE)));
         } else if (this.primary == null) {
             item = GuiElementBuilder.from(CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.beaconPowers.error.needsPrimary").withStyle(Styles.NEGATIVE)));
         } else if (this.hasNoPayment()) {

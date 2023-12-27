@@ -31,4 +31,12 @@ public interface Translations {
     static MutableComponent reset() {
         return Component.translatable("controls.reset");
     }
+
+    static MutableComponent open() {
+        return Component.translatable("jsst.common.open");
+    }
+
+    static MutableComponent save() {
+        return Component.translatable("jsst.common.save");
+    }
 }

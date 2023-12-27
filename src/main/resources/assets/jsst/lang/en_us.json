@@ -6,16 +6,19 @@
   "jsst.common.searchFilter": "Current Search Filter: \"%s\"",
   "jsst.common.invalid": "Invalid",
   "jsst.common.save": "Save",
+  "jsst.common.open": "Open",
+  "jsst.common.noChanges": "No Changes",
 
   "jsst.beaconPowers.beaconLevelActive": "Beacon Level %d (active)",
   "jsst.beaconPowers.beaconLevelInactive": "Beacon Level %d (inactive)",
   "jsst.beaconPowers.beaconRequirement": "Requires a beacon level of at least %d",
   "jsst.beaconPowers.error.beaconPayment": "Place payment item to the left",
-  "jsst.beaconPowers.error.noChanges": "No changes have been made",
   "jsst.beaconPowers.error.needsPrimary": "Select a primary power",
 
   "jsst.itemEditor.selectBaseItem": "Select a base item",
   "jsst.itemEditor.title": "Item Editor",
+  "jsst.itemEditor.simpleName": "Name Editor (Simple)",
+  "jsst.itemEditor.simpleName.changeName": "Change Name",
 
   "jsst.command.config.open_wiki": "Click to open the wiki page for this option",
   "jsst.command.config.check": "%s: %s",

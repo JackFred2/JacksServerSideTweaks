@@ -6,9 +6,9 @@ import net.minecraft.network.chat.MutableComponent;
 
 public interface Hints {
     private static Component wrap(MutableComponent in) {
-        return Component.empty().withStyle(Styles.INPUT)
+        return Component.empty().withStyle(Styles.INPUT_DECOR)
                         .append("[ ")
-                        .append(in.withStyle(Styles.INPUT_LABEL))
+                        .append(in.withStyle(Styles.INPUT_KEY))
                         .append(" ]");
     }
 
