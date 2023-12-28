@@ -52,7 +52,7 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
 
     protected final void drawPreview(int slot) {
         this.setSlot(slot, GuiElementBuilder.from(this.stack.copy())
-                .setName(Util.getLabel(this.stack))
+                .setName(Util.getLabelAsTooltip(this.stack))
                 .addLoreLine(Hints.leftClick(Translations.save()))
                 .addLoreLine(Hints.rightClick(Translations.reset()))
                 .setCallback(this::clickPreview));

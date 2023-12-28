@@ -29,6 +29,20 @@ public interface LabelMap<T> {
         return map;
     }
 
+    static <T> LabelMap<T> createStatic(Map<T, ItemStack> labels, Function<T, ItemStack> defaultGetter) {
+        Static<T> map = new Static<>(defaultGetter);
+        labels.forEach(map::addLabel);
+        return map;
+    }
+
+    static <T> LabelMap<T> createStatic(Map<T, ItemStack> labels) {
+        Static<T> map = new Static<>(t -> {
+            throw new IllegalArgumentException("Unknown key");
+        });
+        labels.forEach(map::addLabel);
+        return map;
+    }
+
     class Datapack<T> implements LabelMap<T> {
         private final Registry<T> registry;
         private final Function<T, ItemStack> fallback;
@@ -36,7 +50,7 @@ public interface LabelMap<T> {
         private ItemStack defaultLabel;
         private final Map<T, ItemStack> labels = new HashMap<>();
 
-        public Datapack(Registry<T> registry, Function<T, ItemStack> fallback, Function<T, Component> nameGetter) {
+        private Datapack(Registry<T> registry, Function<T, ItemStack> fallback, Function<T, Component> nameGetter) {
             this.registry = registry;
             this.fallback = fallback;
             this.nameGetter = nameGetter;
@@ -67,7 +81,7 @@ public interface LabelMap<T> {
         private final Function<T, ItemStack> defaultLabel;
         private final Map<T, ItemStack> labels = new HashMap<>();
 
-        public Static(Function<T, ItemStack> defaultGetter) {
+        private Static(Function<T, ItemStack> defaultGetter) {
             this.defaultLabel = defaultGetter;
         }
 
@@ -78,7 +92,9 @@ public interface LabelMap<T> {
 
         @Override
         public ItemStack getLabel(T key) {
-            return this.labels.getOrDefault(key, defaultLabel.apply(key));
+            var result = this.labels.get(key);
+            if (result != null) return result;
+            else return defaultLabel.apply(key);
         }
     }
 

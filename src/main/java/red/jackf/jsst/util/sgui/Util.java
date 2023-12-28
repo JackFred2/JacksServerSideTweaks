@@ -1,6 +1,9 @@
 package red.jackf.jsst.util.sgui;
 
 import eu.pb4.sgui.api.SlotHolder;
+import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
@@ -51,10 +54,34 @@ public interface Util {
         }
     }
 
-    static Component getLabel(ItemStack stack) {
+    static Component getLabelAsTooltip(ItemStack stack) {
         Style style = Style.EMPTY.withColor(stack.getRarity().color)
                 .withItalic(stack.hasCustomHoverName());
         return Component.empty().append(stack.getHoverName()).withStyle(style);
+    }
+
+    static void setName(GuiElementBuilderInterface<?> builder, Component name) {
+        if (builder instanceof AnimatedGuiElementBuilder anim) anim.setName(name);
+        else if (builder instanceof GuiElementBuilder stat) stat.setName(name);
+        else throw new IllegalArgumentException("Unknown element builder");
+    }
+
+    static void addLore(GuiElementBuilderInterface<?> builder, Component lore) {
+        if (builder instanceof AnimatedGuiElementBuilder anim) anim.addLoreLine(lore);
+        else if (builder instanceof GuiElementBuilder stat) stat.addLoreLine(lore);
+        else throw new IllegalArgumentException("Unknown element builder");
+    }
+
+    interface Enums {
+        static <E extends Enum<E>> E next(E current) {
+            E[] constants = current.getDeclaringClass().getEnumConstants();
+            return constants[(current.ordinal() + 1) % constants.length];
+        }
+
+        static <E extends Enum<E>> E previous(E current) {
+            E[] constants = current.getDeclaringClass().getEnumConstants();
+            return constants[current.ordinal() == 0 ? constants.length - 1 : current.ordinal() - 1];
+        }
     }
 
     final class SlotTranslator {

@@ -42,7 +42,7 @@ public class ItemEditorGui extends SimpleGui {
     public void onOpen() {
         // update result stack
         this.setSlot(Slots.RESULT, GuiElementBuilder.from(stack.copy())
-                                                    .setName(Util.getLabel(stack))
+                                                    .setName(Util.getLabelAsTooltip(stack))
                                                     .addLoreLine(Hints.leftClick(Translations.save()))
                                                     .setCallback(Inputs.leftClick(this::complete)));
 

@@ -9,6 +9,8 @@
   "jsst.common.open": "Open",
   "jsst.common.noChanges": "No Changes",
   "jsst.common.toggle": "Toggle",
+  "jsst.common.next": "Next",
+  "jsst.common.previous": "Previous",
 
   "jsst.beaconPowers.beaconLevelActive": "Beacon Level %d (active)",
   "jsst.beaconPowers.beaconLevelInactive": "Beacon Level %d (inactive)",
@@ -19,6 +21,8 @@
   "jsst.itemEditor.selectBaseItem": "Select a base item",
   "jsst.itemEditor.title": "Item Editor",
 
+  "jsst.itemEditor.menus.resLocHint": "Must be of the form %s",
+
   "jsst.itemEditor.style": "Select Text Style",
   "jsst.itemEditor.style.bold": "Bold",
   "jsst.itemEditor.style.italic": "Italic",
@@ -27,11 +31,7 @@
   "jsst.itemEditor.style.obfuscated": "Obfuscated",
   "jsst.itemEditor.style.font": "Font",
   "jsst.itemEditor.style.changeFont": "Change Font",
-  "jsst.itemEditor.style.changeFont.hint1": "%s doesn't know what fonts are loaded client-side.",
-  "jsst.itemEditor.style.changeFont.hint2": "They also don't always contain every character.",
-  "jsst.itemEditor.style.changeFont.hint3": "Click to get the link for the wiki page on Fonts.",
-  "jsst.itemEditor.style.changeFont.hint4": "The four in the vanilla game are:",
-  "jsst.itemEditor.style.changeFont.hint5": "There may be more added by Resource Packs.",
+  "jsst.itemEditor.style.customFont": "Custom Font",
   "jsst.itemEditor.style.removeColour": "Remove Colour",
   "jsst.itemEditor.style.removeStyle": "Remove Style",
 
@@ -39,13 +39,19 @@
   "jsst.itemEditor.simpleName.changeText": "Change Text",
   "jsst.itemEditor.simpleName.changeStyle": "Change Style",
 
+  "jsst.itemEditor.colour.page": "Colour Page",
   "jsst.itemEditor.colour.common": "Common",
   "jsst.itemEditor.colour.uncommon": "Uncommon",
   "jsst.itemEditor.colour.rare": "Rare",
   "jsst.itemEditor.colour.epic": "Epic",
   "jsst.itemEditor.colour.tooltips": "Tooltips",
+  "jsst.itemEditor.colour.positiveTooltips": "Positive Tooltips",
+  "jsst.itemEditor.colour.negativeTooltips": "Negative Tooltips",
+  "jsst.itemEditor.colour.potionAppliedTooltips": "Potion 'When Applied' Tooltips",
+  "jsst.itemEditor.colour.weaponStats": "Weapon Stats Tooltips",
   "jsst.itemEditor.colour.chatFormatting": "Chat Formatting",
   "jsst.itemEditor.colour.dyes": "Dyes",
+  "jsst.itemEditor.colour.extra": "Extra",
 
   "jsst.command.config.open_wiki": "Click to open the wiki page for this option",
   "jsst.command.config.check": "%s: %s",

@@ -60,4 +60,12 @@ public interface Translations {
     static MutableComponent def() {
         return Component.translatable("resourcePack.vanilla.name");
     }
+
+    static MutableComponent next() {
+        return Component.translatable("jsst.common.next");
+    }
+
+    static MutableComponent previous() {
+        return Component.translatable("jsst.common.previous");
+    }
 }
