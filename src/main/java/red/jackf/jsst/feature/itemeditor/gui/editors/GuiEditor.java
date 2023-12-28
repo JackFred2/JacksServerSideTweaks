@@ -44,6 +44,11 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
     }
 
     @Override
+    public void onClose() {
+        this.callback.accept(this.initial);
+    }
+
+    @Override
     @MustBeInvokedByOverriders
     public void start() {
         Sounds.click(player);
@@ -60,7 +65,6 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
 
     private void clickPreview(ClickType type) {
         if (type == ClickType.MOUSE_LEFT) {
-            Sounds.click(player);
             this.complete();
         } else if (type == ClickType.MOUSE_RIGHT) {
             Sounds.clear(player);
