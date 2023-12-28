@@ -14,5 +14,6 @@ public interface Styles {
     Style EXAMPLE = Style.EMPTY.withColor(ChatFormatting.GOLD);
 
     Style POSITIVE = Style.EMPTY.withColor(0x7FFF7F);
+    Style INFO = Style.EMPTY.withColor(0x7F7FFF);
     Style NEGATIVE = Style.EMPTY.withColor(0xFF7F7F);
 }

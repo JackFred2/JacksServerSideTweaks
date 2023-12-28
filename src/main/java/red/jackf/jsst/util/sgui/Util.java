@@ -5,11 +5,14 @@ import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import red.jackf.jackfredlib.api.colour.Gradient;
+import red.jackf.jackfredlib.api.colour.GradientBuilder;
 
 import java.util.OptionalInt;
 
@@ -70,6 +73,17 @@ public interface Util {
         if (builder instanceof AnimatedGuiElementBuilder anim) anim.addLoreLine(lore);
         else if (builder instanceof GuiElementBuilder stat) stat.addLoreLine(lore);
         else throw new IllegalArgumentException("Unknown element builder");
+    }
+
+    static Component colourise(Component text, MutableComponent base, Gradient gradient) {
+        String str = text.getString();
+        final int divisor = str.length() - 1;
+        for (int i = 0; i < str.length(); i++) {
+            float progress = (float) i / divisor;
+            if (progress == 1F) progress = GradientBuilder.END;
+            base.append(Component.literal(String.valueOf(str.charAt(i))).withColor(gradient.sample(progress).toARGB()));
+        }
+        return base;
     }
 
     interface Enums {

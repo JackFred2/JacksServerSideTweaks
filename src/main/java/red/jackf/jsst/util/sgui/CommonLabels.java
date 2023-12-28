@@ -40,7 +40,7 @@ public interface CommonLabels {
     }
 
     static ItemStack simple(Item item, Component name, Component... lore) {
-        return simple(new ItemStack(item), name, lore);
+        return simple(item.getDefaultInstance(), name, lore);
     }
 
     static ItemStack simple(ItemStack stack, Component name, Component... lore) {

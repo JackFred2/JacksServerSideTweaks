@@ -7,9 +7,13 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import red.jackf.jackfredlib.api.colour.Colour;
+import red.jackf.jackfredlib.api.colour.Gradient;
+import red.jackf.jackfredlib.api.colour.Gradients;
 import red.jackf.jsst.util.sgui.CommonLabels;
 import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.Translations;
+import red.jackf.jsst.util.sgui.Util;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,9 +43,16 @@ public class Colours {
     public static final Map<ItemStack, Integer> DYES = new LinkedHashMap<>();
     public static final Map<ItemStack, Integer> CHAT_FORMATS = new LinkedHashMap<>();
     public static final Map<ItemStack, Integer> EXTRA = new LinkedHashMap<>();
+    public static final Map<ItemStack, Gradient> GRADIENTS = new LinkedHashMap<>();
 
     private static void put(Map<ItemStack, Integer> map, ItemStack stack, int colour) {
         map.put(stack.setHoverName(stack.getHoverName().copy().withColor(colour)), colour);
+    }
+
+    public static void gradient(ItemStack base, Gradient gradient) {
+        GRADIENTS.put(GuiElementBuilder.from(base)
+                              .addLoreLine(Util.colourise(Component.literal("|".repeat(40)), Component.empty(), gradient))
+                              .asStack(), gradient);
     }
 
     private static ItemStack potion(Item item, Potion potion) {
@@ -73,5 +84,26 @@ public class Colours {
         put(EXTRA, CommonLabels.simple(potion(Items.SPLASH_POTION, Potions.POISON), Component.translatable("jsst.itemEditor.colour.negativeTooltips")), ChatFormatting.RED.getColor());
         put(EXTRA, CommonLabels.simple(potion(Items.TIPPED_ARROW, Potions.REGENERATION), Component.translatable("jsst.itemEditor.colour.potionAppliedTooltips")), ChatFormatting.DARK_PURPLE.getColor());
         put(EXTRA, CommonLabels.simple(Items.DIAMOND_SWORD, Component.translatable("jsst.itemEditor.colour.weaponStats")), ChatFormatting.DARK_GREEN.getColor());
+
+        gradient(CommonLabels.simple(Items.APPLE, Component.translatable("jsst.itemEditor.colour.gradient.rainbow")), Gradients.RAINBOW);
+        gradient(CommonLabels.simple(Items.AMETHYST_BLOCK, Component.translatable("jsst.itemEditor.colour.gradient.vaporwave")), Gradient.linear(
+                Colour.fromRGB(255, 0, 255),
+                Colour.fromRGB(0, 255, 255),
+                Gradient.LinearMode.RGB));
+        gradient(CommonLabels.simple(Items.GLOWSTONE, Component.translatable("jsst.itemEditor.colour.gradient.solar")), Gradient.of(
+                Colour.fromRGB(40, 23, 0),
+                red.jackf.jackfredlib.api.colour.Colours.YELLOW,
+                red.jackf.jackfredlib.api.colour.Colours.ORANGE,
+                red.jackf.jackfredlib.api.colour.Colours.WHITE
+        ));
+        gradient(CommonLabels.simple(Items.PRISMARINE_SHARD, Component.translatable("jsst.itemEditor.colour.gradient.gay")), Gradients.GAY);
+        gradient(CommonLabels.simple(Items.CAT_SPAWN_EGG, Component.translatable("jsst.itemEditor.colour.gradient.lesbian")), Gradients.LESBIAN);
+        gradient(CommonLabels.simple(Items.TOTEM_OF_UNDYING, Component.translatable("jsst.itemEditor.colour.gradient.bisexual")), Gradients.BISEXUAL);
+        gradient(CommonLabels.simple(Items.ENDER_EYE, Component.translatable("jsst.itemEditor.colour.gradient.pansexual")), Gradients.PANSEXUAL);
+        gradient(CommonLabels.simple(Items.POTION.getDefaultInstance(), Component.translatable("jsst.itemEditor.colour.gradient.intersex")), Gradients.INTERSEX_SHARP);
+        gradient(CommonLabels.simple(Items.ALLAY_SPAWN_EGG, Component.translatable("jsst.itemEditor.colour.gradient.nonbinary")), Gradients.NONBINARY);
+        gradient(CommonLabels.simple(Items.EGG, Component.translatable("jsst.itemEditor.colour.gradient.transgender")), Gradients.TRANS);
+        gradient(CommonLabels.simple(Items.BREAD, Component.translatable("jsst.itemEditor.colour.gradient.asexual")), Gradients.ACE);
+        gradient(CommonLabels.simple(Items.BARRIER, Component.translatable("jsst.itemEditor.colour.gradient.aromantic")), Gradients.ARO);
     }
 }

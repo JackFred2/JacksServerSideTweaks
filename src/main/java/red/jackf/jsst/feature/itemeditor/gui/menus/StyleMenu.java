@@ -63,31 +63,6 @@ public class StyleMenu extends SimpleGui {
         this.redraw();
     }
 
-    private static GuiElementBuilder createFormattingLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
-        var builder = GuiElementBuilder.from(new ItemStack(Items.WRITABLE_BOOK));
-        forEachFrame.accept(builder);
-        return builder;
-    }
-
-    private static AnimatedGuiElementBuilder createDyeLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
-        var builder = new AnimatedGuiElementBuilder()
-                .setInterval(20)
-                .setRandom(true);
-
-        for (DyeColor colour : DyeColor.values()) {
-            forEachFrame.accept(builder);
-            builder.setItem(DyeItem.byColor(colour)).saveItemStack();
-        }
-
-        return builder;
-    }
-
-    private static GuiElementBuilder createExtraLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
-        var builder = GuiElementBuilder.from(new ItemStack(Items.CHORUS_FRUIT));
-        forEachFrame.accept(builder);
-        return builder;
-    }
-
     private void load() {
         Style style = this.initial.getStyle();
         this.colour = style.getColor() != null ? Colour.fromInt(style.getColor().getValue()) : null;
@@ -115,6 +90,7 @@ public class StyleMenu extends SimpleGui {
 
     private void drawColourPage(Map<ItemStack, Integer> colours) {
         var colourSlots = Util.slotTranslator(0, 4, 0, 4);
+        Util.fill(this, ItemStack.EMPTY, 0, 4, 0, 4);
 
         int index = 0;
         for (Map.Entry<ItemStack, Integer> entry : colours.entrySet()) {
@@ -128,8 +104,24 @@ public class StyleMenu extends SimpleGui {
                                                                this.redraw();
                                                            })));
         }
-        OptionalInt slot;
-        while ((slot = colourSlots.translate(index++)).isPresent()) this.clearSlot(slot.getAsInt());
+    }
+
+    private void drawGradients() {
+        var colourSlots = Util.slotTranslator(0, 4, 0, 4);
+        Util.fill(this, ItemStack.EMPTY, 0, 4, 0, 4);
+
+        int index = 0;
+        for (Map.Entry<ItemStack, Gradient> entry : Colours.GRADIENTS.entrySet()) {
+            var slot = colourSlots.translate(index++);
+            if (slot.isEmpty()) break;
+            this.setSlot(slot.getAsInt(), GuiElementBuilder.from(entry.getKey())
+                                                           .addLoreLine(Hints.leftClick(Translations.select()))
+                                                           .setCallback(Inputs.leftClick(() -> {
+                                                               Sounds.click(player);
+                                                               this.colour = entry.getValue();
+                                                               this.redraw();
+                                                           })));
+        }
     }
 
     private void redraw() {
@@ -274,14 +266,7 @@ public class StyleMenu extends SimpleGui {
         if (this.colour == null || str.isBlank()) return Component.literal(str).withStyle(style);
         if (this.colour instanceof Colour col) return Component.literal(str).withStyle(style).withColor(col.toARGB());
 
-        MutableComponent result = Component.empty().withStyle(style);
-
-        final int divisor = str.length() - 1;
-        for (int i = 0; i < str.length(); i++) {
-            result.append(Component.literal(String.valueOf(str.charAt(i)))
-                                   .withColor(this.colour.sample((float) i / divisor).toARGB()));
-        }
-        return result;
+        return Util.colourise(initial, Component.empty().withStyle(style), this.colour);
     }
 
     private Style buildBaseStyle() {
@@ -301,7 +286,8 @@ public class StyleMenu extends SimpleGui {
     private enum ColourPage implements SwitchButton.Labelled {
         DYES(StyleMenu::createDyeLabel, Component.translatable("jsst.itemEditor.colour.dyes"), menu -> menu.drawColourPage(Colours.DYES)),
         FORMATTING(StyleMenu::createFormattingLabel, Component.translatable("jsst.itemEditor.colour.chatFormatting"), menu -> menu.drawColourPage(Colours.CHAT_FORMATS)),
-        EXTRA(StyleMenu::createExtraLabel, Component.translatable("jsst.itemEditor.colour.extra"), menu -> menu.drawColourPage(Colours.EXTRA));
+        EXTRA(StyleMenu::createExtraLabel, Component.translatable("jsst.itemEditor.colour.extra"), menu -> menu.drawColourPage(Colours.EXTRA)),
+        GRADIENTS(StyleMenu::createGradientLabel, Component.translatable("jsst.itemEditor.colour.gradients"), StyleMenu::drawGradients);
 
         private final SwitchButton.LabelGetter labelSupplier;
         private final Component name;
@@ -324,6 +310,43 @@ public class StyleMenu extends SimpleGui {
         }
     }
 
+    private static GuiElementBuilder createFormattingLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
+        var builder = GuiElementBuilder.from(new ItemStack(Items.WRITABLE_BOOK));
+        forEachFrame.accept(builder);
+        return builder;
+    }
+
+    private static AnimatedGuiElementBuilder createDyeLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
+        var builder = new AnimatedGuiElementBuilder()
+                .setInterval(20)
+                .setRandom(true);
+
+        for (DyeColor colour : DyeColor.values()) {
+            forEachFrame.accept(builder);
+            builder.setItem(DyeItem.byColor(colour)).saveItemStack();
+        }
+
+        return builder;
+    }
+
+    private static GuiElementBuilder createExtraLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
+        var builder = GuiElementBuilder.from(new ItemStack(Items.CHORUS_FRUIT));
+        forEachFrame.accept(builder);
+        return builder;
+    }
+
+    private static AnimatedGuiElementBuilder createGradientLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
+        var builder = new AnimatedGuiElementBuilder()
+                .setInterval(5);
+
+        for (DyeColor colour : List.of(DyeColor.RED, DyeColor.ORANGE, DyeColor.YELLOW, DyeColor.LIME, DyeColor.LIGHT_BLUE, DyeColor.BLUE, DyeColor.MAGENTA)) {
+            forEachFrame.accept(builder);
+            builder.setItem(DyeItem.byColor(colour)).saveItemStack();
+        }
+
+        return builder;
+    }
+
     private enum Fonts {
         DEFAULT(Style.DEFAULT_FONT, new ItemStack(Items.GRASS_BLOCK)),
         ALT(new ResourceLocation("alt"), new ItemStack(Items.ENCHANTING_TABLE)),
@@ -344,7 +367,7 @@ public class StyleMenu extends SimpleGui {
         Fonts(ResourceLocation id, ItemStack label) {
             this.id = id;
             this.label = text -> GuiElementBuilder.from(label)
-                    .setName(Component.literal(id.toString()).withStyle(Styles.LABEL))
+                    .setName(Component.literal(id.toString()).withStyle(Styles.INFO))
                     .addLoreLine(text.copy().withStyle(Style.EMPTY.withFont(id)))
                     .asStack();
         }
