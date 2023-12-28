@@ -28,14 +28,19 @@ public class Formatting {
         return literal(text).withStyle(base.withColor(colour));
     }
 
-    private static final Component PREFIX = Component.empty()
-                                                     .append(colour("[", 0xD884FF, false))
-                                                     .append(colour("J", 0xB100FF, true))
-                                                     .append(colour("S", 0x9E0FFF, true))
-                                                     .append(colour("S", 0x8B1DFF, true))
-                                                     .append(colour("T", 0x8B1DFF, true))
-                                                     .append(colour("]", 0xA477FF, false))
-                                                     .append(CommonComponents.SPACE);
+    public static final Component PREFIX = Component.empty()
+                                                    .append(colour("[", 0xD884FF, false))
+                                                    .append(colour("J", 0xB100FF, true))
+                                                    .append(colour("S", 0x9E0FFF, true))
+                                                    .append(colour("S", 0x8B1DFF, true))
+                                                    .append(colour("T", 0x8B1DFF, true))
+                                                    .append(colour("]", 0xA477FF, false))
+                                                    .append(CommonComponents.SPACE);
+    public static final Component STYLIZED = Component.empty()
+                                                    .append(colour("J", 0xB100FF, true))
+                                                    .append(colour("S", 0x9E0FFF, true))
+                                                    .append(colour("S", 0x8B1DFF, true))
+                                                    .append(colour("T", 0x8B1DFF, true));
 
 
     public static Component successLine(MutableComponent component) {
@@ -84,6 +89,7 @@ public class Formatting {
     }
 
     public static Component player(ServerPlayer player) {
+        //noinspection DataFlowIssue would error earlier in player#getDisplayName()
         return player.getDisplayName().copy().withStyle(PLAYER);
     }
 

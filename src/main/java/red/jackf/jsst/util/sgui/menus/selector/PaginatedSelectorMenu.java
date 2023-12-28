@@ -58,7 +58,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
                 T option = options.get(i);
                 ItemStack label = labelMap.getLabel(option);
                 this.setSlot(slot, GuiElementBuilder.from(label)
-                                                    .addLoreLine(Hints.leftClick(Component.translatable("mco.template.button.select")))
+                                                    .addLoreLine(Hints.leftClick(Translations.select()))
                                                     .setCallback(Inputs.leftClick(() -> {
                                                         Sounds.click(player);
                                                         this.finish(new Selection<>(true, option));

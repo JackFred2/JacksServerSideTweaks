@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.Feature;
-import red.jackf.jsst.feature.itemeditor.menus.ItemEditorGui;
+import red.jackf.jsst.feature.itemeditor.gui.ItemEditorGui;
 
 public class ItemEditor extends Feature<ItemEditor.Config> {
     public static final ItemEditor INSTANCE = new ItemEditor();

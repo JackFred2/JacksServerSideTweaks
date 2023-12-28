@@ -1,4 +1,4 @@
-package red.jackf.jsst.feature.itemeditor.menus;
+package red.jackf.jsst.feature.itemeditor.gui;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -8,8 +8,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import red.jackf.jsst.feature.itemeditor.menus.editors.Editor;
-import red.jackf.jsst.feature.itemeditor.menus.editors.SimpleNameEditor;
+import red.jackf.jsst.feature.itemeditor.gui.editors.Editor;
+import red.jackf.jsst.feature.itemeditor.gui.editors.SimpleNameEditor;
 import red.jackf.jsst.util.sgui.*;
 
 import java.util.List;

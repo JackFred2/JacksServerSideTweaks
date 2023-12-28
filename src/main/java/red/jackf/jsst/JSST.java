@@ -3,10 +3,12 @@ package red.jackf.jsst;
 import blue.endless.jankson.JsonObject;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import red.jackf.jackfredlib.api.config.ConfigHandler;
+import red.jackf.jsst.command.Formatting;
 import red.jackf.jsst.command.JSSTCommand;
 import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.config.JSSTConfigMigrator;
@@ -30,6 +32,7 @@ public class JSST implements ModInitializer {
     }
     public static final Logger LOGGER = getLogger("");
 
+    public static final Component STYLIZED = Formatting.STYLIZED;
     public static final String MODID = "jsst";
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MODID, path);

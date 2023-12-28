@@ -11,6 +11,7 @@ public interface Styles {
     Style INPUT_HINT = Style.EMPTY.withColor(ChatFormatting.GREEN);
     Style INPUT_DECOR = Style.EMPTY.withColor(ChatFormatting.AQUA);
     Style INPUT_KEY = Style.EMPTY.withColor(ChatFormatting.WHITE);
+    Style LINK = Style.EMPTY.withColor(ChatFormatting.GOLD);
 
     Style POSITIVE = Style.EMPTY.withColor(0x7FFF7F);
     Style NEGATIVE = Style.EMPTY.withColor(0xFF7F7F);

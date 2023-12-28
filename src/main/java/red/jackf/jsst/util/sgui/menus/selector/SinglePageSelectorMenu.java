@@ -6,10 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import red.jackf.jsst.util.sgui.CommonLabels;
-import red.jackf.jsst.util.sgui.Hints;
-import red.jackf.jsst.util.sgui.Inputs;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 
 import java.util.Collection;
@@ -22,7 +19,7 @@ public class SinglePageSelectorMenu<T> extends SelectorMenu<T> {
         for (int i = 0; i < this.options.size(); i++) {
             T option = this.options.get(i);
             this.setSlot(i, GuiElementBuilder.from(labelMap.getLabel(option))
-                                             .addLoreLine(Hints.leftClick(Component.translatable("mco.template.button.select")))
+                                             .addLoreLine(Hints.leftClick(Translations.select()))
                                              .setCallback(Inputs.leftClick(() -> {
                                                  Sounds.click(player);
                                                  this.finish(new Selection<>(true, option));

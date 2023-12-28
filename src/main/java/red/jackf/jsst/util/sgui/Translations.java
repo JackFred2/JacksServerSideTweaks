@@ -2,6 +2,7 @@ package red.jackf.jsst.util.sgui;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.DyeColor;
 
 public interface Translations {
     static MutableComponent cancel() {
@@ -38,5 +39,25 @@ public interface Translations {
 
     static MutableComponent save() {
         return Component.translatable("jsst.common.save");
+    }
+
+    static MutableComponent dye(DyeColor colour) {
+        return Component.translatable("color.minecraft." + colour.getName());
+    }
+
+    static MutableComponent select() {
+        return Component.translatable("mco.template.button.select");
+    }
+
+    static MutableComponent toggle() {
+        return Component.translatable("jsst.common.toggle");
+    }
+
+    static MutableComponent current(Object object) {
+        return Component.translatable("mco.configure.world.minigame", object);
+    }
+
+    static MutableComponent def() {
+        return Component.translatable("resourcePack.vanilla.name");
     }
 }

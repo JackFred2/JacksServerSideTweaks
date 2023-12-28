@@ -51,10 +51,10 @@ public interface Util {
         }
     }
 
-    static Component getLabel(ItemStack input) {
-        Style style = Style.EMPTY.withColor(input.getRarity().color)
-                .withItalic(input.hasCustomHoverName());
-        return Component.empty().append(input.getHoverName()).withStyle(style);
+    static Component getLabel(ItemStack stack) {
+        Style style = Style.EMPTY.withColor(stack.getRarity().color)
+                .withItalic(stack.hasCustomHoverName());
+        return Component.empty().append(stack.getHoverName()).withStyle(style);
     }
 
     final class SlotTranslator {
@@ -78,7 +78,7 @@ public interface Util {
             if (outOfRange(index)) return OptionalInt.empty();
             int row = index / width + rowFrom;
             int column = index % width + colFrom;
-            return OptionalInt.of(row * width + column);
+            return OptionalInt.of(row * 9 + column);
         }
     }
 }

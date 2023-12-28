@@ -1,4 +1,4 @@
-package red.jackf.jsst.feature.itemeditor.menus.editors;
+package red.jackf.jsst.feature.itemeditor.gui.editors;
 
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
@@ -14,6 +14,10 @@ import red.jackf.jsst.util.sgui.Util;
 
 import java.util.function.Consumer;
 
+/**
+ * Represents a complex action to be done to an item stack. Be aware that {@link GuiElementBuilder#from(ItemStack)} tampers
+ * with the passed stack, make sure to use {@link ItemStack#copy()}
+ */
 public abstract class GuiEditor extends SimpleGui implements Editor {
     private final ItemStack initial;
     private final Consumer<ItemStack> callback;

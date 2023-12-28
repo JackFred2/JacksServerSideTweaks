@@ -1,10 +1,9 @@
 package red.jackf.jsst.util.sgui.menus;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.selector.PaginatedSelectorMenu;
@@ -13,6 +12,7 @@ import red.jackf.jsst.util.sgui.menus.selector.SinglePageSelectorMenu;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class Menus {
     private static final int PAGINATION_THRESHOLD = 52;
@@ -40,23 +40,25 @@ public class Menus {
             String initial,
             @Nullable ItemStack hint,
             Consumer<Optional<String>> onFinish) {
-        string(player,
-               title,
-               initial,
-               new ItemStack(Items.BARRIER).setHoverName(Component.literal(initial).withStyle(ChatFormatting.WHITE)),
-               hint,
-               new ItemStack(Items.EMERALD).setHoverName(Component.empty().withStyle(ChatFormatting.WHITE)),
-               onFinish);
+        string(player, title, initial, hint, s -> true, onFinish);
     }
 
     public static void string(
             ServerPlayer player,
             Component title,
             String initial,
-            ItemStack input,
             @Nullable ItemStack hint,
-            ItemStack output,
+            Predicate<String> predicate,
             Consumer<Optional<String>> onFinish) {
-        new StringInputMenu(player, title, initial, input, hint, output, onFinish).open();
+        new StringInputMenu(player, title, initial, hint, predicate, onFinish).open();
+    }
+
+    public static void resourceLocation(
+            ServerPlayer player,
+            Component title,
+            ResourceLocation initial,
+            @Nullable ItemStack hint,
+            Consumer<Optional<ResourceLocation>> onFinish) {
+        string(player, title, initial.toString(), hint, ResourceLocation::isValidResourceLocation, opt -> onFinish.accept(opt.map(ResourceLocation::new)));
     }
 }
