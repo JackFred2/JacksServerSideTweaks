@@ -3,7 +3,6 @@ package red.jackf.jsst.feature.itemeditor.gui.menus.style;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
-import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.ChatFormatting;
@@ -33,7 +32,7 @@ public class StyleMenu extends SimpleGui {
     private final Component initial;
     private final Consumer<Optional<Component>> onResult;
 
-    private ColourPage page = ColourPage.DYES;
+    private Page page = Page.DYES;
 
     @Nullable
     private Gradient colour = null;
@@ -57,16 +56,16 @@ public class StyleMenu extends SimpleGui {
         this.load();
     }
 
-    private static AnimatedGuiElementBuilder createGradientLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
+    private static GuiElementInterface createGradientLabel() {
         var builder = new AnimatedGuiElementBuilder()
                 .setInterval(5);
 
         for (DyeColor colour : List.of(DyeColor.RED, DyeColor.ORANGE, DyeColor.YELLOW, DyeColor.LIME, DyeColor.LIGHT_BLUE, DyeColor.BLUE, DyeColor.MAGENTA)) {
-            forEachFrame.accept(builder);
+            builder.setName(Component.translatable("jsst.itemEditor.gradient.page"));
             builder.setItem(DyeItem.byColor(colour)).saveItemStack();
         }
 
-        return builder;
+        return builder.build();
     }
 
     @Override
@@ -139,7 +138,7 @@ public class StyleMenu extends SimpleGui {
         }
 
         this.setSlot(Util.slot(3, 3), GuiElementBuilder.from(Items.GLOWSTONE_DUST.getDefaultInstance())
-                                                       .setName(Component.translatable("jsst.itemEditor.gradient.custom.swap"))
+                                                       .setName(Component.translatable("jsst.itemEditor.gradient.custom"))
                                                        .addLoreLine(Hints.leftClick(Translations.open()))
                                                        .setCallback(Inputs.leftClick(() -> {
                                                            Sounds.click(player);
@@ -175,14 +174,16 @@ public class StyleMenu extends SimpleGui {
                                                            });
                                                        })));
 
-        this.setSlot(Util.slot(3, 4), SwitchButton.create(Component.translatable("jsst.itemEditor.colour.page"),
-                                                          ColourPage.class,
-                                                          this.page,
-                                                          newPage -> {
-                                                              Sounds.click(player);
-                                                              this.page = newPage;
-                                                              this.redraw();
-                                                          }));
+        this.setSlot(Util.slot(3, 4), SwitchButton.<Page>builder(Component.translatable("jsst.itemEditor.colour.page"))
+                                                  .addOption(Page.DYES, ColourMenu.createDyeLabel())
+                                                  .addOption(Page.FORMATTING, ColourMenu.createFormattingLabel())
+                                                  .addOption(Page.EXTRA, ColourMenu.createExtraLabel())
+                                                  .addOption(Page.GRADIENTS, createGradientLabel())
+                                                  .setCallback(page -> {
+                                                      this.page = page;
+                                                      this.page.pageDraw.accept(this);
+                                                  })
+                                                  .build(this.page));
 
         // styles
         this.setSlot(Util.slot(5, 0), createToggleButton(Items.IRON_BLOCK,
@@ -327,30 +328,15 @@ public class StyleMenu extends SimpleGui {
         this.onResult.accept(Optional.empty());
     }
 
-    private enum ColourPage implements SwitchButton.Labelled {
-        DYES(ColourMenu::createDyeLabel, Component.translatable("jsst.itemEditor.colour.dyes"), menu -> menu.drawColourPage(Colours.DYES)),
-        FORMATTING(ColourMenu::createFormattingLabel, Component.translatable("jsst.itemEditor.colour.chatFormatting"), menu -> menu.drawColourPage(Colours.CHAT_FORMATS)),
-        EXTRA(ColourMenu::createExtraLabel, Component.translatable("jsst.itemEditor.colour.extra"), menu -> menu.drawColourPage(Colours.EXTRA)),
-        GRADIENTS(StyleMenu::createGradientLabel, Component.translatable("jsst.itemEditor.gradient.page"), StyleMenu::drawGradients);
-
-        private final SwitchButton.LabelGetter labelSupplier;
-        private final Component name;
+    private enum Page {
+        DYES(menu -> menu.drawColourPage(Colours.DYES)),
+        FORMATTING(menu -> menu.drawColourPage(Colours.CHAT_FORMATS)),
+        EXTRA(menu -> menu.drawColourPage(Colours.EXTRA)),
+        GRADIENTS(StyleMenu::drawGradients);
         private final Consumer<StyleMenu> pageDraw;
 
-        ColourPage(SwitchButton.LabelGetter labelSupplier, Component name, Consumer<StyleMenu> pageDraw) {
-            this.labelSupplier = labelSupplier;
-            this.name = name;
+        Page(Consumer<StyleMenu> pageDraw) {
             this.pageDraw = pageDraw;
-        }
-
-        @Override
-        public GuiElementBuilderInterface<?> getLabel(Consumer<GuiElementBuilderInterface<?>> applyToEachFrame) {
-            return labelSupplier.get(applyToEachFrame);
-        }
-
-        @Override
-        public Component getName() {
-            return name;
         }
     }
 

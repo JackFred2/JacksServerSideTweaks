@@ -1,62 +1,121 @@
 package red.jackf.jsst.feature.itemeditor.gui.elements;
 
 import eu.pb4.sgui.api.ClickType;
-import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
+import eu.pb4.sgui.api.gui.GuiInterface;
+import eu.pb4.sgui.api.gui.SlotGuiInterface;
 import net.minecraft.network.chat.Component;
-import red.jackf.jsst.util.sgui.Hints;
-import red.jackf.jsst.util.sgui.Styles;
-import red.jackf.jsst.util.sgui.Translations;
-import red.jackf.jsst.util.sgui.Util;
+import net.minecraft.world.item.ItemStack;
+import red.jackf.jsst.util.sgui.*;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-public class SwitchButton {
-    public static <E extends Enum<E>> void addOptionsAsLore(
-            Class<E> clazz,
-            E highlighted,
-            Function<E, Component> optionNames,
-            GuiElementBuilderInterface<?> builder) {
-        for (E constant : clazz.getEnumConstants()) {
-            Component line = Component.empty().withStyle(constant == highlighted ? Styles.POSITIVE : Styles.MINOR_LABEL)
-                                      .append(" - ")
-                                      .append(optionNames.apply(constant));
-            Util.addLore(builder, line);
+public class SwitchButton<T> implements GuiElementInterface {
+    private final Component name;
+    private final List<T> options;
+    private final Map<T, GuiElementInterface> labels;
+    private final Consumer<T> callback;
+    private T current;
+
+    private SwitchButton(Component name, List<T> options, Map<T, GuiElementInterface> labels, Consumer<T> callback, T current) {
+        this.name = name;
+        this.options = options;
+        this.labels = labels;
+        this.callback = callback;
+        this.current = current;
+    }
+
+    public static <T> Builder<T> builder(Component name) {
+        return new Builder<>(name);
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return this.labels.get(current).getItemStack();
+    }
+
+    @Override
+    public ItemStack getItemStackForDisplay(GuiInterface gui) {
+        List<Component> names = new ArrayList<>();
+        ItemStack shown = ItemStack.EMPTY;
+        for (Map.Entry<T, GuiElementInterface> entry : this.labels.entrySet()) {
+            ItemStack stack = Styles.unclean(entry.getValue().getItemStackForDisplay(gui).copy()); // tick all for animated
+            if (entry.getKey() == current) {
+                shown = stack;
+                names.add(Component.empty().withStyle(Styles.POSITIVE).append(" - ").append(stack.getHoverName()));
+            } else {
+                names.add(Component.empty().withStyle(Styles.MINOR_LABEL).append(" - ").append(stack.getHoverName()));
+            }
+        }
+
+        var builder = GuiElementBuilder.from(shown).setName(this.name);
+
+        names.forEach(builder::addLoreLine);
+
+        return builder.addLoreLine(Hints.leftClick(Translations.next()))
+                      .addLoreLine(Hints.rightClick(Translations.previous()))
+                      .asStack();
+    }
+
+    @Override
+    public ClickCallback getGuiCallback() {
+        return this::click;
+    }
+
+    private void click(
+            int slot,
+            ClickType clickType,
+            net.minecraft.world.inventory.ClickType mcClickType,
+            SlotGuiInterface gui) {
+        if (clickType == ClickType.MOUSE_LEFT) {
+            Sounds.click(gui.getPlayer());
+            this.current = Util.Lists.next(this.current, this.options);
+            callback.accept(current);
+        } else if (clickType == ClickType.MOUSE_RIGHT) {
+            Sounds.click(gui.getPlayer());
+            this.current = Util.Lists.previous(this.current, this.options);
+            callback.accept(current);
         }
     }
 
-    public static <E extends Enum<E> & Labelled> GuiElementInterface create(
-            Component title,
-            Class<E> clazz,
-            E current,
-            Consumer<E> onChange) {
-        GuiElementBuilderInterface<?> builder = current.getLabel(frame -> {
-            Util.setName(frame, title);
-            addOptionsAsLore(clazz, current, Labelled::getName, frame);
+    public static class Builder<T> {
+        private final Component name;
+        private final List<T> options = new ArrayList<>();
+        private final Map<T, GuiElementInterface> labels = new LinkedHashMap<>();
+        private Consumer<T> callback = t -> {};
 
-            Util.addLore(frame, Hints.leftClick(Translations.next()));
-            Util.addLore(frame, Hints.rightClick(Translations.previous()));
-        });
+        private Builder(Component name) {
+            this.name = name;
+        }
 
-        builder.setCallback(type -> {
-            if (type == ClickType.MOUSE_LEFT) {
-                onChange.accept(Util.Enums.next(current));
-            } else if (type == ClickType.MOUSE_RIGHT) {
-                onChange.accept(Util.Enums.previous(current));
-            }
-        });
+        public Builder<T> addOption(T option, GuiElementInterface label) {
+            if (this.labels.containsKey(option)) throw new IllegalArgumentException("Duplicate element");
+            this.options.add(option);
+            this.labels.put(option, label);
+            return this;
+        }
 
-        return builder.build();
-    }
+        public Builder<T> addOption(T option, ItemStack label) {
+            if (this.labels.containsKey(option)) throw new IllegalArgumentException("Duplicate element");
+            this.options.add(option);
+            this.labels.put(option, GuiElementBuilder.from(label).build());
+            return this;
+        }
 
-    public interface Labelled {
-        GuiElementBuilderInterface<?> getLabel(Consumer<GuiElementBuilderInterface<?>> applyToEachFrame);
+        public Builder<T> setCallback(Consumer<T> callback) {
+            this.callback = callback;
+            return this;
+        }
 
-        Component getName();
-    }
-
-    public interface LabelGetter {
-        GuiElementBuilderInterface<?> get(Consumer<GuiElementBuilderInterface<?>> applyToEachFrame);
+        public SwitchButton<T> build(T current) {
+            if (options.isEmpty()) throw new IllegalArgumentException("No elements");
+            if (!labels.containsKey(current)) throw new IllegalArgumentException("Unknown start element");
+            return new SwitchButton<>(name, options, labels, callback, current);
+        }
     }
 }

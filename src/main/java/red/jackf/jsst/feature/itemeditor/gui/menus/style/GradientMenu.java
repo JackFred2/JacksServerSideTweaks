@@ -3,6 +3,7 @@ package red.jackf.jsst.feature.itemeditor.gui.menus.style;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
+import red.jackf.jsst.feature.itemeditor.gui.elements.SwitchButton;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.*;
@@ -28,7 +30,36 @@ public class GradientMenu extends SimpleGui {
         super(MenuType.GENERIC_9x1, player, false);
         this.callback = callback;
 
-        this.setTitle(Component.translatable("jsst.itemEditor.gradient.custom"));
+        this.drawStatic();
+    }
+
+    private void drawStatic() {
+        this.setSlot(5, CommonLabels.divider());
+
+        this.setSlot(6, SwitchButton.<Gradient.LinearMode>builder(Component.translatable("jsst.itemEditor.gradient.custom.mode"))
+                                    .addOption(Gradient.LinearMode.RGB, CommonLabels.simple(Items.RED_CONCRETE, Component.translatable("jsst.itemEditor.gradient.custom.mode.rgb")))
+                                    .addOption(Gradient.LinearMode.HSV_SHORT, CommonLabels.simple(Items.GREEN_CONCRETE, Component.translatable("jsst.itemEditor.gradient.custom.mode.hsv_short")))
+                                    .addOption(Gradient.LinearMode.HSV_LONG, CommonLabels.simple(Items.LIGHT_BLUE_CONCRETE, Component.translatable("jsst.itemEditor.gradient.custom.mode.hsv_long")))
+                                    .setCallback(mode -> {
+                                        this.mode = mode;
+                                        this.redraw();
+                                    }).build(mode));
+
+        this.setSlot(7, GuiElementBuilder.from(Items.ENDER_PEARL.getDefaultInstance())
+                                         .setName(Component.translatable("jsst.itemEditor.gradient.custom.swap").withStyle(Styles.INPUT_HINT))
+                                         .addLoreLine(Hints.leftClick())
+                                         .setCallback(Inputs.leftClick(() -> {
+                                             Sounds.click(player);
+                                             var temp = first;
+                                             first = second;
+                                             second = temp;
+                                             this.redraw();
+                                         })));
+
+        this.setSlot(8, CommonLabels.cancel(() -> {
+            Sounds.close(player);
+            this.callback.accept(Result.empty());
+        }));
     }
 
     @Override
@@ -53,11 +84,7 @@ public class GradientMenu extends SimpleGui {
     }
 
     private Gradient build() {
-        if (first.equals(second)) {
-            return first;
-        } else {
-            return Gradient.linear(first, second, mode);
-        }
+        return Gradient.linear(first, second, mode);
     }
 
     private void redraw() {
@@ -79,22 +106,6 @@ public class GradientMenu extends SimpleGui {
             this.open();
         }));
 
-        this.setSlot(5, CommonLabels.divider());
-
-        this.setSlot(7, GuiElementBuilder.from(Items.ENDER_PEARL.getDefaultInstance())
-                .setName(Component.translatable("jsst.itemEditor.gradient.custom.swap").withStyle(Styles.INPUT_HINT))
-                .addLoreLine(Hints.leftClick())
-                .setCallback(Inputs.leftClick(() -> {
-                    Sounds.click(player);
-                    var temp = first;
-                    first = second;
-                    second = temp;
-                    this.redraw();
-                })));
-
-        this.setSlot(8, CommonLabels.cancel(() -> {
-            Sounds.close(player);
-            this.callback.accept(Result.empty());
-        }));
+        this.setTitle(Util.colourise(Component.translatable("jsst.itemEditor.gradient.custom"), Component.empty().withStyle(ChatFormatting.UNDERLINE), build()));
     }
 }

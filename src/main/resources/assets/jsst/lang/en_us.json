@@ -38,9 +38,9 @@
 
   "jsst.itemEditor.colour.title": "Select Colour",
   "jsst.itemEditor.colour.page": "Colour Page",
-  "jsst.itemEditor.colour.chatFormatting": "Chat Formatting",
-  "jsst.itemEditor.colour.dyes": "Dyes",
-  "jsst.itemEditor.colour.extra": "Extra",
+  "jsst.itemEditor.colour.page.chatFormatting": "Chat Formatting",
+  "jsst.itemEditor.colour.page.dyes": "Dyes",
+  "jsst.itemEditor.colour.page.extra": "Extra",
   "jsst.itemEditor.colour.common": "Common",
   "jsst.itemEditor.colour.uncommon": "Uncommon",
   "jsst.itemEditor.colour.rare": "Rare",
@@ -68,6 +68,10 @@
   "jsst.itemEditor.gradient.asexual": "Asexual",
   "jsst.itemEditor.gradient.aromantic": "Aromantic",
   "jsst.itemEditor.gradient.custom": "Custom Gradient",
+  "jsst.itemEditor.gradient.custom.mode": "Gradient Mode",
+  "jsst.itemEditor.gradient.custom.mode.rgb": "RGB",
+  "jsst.itemEditor.gradient.custom.mode.hsv_short": "HSV (Short)",
+  "jsst.itemEditor.gradient.custom.mode.hsv_long": "HSV (Long)",
   "jsst.itemEditor.gradient.custom.swap": "Swap Colours",
 
   "jsst.itemEditor.simpleName": "Name Editor (Simple)",

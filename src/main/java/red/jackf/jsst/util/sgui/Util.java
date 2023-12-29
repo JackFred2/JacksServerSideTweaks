@@ -16,6 +16,7 @@ import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.GradientBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalInt;
 
 public interface Util {
@@ -91,6 +92,22 @@ public interface Util {
     static Component formatAsHex(Colour colour) {
         return Component.literal(String.format("#%06X", colour.toARGB() & 0xFFFFFF))
                 .setStyle(Styles.MINOR_LABEL);
+    }
+
+    interface Lists {
+        static <T> T next(T current, List<T> options) {
+            int currentIndex = options.indexOf(current);
+            if (currentIndex == -1) throw new IllegalArgumentException("Unknown option");
+            if (currentIndex == options.size() - 1) return options.get(0);
+            else return options.get(currentIndex + 1);
+        }
+
+        static <T> T previous(T current, List<T> options) {
+            int currentIndex = options.indexOf(current);
+            if (currentIndex == -1) throw new IllegalArgumentException("Unknown option");
+            if (currentIndex == 0) return options.get(options.size() - 1);
+            else return options.get(currentIndex - 1);
+        }
     }
 
     interface Enums {

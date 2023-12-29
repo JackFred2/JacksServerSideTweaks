@@ -2,6 +2,7 @@ package red.jackf.jsst.util.sgui;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.ItemStack;
 
 public interface Styles {
     Style LABEL = Style.EMPTY.withColor(ChatFormatting.WHITE);
@@ -16,4 +17,8 @@ public interface Styles {
     Style POSITIVE = Style.EMPTY.withColor(0x7FFF7F);
     Style INFO = Style.EMPTY.withColor(0x7F7FFF);
     Style NEGATIVE = Style.EMPTY.withColor(0xFF7F7F);
+
+    static ItemStack unclean(ItemStack in) {
+        return in.setHoverName(in.getHoverName().copy().setStyle(Style.EMPTY));
+    }
 }

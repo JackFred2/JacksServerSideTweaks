@@ -44,10 +44,10 @@ public interface CommonLabels {
     }
 
     static ItemStack simple(ItemStack stack, Component name, Component... lore) {
-        return GuiElementBuilder.from(stack)
+        return Styles.unclean(GuiElementBuilder.from(stack)
                                 .hideFlags()
                                 .setName(name)
                                 .setLore(Arrays.asList(lore))
-                                .asStack();
+                                .asStack());
     }
 }

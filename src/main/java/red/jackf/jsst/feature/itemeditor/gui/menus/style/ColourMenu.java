@@ -2,7 +2,7 @@ package red.jackf.jsst.feature.itemeditor.gui.menus.style;
 
 import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
-import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
+import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,31 +35,80 @@ public class ColourMenu extends SimpleGui {
         this.callback = callback;
 
         this.setTitle(Component.translatable("jsst.itemEditor.colour.custom"));
+
+        this.drawStatic();
+        this.redraw();
     }
 
-    protected static GuiElementBuilder createFormattingLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
-        var builder = GuiElementBuilder.from(new ItemStack(Items.WRITABLE_BOOK));
-        forEachFrame.accept(builder);
-        return builder;
+    protected static GuiElementInterface createFormattingLabel() {
+        return GuiElementBuilder.from(new ItemStack(Items.WRITABLE_BOOK))
+                                .setName(Component.translatable("jsst.itemEditor.colour.page.chatFormatting"))
+                                .build();
     }
 
-    protected static AnimatedGuiElementBuilder createDyeLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
+    protected static GuiElementInterface createDyeLabel() {
         var builder = new AnimatedGuiElementBuilder()
                 .setInterval(20)
                 .setRandom(true);
 
         for (DyeColor colour : DyeColor.values()) {
-            forEachFrame.accept(builder);
-            builder.setItem(DyeItem.byColor(colour)).saveItemStack();
+            builder.setName(Component.translatable("jsst.itemEditor.colour.page.dyes"))
+                   .setItem(DyeItem.byColor(colour))
+                   .saveItemStack();
         }
 
-        return builder;
+        return builder.build();
     }
 
-    protected static GuiElementBuilder createExtraLabel(Consumer<GuiElementBuilderInterface<?>> forEachFrame) {
-        var builder = GuiElementBuilder.from(new ItemStack(Items.CHORUS_FRUIT));
-        forEachFrame.accept(builder);
-        return builder;
+    protected static GuiElementInterface createExtraLabel() {
+        return GuiElementBuilder.from(new ItemStack(Items.CHORUS_FRUIT))
+                                .setName(Component.translatable("jsst.itemEditor.colour.page.extra"))
+                                .build();
+    }
+
+    private void drawStatic() {
+        if (removable) {
+            this.setSlot(Util.slot(4, 1), GuiElementBuilder.from(new ItemStack(Items.GUNPOWDER))
+                                                           .setName(Component.translatable("jsst.itemEditor.style.removeColour").withStyle(Styles.INPUT_HINT))
+                                                           .addLoreLine(Hints.leftClick())
+                                                           .setCallback(Inputs.leftClick(() -> {
+                                                               Sounds.clear(player);
+                                                               this.callback.accept(Result.of(null));
+                                                           })));
+        }
+
+        this.setSlot(Util.slot(4, 3), GuiElementBuilder.from(new ItemStack(Items.PAPER))
+                                                       .setName(Component.translatable("jsst.itemEditor.colour.custom"))
+                                                       .addLoreLine(Hints.leftClick())
+                                                       .setCallback(Inputs.leftClick(() -> {
+                                                           Sounds.click(player);
+                                                           Menus.customColour(player, col -> {
+                                                               if (col.isPresent()) {
+                                                                   this.callback.accept(Result.of(col.get()));
+                                                               } else {
+                                                                   this.open();
+                                                               }
+                                                           });
+                                                       })));
+
+        this.setSlot(Util.slot(8, 3), CommonLabels.cancel(() -> {
+            Sounds.close(player);
+            this.callback.accept(Result.empty());
+        }));
+
+        this.setSlot(Util.slot(4, 0), SwitchButton.<Page>builder(Component.translatable("jsst.itemEditor.colour.page"))
+                                                  .addOption(Page.DYES, createDyeLabel())
+                                                  .addOption(Page.FORMATTING, createFormattingLabel())
+                                                  .addOption(Page.EXTRA, createExtraLabel())
+                                                  .setCallback(page -> {
+                                                      this.page = page;
+                                                      this.page.pageDraw.accept(this);
+                                                  })
+                                                  .build(this.page));
+    }
+
+    private void redraw() {
+        this.page.pageDraw.accept(this);
     }
 
     private void drawColourPage(Map<ItemStack, Colour> colours) {
@@ -89,72 +138,15 @@ public class ColourMenu extends SimpleGui {
         this.callback.accept(Result.empty());
     }
 
-    private void redraw() {
-        this.page.pageDraw.accept(this);
+    private enum Page {
+        DYES(menu -> menu.drawColourPage(Colours.DYES)),
+        FORMATTING(menu -> menu.drawColourPage(Colours.CHAT_FORMATS)),
+        EXTRA(menu -> menu.drawColourPage(Colours.EXTRA));
 
-        this.setSlot(Util.slot(4, 0), SwitchButton.create(Component.translatable("jsst.itemEditor.colour.page"),
-                                                          Page.class,
-                                                          this.page,
-                                                          newPage -> {
-                                                              Sounds.click(player);
-                                                              this.page = newPage;
-                                                              this.redraw();
-                                                          }));
-
-        if (removable) {
-            this.setSlot(Util.slot(4, 1), GuiElementBuilder.from(new ItemStack(Items.GUNPOWDER))
-                                                           .setName(Component.translatable("jsst.itemEditor.style.removeColour")
-                                                                             .withStyle(Styles.INPUT_HINT))
-                                                           .addLoreLine(Hints.leftClick())
-                                                           .setCallback(Inputs.leftClick(() -> {
-                                                               Sounds.clear(player);
-                                                               this.callback.accept(Result.of(null));
-                                                           })));
-        }
-
-        this.setSlot(Util.slot(4, 3), GuiElementBuilder.from(new ItemStack(Items.PAPER))
-                                                       .setName(Component.translatable("jsst.itemEditor.colour.custom"))
-                                                       .addLoreLine(Hints.leftClick())
-                                                       .setCallback(Inputs.leftClick(() -> {
-                                                           Sounds.click(player);
-                                                           Menus.customColour(player, col -> {
-                                                               if (col.isPresent()) {
-                                                                   this.callback.accept(Result.of(col.get()));
-                                                               } else {
-                                                                   this.open();
-                                                               }
-                                                           });
-                                                       })));
-
-        this.setSlot(Util.slot(8, 3), CommonLabels.cancel(() -> {
-            Sounds.close(player);
-            this.callback.accept(Result.empty());
-        }));
-    }
-
-    private enum Page implements SwitchButton.Labelled {
-        DYES(ColourMenu::createDyeLabel, Component.translatable("jsst.itemEditor.colour.dyes"), menu -> menu.drawColourPage(Colours.DYES)),
-        FORMATTING(ColourMenu::createFormattingLabel, Component.translatable("jsst.itemEditor.colour.chatFormatting"), menu -> menu.drawColourPage(Colours.CHAT_FORMATS)),
-        EXTRA(ColourMenu::createExtraLabel, Component.translatable("jsst.itemEditor.colour.extra"), menu -> menu.drawColourPage(Colours.EXTRA));
-
-        private final SwitchButton.LabelGetter labelSupplier;
-        private final Component name;
         private final Consumer<ColourMenu> pageDraw;
 
-        Page(SwitchButton.LabelGetter labelSupplier, Component name, Consumer<ColourMenu> pageDraw) {
-            this.labelSupplier = labelSupplier;
-            this.name = name;
+        Page(Consumer<ColourMenu> pageDraw) {
             this.pageDraw = pageDraw;
-        }
-
-        @Override
-        public GuiElementBuilderInterface<?> getLabel(Consumer<GuiElementBuilderInterface<?>> applyToEachFrame) {
-            return this.labelSupplier.get(applyToEachFrame);
-        }
-
-        @Override
-        public Component getName() {
-            return this.name;
         }
     }
 }
