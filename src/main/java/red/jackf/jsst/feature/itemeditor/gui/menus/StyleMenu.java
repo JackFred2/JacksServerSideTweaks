@@ -139,10 +139,14 @@ public class StyleMenu extends SimpleGui {
                                                           }));
 
         this.setSlot(Util.slot(1, 4), GuiElementBuilder.from(new ItemStack(Items.PAPER))
-                .setName(Component.translatable("jsst.itemEditor.style.byHexCode"))
+                .setName(Component.translatable("jsst.itemEditor.colour.custom"))
                 .addLoreLine(Hints.leftClick())
                 .setCallback(Inputs.leftClick(() -> {
-
+                    Sounds.click(player);
+                    Menus.colour(player, col -> {
+                        col.ifPresent(value -> this.colour = value);
+                        this.open();
+                    });
                 })));
 
         this.setSlot(Util.slot(3, 4), GuiElementBuilder.from(new ItemStack(Items.GUNPOWDER))

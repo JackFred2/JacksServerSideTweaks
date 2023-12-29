@@ -16,6 +16,7 @@ import red.jackf.jsst.util.sgui.*;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class StringInputMenu extends SimpleGui {
@@ -28,6 +29,7 @@ public class StringInputMenu extends SimpleGui {
 
     private final String initial;
     private final Consumer<Optional<String>> onFinish;
+    private final Function<String, GuiElementInterface> hint;
     private final Predicate<String> predicate;
 
     private String text;
@@ -36,17 +38,18 @@ public class StringInputMenu extends SimpleGui {
             ServerPlayer player,
             Component title,
             String initial,
-            GuiElementInterface hint,
+            Function<String, GuiElementInterface> hint,
             Predicate<String> predicate,
             Consumer<Optional<String>> onFinish) {
         super(MenuType.ANVIL, player, false);
+        this.hint = hint;
         this.predicate = predicate;
-        this.setTitle(title);
         this.initial = initial;
         this.onFinish = onFinish;
 
         this.text = initial;
 
+        this.setTitle(title);
         this.setSlot(INPUT, GuiElementBuilder.from(new ItemStack(Items.BARRIER))
                                              .setName(Component.literal(initial))
                                              .addLoreLine(Hints.leftClick(Translations.cancel()))
@@ -62,13 +65,12 @@ public class StringInputMenu extends SimpleGui {
                                                  }
                                              }));
 
-        this.setSlot(HINT, hint);
-
         updateOutput();
     }
 
     public void onTextUpdate(String text) {
         this.text = text;
+        this.setSlot(HINT, hint.apply(text));
         this.updateOutput();
     }
 
@@ -110,7 +112,7 @@ public class StringInputMenu extends SimpleGui {
         private Component title = Component.translatable("jsst.common.input");
         private String initial = "";
         private Predicate<String> predicate = s -> true;
-        private GuiElementInterface hint = GuiElement.EMPTY;
+        private Function<String, GuiElementInterface> hint = ignored -> GuiElement.EMPTY;
 
         protected Builder(ServerPlayer player) {
             this.player = player;
@@ -131,13 +133,18 @@ public class StringInputMenu extends SimpleGui {
             return this;
         }
 
+        public Builder hint(Function<String, GuiElementInterface> hintBuilder) {
+            this.hint = hintBuilder;
+            return this;
+        }
+
         public Builder hint(GuiElementInterface hint) {
-            this.hint = hint;
+            this.hint = ignored -> hint;
             return this;
         }
 
         public Builder hint(GuiElementBuilderInterface<?> hint) {
-            this.hint = hint.build();
+            this.hint = ignored -> hint.build();
             return this;
         }
 

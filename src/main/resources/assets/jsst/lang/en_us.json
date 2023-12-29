@@ -35,13 +35,15 @@
   "jsst.itemEditor.style.customFont": "Custom Font",
   "jsst.itemEditor.style.removeColour": "Remove Colour",
   "jsst.itemEditor.style.removeStyle": "Remove Style",
-  "jsst.itemEditor.style.byHexCode": "By Hex Code",
 
   "jsst.itemEditor.simpleName": "Name Editor (Simple)",
   "jsst.itemEditor.simpleName.changeText": "Change Text",
   "jsst.itemEditor.simpleName.changeStyle": "Change Style",
 
   "jsst.itemEditor.durability": "Durability Editor",
+
+  "jsst.itemEditor.colour.custom": "Custom Colour",
+  "jsst.itemEditor.colour.custom.hint": "Valid formats are:",
 
   "jsst.itemEditor.colour.page": "Colour Page",
   "jsst.itemEditor.colour.common": "Common",
