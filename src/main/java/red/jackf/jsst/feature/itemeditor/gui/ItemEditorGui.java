@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.feature.itemeditor.gui.editors.Editor;
 import red.jackf.jsst.feature.itemeditor.gui.editors.SimpleNameEditor;
+import red.jackf.jsst.feature.itemeditor.gui.editors.DurabilityEditor;
 import red.jackf.jsst.util.sgui.*;
 
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.OptionalInt;
 
 public class ItemEditorGui extends SimpleGui {
     private static final List<Editor.Supplier<?>> EDITORS = List.of(
-            SimpleNameEditor::new
+            SimpleNameEditor::new,
+            DurabilityEditor::new
     );
     private final EquipmentSlot returnSlot;
     private ItemStack stack;

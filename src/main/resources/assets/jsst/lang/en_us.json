@@ -41,6 +41,8 @@
   "jsst.itemEditor.simpleName.changeText": "Change Text",
   "jsst.itemEditor.simpleName.changeStyle": "Change Style",
 
+  "jsst.itemEditor.durability": "Durability Editor",
+
   "jsst.itemEditor.colour.page": "Colour Page",
   "jsst.itemEditor.colour.common": "Common",
   "jsst.itemEditor.colour.uncommon": "Uncommon",

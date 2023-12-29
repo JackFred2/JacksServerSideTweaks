@@ -55,6 +55,10 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
         this.open();
     }
 
+    protected ItemStack getInitial() {
+        return this.initial.copy();
+    }
+
     protected final void drawPreview(int slot) {
         this.setSlot(slot, GuiElementBuilder.from(this.stack.copy())
                 .setName(Util.getLabelAsTooltip(this.stack))

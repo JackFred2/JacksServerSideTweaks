@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.GradientBuilder;
 
+import java.util.ArrayList;
 import java.util.OptionalInt;
 
 public interface Util {
@@ -115,11 +116,39 @@ public interface Util {
             return index < 0 || index >= width * height;
         }
 
+        public Iterable<Integer> slots() {
+            var list = new ArrayList<Integer>();
+            for (int col = 0; col < width; col++) {
+                for (int row = 0; row < height; row++) {
+                    list.add(colFrom + col + 9 * (row + rowFrom));
+                }
+            }
+            return list;
+        }
+
         public OptionalInt translate(int index) {
             if (outOfRange(index)) return OptionalInt.empty();
             int row = index / width + rowFrom;
             int column = index % width + colFrom;
             return OptionalInt.of(row * 9 + column);
         }
+
+        public <T> Iterable<SlotItemPair<T>> iterate(Iterable<T> elements) {
+            int index = 0;
+            var result = new ArrayList<SlotItemPair<T>>();
+            for (T element : elements) {
+                var slot = this.translate(index++);
+                if (slot.isEmpty()) return result;
+                result.add(new SlotItemPair<>(slot.getAsInt(), element));
+            }
+            return result;
+        }
+
+        public void fill(SlotHolder gui, ItemStack fillMaterial) {
+            for (int slot : slots())
+                gui.setSlot(slot, fillMaterial);
+        }
+
+        public record SlotItemPair<T>(int slot, T item) {}
     }
 }
