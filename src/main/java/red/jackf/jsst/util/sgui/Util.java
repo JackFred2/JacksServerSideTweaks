@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.GradientBuilder;
 
@@ -85,6 +86,11 @@ public interface Util {
             base.append(Component.literal(String.valueOf(str.charAt(i))).withColor(gradient.sample(progress).toARGB()));
         }
         return base;
+    }
+
+    static Component formatAsHex(Colour colour) {
+        return Component.literal(String.format("#%06X", colour.toARGB() & 0xFFFFFF))
+                .setStyle(Styles.MINOR_LABEL);
     }
 
     interface Enums {

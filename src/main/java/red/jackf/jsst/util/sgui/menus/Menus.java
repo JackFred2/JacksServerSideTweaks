@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
+import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.selector.PaginatedSelectorMenu;
@@ -41,7 +42,7 @@ public class Menus {
             Component title,
             Collection<T> options,
             LabelMap<T> labelMap,
-            Consumer<PaginatedSelectorMenu.Selection<T>> onSelect) {
+            Consumer<Result<T>> onSelect) {
         if (options.size() > PAGINATION_THRESHOLD) {
             new PaginatedSelectorMenu<>(player, title, options, onSelect, labelMap).open();
         } else {
@@ -111,7 +112,7 @@ public class Menus {
         }
     }
 
-    public static void colour(
+    public static void customColour(
             ServerPlayer player,
             Consumer<Optional<Colour>> onFinish) {
         stringBuilder(player)

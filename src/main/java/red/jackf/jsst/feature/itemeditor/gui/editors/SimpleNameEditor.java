@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import red.jackf.jsst.feature.itemeditor.gui.menus.StyleMenu;
+import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
@@ -56,13 +56,12 @@ public class SimpleNameEditor extends GuiEditor {
 
     private void changeStyle() {
         Sounds.click(player);
-        new StyleMenu(player,
-                      this.stack.getHoverName(),
-                      Component.translatable("jsst.itemEditor.simpleName.changeStyle"),
+        EditorMenus.style(player,
+                          this.stack.getHoverName(),
                           opt -> {
-                              opt.ifPresent(c -> this.stack.setHoverName(c));
+                              opt.ifPresent(this.stack::setHoverName);
                               this.open();
-                          }).open();
+                          });
     }
 
     private void changeText() {

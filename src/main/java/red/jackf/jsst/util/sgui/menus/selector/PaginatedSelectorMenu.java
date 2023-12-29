@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.Menus;
@@ -23,13 +24,13 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
     private int maxPage;
     private int page = 0;
 
-    public PaginatedSelectorMenu(ServerPlayer player, Component title, Collection<T> options, Consumer<Selection<T>> onSelect, LabelMap<T> labelMap) {
+    public PaginatedSelectorMenu(ServerPlayer player, Component title, Collection<T> options, Consumer<Result<T>> onSelect, LabelMap<T> labelMap) {
         super(MenuType.GENERIC_9x6, title, player, options, onSelect, labelMap);
         this.filteredOptions = new ArrayList<>(this.options.size());
 
         this.setSlot(53, CommonLabels.cancel(() -> {
             Sounds.close(player);
-            this.finish(new Selection<>(false, null));
+            this.finish(Result.empty());
         }));
     }
 
@@ -61,7 +62,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
                                                     .addLoreLine(Hints.leftClick(Translations.select()))
                                                     .setCallback(Inputs.leftClick(() -> {
                                                         Sounds.click(player);
-                                                        this.finish(new Selection<>(true, option));
+                                                        this.finish(Result.of(option));
                                                     })));
             } else {
                 this.setSlot(slot, ItemStack.EMPTY);

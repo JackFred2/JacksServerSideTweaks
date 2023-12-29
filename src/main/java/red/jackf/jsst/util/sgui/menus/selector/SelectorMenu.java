@@ -4,6 +4,7 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
+import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 
 import java.util.Collection;
@@ -12,11 +13,11 @@ import java.util.function.Consumer;
 
 public abstract class SelectorMenu<T> extends SimpleGui {
     protected final List<T> options;
-    private final Consumer<Selection<T>> onSelect;
+    private final Consumer<Result<T>> onSelect;
     protected final LabelMap<T> labelMap;
     private boolean hasRanCallback = false;
 
-    public SelectorMenu(MenuType<?> type, Component title, ServerPlayer player, Collection<T> options, Consumer<Selection<T>> onSelect, LabelMap<T> labelMap) {
+    public SelectorMenu(MenuType<?> type, Component title, ServerPlayer player, Collection<T> options, Consumer<Result<T>> onSelect, LabelMap<T> labelMap) {
         super(type, player, false);
         this.setTitle(title);
         this.options = List.copyOf(options);
@@ -24,7 +25,7 @@ public abstract class SelectorMenu<T> extends SimpleGui {
         this.labelMap = labelMap;
     }
 
-    protected void finish(Selection<T> selection) {
+    protected void finish(Result<T> selection) {
         if (!hasRanCallback) {
             this.hasRanCallback = true;
             this.onSelect.accept(selection);
@@ -33,8 +34,6 @@ public abstract class SelectorMenu<T> extends SimpleGui {
 
     @Override
     public void onClose() {
-        finish(new Selection<>(false, null));
+        finish(Result.empty());
     }
-
-    public record Selection<T>(boolean hasResult, T result) {}
 }
