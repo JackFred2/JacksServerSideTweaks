@@ -100,10 +100,13 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
     private void openFilter(ClickType type) {
         if (type == ClickType.MOUSE_LEFT) {
             Sounds.click(player);
-            Menus.string(player, Translations.search(), this.filter, null, opt -> {
-                opt.ifPresent(s -> this.filter = s);
-                this.open();
-            });
+            Menus.stringBuilder(player)
+                 .title(Translations.search())
+                 .initial(this.filter)
+                 .createAndShow(opt -> {
+                     opt.ifPresent(s -> this.filter = s);
+                     this.open();
+                 });
         } else if (type == ClickType.MOUSE_RIGHT) {
             Sounds.clear(player);
             this.filter = "";

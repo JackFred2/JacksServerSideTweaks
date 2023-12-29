@@ -129,7 +129,7 @@ public class StyleMenu extends SimpleGui {
         // colours
         this.page.pageDraw.accept(this);
 
-        this.setSlot(Util.slot(3, 4), SwitchButton.create(Component.translatable("jsst.itemEditor.colour.page"),
+        this.setSlot(Util.slot(0, 4), SwitchButton.create(Component.translatable("jsst.itemEditor.colour.page"),
                                                           ColourPage.class,
                                                           this.page,
                                                           newPage -> {
@@ -138,7 +138,14 @@ public class StyleMenu extends SimpleGui {
                                                               this.redraw();
                                                           }));
 
-        this.setSlot(Util.slot(0, 4), GuiElementBuilder.from(new ItemStack(Items.GUNPOWDER))
+        this.setSlot(Util.slot(1, 4), GuiElementBuilder.from(new ItemStack(Items.PAPER))
+                .setName(Component.translatable("jsst.itemEditor.style.byHexCode"))
+                .addLoreLine(Hints.leftClick())
+                .setCallback(Inputs.leftClick(() -> {
+
+                })));
+
+        this.setSlot(Util.slot(3, 4), GuiElementBuilder.from(new ItemStack(Items.GUNPOWDER))
                 .setName(Component.translatable("jsst.itemEditor.style.removeColour").withStyle(Styles.INPUT_HINT))
                 .addLoreLine(Hints.leftClick())
                 .setCallback(Inputs.leftClick(() -> {

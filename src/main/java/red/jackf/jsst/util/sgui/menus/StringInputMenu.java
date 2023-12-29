@@ -1,8 +1,10 @@
 package red.jackf.jsst.util.sgui.menus;
 
-import blue.endless.jankson.annotation.Nullable;
 import eu.pb4.sgui.api.ClickType;
+import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
+import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,11 +32,11 @@ public class StringInputMenu extends SimpleGui {
 
     private String text;
 
-    public StringInputMenu(
+    private StringInputMenu(
             ServerPlayer player,
             Component title,
             String initial,
-            @Nullable ItemStack hint,
+            GuiElementInterface hint,
             Predicate<String> predicate,
             Consumer<Optional<String>> onFinish) {
         super(MenuType.ANVIL, player, false);
@@ -60,8 +62,7 @@ public class StringInputMenu extends SimpleGui {
                                                  }
                                              }));
 
-        this.setSlot(HINT, GuiElementBuilder.from(hint == null ? ItemStack.EMPTY : hint)
-                                            .setCallback(this::sendGui)); // if a player clicks on the output with empty text it all vanishes
+        this.setSlot(HINT, hint);
 
         updateOutput();
     }
@@ -71,17 +72,21 @@ public class StringInputMenu extends SimpleGui {
         this.updateOutput();
     }
 
+    @Override
+    public boolean onAnyClick(int index, ClickType type, net.minecraft.world.inventory.ClickType action) {
+        this.sendGui();
+        return super.onAnyClick(index, type, action);
+    }
+
     public void updateOutput() { // update result
         if (this.text.equals(initial)) {
             this.setSlot(OUTPUT, GuiElementBuilder.from(new ItemStack(INVALID))
                                                   .setName(Component.literal(this.text).withStyle(Styles.LABEL))
-                                                  .addLoreLine(Component.translatable("jsst.common.noChanges").setStyle(Styles.NEGATIVE))
-                                                  .setCallback(this::sendGui)); // if a player clicks on the output with empty text it all vanishes
+                                                  .addLoreLine(Component.translatable("jsst.common.noChanges").setStyle(Styles.NEGATIVE)));
         } else if (!this.predicate.test(this.text)) {
             this.setSlot(OUTPUT, GuiElementBuilder.from(new ItemStack(INVALID))
                                                   .setName(Component.literal(this.text).withStyle(Styles.LABEL))
-                                                  .addLoreLine(Component.translatable("jsst.common.invalid").setStyle(Styles.NEGATIVE))
-                                                  .setCallback(this::sendGui)); // if a player clicks on the output with empty text it all vanishes
+                                                  .addLoreLine(Component.translatable("jsst.common.invalid").setStyle(Styles.NEGATIVE)));
         } else {
             this.setSlot(OUTPUT, GuiElementBuilder.from(new ItemStack(VALID))
                                                   .setName(Component.literal(this.text))
@@ -98,5 +103,54 @@ public class StringInputMenu extends SimpleGui {
     private void onAccept() {
         Sounds.click(player);
         this.onFinish.accept(Optional.of(this.text));
+    }
+
+    public static class Builder {
+        private final ServerPlayer player;
+        private Component title = Component.translatable("jsst.common.input");
+        private String initial = "";
+        private Predicate<String> predicate = s -> true;
+        private GuiElementInterface hint = GuiElement.EMPTY;
+
+        protected Builder(ServerPlayer player) {
+            this.player = player;
+        }
+
+        public Builder title(Component title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder initial(String initial) {
+            this.initial = initial;
+            return this;
+        }
+
+        public Builder predicate(Predicate<String> predicate) {
+            this.predicate = predicate;
+            return this;
+        }
+
+        public Builder hint(GuiElementInterface hint) {
+            this.hint = hint;
+            return this;
+        }
+
+        public Builder hint(GuiElementBuilderInterface<?> hint) {
+            this.hint = hint.build();
+            return this;
+        }
+
+        public Builder hint(ItemStack hint) {
+            return hint(GuiElementBuilder.from(hint));
+        }
+
+        public Builder hint(Component hint) {
+            return hint(GuiElementBuilder.from(Items.PAPER.getDefaultInstance()).setName(hint));
+        }
+
+        public void createAndShow(Consumer<Optional<String>> callback) {
+            new StringInputMenu(player, title, initial, hint, predicate, callback).open();
+        }
     }
 }

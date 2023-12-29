@@ -15,7 +15,6 @@ import red.jackf.jsst.util.sgui.menus.selector.SinglePageSelectorMenu;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class Menus {
     private static final int PAGINATION_THRESHOLD = 52;
@@ -40,28 +39,8 @@ public class Menus {
         }
     }
 
-    public static void string(
-            ServerPlayer player,
-            Component title,
-            String initial,
-            @Nullable ItemStack hint,
-            Consumer<Optional<String>> onFinish) {
-        string(player,
-               title,
-               initial,
-               hint,
-               s -> true,
-               onFinish);
-    }
-
-    public static void string(
-            ServerPlayer player,
-            Component title,
-            String initial,
-            @Nullable ItemStack hint,
-            Predicate<String> predicate,
-            Consumer<Optional<String>> onFinish) {
-        new StringInputMenu(player, title, initial, hint, predicate, onFinish).open();
+    public static StringInputMenu.Builder stringBuilder(ServerPlayer player) {
+        return new StringInputMenu.Builder(player);
     }
 
     public static void resourceLocation(
@@ -70,11 +49,10 @@ public class Menus {
             ResourceLocation initial,
             @Nullable ItemStack hint,
             Consumer<Optional<ResourceLocation>> onFinish) {
-        string(player,
-               title,
-               initial.toString(),
-               hint == null ? DEFAULT_RESLOC_HINT : hint,
-               ResourceLocation::isValidResourceLocation,
-               opt -> onFinish.accept(opt.map(ResourceLocation::new)));
+        stringBuilder(player)
+                .title(title)
+                .initial(initial.toString())
+                .hint(hint == null ? DEFAULT_RESLOC_HINT : hint)
+                .createAndShow(opt -> onFinish.accept(opt.map(ResourceLocation::new)));
     }
 }

@@ -11,6 +11,7 @@
   "jsst.common.toggle": "Toggle",
   "jsst.common.next": "Next",
   "jsst.common.previous": "Previous",
+  "jsst.common.input": "Input",
 
   "jsst.beaconPowers.beaconLevelActive": "Beacon Level %d (active)",
   "jsst.beaconPowers.beaconLevelInactive": "Beacon Level %d (inactive)",
@@ -34,6 +35,7 @@
   "jsst.itemEditor.style.customFont": "Custom Font",
   "jsst.itemEditor.style.removeColour": "Remove Colour",
   "jsst.itemEditor.style.removeStyle": "Remove Style",
+  "jsst.itemEditor.style.byHexCode": "By Hex Code",
 
   "jsst.itemEditor.simpleName": "Name Editor (Simple)",
   "jsst.itemEditor.simpleName.changeText": "Change Text",
