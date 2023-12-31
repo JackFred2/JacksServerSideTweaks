@@ -24,10 +24,10 @@ public class DurabilityEditor extends GuiEditor {
 
     public DurabilityEditor(
             ServerPlayer player,
-            boolean fullAccess,
+            boolean cosmeticOnly,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x4, player, fullAccess, initial, callback);
+        super(MenuType.GENERIC_9x4, player, cosmeticOnly, initial, callback);
         this.setTitle(Component.translatable("jsst.itemEditor.durability"));
 
         this.setSlot(Util.slot(0, 3), CommonLabels.cancel(this::cancel));

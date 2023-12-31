@@ -20,7 +20,9 @@ import red.jackf.jsst.JSST;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 
 import java.io.Reader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 

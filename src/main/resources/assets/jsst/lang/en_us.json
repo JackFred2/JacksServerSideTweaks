@@ -80,6 +80,10 @@
 
   "jsst.itemEditor.durability": "Durability Editor",
 
+  "jsst.itemEditor.stackNBTPrinter": "Stack NBT Printer",
+  "jsst.itemEditor.stackNBTPrinter.hint": "Useful for label maps",
+  "jsst.itemEditor.stackNBTPrinter.copyInstruction": "Click to copy the label for this stack. Include quotes!",
+
   "jsst.command.config.open_wiki": "Click to open the wiki page for this option",
   "jsst.command.config.check": "%s: %s",
   "jsst.command.config.change": "%s: %s -> %s",

@@ -1,6 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,5 +22,5 @@ public interface Editor {
     record EditorType(Constructor<?> constructor,
                       boolean cosmeticOnly,
                       Predicate<ItemStack> appliesTo,
-                      Supplier<GuiElementBuilderInterface<?>> labelSupplier) {}
+                      Supplier<GuiElementBuilder> labelSupplier) {}
 }
