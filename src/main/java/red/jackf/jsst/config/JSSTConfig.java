@@ -11,6 +11,11 @@ import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 
 public class JSSTConfig implements Config<JSSTConfig> {
     @Comment("""
+            Adds a powerful in-game item editor, accessed using /jsst itemEditor. Offers a cosmetic-only mode for survival
+            flavour.""")
+    public ItemEditor.Config itemEditor = new ItemEditor.Config();
+
+    @Comment("""
             Allows players to right click with a crafting table in-hand to open it, instead of needing to place it down. Configurable
             using a tag representing crafting table items.""")
     public PortableCrafting.Config portableCrafting = new PortableCrafting.Config();
@@ -25,10 +30,6 @@ public class JSSTConfig implements Config<JSSTConfig> {
     public BeaconEnhancement.Config beaconEnhancement = new BeaconEnhancement.Config();
 
     @Comment("""
-            Adds a powerful in-game item editor""")
-    public ItemEditor.Config itemEditor = new ItemEditor.Config();
-
-    @Comment("""
             Tiny gameplay mechanics tweaks to reduce frustration when playing.""")
     public QualityOfLife.Config qol = new QualityOfLife.Config();
 
@@ -40,6 +41,7 @@ public class JSSTConfig implements Config<JSSTConfig> {
 
     @Override
     public void onLoad(@Nullable JSSTConfig old) {
+        ItemEditor.INSTANCE.reload(this.itemEditor);
         PortableCrafting.INSTANCE.reload(this.portableCrafting);
         WorldContainerNames.INSTANCE.reload(this.worldContainerNames);
         BeaconEnhancement.INSTANCE.reload(this.beaconEnhancement);

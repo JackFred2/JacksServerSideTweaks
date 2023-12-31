@@ -2,7 +2,6 @@ package red.jackf.jsst.command;
 
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -129,6 +128,7 @@ public class CommandConfig {
         return root;
     }
 
+    /*
     private static <E extends Enum<E>> LiteralArgumentBuilder<CommandSourceStack> makeEnum(
             String name,
             String fullName,
@@ -177,7 +177,7 @@ public class CommandConfig {
 
         return node;
     }
-
+*/
     private static LiteralArgumentBuilder<CommandSourceStack> makeIntRange(
             String name,
             String fullName,
@@ -316,9 +316,9 @@ public class CommandConfig {
     ///////////
 
     public static LiteralArgumentBuilder<CommandSourceStack> createCommandNode(CommandBuildContext context) {
-        var root = Commands.literal("config")
-                           .requires(ctx -> ctx.hasPermission(4));
+        var root = Commands.literal("config");
 
+        root.then(makeItemEditorNode());
         root.then(makePortableCraftingNode());
         root.then(makeBeaconEnhancementNode(context));
         root.then(makeWorldContainerNamesNode());
@@ -327,7 +327,25 @@ public class CommandConfig {
         return root;
     }
 
-    private static ArgumentBuilder<CommandSourceStack, ?> makePortableCraftingNode() {
+    private static LiteralArgumentBuilder<CommandSourceStack> makeItemEditorNode() {
+        var root = Commands.literal("itemEditor");
+
+        root.then(makeBoolean("cosmeticOnlyModeAvailable",
+                              "itemEditor.cosmeticOnlyModeAvailable",
+                              WikiPage.ITEM_EDITOR,
+                              config -> config.itemEditor.cosmeticOnlyModeAvailable,
+                              (config, newVal) -> config.itemEditor.cosmeticOnlyModeAvailable = newVal));
+
+        root.then(makeBoolean("dedicatedCommand",
+                              "itemEditor.dedicatedCommand",
+                              WikiPage.ITEM_EDITOR,
+                              config -> config.itemEditor.dedicatedCommand,
+                              (config, newVal) -> config.itemEditor.dedicatedCommand = newVal));
+
+        return root;
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> makePortableCraftingNode() {
         var root = Commands.literal("portableCrafting");
 
         root.then(makeBoolean("enabled",
@@ -345,7 +363,7 @@ public class CommandConfig {
         return root;
     }
 
-    private static ArgumentBuilder<CommandSourceStack, ?> makeBeaconEnhancementNode(CommandBuildContext context) {
+    private static LiteralArgumentBuilder<CommandSourceStack> makeBeaconEnhancementNode(CommandBuildContext context) {
         var root = Commands.literal("beaconEnhancement");
 
         root.then(makeBoolean("enabled",
@@ -373,7 +391,7 @@ public class CommandConfig {
         return root;
     }
 
-    private static ArgumentBuilder<CommandSourceStack, ?> makeBeaconEnhancementPowersNode(CommandBuildContext context) {
+    private static LiteralArgumentBuilder<CommandSourceStack> makeBeaconEnhancementPowersNode(CommandBuildContext context) {
         var root = Commands.literal("powerSet");
         final String fullName = "beaconEnhancement.powerSet";
 
@@ -520,7 +538,7 @@ public class CommandConfig {
         return root;
     }
 
-    private static ArgumentBuilder<CommandSourceStack, ?> makeWorldContainerNamesNode() {
+    private static LiteralArgumentBuilder<CommandSourceStack> makeWorldContainerNamesNode() {
         var root = Commands.literal("worldContainerNames");
 
         root.then(makeBoolean("enabled",
@@ -539,7 +557,7 @@ public class CommandConfig {
         return root;
     }
 
-    private static ArgumentBuilder<CommandSourceStack, ?> makeQolNode() {
+    private static LiteralArgumentBuilder<CommandSourceStack> makeQolNode() {
         var root = Commands.literal("qol");
 
         root.then(makeBoolean("doMinedItemsShiftUp",

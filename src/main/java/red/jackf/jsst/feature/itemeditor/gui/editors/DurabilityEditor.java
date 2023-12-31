@@ -15,23 +15,25 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class DurabilityEditor extends GuiEditor {
+    public static final EditorType TYPE = new EditorType(
+            DurabilityEditor::new,
+            false,
+            stack -> stack.getItem().canBeDepleted(),
+            DurabilityEditor::getLabel
+    );
+
     public DurabilityEditor(
             ServerPlayer player,
+            boolean fullAccess,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x4, player, initial, callback);
+        super(MenuType.GENERIC_9x4, player, fullAccess, initial, callback);
         this.setTitle(Component.translatable("jsst.itemEditor.durability"));
 
         this.setSlot(Util.slot(0, 3), CommonLabels.cancel(this::cancel));
     }
 
-    @Override
-    public boolean appliesTo(ItemStack stack) {
-        return stack.getItem().canBeDepleted();
-    }
-
-    @Override
-    public GuiElementBuilder getLabel() {
+    public static GuiElementBuilder getLabel() {
         return GuiElementBuilder.from(new ItemStack(Items.CRACKED_STONE_BRICKS))
                                 .setName(Component.translatable("jsst.itemEditor.durability"));
     }

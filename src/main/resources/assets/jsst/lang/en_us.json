@@ -91,5 +91,7 @@
   "jsst.command.config.list.added": "%s: Added %s",
   "jsst.command.config.list.removed": "%s: Removed %s",
 
+  "jsst.command.itemEditor.requiresHeldItem": "Hold an item to edit it.",
+
   "jsst.command.config.powerListHeader": "Level %d"
 }

@@ -13,16 +13,23 @@ import red.jackf.jsst.util.sgui.menus.Menus;
 import java.util.function.Consumer;
 
 public class SimpleNameEditor extends GuiEditor {
+    public static final EditorType TYPE = new EditorType(
+            SimpleNameEditor::new,
+            true,
+            ignored -> true,
+            SimpleNameEditor::getLabel
+    );
+
     public SimpleNameEditor(
             ServerPlayer player,
+            boolean cosmeticOnly,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x1, player, initial, callback);
+        super(MenuType.GENERIC_9x1, player, cosmeticOnly, initial, callback);
         this.setTitle(Component.translatable("jsst.itemEditor.simpleName"));
     }
 
-    @Override
-    public GuiElementBuilder getLabel() {
+    public static GuiElementBuilder getLabel() {
         return GuiElementBuilder.from(new ItemStack(Items.PAPER))
                                 .setName(Component.translatable("jsst.itemEditor.simpleName"));
     }

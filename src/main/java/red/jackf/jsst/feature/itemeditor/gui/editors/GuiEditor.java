@@ -19,6 +19,7 @@ import java.util.function.Consumer;
  * with the passed stack, make sure to use {@link ItemStack#copy()}
  */
 public abstract class GuiEditor extends SimpleGui implements Editor {
+    private final boolean cosmeticOnly;
     private final ItemStack initial;
     private final Consumer<ItemStack> callback;
 
@@ -27,9 +28,11 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
     public GuiEditor(
             MenuType<?> type,
             ServerPlayer player,
+            boolean cosmeticOnly,
             ItemStack initial,
             Consumer<ItemStack> callback) {
         super(type, player, false);
+        this.cosmeticOnly = cosmeticOnly;
         this.initial = initial;
         this.callback = callback;
         this.stack = initial.copy();
@@ -50,7 +53,7 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
 
     @Override
     @MustBeInvokedByOverriders
-    public void start() {
+    public void run() {
         Sounds.click(player);
         this.open();
     }

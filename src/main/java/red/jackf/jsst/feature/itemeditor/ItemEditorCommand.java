@@ -15,16 +15,22 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.command.Formatting;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
+import java.util.function.Predicate;
+
 public class ItemEditorCommand {
+    public static final Predicate<CommandSourceStack> PREDICATE
+            = ctx -> ItemEditor.INSTANCE.getAccessForPlayer(ctx.getPlayer()) != ItemEditor.EditorAccess.NONE;
+
     public static LiteralArgumentBuilder<CommandSourceStack> create(CommandBuildContext buildCtx) {
         var root = Commands.literal("itemEditor")
-                           .requires(CommandSourceStack::isPlayer)
                            .executes(ctx -> onHand(buildCtx, ctx));
 
         var itemId = Commands.argument("itemId", ItemArgument.item(buildCtx))
+                             .requires(ctx -> ItemEditor.INSTANCE.getAccessForPlayer(ctx.getPlayer()) == ItemEditor.EditorAccess.FULL)
                              .executes(ItemEditorCommand::onItemId);
 
         root.then(itemId);
@@ -43,7 +49,6 @@ public class ItemEditorCommand {
             CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
 
-
         ItemStack handItem = player.getMainHandItem();
         EquipmentSlot slot = EquipmentSlot.MAINHAND;
         if (handItem.isEmpty()) {
@@ -52,17 +57,24 @@ public class ItemEditorCommand {
         }
 
         if (handItem.isEmpty()) {
-            Menus.selector(player,
-                           Component.translatable("jsst.itemEditor.selectBaseItem"),
-                           buildCtx.holderLookup(Registries.ITEM).listElements().map(Holder.Reference::value).filter(item -> !(item == Items.AIR)).toList(),
-                           LabelMaps.ITEMS,
-                           selection -> {
-                               if (selection.hasResult()) {
-                                   ItemEditor.INSTANCE.newSession(player, new ItemStack(selection.result()), null);
-                               } else {
-                                   player.closeContainer();
-                               }
-                           });
+            var access = ItemEditor.INSTANCE.getAccessForPlayer(player);
+            if (access == ItemEditor.EditorAccess.FULL) {
+                Menus.selector(player,
+                               Component.translatable("jsst.itemEditor.selectBaseItem"),
+                               buildCtx.holderLookup(Registries.ITEM).listElements().map(Holder.Reference::value)
+                                       .filter(item -> !(item == Items.AIR)).toList(),
+                               LabelMaps.ITEMS,
+                               selection -> {
+                                   if (selection.hasResult()) {
+                                       ItemEditor.INSTANCE.newSession(player, new ItemStack(selection.result()), null);
+                                   } else {
+                                       player.closeContainer();
+                                   }
+                               });
+            } else {
+                ctx.getSource().sendFailure(Formatting.errorLine(Component.translatable("jsst.command.itemEditor.requiresHeldItem")));
+                return 0;
+            }
         } else {
             ItemEditor.INSTANCE.newSession(player, handItem, slot);
         }

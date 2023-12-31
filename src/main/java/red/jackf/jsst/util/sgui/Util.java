@@ -66,16 +66,11 @@ public interface Util {
         return Component.empty().append(stack.getHoverName()).withStyle(style);
     }
 
-    static void setName(GuiElementBuilderInterface<?> builder, Component name) {
-        if (builder instanceof AnimatedGuiElementBuilder anim) anim.setName(name);
-        else if (builder instanceof GuiElementBuilder stat) stat.setName(name);
-        else throw new IllegalArgumentException("Unknown element builder");
-    }
-
-    static void addLore(GuiElementBuilderInterface<?> builder, Component lore) {
+    static <T extends GuiElementBuilderInterface<T>> GuiElementBuilderInterface<T> addLore(GuiElementBuilderInterface<T> builder, Component lore) {
         if (builder instanceof AnimatedGuiElementBuilder anim) anim.addLoreLine(lore);
         else if (builder instanceof GuiElementBuilder stat) stat.addLoreLine(lore);
         else throw new IllegalArgumentException("Unknown element builder");
+        return builder;
     }
 
     static Component colourise(Component text, MutableComponent base, Gradient gradient) {

@@ -50,10 +50,10 @@ public class JSST implements ModInitializer {
             .build();
 
     private static final List<Feature<?>> FEATURES = List.of(
+            ItemEditor.INSTANCE,
             PortableCrafting.INSTANCE,
             WorldContainerNames.INSTANCE,
             BeaconEnhancement.INSTANCE,
-            ItemEditor.INSTANCE,
             QualityOfLife.INSTANCE
     );
 

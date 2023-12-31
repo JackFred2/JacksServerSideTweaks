@@ -14,20 +14,24 @@ import red.jackf.jsst.feature.itemeditor.gui.editors.SimpleNameEditor;
 import red.jackf.jsst.util.sgui.*;
 
 import java.util.List;
-import java.util.OptionalInt;
 
 public class ItemEditorGui extends SimpleGui {
-    private static final List<Editor.Supplier<?>> EDITORS = List.of(
-            SimpleNameEditor::new,
-            DurabilityEditor::new
+    private static final List<Editor.EditorType> EDITORS = List.of(
+            SimpleNameEditor.TYPE,
+            DurabilityEditor.TYPE
     );
     private final EquipmentSlot returnSlot;
+    private final boolean cosmeticOnly;
     private ItemStack stack;
 
-    public ItemEditorGui(ServerPlayer player, ItemStack initialStack, @Nullable EquipmentSlot returnSlot) {
+    public ItemEditorGui(ServerPlayer player,
+                         ItemStack initialStack,
+                         @Nullable EquipmentSlot returnSlot,
+                         boolean cosmeticOnly) {
         super(MenuType.GENERIC_9x5, player, false);
         this.stack = initialStack.copy();
         this.returnSlot = returnSlot;
+        this.cosmeticOnly = cosmeticOnly;
 
         this.setTitle(Component.translatable("jsst.itemEditor.title"));
 
@@ -37,32 +41,30 @@ public class ItemEditorGui extends SimpleGui {
     private void drawStatic() {
         for (int row = 0; row < 5; row++) this.setSlot(row * 9 + 3, CommonLabels.divider());
 
-        this.setSlot(Slots.CANCEL, CommonLabels.cancel(this::close));
+        this.setSlot(Util.slot(0, 4), CommonLabels.cancel(this::close));
     }
 
     @Override
     public void onOpen() {
         // update result stack
-        this.setSlot(Slots.RESULT, GuiElementBuilder.from(stack.copy())
+        this.setSlot(Util.slot(1, 1), GuiElementBuilder.from(stack.copy())
                                                     .setName(Util.getLabelAsTooltip(stack))
                                                     .addLoreLine(Hints.leftClick(Translations.save()))
                                                     .setCallback(Inputs.leftClick(this::complete)));
 
-        // update editors
-        Util.fill(this, ItemStack.EMPTY, 4, 9, 0, 5);
-        final Util.SlotTranslator slotTranslator = Util.slotTranslator(4, 9, 0, 5);
+        final var editors = EDITORS.stream()
+                                   .filter(type -> type.appliesTo().test(stack))
+                                   .filter(type -> !cosmeticOnly || type.cosmeticOnly())
+                                   .map(type -> Util.addLore(type.labelSupplier().get(), Hints.leftClick(Translations.open()))
+                                                    .setCallback(Inputs.leftClick(() -> type.constructor().create(this.player, this.cosmeticOnly, this.stack, this::onResult).run())))
+                                   .toList();
 
-        int index = 0;
-        for (Editor.Supplier<?> editorConstructor : EDITORS) {
-            OptionalInt slot = slotTranslator.translate(index);
-            if (slot.isEmpty()) break;
-            Editor built = editorConstructor.create(player, this.stack, this::onResult);
-            if (built.appliesTo(this.stack)) {
-                this.setSlot(slot.getAsInt(), built.getLabel()
-                                                   .addLoreLine(Hints.leftClick(Translations.open()))
-                                                   .setCallback(Inputs.leftClick(built::start)));
-                index++;
-            }
+        // update editors
+        final Util.SlotTranslator slotTranslator = Util.slotTranslator(4, 9, 0, 5);
+        slotTranslator.fill(this, ItemStack.EMPTY);
+
+        for (var pair : slotTranslator.iterate(editors)) {
+            this.setSlot(pair.slot(), pair.item());
         }
     }
 
@@ -79,10 +81,5 @@ public class ItemEditorGui extends SimpleGui {
             this.player.getInventory().placeItemBackInInventory(this.stack);
         }
         this.close();
-    }
-
-    private static class Slots {
-        private static final int RESULT = 10;
-        private static final int CANCEL = 36;
     }
 }
