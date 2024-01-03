@@ -230,8 +230,7 @@ public class ListPaginator<T> {
                                                                      })));
 
             this.gui.setSlot(Util.slot(this.colTo - 2, lastRow),
-                             GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
-                                              .setName(Translations.page(this.page, this.maxPage)));
+                             GuiElementBuilder.from(Banners.Arrows.EMPTY).setName(Translations.page(this.page, this.maxPage)));
 
             if (canGoNextPage) this.gui.setSlot(Util.slot(this.colTo - 1, lastRow),
                                                 GuiElementBuilder.from(Banners.Arrows.RIGHT)

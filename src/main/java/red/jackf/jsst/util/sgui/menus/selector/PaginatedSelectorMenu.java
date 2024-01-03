@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.banners.Banners;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
@@ -28,7 +29,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
         super(MenuType.GENERIC_9x6, title, player, options, onSelect, labelMap);
         this.filteredOptions = new ArrayList<>(this.options.size());
 
-        this.setSlot(53, CommonLabels.cancel(() -> {
+        this.setSlot(Util.slot(8, 5), CommonLabels.cancel(() -> {
             Sounds.close(player);
             this.finish(Result.empty());
         }));
@@ -54,44 +55,45 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
 
         // refresh options
         for (int i = 0; i < PER_PAGE; i++) {
-            int slot = (i / 8) * 9 + i % 8;
+            int col = i % 8;
+            int row = i / 8;
             if (i < options.size()) {
                 T option = options.get(i);
                 ItemStack label = labelMap.getLabel(option);
-                this.setSlot(slot, GuiElementBuilder.from(label)
+                this.setSlot(Util.slot(col, row), GuiElementBuilder.from(label)
                                                     .addLoreLine(Hints.leftClick(Translations.select()))
                                                     .setCallback(Inputs.leftClick(() -> {
                                                         Sounds.click(player);
                                                         this.finish(Result.of(option));
                                                     })));
             } else {
-                this.setSlot(slot, ItemStack.EMPTY);
+                this.setSlot(Util.slot(col, row), ItemStack.EMPTY);
             }
         }
 
         // refresh scroll
         if (this.page > 0) {
-            this.setSlot(8, GuiElementBuilder.from(new ItemStack(Items.RED_CONCRETE))
+            this.setSlot(Util.slot(8, 0), GuiElementBuilder.from(Banners.Arrows.UP)
                                              .setName(Component.translatable("spectatorMenu.previous_page").withStyle(Styles.INPUT_HINT))
                                              .addLoreLine(Hints.leftClick())
                                              .setCallback(Inputs.leftClick(this::previousPage)));
         } else {
-            this.setSlot(8, ItemStack.EMPTY);
+            this.setSlot(Util.slot(8, 0), ItemStack.EMPTY);
         }
 
-        this.setSlot(17, CommonLabels.simple(Items.PAPER, Translations.page(this.page, this.maxPage)));
+        this.setSlot(Util.slot(8, 1), CommonLabels.simple(Banners.Arrows.EMPTY, Translations.page(this.page, this.maxPage)));
 
         if (this.page < maxPage) {
-            this.setSlot(26, GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))
+            this.setSlot(Util.slot(8, 2), GuiElementBuilder.from(Banners.Arrows.DOWN)
                                               .setName(Component.translatable("spectatorMenu.next_page").withStyle(Styles.INPUT_HINT))
                                               .addLoreLine(Hints.leftClick())
                                               .setCallback(Inputs.leftClick(this::nextPage)));
         } else {
-            this.setSlot(26, ItemStack.EMPTY);
+            this.setSlot(Util.slot(8, 2), ItemStack.EMPTY);
         }
 
         // search
-        this.setSlot(44, GuiElementBuilder.from(new ItemStack(Items.NAME_TAG))
+        this.setSlot(Util.slot(8, 4), GuiElementBuilder.from(new ItemStack(Items.NAME_TAG))
                 .setName(Component.translatable("jsst.common.searchFilter", Component.literal(this.filter).setStyle(Styles.VARIABLE)))
                 .addLoreLine(Hints.leftClick(Translations.change()))
                 .addLoreLine(Hints.rightClick(Translations.clear()))

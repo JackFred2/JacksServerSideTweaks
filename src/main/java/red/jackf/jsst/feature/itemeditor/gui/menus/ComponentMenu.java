@@ -24,11 +24,11 @@ public class ComponentMenu extends SimpleGui {
     private final Consumer<Component> onResult;
     private final List<Component> parts = new ArrayList<>();
     private final ListPaginator<Component> paginator = ListPaginator.<Component>builder(this)
-                                                                    .at(4, 7, 0, 6)
+                                                                    .at(4, 9, 0, 6)
                                                                     .list(this.parts)
                                                                     .max(50)
                                                                     .rowDraw(this::getRow)
-                                                                    .modifiable(() -> Component.literal("Text"), false)
+                                                                    .modifiable(() -> Component.literal("Text"), true)
                                                                     .onUpdate(this::redraw)
                                                                     .build();
 
