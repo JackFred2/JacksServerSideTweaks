@@ -568,6 +568,12 @@ public class CommandConfig {
                            config -> config.anvilEnhancement.renameCost,
                            (config, newVal) -> config.anvilEnhancement.renameCost = newVal));
 
+        root.then(makeBoolean("renameDoesNotDamageAnvil",
+                              "anvilEnhancement.renameDoesNotDamageAnvil",
+                              WikiPage.ANVIL_ENHANCEMENT,
+                              config -> config.anvilEnhancement.renameDoesNotDamageAnvil,
+                              (config, newVal) -> config.anvilEnhancement.renameDoesNotDamageAnvil = newVal));
+
         return root;
     }
 
