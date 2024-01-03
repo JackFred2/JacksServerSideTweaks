@@ -3,6 +3,7 @@
   "package": "red.jackf.jsst.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "anvilenhancement.AnvilMenuMixin",
     "beaconenhancement.BeaconBlockEntityMixin",
     "containernames.ChunkMapAccessor",
     "containernames.ServerLevelMixin",

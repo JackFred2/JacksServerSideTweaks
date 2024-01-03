@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.config.JSSTConfig;
+import red.jackf.jsst.feature.anvilenhancement.AnvilEnhancement;
 
 import java.util.Locale;
 import java.util.function.BiConsumer;
@@ -128,7 +129,6 @@ public class CommandConfig {
         return root;
     }
 
-    /*
     private static <E extends Enum<E>> LiteralArgumentBuilder<CommandSourceStack> makeEnum(
             String name,
             String fullName,
@@ -177,7 +177,7 @@ public class CommandConfig {
 
         return node;
     }
-*/
+
     private static LiteralArgumentBuilder<CommandSourceStack> makeIntRange(
             String name,
             String fullName,
@@ -320,8 +320,9 @@ public class CommandConfig {
 
         root.then(makeItemEditorNode());
         root.then(makePortableCraftingNode());
-        root.then(makeBeaconEnhancementNode(context));
         root.then(makeWorldContainerNamesNode());
+        root.then(makeBeaconEnhancementNode(context));
+        root.then(makeAnvilEnhancementNode());
         root.then(makeQolNode());
 
         return root;
@@ -359,6 +360,25 @@ public class CommandConfig {
                               WikiPage.PORTABLE_CRAFTING,
                               config -> config.portableCrafting.requireSneak,
                               (config, newVal) -> config.portableCrafting.requireSneak = newVal));
+
+        return root;
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> makeWorldContainerNamesNode() {
+        var root = Commands.literal("worldContainerNames");
+
+        root.then(makeBoolean("enabled",
+                              "worldContainerNames.enabled",
+                              WikiPage.WORLD_CONTAINER_NAMES,
+                              config -> config.worldContainerNames.enabled,
+                              (config, newVal) -> config.worldContainerNames.enabled = newVal));
+
+        root.then(makeDoubleRange("viewRange",
+                                  "worldContainerNames.viewRange",
+                                  WikiPage.WORLD_CONTAINER_NAMES,
+                                  4, 16,
+                                  config -> config.worldContainerNames.viewRange,
+                                  (config, newVal) -> config.worldContainerNames.viewRange = newVal));
 
         return root;
     }
@@ -538,21 +558,15 @@ public class CommandConfig {
         return root;
     }
 
-    private static LiteralArgumentBuilder<CommandSourceStack> makeWorldContainerNamesNode() {
-        var root = Commands.literal("worldContainerNames");
+    private static LiteralArgumentBuilder<CommandSourceStack> makeAnvilEnhancementNode() {
+        var root = Commands.literal("anvilEnhancement");
 
-        root.then(makeBoolean("enabled",
-                              "worldContainerNames.enabled",
-                              WikiPage.WORLD_CONTAINER_NAMES,
-                              config -> config.worldContainerNames.enabled,
-                              (config, newVal) -> config.worldContainerNames.enabled = newVal));
-
-        root.then(makeDoubleRange("viewRange",
-                                  "worldContainerNames.viewRange",
-                                  WikiPage.WORLD_CONTAINER_NAMES,
-                                  4, 16,
-                                  config -> config.worldContainerNames.viewRange,
-                                  (config, newVal) -> config.worldContainerNames.viewRange = newVal));
+        root.then(makeEnum("renameCost",
+                           "anvilEnhancement.renameCost",
+                           WikiPage.ANVIL_ENHANCEMENT,
+                           AnvilEnhancement.RenameCost.class,
+                           config -> config.anvilEnhancement.renameCost,
+                           (config, newVal) -> config.anvilEnhancement.renameCost = newVal));
 
         return root;
     }
@@ -581,5 +595,6 @@ public class CommandConfig {
         String WORLD_CONTAINER_NAMES = "World-Container-Names";
         String ITEM_EDITOR = "Item-Editor";
         String QOL = "Quality-Of-Life";
+        String ANVIL_ENHANCEMENT = "Anvil-Enhancement";
     }
 }

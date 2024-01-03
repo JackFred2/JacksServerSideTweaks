@@ -3,6 +3,7 @@ package red.jackf.jsst.config;
 import blue.endless.jankson.Comment;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.config.Config;
+import red.jackf.jsst.feature.anvilenhancement.AnvilEnhancement;
 import red.jackf.jsst.feature.beaconenhancement.BeaconEnhancement;
 import red.jackf.jsst.feature.containernames.WorldContainerNames;
 import red.jackf.jsst.feature.itemeditor.ItemEditor;
@@ -30,6 +31,11 @@ public class JSSTConfig implements Config<JSSTConfig> {
     public BeaconEnhancement.Config beaconEnhancement = new BeaconEnhancement.Config();
 
     @Comment("""
+            Tweaks to the anvil to make them less frustrating to use; mainly removing the XP cost and damage from renaming
+            items.""")
+    public AnvilEnhancement.Config anvilEnhancement = new AnvilEnhancement.Config();
+
+    @Comment("""
             Tiny gameplay mechanics tweaks to reduce frustration when playing.""")
     public QualityOfLife.Config qol = new QualityOfLife.Config();
 
@@ -45,6 +51,7 @@ public class JSSTConfig implements Config<JSSTConfig> {
         PortableCrafting.INSTANCE.reload(this.portableCrafting);
         WorldContainerNames.INSTANCE.reload(this.worldContainerNames);
         BeaconEnhancement.INSTANCE.reload(this.beaconEnhancement);
+        AnvilEnhancement.INSTANCE.reload(this.anvilEnhancement);
         QualityOfLife.INSTANCE.reload(this.qol);
     }
 }

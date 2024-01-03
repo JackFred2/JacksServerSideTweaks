@@ -95,6 +95,9 @@ public class StringInputMenu extends SimpleGui {
                                                   .addLoreLine(Hints.leftClick(Translations.confirm()))
                                                   .setCallback(Inputs.leftClick(this::onAccept)));
         }
+
+        // clear level indicator
+        Util.sendAnvilCost(this.player, this.getSyncId(), 0);
     }
 
     @Override

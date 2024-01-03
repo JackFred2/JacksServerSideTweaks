@@ -7,6 +7,7 @@ import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -91,6 +92,14 @@ public interface Util {
     static Component formatAsHex(Colour colour) {
         return Component.literal(String.format("#%06X", colour.toARGB() & 0xFFFFFF))
                 .setStyle(Styles.MINOR_LABEL);
+    }
+
+    static void sendAnvilCost(ServerPlayer player, int containerId, int cost) {
+        player.connection.send(new ClientboundContainerSetDataPacket(
+                containerId,
+                0,
+                cost
+        ));
     }
 
     interface Lists {
