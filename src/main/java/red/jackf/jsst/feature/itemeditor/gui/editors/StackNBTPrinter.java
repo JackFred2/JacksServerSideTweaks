@@ -23,8 +23,8 @@ public class StackNBTPrinter implements Editor {
             true,
             ignored -> true,
             () -> GuiElementBuilder.from(Items.ACACIA_SIGN.getDefaultInstance())
-                                   .setName(Component.translatable("jsst.itemEditor.stackNBTPrinter"))
-                                   .addLoreLine(Component.translatable("jsst.itemEditor.stackNBTPrinter.hint").withStyle(Styles.MINOR_LABEL))
+                                   .setName(Component.translatable("jsst.itemEditor.labelMapNBTPrinter"))
+                                   .addLoreLine(Component.translatable("jsst.itemEditor.labelMapNBTPrinter.hint").withStyle(Styles.MINOR_LABEL))
     );
     private final ServerPlayer player;
     private final ItemStack stack;
@@ -44,7 +44,7 @@ public class StackNBTPrinter implements Editor {
         String str = Util.getOrThrow(JSSTCodecs.SIMPLIFIED_ITEMSTACK.encodeStart(JsonOps.INSTANCE, this.stack), IllegalStateException::new)
                          .toString();
         HoverEvent action = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(str).withStyle(Styles.LABEL));
-        MutableComponent text = Component.translatable("jsst.itemEditor.stackNBTPrinter.copyInstruction")
+        MutableComponent text = Component.translatable("jsst.itemEditor.labelMapNBTPrinter.copyInstruction")
                                          .withStyle(Styles.INPUT_HINT.withHoverEvent(action)
                                                                      .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, str)));
         this.player.sendSystemMessage(Formatting.successLine(text));

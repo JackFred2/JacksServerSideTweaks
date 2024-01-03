@@ -7,8 +7,10 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SlotGuiInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.JSST;
+import red.jackf.jsst.util.sgui.banners.Banners;
 
 import java.util.List;
 import java.util.Objects;
@@ -125,10 +127,22 @@ public class ListPaginator<T> {
                 final boolean canMoveDown = fullIndex < elements.size() - 1;
                 final boolean canMoveUp = fullIndex > 0;
 
-                if (!canMoveDown && !canMoveUp) continue;
+                ItemStack icon;
+                if (canMoveDown) {
+                    if (canMoveUp) {
+                        icon = Banners.Arrows.VERTICAL;
+                    } else {
+                        icon = Banners.Arrows.DOWN;
+                    }
+                } else {
+                    if (canMoveUp) {
+                        icon = Banners.Arrows.UP;
+                    } else {
+                        continue;
+                    }
+                }
 
-                var reorder = GuiElementBuilder.from(Items.DIAMOND.getDefaultInstance())
-                                               .setName(Component.translatable("jsst.common.reorder"));
+                var reorder = GuiElementBuilder.from(icon).setName(Component.translatable("jsst.common.reorder"));
 
                 if (canMoveDown) reorder.addLoreLine(Hints.leftClick(Component.translatable("jsst.common.reorder.down")));
                 if (canMoveUp) reorder.addLoreLine(Hints.rightClick(Component.translatable("jsst.common.reorder.up")));
@@ -171,8 +185,22 @@ public class ListPaginator<T> {
         final boolean canGoNextPage = this.page < this.maxPage;
 
         if (useSmall) {
-            var builder = GuiElementBuilder.from(Items.WHITE_BANNER.getDefaultInstance())
-                                           .setName(Translations.page(this.page, this.maxPage));
+            ItemStack icon;
+            if (canGoPreviousPage) {
+                if (canGoNextPage) {
+                    icon = Banners.Arrows.HORIZONTAL;
+                } else {
+                    icon = Banners.Arrows.LEFT;
+                }
+            } else {
+                if (canGoNextPage) {
+                    icon = Banners.Arrows.RIGHT;
+                } else {
+                    icon = Banners.Arrows.EMPTY;
+                }
+            }
+
+            var builder = GuiElementBuilder.from(icon).setName(Translations.page(this.page, this.maxPage));
 
             if (canGoPreviousPage) builder.addLoreLine(Hints.rightClick(Component.translatable("jsst.common.previous")));
             if (canGoNextPage) builder.addLoreLine(Hints.leftClick(Component.translatable("jsst.common.next")));
@@ -192,7 +220,7 @@ public class ListPaginator<T> {
             this.gui.setSlot(Util.slot(this.colTo - 1, lastRow), builder);
         } else {
             if (canGoPreviousPage) this.gui.setSlot(Util.slot(this.colTo - 3, lastRow),
-                                                    GuiElementBuilder.from(Items.RED_CONCRETE.getDefaultInstance())
+                                                    GuiElementBuilder.from(Banners.Arrows.LEFT)
                                                                      .setName(Translations.previous().withStyle(Styles.INPUT_HINT))
                                                                      .addLoreLine(Hints.leftClick())
                                                                      .setCallback(Inputs.leftClick(() -> {
@@ -206,7 +234,7 @@ public class ListPaginator<T> {
                                               .setName(Translations.page(this.page, this.maxPage)));
 
             if (canGoNextPage) this.gui.setSlot(Util.slot(this.colTo - 1, lastRow),
-                                                GuiElementBuilder.from(Items.GREEN_CONCRETE.getDefaultInstance())
+                                                GuiElementBuilder.from(Banners.Arrows.RIGHT)
                                                                  .setName(Translations.next().withStyle(Styles.INPUT_HINT))
                                                                  .addLoreLine(Hints.leftClick())
                                                                  .setCallback(Inputs.leftClick(() -> {

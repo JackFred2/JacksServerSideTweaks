@@ -23,6 +23,15 @@ public class ComponentMenu extends SimpleGui {
     private final Function<Component, ItemStack> previewBuilder;
     private final Consumer<Component> onResult;
     private final List<Component> parts = new ArrayList<>();
+    private final ListPaginator<Component> paginator = ListPaginator.<Component>builder(this)
+                                                                    .at(4, 7, 0, 6)
+                                                                    .list(this.parts)
+                                                                    .max(50)
+                                                                    .rowDraw(this::getRow)
+                                                                    .modifiable(() -> Component.literal("Text"), false)
+                                                                    .onUpdate(this::redraw)
+                                                                    .build();
+
     public ComponentMenu(
             ServerPlayer player,
             Component initial,
@@ -34,14 +43,7 @@ public class ComponentMenu extends SimpleGui {
         this.onResult = onResult;
 
         this.parts.addAll(this.initial.toFlatList());
-    }    private final ListPaginator<Component> paginator = ListPaginator.<Component>builder(this)
-                                                                    .at(4, 9, 0, 6)
-                                                                    .list(this.parts)
-                                                                    .max(50)
-                                                                    .rowDraw(this::getRow)
-                                                                    .modifiable(() -> Component.literal("Text"), true)
-                                                                    .onUpdate(this::redraw)
-                                                                    .build();
+    }
 
     private List<GuiElementInterface> getRow(int index, Component component) {
         return List.of(
@@ -51,21 +53,22 @@ public class ComponentMenu extends SimpleGui {
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
                                      Menus.stringBuilder(player)
-                                             .title(Component.translatable("jsst.itemEditor.simpleName.changeText"))
-                                             .initial(component.getString())
-                                             .createAndShow(opt -> {
-                                                 opt.ifPresent(s -> {
-                                                     if (s.isBlank()) {
-                                                         this.parts.remove(index);
-                                                     } else {
-                                                         this.parts.set(index, Component.literal(s));
-                                                     }
-                                                 });
-                                                 this.open();
-                                             });
+                                          .title(Component.translatable("jsst.itemEditor.simpleName.changeText"))
+                                          .initial(component.getString())
+                                          .createAndShow(opt -> {
+                                              opt.ifPresent(s -> {
+                                                  if (s.isBlank()) {
+                                                      this.parts.remove(index);
+                                                  } else {
+                                                      this.parts.set(index, Component.literal(s));
+                                                  }
+                                              });
+                                              this.open();
+                                          });
                                  })).build(),
                 GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
-                                 .setName(Component.translatable("jsst.itemEditor.simpleName.changeStyle").withStyle(Styles.INPUT_HINT))
+                                 .setName(Component.translatable("jsst.itemEditor.simpleName.changeStyle")
+                                                   .withStyle(Styles.INPUT_HINT))
                                  .addLoreLine(Hints.leftClick())
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
@@ -124,6 +127,8 @@ public class ComponentMenu extends SimpleGui {
     public void onClose() {
         this.onResult.accept(initial);
     }
+
+
 
 
 }
