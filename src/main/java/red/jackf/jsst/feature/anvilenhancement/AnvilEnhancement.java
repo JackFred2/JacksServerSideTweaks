@@ -33,5 +33,11 @@ public class AnvilEnhancement extends Feature<AnvilEnhancement.Config> {
                   - free: Renaming items is free.
                 Default: one_level""")
         public RenameCost renameCost = RenameCost.one_level;
+
+        @Comment("""
+                Whether renaming an item should not cause an anvil to be damaged.
+                Options: true, false
+                Default: true""")
+        public boolean renameDoesNotDamageAnvil = true;
     }
 }
