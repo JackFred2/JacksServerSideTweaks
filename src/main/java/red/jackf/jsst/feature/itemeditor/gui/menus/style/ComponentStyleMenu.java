@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class StyleMenu extends SimpleGui {
+public class ComponentStyleMenu extends SimpleGui {
     private final Component initial;
     private final Consumer<Optional<Component>> onResult;
 
@@ -44,7 +44,7 @@ public class StyleMenu extends SimpleGui {
     @Nullable
     private ResourceLocation font = null;
 
-    public StyleMenu(
+    public ComponentStyleMenu(
             ServerPlayer player,
             Component initial,
             Consumer<Optional<Component>> onResult) {
@@ -332,10 +332,10 @@ public class StyleMenu extends SimpleGui {
         DYES(menu -> menu.drawColourPage(Colours.DYES)),
         FORMATTING(menu -> menu.drawColourPage(Colours.CHAT_FORMATS)),
         EXTRA(menu -> menu.drawColourPage(Colours.EXTRA)),
-        GRADIENTS(StyleMenu::drawGradients);
-        private final Consumer<StyleMenu> pageDraw;
+        GRADIENTS(ComponentStyleMenu::drawGradients);
+        private final Consumer<ComponentStyleMenu> pageDraw;
 
-        Page(Consumer<StyleMenu> pageDraw) {
+        Page(Consumer<ComponentStyleMenu> pageDraw) {
             this.pageDraw = pageDraw;
         }
     }

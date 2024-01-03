@@ -39,7 +39,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
         this.filteredOptions.addAll(this.options.stream()
                                                 .filter(opt -> labelMap.getLabel(opt).getDisplayName().getString().toLowerCase().contains(this.filter))
                                                 .toList());
-        this.maxPage = (this.filteredOptions.size() - 1) / PER_PAGE;
+        this.maxPage = Math.max(0, (this.filteredOptions.size() - 1) / PER_PAGE);
         this.page = Math.min(maxPage, page);
         this.refresh();
     }
@@ -79,7 +79,7 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
             this.setSlot(8, ItemStack.EMPTY);
         }
 
-        this.setSlot(17, CommonLabels.simple(Items.PAPER, Component.translatable("book.pageIndicator", this.page + 1, this.maxPage + 1)));
+        this.setSlot(17, CommonLabels.simple(Items.PAPER, Translations.page(this.page, this.maxPage)));
 
         if (this.page < maxPage) {
             this.setSlot(26, GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))

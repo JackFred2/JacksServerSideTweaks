@@ -17,6 +17,14 @@ public interface Translations {
         return Component.translatable("jsst.common.clear");
     }
 
+    static MutableComponent add() {
+        return Component.translatable("jsst.common.add");
+    }
+
+    static MutableComponent delete() {
+        return Component.translatable("selectServer.delete");
+    }
+
     static MutableComponent change() {
         return Component.translatable("jsst.common.change");
     }
@@ -67,5 +75,9 @@ public interface Translations {
 
     static MutableComponent previous() {
         return Component.translatable("jsst.common.previous");
+    }
+
+    static MutableComponent page(int page, int maxPage) {
+        return Component.translatable("book.pageIndicator", page + 1, maxPage + 1);
     }
 }

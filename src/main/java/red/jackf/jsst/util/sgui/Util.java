@@ -52,6 +52,10 @@ public interface Util {
         return new SlotTranslator(colFrom, rowFrom, width, height);
     }
 
+    static void clear(SlotHolder holder, int colFrom, int colTo, int rowFrom, int rowTo) {
+        fill(holder, ItemStack.EMPTY, colFrom, colTo, rowFrom, rowTo);
+    }
+
     static void fill(SlotHolder holder, ItemStack stack, int colFrom, int colTo, int rowFrom, int rowTo) {
         for (int col = colFrom; col < colTo; col++) {
             for (int row = rowFrom; row < rowTo; row++) {
@@ -102,6 +106,10 @@ public interface Util {
             if (currentIndex == -1) throw new IllegalArgumentException("Unknown option");
             if (currentIndex == 0) return options.get(options.size() - 1);
             else return options.get(currentIndex - 1);
+        }
+
+        static <T> void swap(List<T> list, int indexA, int indexB) {
+            list.set(indexA, list.set(indexB, list.get(indexA)));
         }
     }
 

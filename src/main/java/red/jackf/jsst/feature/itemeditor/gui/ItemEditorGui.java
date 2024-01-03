@@ -8,10 +8,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import red.jackf.jsst.feature.itemeditor.gui.editors.DurabilityEditor;
-import red.jackf.jsst.feature.itemeditor.gui.editors.Editor;
-import red.jackf.jsst.feature.itemeditor.gui.editors.SimpleNameEditor;
-import red.jackf.jsst.feature.itemeditor.gui.editors.StackNBTPrinter;
+import red.jackf.jsst.feature.itemeditor.gui.editors.*;
 import red.jackf.jsst.util.sgui.*;
 
 import java.util.List;
@@ -19,6 +16,7 @@ import java.util.List;
 public class ItemEditorGui extends SimpleGui {
     private static final List<Editor.EditorType> EDITORS = List.of(
             SimpleNameEditor.TYPE,
+            NameEditor.TYPE,
             DurabilityEditor.TYPE,
             StackNBTPrinter.TYPE
     );

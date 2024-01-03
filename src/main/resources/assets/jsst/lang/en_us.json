@@ -11,6 +11,10 @@
   "jsst.common.toggle": "Toggle",
   "jsst.common.next": "Next",
   "jsst.common.previous": "Previous",
+  "jsst.common.reorder": "Reorder",
+  "jsst.common.reorder.up": "Move Up",
+  "jsst.common.reorder.down": "Move Down",
+  "jsst.common.add": "Add",
   "jsst.common.input": "Input",
 
   "jsst.beaconPowers.beaconLevelActive": "Beacon Level %d (active)",
@@ -77,6 +81,8 @@
   "jsst.itemEditor.simpleName": "Name Editor (Simple)",
   "jsst.itemEditor.simpleName.changeText": "Change Text",
   "jsst.itemEditor.simpleName.changeStyle": "Change Style",
+
+  "jsst.itemEditor.name": "Name Editor",
 
   "jsst.itemEditor.durability": "Durability Editor",
 

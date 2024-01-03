@@ -63,8 +63,8 @@ public class SimpleNameEditor extends GuiEditor {
 
     private void changeStyle() {
         Sounds.click(player);
-        EditorMenus.style(player,
-                          this.stack.getHoverName(),
+        EditorMenus.componentStyle(player,
+                                   this.stack.getHoverName(),
                           opt -> {
                               opt.ifPresent(this.stack::setHoverName);
                               this.open();
