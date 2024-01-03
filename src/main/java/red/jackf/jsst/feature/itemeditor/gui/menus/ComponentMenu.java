@@ -57,7 +57,7 @@ public class ComponentMenu extends SimpleGui {
                                           .initial(component.getString())
                                           .createAndShow(opt -> {
                                               opt.ifPresent(s -> {
-                                                  if (s.isBlank()) {
+                                                  if (s.isEmpty()) {
                                                       this.parts.remove(index);
                                                   } else {
                                                       this.parts.set(index, Component.literal(s));
