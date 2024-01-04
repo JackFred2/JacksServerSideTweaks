@@ -33,7 +33,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
     @Inject(method = "createResult",
             at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/inventory/DataSlot;get()I", ordinal = 1))
-    private void jsst$anvilenhancement$adjustPriceIfRenameOnly(CallbackInfo ci,
+    private void jsst$anvilenhancement$adjustPrice(CallbackInfo ci,
                                                                @Local(ordinal = 0) int workCost, // i
                                                                // @Local(ordinal = 1) int baseCost, // j
                                                                @Local(ordinal = 2) int renameCost) { // k
@@ -44,6 +44,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
         if (this.isRenameOnly) {
             this.cost.set(cost == AnvilEnhancement.RenameCost.one_level ? 1 : 0);
+        } else if (renameCost == 1 && cost == AnvilEnhancement.RenameCost.free) {
+            this.cost.set(this.cost.get() - 1);
         }
     }
 
