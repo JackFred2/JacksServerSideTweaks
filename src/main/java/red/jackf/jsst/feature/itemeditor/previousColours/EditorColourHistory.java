@@ -1,5 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.previousColours;
 
+import net.minecraft.server.level.ServerPlayer;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 
@@ -12,4 +13,6 @@ public interface EditorColourHistory {
     List<Gradient> jsst$itemEditor$getPreviousGradients();
 
     void jsst$itemEditor$push(Gradient gradient);
+
+    void jsst$itemEditor$copyFrom(ServerPlayer oldPlayer);
 }

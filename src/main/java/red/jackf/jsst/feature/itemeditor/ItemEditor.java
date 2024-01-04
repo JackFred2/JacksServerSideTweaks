@@ -2,6 +2,7 @@ package red.jackf.jsst.feature.itemeditor;
 
 import blue.endless.jankson.Comment;
 import blue.endless.jankson.annotation.Nullable;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +11,7 @@ import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.JSSTCommand;
 import red.jackf.jsst.feature.Feature;
 import red.jackf.jsst.feature.itemeditor.gui.ItemEditorGui;
+import red.jackf.jsst.feature.itemeditor.previousColours.EditorColourHistory;
 
 public class ItemEditor extends Feature<ItemEditor.Config> {
     public static final ItemEditor INSTANCE = new ItemEditor();
@@ -18,7 +20,9 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
     public static final Logger LOGGER = JSST.getLogger("Item Editor");
 
     @Override
-    public void setup() {}
+    public void setup() {
+        ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> ((EditorColourHistory) newPlayer).jsst$itemEditor$copyFrom(oldPlayer));
+    }
 
     @Override
     public void reload(Config current) {

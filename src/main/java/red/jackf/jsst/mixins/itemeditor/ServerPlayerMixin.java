@@ -61,19 +61,27 @@ public class ServerPlayerMixin implements EditorColourHistory {
         }
     }
 
+    @Override
+    public void jsst$itemEditor$copyFrom(ServerPlayer oldPlayer) {
+        this.previousColours.clear();
+        this.previousColours.addAll(((EditorColourHistory) oldPlayer).jsst$itemEditor$getPreviousColours());
+        this.previousGradients.clear();
+        this.previousGradients.addAll(((EditorColourHistory) oldPlayer).jsst$itemEditor$getPreviousGradients());
+    }
+
     @Inject(method = "readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
     private void jsst$itemEditor$readPreviousColours(CompoundTag tag, CallbackInfo ci) {
-        if (tag.contains(KEY_PREVIOUS_COLOURS, CompoundTag.TAG_LIST))
+        if (tag.contains(KEY_PREVIOUS_COLOURS))
             Colour.CODEC.listOf()
                         .parse(new Dynamic<>(NbtOps.INSTANCE, tag.get(KEY_PREVIOUS_COLOURS)))
                         .resultOrPartial(ItemEditor.LOGGER::error)
-                        .ifPresent(list -> list.forEach(this::jsst$itemEditor$push));
+                        .ifPresent(this.previousColours::addAll);
 
-        if (tag.contains(KEY_PREVIOUS_GRADIENTS, CompoundTag.TAG_LIST))
+        if (tag.contains(KEY_PREVIOUS_GRADIENTS))
             Gradient.CODEC.listOf()
                         .parse(new Dynamic<>(NbtOps.INSTANCE, tag.get(KEY_PREVIOUS_GRADIENTS)))
                         .resultOrPartial(ItemEditor.LOGGER::error)
-                        .ifPresent(list -> list.forEach(this::jsst$itemEditor$push));
+                        .ifPresent(this.previousGradients::addAll);
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
