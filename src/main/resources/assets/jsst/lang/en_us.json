@@ -45,6 +45,7 @@
   "jsst.itemEditor.colour.page.chatFormatting": "Chat Formatting",
   "jsst.itemEditor.colour.page.dyes": "Dyes",
   "jsst.itemEditor.colour.page.extra": "Extra",
+  "jsst.itemEditor.colour.page.playerHistory": "Colour History",
   "jsst.itemEditor.colour.common": "Common",
   "jsst.itemEditor.colour.uncommon": "Uncommon",
   "jsst.itemEditor.colour.rare": "Rare",
@@ -58,6 +59,7 @@
   "jsst.itemEditor.colour.custom.hint": "Valid formats are:",
 
   "jsst.itemEditor.gradient.page": "Gradients",
+  "jsst.itemEditor.gradient.page.playerHistory": "Gradient History",
   "jsst.itemEditor.gradient.rainbow": "Rainbow",
   "jsst.itemEditor.gradient.vaporwave": "Vaporwave",
   "jsst.itemEditor.gradient.solar": "Solar",

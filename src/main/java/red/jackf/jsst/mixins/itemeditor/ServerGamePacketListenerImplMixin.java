@@ -13,8 +13,7 @@ import red.jackf.jsst.util.sgui.menus.StringInputMenu;
 
 // reimplement SGUI's mixin but slightly differently for more control
 @Mixin(ServerGamePacketListenerImpl.class)
-public class ServerHandlerMixin {
-
+public class ServerGamePacketListenerImplMixin {
     @Shadow public ServerPlayer player;
 
     @Inject(method = "handleRenameItem", at = @At("TAIL"))

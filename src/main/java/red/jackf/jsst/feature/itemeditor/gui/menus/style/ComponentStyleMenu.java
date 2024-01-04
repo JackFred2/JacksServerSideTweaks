@@ -19,6 +19,8 @@ import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jsst.feature.itemeditor.gui.elements.SwitchButton;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
+import red.jackf.jsst.feature.itemeditor.previousColours.EditorColourHistory;
+import red.jackf.jsst.feature.itemeditor.previousColours.PlayerHistoryGui;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.Menus;
@@ -66,6 +68,14 @@ public class ComponentStyleMenu extends SimpleGui {
         }
 
         return builder.build();
+    }
+
+    protected static GuiElementInterface createPlayerGradientHistoryLabel(ServerPlayer player) {
+        return GuiElementBuilder.from(Items.PLAYER_HEAD.getDefaultInstance())
+                                .glow()
+                                .setName(Component.translatable("jsst.itemEditor.gradient.page.playerHistory"))
+                                .setSkullOwner(player.getGameProfile(), null)
+                                .build();
     }
 
     @Override
@@ -136,17 +146,6 @@ public class ComponentStyleMenu extends SimpleGui {
                                                                this.redraw();
                                                            })));
         }
-
-        this.setSlot(Util.slot(3, 3), GuiElementBuilder.from(Items.GLOWSTONE_DUST.getDefaultInstance())
-                                                       .setName(Component.translatable("jsst.itemEditor.gradient.custom"))
-                                                       .addLoreLine(Hints.leftClick(Translations.open()))
-                                                       .setCallback(Inputs.leftClick(() -> {
-                                                           Sounds.click(player);
-                                                           EditorMenus.gradient(player, result -> {
-                                                               if (result.hasResult()) this.colour = result.result();
-                                                               this.open();
-                                                           });
-                                                       })));
     }
 
     private void redraw() {
@@ -168,8 +167,25 @@ public class ComponentStyleMenu extends SimpleGui {
                                                        .addLoreLine(Hints.leftClick(Translations.open()))
                                                        .setCallback(Inputs.leftClick(() -> {
                                                            Sounds.click(player);
-                                                           Menus.customColour(player, col -> {
-                                                               col.ifPresent(value -> this.colour = value);
+                                                           Menus.customColour(player, opt -> {
+                                                               opt.ifPresent(colour -> {
+                                                                   ((EditorColourHistory) player).jsst$itemEditor$push(colour);
+                                                                   this.colour = colour;
+                                                               });
+                                                               this.open();
+                                                           });
+                                                       })));
+
+        this.setSlot(Util.slot(2, 4), GuiElementBuilder.from(Items.GLOWSTONE_DUST.getDefaultInstance())
+                                                       .setName(Component.translatable("jsst.itemEditor.gradient.custom"))
+                                                       .addLoreLine(Hints.leftClick(Translations.open()))
+                                                       .setCallback(Inputs.leftClick(() -> {
+                                                           Sounds.click(player);
+                                                           EditorMenus.gradient(player, result -> {
+                                                               if (result.hasResult()) {
+                                                                   ((EditorColourHistory) player).jsst$itemEditor$push(result.result());
+                                                                   this.colour = result.result();
+                                                               }
                                                                this.open();
                                                            });
                                                        })));
@@ -179,6 +195,8 @@ public class ComponentStyleMenu extends SimpleGui {
                                                   .addOption(Page.FORMATTING, ColourMenu.createFormattingLabel())
                                                   .addOption(Page.EXTRA, ColourMenu.createExtraLabel())
                                                   .addOption(Page.GRADIENTS, createGradientLabel())
+                                                  .addOption(Page.PLAYER_PREVIOUS_COLOURS, ColourMenu.createPlayerColourHistoryLabel(player))
+                                                  .addOption(Page.PLAYER_PREVIOUS_GRADIENTS, createPlayerGradientHistoryLabel(player))
                                                   .setCallback(page -> {
                                                       this.page = page;
                                                       this.page.pageDraw.accept(this);
@@ -294,6 +312,13 @@ public class ComponentStyleMenu extends SimpleGui {
         }
     }
 
+    private void setCustom(Gradient gradient) {
+        Sounds.click(player);
+        ((EditorColourHistory) player).jsst$itemEditor$push(gradient);
+        this.colour = gradient;
+        this.redraw();
+    }
+
     private void clickPreview(ClickType type) {
         if (type == ClickType.MOUSE_LEFT) {
             Sounds.click(player);
@@ -332,7 +357,9 @@ public class ComponentStyleMenu extends SimpleGui {
         DYES(menu -> menu.drawColourPage(Colours.DYES)),
         FORMATTING(menu -> menu.drawColourPage(Colours.CHAT_FORMATS)),
         EXTRA(menu -> menu.drawColourPage(Colours.EXTRA)),
-        GRADIENTS(ComponentStyleMenu::drawGradients);
+        GRADIENTS(ComponentStyleMenu::drawGradients),
+        PLAYER_PREVIOUS_COLOURS(menu -> PlayerHistoryGui.drawColours(menu, 0, 0, menu::setCustom)),
+        PLAYER_PREVIOUS_GRADIENTS(menu -> PlayerHistoryGui.drawGradients(menu, 0, 0, menu::setCustom));
         private final Consumer<ComponentStyleMenu> pageDraw;
 
         Page(Consumer<ComponentStyleMenu> pageDraw) {

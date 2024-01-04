@@ -15,7 +15,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
     public static final ItemEditor INSTANCE = new ItemEditor();
     private ItemEditor() {}
 
-    private static final Logger LOGGER = JSST.getLogger("Item Editor");
+    public static final Logger LOGGER = JSST.getLogger("Item Editor");
 
     @Override
     public void setup() {}
