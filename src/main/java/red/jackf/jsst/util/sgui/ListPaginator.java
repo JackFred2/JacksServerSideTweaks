@@ -124,42 +124,46 @@ public class ListPaginator<T> {
                                                   })));
 
                 // reorder if applicable
-                final boolean canMoveDown = fullIndex < elements.size() - 1;
-                final boolean canMoveUp = fullIndex > 0;
+                if (this.withReordering) {
+                    final boolean canMoveDown = fullIndex < elements.size() - 1;
+                    final boolean canMoveUp = fullIndex > 0;
 
-                ItemStack icon;
-                if (canMoveDown) {
-                    if (canMoveUp) {
-                        icon = Banners.Arrows.VERTICAL;
+                    ItemStack icon;
+                    if (canMoveDown) {
+                        if (canMoveUp) {
+                            icon = Banners.Arrows.VERTICAL;
+                        } else {
+                            icon = Banners.Arrows.DOWN;
+                        }
                     } else {
-                        icon = Banners.Arrows.DOWN;
+                        if (canMoveUp) {
+                            icon = Banners.Arrows.UP;
+                        } else {
+                            continue;
+                        }
                     }
-                } else {
-                    if (canMoveUp) {
-                        icon = Banners.Arrows.UP;
-                    } else {
-                        continue;
-                    }
+
+                    var reorder = GuiElementBuilder.from(icon).setName(Component.translatable("jsst.common.reorder"));
+
+                    if (canMoveDown)
+                        reorder.addLoreLine(Hints.leftClick(Component.translatable("jsst.common.reorder.down")));
+                    if (canMoveUp)
+                        reorder.addLoreLine(Hints.rightClick(Component.translatable("jsst.common.reorder.up")));
+
+                    reorder.setCallback(clickType -> {
+                        if (canMoveDown && clickType == ClickType.MOUSE_LEFT) {
+                            Sounds.click(this.gui.getPlayer());
+                            Util.Lists.swap(this.listSupplier.get(), fullIndex, fullIndex + 1);
+                            this.onUpdate();
+                        } else if (canMoveUp && clickType == ClickType.MOUSE_RIGHT) {
+                            Sounds.click(this.gui.getPlayer());
+                            Util.Lists.swap(this.listSupplier.get(), fullIndex, fullIndex - 1);
+                            this.onUpdate();
+                        }
+                    });
+
+                    this.gui.setSlot(Util.slot(this.colTo - 2, row), reorder);
                 }
-
-                var reorder = GuiElementBuilder.from(icon).setName(Component.translatable("jsst.common.reorder"));
-
-                if (canMoveDown) reorder.addLoreLine(Hints.leftClick(Component.translatable("jsst.common.reorder.down")));
-                if (canMoveUp) reorder.addLoreLine(Hints.rightClick(Component.translatable("jsst.common.reorder.up")));
-
-                reorder.setCallback(clickType -> {
-                    if (canMoveDown && clickType == ClickType.MOUSE_LEFT) {
-                        Sounds.click(this.gui.getPlayer());
-                        Util.Lists.swap(this.listSupplier.get(), fullIndex, fullIndex + 1);
-                        this.onUpdate();
-                    } else if (canMoveUp && clickType == ClickType.MOUSE_RIGHT) {
-                        Sounds.click(this.gui.getPlayer());
-                        Util.Lists.swap(this.listSupplier.get(), fullIndex, fullIndex - 1);
-                        this.onUpdate();
-                    }
-                });
-
-                this.gui.setSlot(Util.slot(this.colTo - 2, row), reorder);
             }
         }
 
