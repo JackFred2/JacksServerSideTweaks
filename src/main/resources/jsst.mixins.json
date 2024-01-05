@@ -5,6 +5,7 @@
   "mixins": [
     "anvilenhancement.AnvilMenuMixin",
     "beaconenhancement.BeaconBlockEntityMixin",
+    "beaconenhancement.ConduitBlockEntityMixin",
     "containernames.ChunkMapAccessor",
     "containernames.ServerLevelMixin",
     "itemeditor.ServerGamePacketListenerImplMixin",

@@ -47,6 +47,13 @@ public class BeaconEnhancement extends ToggleFeature<BeaconEnhancement.Config> {
         public double rangeMultiplier = 1.5;
 
         @Comment("""
+                Multiplier for an active conduit's range. For reference, a max level conduit in vanilla has a radius of
+                96 blocks.
+                Options: [0.5, 4]
+                Default: 1""")
+        public double conduitRangeMultiplier = 1;
+
+        @Comment("""
                 This feature can optionally increase the maximum level of the beacon. This allows you to limit more powerful effects
                 to higher levels.
                 Options: [4, 6]
@@ -62,6 +69,7 @@ public class BeaconEnhancement extends ToggleFeature<BeaconEnhancement.Config> {
 
         public void validate() {
             this.rangeMultiplier = Mth.clamp(this.rangeMultiplier, 0.5, 8);
+            this.conduitRangeMultiplier = Mth.clamp(this.conduitRangeMultiplier, 0.5, 4);
             this.maxBeaconLevel = Mth.clamp(this.maxBeaconLevel, 4, 6);
         }
     }

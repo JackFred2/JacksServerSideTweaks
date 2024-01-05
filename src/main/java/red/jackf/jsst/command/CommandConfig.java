@@ -392,6 +392,13 @@ public class CommandConfig {
                               config -> config.beaconEnhancement.enabled,
                               (config, newVal) -> config.beaconEnhancement.enabled = newVal));
 
+        root.then(makeDoubleRange("conduitRangeMultiplier",
+                                  "beaconEnhancement.conduitRangeMultiplier",
+                                  WikiPage.BEACON_ENHANCEMENT,
+                                  0.5, 4,
+                                  config -> config.beaconEnhancement.conduitRangeMultiplier,
+                                  (config, newVal) -> config.beaconEnhancement.conduitRangeMultiplier = newVal));
+
         root.then(makeDoubleRange("rangeMultiplier",
                                   "beaconEnhancement.rangeMultiplier",
                                   WikiPage.BEACON_ENHANCEMENT,
