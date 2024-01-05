@@ -12,7 +12,7 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jackfredlib.api.colour.Colour;
-import red.jackf.jsst.feature.itemeditor.gui.elements.SwitchButton;
+import red.jackf.jsst.util.sgui.elements.SwitchButton;
 import red.jackf.jsst.feature.itemeditor.previousColours.EditorColourHistory;
 import red.jackf.jsst.feature.itemeditor.previousColours.PlayerHistoryGui;
 import red.jackf.jsst.util.Result;
@@ -92,13 +92,12 @@ public class ColourMenu extends SimpleGui {
                                                        .addLoreLine(Hints.leftClick(Translations.select()))
                                                        .setCallback(Inputs.leftClick(() -> {
                                                            Sounds.click(player);
-                                                           Menus.customColour(player, colour -> {
-                                                               if (colour.isPresent()) {
-                                                                   ((EditorColourHistory) player).jsst$itemEditor$push(colour.get());
-                                                                   this.callback.accept(Result.of(colour.get()));
-                                                               } else {
-                                                                   this.open();
+                                                           Menus.customColour(player, result -> {
+                                                               if (result.hasResult()) {
+                                                                   ((EditorColourHistory) player).jsst$itemEditor$push(result.result());
+                                                                   this.callback.accept(Result.of(result.result()));
                                                                }
+                                                               this.open();
                                                            });
                                                        })));
 

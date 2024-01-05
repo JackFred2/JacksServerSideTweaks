@@ -1,4 +1,4 @@
-package red.jackf.jsst.feature.itemeditor.gui.elements;
+package red.jackf.jsst.util.sgui.elements;
 
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;

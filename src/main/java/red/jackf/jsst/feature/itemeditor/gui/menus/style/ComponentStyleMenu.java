@@ -17,11 +17,11 @@ import net.minecraft.world.item.*;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
-import red.jackf.jsst.feature.itemeditor.gui.elements.SwitchButton;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.feature.itemeditor.previousColours.EditorColourHistory;
 import red.jackf.jsst.feature.itemeditor.previousColours.PlayerHistoryGui;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.SwitchButton;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
@@ -167,11 +167,11 @@ public class ComponentStyleMenu extends SimpleGui {
                                                        .addLoreLine(Hints.leftClick(Translations.open()))
                                                        .setCallback(Inputs.leftClick(() -> {
                                                            Sounds.click(player);
-                                                           Menus.customColour(player, opt -> {
-                                                               opt.ifPresent(colour -> {
-                                                                   ((EditorColourHistory) player).jsst$itemEditor$push(colour);
-                                                                   this.colour = colour;
-                                                               });
+                                                           Menus.customColour(player, result -> {
+                                                               if (result.hasResult()) {
+                                                                   ((EditorColourHistory) player).jsst$itemEditor$push(result.result());
+                                                                   this.colour = result.result();
+                                                               }
                                                                this.open();
                                                            });
                                                        })));
@@ -293,8 +293,9 @@ public class ComponentStyleMenu extends SimpleGui {
                                                               Component.translatable("jsst.itemEditor.style.changeFont"),
                                                               this.font != null ? this.font : Style.DEFAULT_FONT,
                                                               null,
-                                                              opt -> {
-                                                                  opt.ifPresent(resLoc -> this.font = resLoc.equals(Style.DEFAULT_FONT) ? null : resLoc);
+                                                              result -> {
+                                                                  if (result.hasResult())
+                                                                      this.font = result.result().equals(Style.DEFAULT_FONT) ? null : result.result();
                                                                   this.open();
                                                               });
                                    } else {

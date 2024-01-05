@@ -76,8 +76,9 @@ public class SimpleNameEditor extends GuiEditor {
         Menus.stringBuilder(player)
              .title(Component.translatable("jsst.itemEditor.simpleName.changeText"))
              .initial(stack.getHoverName().getString())
-             .createAndShow(opt -> {
-                 opt.ifPresent(s -> this.stack.setHoverName(Component.literal(s).setStyle(this.stack.getHoverName().getStyle())));
+             .createAndShow(result -> {
+                 if (result.hasResult())
+                    this.stack.setHoverName(Component.literal(result.result()).setStyle(this.stack.getHoverName().getStyle()));
                  this.open();
              });
     }

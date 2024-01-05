@@ -106,8 +106,9 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
             Menus.stringBuilder(player)
                  .title(Translations.search())
                  .initial(this.filter)
-                 .createAndShow(opt -> {
-                     opt.ifPresent(s -> this.filter = s);
+                 .createAndShow(result -> {
+                     if (result.hasResult())
+                         this.filter = result.result();
                      this.open();
                  });
         } else if (type == ClickType.MOUSE_RIGHT) {

@@ -12,9 +12,9 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.*;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,7 +28,7 @@ public class StringInputMenu extends SimpleGui {
     private static final Item VALID = Items.LIME_CONCRETE;
 
     private final String initial;
-    private final Consumer<Optional<String>> onFinish;
+    private final Consumer<Result<String>> callback;
     private final Function<String, GuiElementInterface> hint;
     private final Predicate<String> predicate;
 
@@ -40,12 +40,12 @@ public class StringInputMenu extends SimpleGui {
             String initial,
             Function<String, GuiElementInterface> hint,
             Predicate<String> predicate,
-            Consumer<Optional<String>> onFinish) {
+            Consumer<Result<String>> callback) {
         super(MenuType.ANVIL, player, false);
         this.hint = hint;
         this.predicate = predicate;
         this.initial = initial;
-        this.onFinish = onFinish;
+        this.callback = callback;
 
         this.text = initial;
 
@@ -57,7 +57,7 @@ public class StringInputMenu extends SimpleGui {
                                              .setCallback(type -> {
                                                  if (type == ClickType.MOUSE_LEFT) {
                                                      Sounds.close(player);
-                                                     this.onFinish.accept(Optional.empty());
+                                                     this.callback.accept(Result.empty());
                                                  } else if (type == ClickType.MOUSE_RIGHT) {
                                                      Sounds.clear(player);
                                                      this.text = initial;
@@ -102,12 +102,12 @@ public class StringInputMenu extends SimpleGui {
 
     @Override
     public void onClose() {
-        this.onFinish.accept(Optional.empty());
+        this.callback.accept(Result.empty());
     }
 
     private void onAccept() {
         Sounds.click(player);
-        this.onFinish.accept(Optional.of(this.text));
+        this.callback.accept(Result.of(this.text));
     }
 
     public static class Builder {
@@ -159,7 +159,7 @@ public class StringInputMenu extends SimpleGui {
             return hint(GuiElementBuilder.from(Items.PAPER.getDefaultInstance()).setName(hint));
         }
 
-        public void createAndShow(Consumer<Optional<String>> callback) {
+        public void createAndShow(Consumer<Result<String>> callback) {
             new StringInputMenu(player, title, initial, hint, predicate, callback).open();
         }
     }

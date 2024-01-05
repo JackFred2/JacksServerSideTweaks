@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
-import red.jackf.jsst.feature.itemeditor.gui.elements.SwitchButton;
+import red.jackf.jsst.util.sgui.elements.SwitchButton;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.*;

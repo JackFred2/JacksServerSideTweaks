@@ -1,5 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui;
 
+import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.feature.itemeditor.gui.editors.*;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.WrappedElement;
 
 import java.util.List;
 
@@ -18,16 +20,18 @@ public class ItemEditorGui extends SimpleGui {
             SimpleNameEditor.TYPE,
             NameEditor.TYPE,
             DurabilityEditor.TYPE,
+            PotionEditor.TYPE,
             StackNBTPrinter.TYPE
     );
     private final EquipmentSlot returnSlot;
     private final boolean cosmeticOnly;
     private ItemStack stack;
 
-    public ItemEditorGui(ServerPlayer player,
-                         ItemStack initialStack,
-                         @Nullable EquipmentSlot returnSlot,
-                         boolean cosmeticOnly) {
+    public ItemEditorGui(
+            ServerPlayer player,
+            ItemStack initialStack,
+            @Nullable EquipmentSlot returnSlot,
+            boolean cosmeticOnly) {
         super(MenuType.GENERIC_9x5, player, false);
         this.stack = initialStack.copy();
         this.returnSlot = returnSlot;
@@ -48,15 +52,21 @@ public class ItemEditorGui extends SimpleGui {
     public void onOpen() {
         // update result stack
         this.setSlot(Util.slot(1, 1), GuiElementBuilder.from(stack.copy())
-                                                    .setName(Util.getLabelAsTooltip(stack))
-                                                    .addLoreLine(Hints.leftClick(Translations.save()))
-                                                    .setCallback(Inputs.leftClick(this::complete)));
+                                                       .setName(Util.getLabelAsTooltip(stack))
+                                                       .addLoreLine(Hints.leftClick(Translations.save()))
+                                                       .setCallback(Inputs.leftClick(this::complete)));
 
         final var editors = EDITORS.stream()
                                    .filter(type -> type.appliesTo().test(stack))
                                    .filter(type -> !cosmeticOnly || type.cosmeticOnly())
-                                   .map(type -> Util.addLore(type.labelSupplier().get(), Hints.leftClick(Translations.open()))
-                                                    .setCallback(Inputs.leftClick(() -> type.constructor().create(this.player, this.cosmeticOnly, this.stack, this::onResult).run())))
+                                   .map(editorType -> new WrappedElement(editorType.labelSupplier().get().build(),
+                                                                         List.of(Hints.leftClick(Translations.open())),
+                                                                         (slot, guiClickType, rawClickType, gui) -> {
+                                                                             if (guiClickType == ClickType.MOUSE_LEFT)
+                                                                                 editorType.constructor()
+                                                                                           .create(this.player, this.cosmeticOnly, this.stack, this::onResult)
+                                                                                           .run();
+                                                                         }))
                                    .toList();
 
         // update editors

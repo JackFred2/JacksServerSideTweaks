@@ -1,6 +1,7 @@
 package red.jackf.jsst.util;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class Result<T> {
     private static final Result<?> EMPTY = new Result<>(false, null);
@@ -29,6 +30,22 @@ public final class Result<T> {
     public T result() {
         if (!hasResult) throw new IllegalArgumentException("No result to get!");
         return result;
+    }
+
+    public <U> Result<U> map(Function<T, U> mapping) {
+        if (this.hasResult()) {
+            return Result.of(mapping.apply(this.result));
+        } else {
+            return empty();
+        }
+    }
+
+    public <U> Result<U> flatMap(Function<T, Result<U>> mapping) {
+        if (this.hasResult()) {
+            return mapping.apply(this.result);
+        } else {
+            return empty();
+        }
     }
 
     @Override

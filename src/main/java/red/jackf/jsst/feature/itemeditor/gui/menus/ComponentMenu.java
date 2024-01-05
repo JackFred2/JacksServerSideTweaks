@@ -55,14 +55,14 @@ public class ComponentMenu extends SimpleGui {
                                      Menus.stringBuilder(player)
                                           .title(Component.translatable("jsst.itemEditor.simpleName.changeText"))
                                           .initial(component.getString())
-                                          .createAndShow(opt -> {
-                                              opt.ifPresent(s -> {
-                                                  if (s.isEmpty()) {
+                                          .createAndShow(result -> {
+                                              if (result.hasResult()) {
+                                                  if (result.result().isEmpty()) {
                                                       this.parts.remove(index);
                                                   } else {
-                                                      this.parts.set(index, Component.literal(s));
+                                                      this.parts.set(index, Component.literal(result.result()));
                                                   }
-                                              });
+                                              }
                                               this.open();
                                           });
                                  })).build(),
