@@ -1,9 +1,6 @@
 package red.jackf.jsst.util.sgui;
 
 import eu.pb4.sgui.api.SlotHolder;
-import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
-import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -15,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.GradientBuilder;
+import red.jackf.jsst.mixins.itemeditor.ItemStackAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,17 +63,22 @@ public interface Util {
         }
     }
 
+    static void unhideTooltipPart(ItemStack stack, ItemStack.TooltipPart... parts) {
+        int mask = ((ItemStackAccessor) (Object) stack).jsst$itemEditor$getTooltipHideMask();
+        for (ItemStack.TooltipPart part : parts) {
+            mask &= ~part.getMask();
+        }
+        if (mask == 0) {
+            stack.removeTagKey("HideFlags");
+        } else {
+            stack.getOrCreateTag().putInt("HideFlags", mask);
+        }
+    }
+
     static Component getLabelAsTooltip(ItemStack stack) {
         Style style = Style.EMPTY.withColor(stack.getRarity().color)
                 .withItalic(stack.hasCustomHoverName());
         return Component.empty().append(stack.getHoverName()).withStyle(style);
-    }
-
-    static <T extends GuiElementBuilderInterface<T>> GuiElementBuilderInterface<T> addLore(GuiElementBuilderInterface<T> builder, Component lore) {
-        if (builder instanceof AnimatedGuiElementBuilder anim) anim.addLoreLine(lore);
-        else if (builder instanceof GuiElementBuilder stat) stat.addLoreLine(lore);
-        else throw new IllegalArgumentException("Unknown element builder");
-        return builder;
     }
 
     static Component colourise(Component text, MutableComponent base, Gradient gradient) {

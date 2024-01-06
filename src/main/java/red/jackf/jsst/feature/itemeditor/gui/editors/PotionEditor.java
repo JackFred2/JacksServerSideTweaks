@@ -22,7 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Colours;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
+import red.jackf.jsst.mixins.itemeditor.ItemStackAccessor;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.ToggleButton;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
@@ -45,14 +47,6 @@ public class PotionEditor extends GuiEditor {
             PotionEditor::createLabel
     );
     private final List<MobEffectInstance> effects = new ArrayList<>();
-    private final ListPaginator<MobEffectInstance> effectPaginator = ListPaginator.<MobEffectInstance>builder(this)
-                                                                                  .at(4, 9, 2, 6)
-                                                                                  .list(this.effects)
-                                                                                  .max(20)
-                                                                                  .rowDraw(this::drawPageRow)
-                                                                                  .modifiable(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600), false)
-                                                                                  .onUpdate(this::redraw).build();
-
     public PotionEditor(
             ServerPlayer player,
             boolean cosmeticOnly,
@@ -62,14 +56,13 @@ public class PotionEditor extends GuiEditor {
         this.setTitle(Component.translatable("jsst.itemEditor.potionEditor"));
         this.drawStatic();
         this.effects.addAll(PotionUtils.getCustomEffects(this.stack));
-    }
-
-    @Override
-    protected void reset() {
-        super.reset();
-        this.effects.clear();
-        this.effects.addAll(PotionUtils.getCustomEffects(this.stack));
-    }
+    }    private final ListPaginator<MobEffectInstance> effectPaginator = ListPaginator.<MobEffectInstance>builder(this)
+                                                                                  .at(4, 9, 2, 6)
+                                                                                  .list(this.effects)
+                                                                                  .max(20)
+                                                                                  .rowDraw(this::drawPageRow)
+                                                                                  .modifiable(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600), false)
+                                                                                  .onUpdate(this::redraw).build();
 
     private static MobEffectInstance copy(
             MobEffectInstance original,
@@ -97,17 +90,43 @@ public class PotionEditor extends GuiEditor {
         return builder;
     }
 
+    private static ItemStack setColour(ItemStack potionItem, Colour colour) {
+        potionItem.getOrCreateTag().putInt(PotionUtils.TAG_CUSTOM_POTION_COLOR, colour.toARGB());
+        return potionItem;
+    }
+
+    private static Component describe(MobEffectInstance instance, float tickrate) {
+        MutableComponent description = Component.translatable(instance.getDescriptionId());
+        if (instance.getAmplifier() > 0) {
+            description = Component.translatable(
+                    "potion.withAmplifier",
+                    description,
+                    Component.translatable("potion.potency." + instance.getAmplifier())
+            );
+        }
+
+        description = Component.translatable(
+                "potion.withDuration",
+                description,
+                instance.getDuration() < 20 ? instance.getDuration() + " ticks" : MobEffectUtil.formatDuration(instance, 1f, tickrate)
+        );
+
+        return description;
+    }
+
+    @Override
+    protected void reset() {
+        super.reset();
+        this.effects.clear();
+        this.effects.addAll(PotionUtils.getCustomEffects(this.stack));
+    }
+
     private void updateCustomEffects() {
         if (this.effects.isEmpty()) {
             this.stack.removeTagKey(PotionUtils.TAG_CUSTOM_POTION_EFFECTS);
         } else {
             PotionUtils.setCustomEffects(this.stack, this.effects);
         }
-    }
-
-    private static ItemStack setColour(ItemStack potionItem, Colour colour) {
-        potionItem.getOrCreateTag().putInt(PotionUtils.TAG_CUSTOM_POTION_COLOR, colour.toARGB());
-        return potionItem;
     }
 
     private void drawStatic() {
@@ -130,6 +149,18 @@ public class PotionEditor extends GuiEditor {
                                                        })));
     }
 
+    private boolean isHidingAdditional() {
+        return (((ItemStackAccessor) (Object) this.stack).jsst$itemEditor$getTooltipHideMask() & ItemStack.TooltipPart.ADDITIONAL.getMask()) != 0;
+    }
+
+    private void setHidingAdditional(boolean shouldHide) {
+        if (shouldHide) {
+            this.stack.hideTooltipPart(ItemStack.TooltipPart.ADDITIONAL);
+        } else {
+            Util.unhideTooltipPart(this.stack, ItemStack.TooltipPart.ADDITIONAL);
+        }
+    }
+
     @Override
     protected void redraw() {
         this.updateCustomEffects();
@@ -146,8 +177,20 @@ public class PotionEditor extends GuiEditor {
                                                                this.redraw();
                                                            })));
         } else {
-            this.clearSlot(Util.slot(1, 5));
+            this.clearSlot(Util.slot(1, 4));
         }
+
+        this.setSlot(Util.slot(2, 4), ToggleButton.builder()
+                                                  .disabled(Items.ENDER_EYE.getDefaultInstance())
+                                                  .enabled(Items.ENDER_PEARL.getDefaultInstance())
+                                                  .label(Component.translatable("jsst.itemEditor.lore.tooltip.hideAdditional"))
+                                                  .initial(isHidingAdditional())
+                                                  .setCallback(newValue -> {
+                                                      Sounds.click(player);
+                                                      setHidingAdditional(newValue);
+                                                      this.redraw();
+                                                  })
+                                                  .build());
 
         this.setSlot(Util.slot(4, 0), GuiElementBuilder.from(LabelMaps.POTIONS.getLabel(PotionUtils.getPotion(this.stack)))
                                                        .setName(Component.translatable("jsst.itemEditor.potionEditor.setPotion").setStyle(Styles.INPUT_HINT))
@@ -169,25 +212,6 @@ public class PotionEditor extends GuiEditor {
                                                        })));
 
         this.effectPaginator.draw();
-    }
-
-    private static Component describe(MobEffectInstance instance, float tickrate) {
-        MutableComponent description = Component.translatable(instance.getDescriptionId());
-        if (instance.getAmplifier() > 0) {
-            description = Component.translatable(
-                    "potion.withAmplifier",
-                    description,
-                    Component.translatable("potion.potency." + instance.getAmplifier())
-            );
-        }
-
-        description = Component.translatable(
-                "potion.withDuration",
-                description,
-                instance.getDuration() < 20 ? instance.getDuration() + " ticks" : MobEffectUtil.formatDuration(instance, 1f, tickrate)
-        );
-
-        return description;
     }
 
     private List<GuiElementInterface> drawPageRow(int index, MobEffectInstance instance) {
@@ -243,4 +267,6 @@ public class PotionEditor extends GuiEditor {
                                  })).build()
         );
     }
+
+
 }

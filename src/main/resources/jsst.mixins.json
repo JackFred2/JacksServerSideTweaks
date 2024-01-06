@@ -8,6 +8,7 @@
     "beaconenhancement.ConduitBlockEntityMixin",
     "containernames.ChunkMapAccessor",
     "containernames.ServerLevelMixin",
+    "itemeditor.ItemStackAccessor",
     "itemeditor.ServerGamePacketListenerImplMixin",
     "itemeditor.ServerPlayerMixin",
     "qualityoflife.BlockMixin"

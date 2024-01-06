@@ -87,6 +87,8 @@
 
   "jsst.itemEditor.name": "Name Editor",
 
+  "jsst.itemEditor.lore.tooltip.hideAdditional": "Hide Additional Tooltips",
+
   "jsst.itemEditor.durability": "Durability Editor",
 
   "jsst.itemEditor.potionEditor": "Potion Editor",
