@@ -70,7 +70,7 @@ public class PotionEditor extends GuiEditor {
             ItemStack initial,
             Consumer<ItemStack> callback) {
         super(MenuType.GENERIC_9x6, player, context, initial, callback);
-        this.setTitle(Component.translatable("jsst.itemEditor.potionEditor"));
+        this.setTitle(Component.translatable("jsst.itemEditor.potion"));
         this.loadFromStack();
         this.drawStatic();
     }
@@ -81,7 +81,7 @@ public class PotionEditor extends GuiEditor {
         for (Colour colour : List.of(Colours.RED, Colours.ORANGE, Colours.YELLOW, Colours.GREEN, Colours.LIGHT_BLUE, Colours.BLUE, Colours.PURPLE, Colours.MAGENTA)) {
             builder.addStack(GuiElementBuilder.from(setColour(Items.POTION.getDefaultInstance(), colour))
                                               .hideFlags()
-                                              .setName(Component.translatable("jsst.itemEditor.potionEditor"))
+                                              .setName(Component.translatable("jsst.itemEditor.potion"))
                                               .asStack());
         }
 
@@ -155,7 +155,7 @@ public class PotionEditor extends GuiEditor {
     }
 
     private void drawStatic() {
-        this.setSlot(Util.slot(0, 5), CommonLabels.close(this::close));
+        this.setSlot(Util.slot(0, 5), CommonLabels.cancel(this::cancel));
 
         for (int row = 0; row < 6; row++) this.setSlot(Util.slot(3, row), CommonLabels.divider());
 
@@ -201,7 +201,7 @@ public class PotionEditor extends GuiEditor {
 
         // change item type
         {
-            var itemTypeBuilder = SwitchButton.<Item>builder(Component.translatable("jsst.itemEditor.potionEditor.setPotionItemType"));
+            var itemTypeBuilder = SwitchButton.<Item>builder(Component.translatable("jsst.itemEditor.potion.setPotionItemType"));
             for (Item potionHoldingItem : VALID_ITEMS) {
                 itemTypeBuilder.addOption(potionHoldingItem, CommonLabels.simple(potionHoldingItem, potionHoldingItem.getDescription()));
             }
@@ -243,7 +243,7 @@ public class PotionEditor extends GuiEditor {
                                                       .disabled(Items.CLOCK.getDefaultInstance())
                                                       .enabled(GuiElementBuilder.from(Items.CLOCK.getDefaultInstance())
                                                                                 .glow().asStack())
-                                                      .label(Component.translatable("jsst.itemEditor.potionEditor.compensateForItemReductions"))
+                                                      .label(Component.translatable("jsst.itemEditor.potion.compensateForItemReductions"))
                                                       .initial(this.mitigateItemSpecificDurationReduction)
                                                       .setCallback(newValue -> {
                                                           Sounds.click(player);
@@ -257,7 +257,7 @@ public class PotionEditor extends GuiEditor {
 
         // standard potion selection
         this.setSlot(Util.slot(4, 0), GuiElementBuilder.from(LabelMaps.POTIONS.getLabel(PotionUtils.getPotion(this.stack)))
-                                                       .setName(Component.translatable("jsst.itemEditor.potionEditor.setPotion")
+                                                       .setName(Component.translatable("jsst.itemEditor.potion.setPotion")
                                                                          .setStyle(Styles.INPUT_HINT))
                                                        .addLoreLine(Hints.leftClick())
                                                        .setCallback(Inputs.leftClick(() -> {
@@ -266,7 +266,7 @@ public class PotionEditor extends GuiEditor {
                                                                                               .registryOrThrow(Registries.POTION)
                                                                                               .stream().toList();
                                                            Menus.selector(player,
-                                                                          Component.translatable("jsst.itemEditor.potionEditor.setPotion"),
+                                                                          Component.translatable("jsst.itemEditor.potion.setPotion"),
                                                                           potions,
                                                                           LabelMaps.POTIONS,
                                                                           result -> {
@@ -283,11 +283,11 @@ public class PotionEditor extends GuiEditor {
         return List.of(
                 GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(instance.getEffect()))
                                  .setName(describe(instance, this.context.server().tickRateManager().tickrate()))
-                                 .addLoreLine(Hints.leftClick(Component.translatable("jsst.itemEditor.potionEditor.setEffect")))
+                                 .addLoreLine(Hints.leftClick(Component.translatable("jsst.itemEditor.potion.setEffect")))
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
                                      Menus.selector(player,
-                                                    Component.translatable("jsst.itemEditor.potionEditor.setEffect"),
+                                                    Component.translatable("jsst.itemEditor.potion.setEffect"),
                                                     this.context.server().registryAccess()
                                                                 .registryOrThrow(Registries.MOB_EFFECT).stream()
                                                                 .toList(),
@@ -299,13 +299,13 @@ public class PotionEditor extends GuiEditor {
                                                     });
                                  })).build(),
                 GuiElementBuilder.from(Items.CLOCK.getDefaultInstance())
-                                 .setName(Component.translatable("jsst.itemEditor.potionEditor.setDuration")
+                                 .setName(Component.translatable("jsst.itemEditor.potion.setDuration")
                                                    .setStyle(Styles.INPUT_HINT))
                                  .addLoreLine(Hints.leftClick())
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
                                      Menus.duration(player,
-                                                    Component.translatable("jsst.itemEditor.potionEditor.setDuration"),
+                                                    Component.translatable("jsst.itemEditor.potion.setDuration"),
                                                     instance.isInfiniteDuration() ? "infinite" : instance.getDuration() + " ticks",
                                                     true,
                                                     result -> {
@@ -317,13 +317,13 @@ public class PotionEditor extends GuiEditor {
                                                     });
                                  })).build(),
                 GuiElementBuilder.from(Items.GLOWSTONE_DUST.getDefaultInstance())
-                                 .setName(Component.translatable("jsst.itemEditor.potionEditor.setAmplifier")
+                                 .setName(Component.translatable("jsst.itemEditor.potion.setAmplifier")
                                                    .setStyle(Styles.INPUT_HINT))
                                  .addLoreLine(Hints.leftClick())
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
                                      Menus.integer(player,
-                                                   Component.translatable("jsst.itemEditor.potionEditor.setAmplifier"),
+                                                   Component.translatable("jsst.itemEditor.potion.setAmplifier"),
                                                    instance.getAmplifier(),
                                                    0,
                                                    127,

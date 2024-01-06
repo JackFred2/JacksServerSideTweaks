@@ -19,6 +19,7 @@ public class ItemEditorGui extends SimpleGui {
     private static final List<Editor.EditorType> EDITORS = List.of(
             SimpleNameEditor.TYPE,
             NameEditor.TYPE,
+            LoreEditor.TYPE,
             DurabilityEditor.TYPE,
             PotionEditor.TYPE,
             StackNBTPrinter.TYPE

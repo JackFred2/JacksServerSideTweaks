@@ -37,8 +37,15 @@ public class NameEditor implements Editor {
     public void run() {
         Sounds.click(player);
         EditorMenus.component(player,
+                              Component.translatable("jsst.itemEditor.name"),
                               this.initial.getHoverName(),
                               newName -> this.initial.copy().setHoverName(newName),
-                              newName -> callback.accept(this.initial.copy().setHoverName(newName)));
+                              result -> {
+                                  if (result.hasResult()) {
+                                      this.callback.accept(this.initial.copy().setHoverName(result.result()));
+                                  } else {
+                                      this.callback.accept(this.initial);
+                                  }
+                              });
     }
 }

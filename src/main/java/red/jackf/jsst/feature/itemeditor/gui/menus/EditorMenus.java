@@ -43,9 +43,10 @@ public interface EditorMenus {
     }
 
     static void component(ServerPlayer player,
+                          Component title,
                           Component initial,
                           Function<Component, ItemStack> previewBuilder,
-                          Consumer<Component> onResult) {
-        new ComponentMenu(player, initial, previewBuilder, onResult).open();
+                          Consumer<Result<Component>> onResult) {
+        new ComponentMenu(player, title, initial, previewBuilder, onResult).open();
     }
 }

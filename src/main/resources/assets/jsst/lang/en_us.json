@@ -87,18 +87,20 @@
 
   "jsst.itemEditor.name": "Name Editor",
 
+  "jsst.itemEditor.lore": "Lore Editor",
+  "jsst.itemEditor.lore.line": "Edit Lore Line",
   "jsst.itemEditor.lore.tooltip.hideAdditional": "Hide Additional Tooltips",
 
   "jsst.itemEditor.durability": "Durability Editor",
 
-  "jsst.itemEditor.potionEditor": "Potion Editor",
-  "jsst.itemEditor.potionEditor.setPotionItemType": "Change Potion Type",
-  "jsst.itemEditor.potionEditor.setPotion": "Set Base Potion",
-  "jsst.itemEditor.potionEditor.setEffect": "Set Effect",
-  "jsst.itemEditor.potionEditor.setAmplifier": "Set Amplifier",
-  "jsst.itemEditor.potionEditor.setDuration": "Set Duration",
-  "jsst.itemEditor.potionEditor.noPotion": "No Potion",
-  "jsst.itemEditor.potionEditor.compensateForItemReductions": "Compensate for item-specific duration reduction",
+  "jsst.itemEditor.potion": "Potion Editor",
+  "jsst.itemEditor.potion.setPotionItemType": "Change Potion Type",
+  "jsst.itemEditor.potion.setPotion": "Set Base Potion",
+  "jsst.itemEditor.potion.setEffect": "Set Effect",
+  "jsst.itemEditor.potion.setAmplifier": "Set Amplifier",
+  "jsst.itemEditor.potion.setDuration": "Set Duration",
+  "jsst.itemEditor.potion.noPotion": "No Potion",
+  "jsst.itemEditor.potion.compensateForItemReductions": "Compensate for item-specific duration reduction",
 
   "jsst.itemEditor.labelMapNBTPrinter": "Stack NBT Printer",
   "jsst.itemEditor.labelMapNBTPrinter.hint": "Used for label map data files",

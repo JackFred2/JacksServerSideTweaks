@@ -20,7 +20,7 @@ public interface LabelMaps {
                                                                  MobEffect::getDisplayName);
     LabelMap<Potion> POTIONS = LabelMap.createStatic(Map.of(
             Potions.EMPTY,
-            Items.GLASS_BOTTLE.getDefaultInstance().setHoverName(Component.translatable("jsst.itemEditor.potionEditor.noPotion"))
+            Items.GLASS_BOTTLE.getDefaultInstance().setHoverName(Component.translatable("jsst.itemEditor.potion.noPotion"))
     ), potion -> {
         var stack = Items.POTION.getDefaultInstance();
         PotionUtils.setPotion(stack, potion);

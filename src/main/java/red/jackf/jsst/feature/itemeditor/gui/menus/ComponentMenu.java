@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
@@ -21,7 +22,7 @@ import java.util.function.Function;
 public class ComponentMenu extends SimpleGui {
     private final Component initial;
     private final Function<Component, ItemStack> previewBuilder;
-    private final Consumer<Component> onResult;
+    private final Consumer<Result<Component>> callback;
     private final List<Component> parts = new ArrayList<>();
     private final ListPaginator<Component> paginator = ListPaginator.<Component>builder(this)
                                                                     .at(4, 9, 0, 6)
@@ -34,13 +35,15 @@ public class ComponentMenu extends SimpleGui {
 
     public ComponentMenu(
             ServerPlayer player,
+            Component title,
             Component initial,
             Function<Component, ItemStack> previewBuilder,
-            Consumer<Component> onResult) {
+            Consumer<Result<Component>> callback) {
         super(MenuType.GENERIC_9x6, player, false);
+        this.setTitle(title);
         this.initial = initial;
         this.previewBuilder = previewBuilder;
-        this.onResult = onResult;
+        this.callback = callback;
 
         this.parts.addAll(this.initial.toFlatList());
     }
@@ -67,8 +70,7 @@ public class ComponentMenu extends SimpleGui {
                                           });
                                  })).build(),
                 GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
-                                 .setName(Component.translatable("jsst.itemEditor.simpleName.changeStyle")
-                                                   .withStyle(Styles.INPUT_HINT))
+                                 .setName(Component.translatable("jsst.itemEditor.simpleName.changeStyle").withStyle(Styles.INPUT_HINT))
                                  .addLoreLine(Hints.leftClick())
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
@@ -113,7 +115,7 @@ public class ComponentMenu extends SimpleGui {
     private void clickPreview(ClickType clickType) {
         if (clickType == ClickType.MOUSE_LEFT) {
             Sounds.click(player);
-            this.onResult.accept(build());
+            this.callback.accept(Result.of(build()));
         } else if (clickType == ClickType.MOUSE_RIGHT) {
             Sounds.clear(player);
             this.parts.clear();
@@ -125,10 +127,6 @@ public class ComponentMenu extends SimpleGui {
 
     @Override
     public void onClose() {
-        this.onResult.accept(initial);
+        this.callback.accept(Result.empty());
     }
-
-
-
-
 }
