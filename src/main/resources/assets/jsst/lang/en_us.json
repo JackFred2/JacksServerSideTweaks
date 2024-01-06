@@ -92,6 +92,7 @@
   "jsst.itemEditor.durability": "Durability Editor",
 
   "jsst.itemEditor.potionEditor": "Potion Editor",
+  "jsst.itemEditor.potionEditor.setPotionItemType": "Change Potion Type",
   "jsst.itemEditor.potionEditor.setPotion": "Set Base Potion",
   "jsst.itemEditor.potionEditor.setEffect": "Set Effect",
   "jsst.itemEditor.potionEditor.setAmplifier": "Set Amplifier",

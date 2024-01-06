@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.JSSTCommand;
 import red.jackf.jsst.feature.Feature;
+import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.ItemEditorGui;
 import red.jackf.jsst.feature.itemeditor.previousColours.EditorColourHistory;
 
@@ -39,7 +40,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
         var access = getAccessForPlayer(player);
         if (access == EditorAccess.NONE) return;
         LOGGER.debug("Starting Item Editor for {}, base item {}", player.getName().getString(), handItem);
-        new ItemEditorGui(player, handItem, returnSlot, access == EditorAccess.COSMETIC).open();
+        new ItemEditorGui(player, handItem, returnSlot, new EditorContext(player.server, access == EditorAccess.COSMETIC)).open();
     }
 
     public EditorAccess getAccessForPlayer(@Nullable ServerPlayer player) {

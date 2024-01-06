@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
+import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.sgui.Hints;
 import red.jackf.jsst.util.sgui.Sounds;
 import red.jackf.jsst.util.sgui.Translations;
@@ -19,7 +20,7 @@ import java.util.function.Consumer;
  * with the passed stack, make sure to use {@link ItemStack#copy()}
  */
 public abstract class GuiEditor extends SimpleGui implements Editor {
-    private final boolean cosmeticOnly;
+    protected final EditorContext context;
     private final ItemStack initial;
     private final Consumer<ItemStack> callback;
 
@@ -28,11 +29,11 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
     public GuiEditor(
             MenuType<?> type,
             ServerPlayer player,
-            boolean cosmeticOnly,
+            EditorContext context,
             ItemStack initial,
             Consumer<ItemStack> callback) {
         super(type, player, false);
-        this.cosmeticOnly = cosmeticOnly;
+        this.context = context;
         this.initial = initial;
         this.callback = callback;
         this.stack = initial.copy();

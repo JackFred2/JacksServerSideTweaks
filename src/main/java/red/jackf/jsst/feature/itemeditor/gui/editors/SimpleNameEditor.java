@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.menus.Menus;
@@ -22,10 +23,10 @@ public class SimpleNameEditor extends GuiEditor {
 
     public SimpleNameEditor(
             ServerPlayer player,
-            boolean cosmeticOnly,
+            EditorContext context,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x1, player, cosmeticOnly, initial, callback);
+        super(MenuType.GENERIC_9x1, player, context, initial, callback);
         this.setTitle(Component.translatable("jsst.itemEditor.simpleName"));
     }
 

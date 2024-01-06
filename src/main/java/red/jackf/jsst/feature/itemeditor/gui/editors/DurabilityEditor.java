@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.sgui.*;
 
 import java.util.ArrayList;
@@ -24,10 +25,10 @@ public class DurabilityEditor extends GuiEditor {
 
     public DurabilityEditor(
             ServerPlayer player,
-            boolean cosmeticOnly,
+            EditorContext context,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x4, player, cosmeticOnly, initial, callback);
+        super(MenuType.GENERIC_9x4, player, context, initial, callback);
         this.setTitle(Component.translatable("jsst.itemEditor.durability"));
 
         this.setSlot(Util.slot(0, 3), CommonLabels.cancel(this::cancel));

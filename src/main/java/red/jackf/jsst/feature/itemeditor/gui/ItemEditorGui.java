@@ -24,18 +24,18 @@ public class ItemEditorGui extends SimpleGui {
             StackNBTPrinter.TYPE
     );
     private final EquipmentSlot returnSlot;
-    private final boolean cosmeticOnly;
+    private final EditorContext context;
     private ItemStack stack;
 
     public ItemEditorGui(
             ServerPlayer player,
             ItemStack initialStack,
             @Nullable EquipmentSlot returnSlot,
-            boolean cosmeticOnly) {
+            EditorContext context) {
         super(MenuType.GENERIC_9x5, player, false);
         this.stack = initialStack.copy();
         this.returnSlot = returnSlot;
-        this.cosmeticOnly = cosmeticOnly;
+        this.context = context;
 
         this.setTitle(Component.translatable("jsst.itemEditor.title"));
 
@@ -58,13 +58,13 @@ public class ItemEditorGui extends SimpleGui {
 
         final var editors = EDITORS.stream()
                                    .filter(type -> type.appliesTo().test(stack))
-                                   .filter(type -> !cosmeticOnly || type.cosmeticOnly())
+                                   .filter(type -> !context.cosmeticOnly() || type.cosmeticOnly())
                                    .map(editorType -> new WrappedElement(editorType.labelSupplier().get().build(),
                                                                          List.of(Hints.leftClick(Translations.open())),
                                                                          (slot, guiClickType, rawClickType, gui) -> {
                                                                              if (guiClickType == ClickType.MOUSE_LEFT)
                                                                                  editorType.constructor()
-                                                                                           .create(this.player, this.cosmeticOnly, this.stack, this::onResult)
+                                                                                           .create(this.player, this.context, this.stack, this::onResult)
                                                                                            .run();
                                                                          }))
                                    .toList();

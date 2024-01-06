@@ -3,6 +3,7 @@ package red.jackf.jsst.feature.itemeditor.gui.editors;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -16,7 +17,7 @@ public interface Editor {
     void run();
 
     interface Constructor<E extends Editor> {
-        E create(ServerPlayer viewer, boolean cosmeticOnly, ItemStack initial, Consumer<ItemStack> callback);
+        E create(ServerPlayer viewer, EditorContext cosmeticOnly, ItemStack initial, Consumer<ItemStack> callback);
     }
 
     record EditorType(Constructor<?> constructor,

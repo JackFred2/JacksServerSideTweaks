@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.command.Formatting;
+import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.JSSTCodecs;
 import red.jackf.jsst.util.sgui.Sounds;
 import red.jackf.jsst.util.sgui.Styles;
@@ -31,7 +32,7 @@ public class StackNBTPrinter implements Editor {
 
     public StackNBTPrinter(
             ServerPlayer player,
-            boolean cosmeticOnly,
+            EditorContext context,
             ItemStack stack,
             Consumer<ItemStack> callback) {
         this.player = player;

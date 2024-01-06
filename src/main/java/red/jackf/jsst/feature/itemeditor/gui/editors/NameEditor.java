@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.util.sgui.Sounds;
 
@@ -24,7 +25,7 @@ public class NameEditor implements Editor {
 
     public NameEditor(
             ServerPlayer player,
-            boolean ignored,
+            EditorContext context,
             ItemStack initial,
             Consumer<ItemStack> callback) {
         this.player = player;
