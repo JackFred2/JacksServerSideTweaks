@@ -30,50 +30,16 @@ import red.jackf.jsst.util.sgui.menus.Menus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class PotionEditor extends GuiEditor {
-    private static final List<Item> POTION_ITEMS = List.of(
-            Items.POTION,
-            Items.SPLASH_POTION,
-            Items.LINGERING_POTION,
-            Items.TIPPED_ARROW
+    private static final Map<Item, Integer> POTION_DURATION_SCALAR = Map.of(
+            Items.POTION, 1,
+            Items.SPLASH_POTION, 1,
+            Items.LINGERING_POTION, 4,
+            Items.TIPPED_ARROW, 8
     );
-
-    public static final EditorType TYPE = new EditorType(
-            PotionEditor::new,
-            false,
-            stack -> POTION_ITEMS.contains(stack.getItem()),
-            PotionEditor::createLabel
-    );
-    private final List<MobEffectInstance> effects = new ArrayList<>();
-    public PotionEditor(
-            ServerPlayer player,
-            boolean cosmeticOnly,
-            ItemStack initial,
-            Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x6, player, cosmeticOnly, initial, callback);
-        this.setTitle(Component.translatable("jsst.itemEditor.potionEditor"));
-        this.drawStatic();
-        this.effects.addAll(PotionUtils.getCustomEffects(this.stack));
-    }    private final ListPaginator<MobEffectInstance> effectPaginator = ListPaginator.<MobEffectInstance>builder(this)
-                                                                                  .at(4, 9, 2, 6)
-                                                                                  .list(this.effects)
-                                                                                  .max(20)
-                                                                                  .rowDraw(this::drawPageRow)
-                                                                                  .modifiable(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600), false)
-                                                                                  .onUpdate(this::redraw).build();
-
-    private static MobEffectInstance copy(
-            MobEffectInstance original,
-            @Nullable MobEffect effect,
-            @Nullable Integer duration,
-            @Nullable Integer amplifier) {
-        MobEffect newEffect = effect != null ? effect : original.getEffect();
-        int newDuration = duration != null ? duration : original.getDuration();
-        int newAmplifier = amplifier != null ? amplifier : original.getAmplifier();
-        return new MobEffectInstance(newEffect, newDuration, newAmplifier);
-    }
 
     private static AnimatedGuiElementBuilder createLabel() {
         AnimatedGuiElementBuilderExt builder = new AnimatedGuiElementBuilderExt();
@@ -90,8 +56,76 @@ public class PotionEditor extends GuiEditor {
         return builder;
     }
 
-    private static ItemStack setColour(ItemStack potionItem, Colour colour) {
-        potionItem.getOrCreateTag().putInt(PotionUtils.TAG_CUSTOM_POTION_COLOR, colour.toARGB());
+    public static final EditorType TYPE = new EditorType(
+            PotionEditor::new,
+            false,
+            stack -> POTION_DURATION_SCALAR.containsKey(stack.getItem()),
+            PotionEditor::createLabel
+    );
+
+    private final List<MobEffectInstance> effects = new ArrayList<>();
+    private boolean mitigateItemSpecificDurationReduction = false;
+
+    private final ListPaginator<MobEffectInstance> effectPaginator = ListPaginator.<MobEffectInstance>builder(this)
+                                                                                  .at(4, 9, 2, 6)
+                                                                                  .list(this.effects)
+                                                                                  .max(20)
+                                                                                  .rowDraw(this::drawPageRow)
+                                                                                  .modifiable(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600), false)
+                                                                                  .onUpdate(this::redraw).build();
+    public PotionEditor(
+            ServerPlayer player,
+            boolean cosmeticOnly,
+            ItemStack initial,
+            Consumer<ItemStack> callback) {
+        super(MenuType.GENERIC_9x6, player, cosmeticOnly, initial, callback);
+        this.setTitle(Component.translatable("jsst.itemEditor.potionEditor"));
+        this.loadFromStack();
+        this.drawStatic();
+    }
+
+    private void loadFromStack() {
+        this.effects.clear();
+        this.effects.addAll(PotionUtils.getCustomEffects(this.stack));
+    }
+
+    @Override
+    protected void reset() {
+        super.reset();
+        this.loadFromStack();
+    }
+
+    protected void applyCustomEffectsToStack() {
+        if (this.effects.isEmpty()) {
+            this.stack.removeTagKey(PotionUtils.TAG_CUSTOM_POTION_EFFECTS);
+        } else if (this.mitigateItemSpecificDurationReduction) {
+            var mitigated = new ArrayList<MobEffectInstance>(this.effects.size());
+            for (MobEffectInstance effect : this.effects) {
+                mitigated.add(copy(effect, null, effect.mapDuration(i -> i * POTION_DURATION_SCALAR.getOrDefault(stack.getItem(), 1)), null));
+            }
+            PotionUtils.setCustomEffects(stack, mitigated);
+        } else {
+            PotionUtils.setCustomEffects(stack, this.effects);
+        }
+    }
+
+    private static MobEffectInstance copy(
+            MobEffectInstance original,
+            @Nullable MobEffect effect,
+            @Nullable Integer duration,
+            @Nullable Integer amplifier) {
+        MobEffect newEffect = effect != null ? effect : original.getEffect();
+        int newDuration = duration != null ? duration : original.getDuration();
+        int newAmplifier = amplifier != null ? amplifier : original.getAmplifier();
+        return new MobEffectInstance(newEffect, newDuration, newAmplifier);
+    }
+
+    private static ItemStack setColour(ItemStack potionItem, @Nullable Colour colour) {
+        if (colour == null) {
+            potionItem.removeTagKey(PotionUtils.TAG_CUSTOM_POTION_COLOR);
+        } else {
+            potionItem.getOrCreateTag().putInt(PotionUtils.TAG_CUSTOM_POTION_COLOR, colour.toARGB());
+        }
         return potionItem;
     }
 
@@ -112,21 +146,6 @@ public class PotionEditor extends GuiEditor {
         );
 
         return description;
-    }
-
-    @Override
-    protected void reset() {
-        super.reset();
-        this.effects.clear();
-        this.effects.addAll(PotionUtils.getCustomEffects(this.stack));
-    }
-
-    private void updateCustomEffects() {
-        if (this.effects.isEmpty()) {
-            this.stack.removeTagKey(PotionUtils.TAG_CUSTOM_POTION_EFFECTS);
-        } else {
-            PotionUtils.setCustomEffects(this.stack, this.effects);
-        }
     }
 
     private void drawStatic() {
@@ -164,7 +183,7 @@ public class PotionEditor extends GuiEditor {
 
     @Override
     protected void redraw() {
-        this.updateCustomEffects();
+        this.applyCustomEffectsToStack();
         this.drawPreview(Util.slot(1, 1));
 
         //noinspection DataFlowIssue
@@ -174,7 +193,7 @@ public class PotionEditor extends GuiEditor {
                                                            .addLoreLine(Hints.leftClick())
                                                            .setCallback(Inputs.leftClick(() -> {
                                                                Sounds.clear(player);
-                                                               this.stack.removeTagKey(PotionUtils.TAG_CUSTOM_POTION_COLOR);
+                                                               setColour(this.stack, null);
                                                                this.redraw();
                                                            })));
         } else {
@@ -182,19 +201,32 @@ public class PotionEditor extends GuiEditor {
         }
 
         this.setSlot(Util.slot(2, 4), ToggleButton.builder()
-                                                  .disabled(Items.ENDER_EYE.getDefaultInstance())
-                                                  .enabled(Items.ENDER_PEARL.getDefaultInstance())
+                                                  .disabled(Items.GLOWSTONE_DUST.getDefaultInstance())
+                                                  .enabled(Items.GUNPOWDER.getDefaultInstance())
                                                   .label(Component.translatable("jsst.itemEditor.lore.tooltip.hideAdditional"))
                                                   .initial(isHidingAdditional())
                                                   .setCallback(newValue -> {
                                                       Sounds.click(player);
                                                       setHidingAdditional(newValue);
                                                       this.redraw();
-                                                  })
-                                                  .build());
+                                                  }).build());
+
+        if (POTION_DURATION_SCALAR.getOrDefault(this.stack.getItem(), 1) != 1)
+            this.setSlot(Util.slot(0, 3), ToggleButton.builder()
+                                                      .disabled(Items.CLOCK.getDefaultInstance())
+                                                      .enabled(GuiElementBuilder.from(Items.CLOCK.getDefaultInstance()).glow().asStack())
+                                                      .label(Component.translatable("jsst.itemEditor.potionEditor.compensateForItemReductions"))
+                                                      .initial(this.mitigateItemSpecificDurationReduction)
+                                                      .setCallback(newValue -> {
+                                                          Sounds.click(player);
+                                                          this.mitigateItemSpecificDurationReduction = newValue;
+                                                          this.redraw();
+                                                      })
+                                                      .build());
 
         this.setSlot(Util.slot(4, 0), GuiElementBuilder.from(LabelMaps.POTIONS.getLabel(PotionUtils.getPotion(this.stack)))
-                                                       .setName(Component.translatable("jsst.itemEditor.potionEditor.setPotion").setStyle(Styles.INPUT_HINT))
+                                                       .setName(Component.translatable("jsst.itemEditor.potionEditor.setPotion")
+                                                                         .setStyle(Styles.INPUT_HINT))
                                                        .addLoreLine(Hints.leftClick())
                                                        .setCallback(Inputs.leftClick(() -> {
                                                            Sounds.click(player);
@@ -235,7 +267,8 @@ public class PotionEditor extends GuiEditor {
                                                     });
                                  })).build(),
                 GuiElementBuilder.from(Items.CLOCK.getDefaultInstance())
-                                 .setName(Component.translatable("jsst.itemEditor.potionEditor.setDuration").setStyle(Styles.INPUT_HINT))
+                                 .setName(Component.translatable("jsst.itemEditor.potionEditor.setDuration")
+                                                   .setStyle(Styles.INPUT_HINT))
                                  .addLoreLine(Hints.leftClick())
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
@@ -246,13 +279,14 @@ public class PotionEditor extends GuiEditor {
                                                     result -> {
                                                         if (result.hasResult()) {
                                                             int newDuration = result.result();
-                                                            this.effects.set(index, copy(instance, null, newDuration == Integer.MAX_VALUE ? - 1 : result.result(), null));
+                                                            this.effects.set(index, copy(instance, null, newDuration == Integer.MAX_VALUE ? -1 : result.result(), null));
                                                         }
                                                         this.open();
                                                     });
                                  })).build(),
                 GuiElementBuilder.from(Items.GLOWSTONE_DUST.getDefaultInstance())
-                                 .setName(Component.translatable("jsst.itemEditor.potionEditor.setAmplifier").setStyle(Styles.INPUT_HINT))
+                                 .setName(Component.translatable("jsst.itemEditor.potionEditor.setAmplifier")
+                                                   .setStyle(Styles.INPUT_HINT))
                                  .addLoreLine(Hints.leftClick())
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
@@ -270,6 +304,8 @@ public class PotionEditor extends GuiEditor {
                                  })).build()
         );
     }
+
+
 
 
 }

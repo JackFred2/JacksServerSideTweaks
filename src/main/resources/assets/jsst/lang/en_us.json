@@ -25,6 +25,7 @@
 
   "jsst.itemEditor.selectBaseItem": "Select a base item",
   "jsst.itemEditor.title": "Item Editor",
+  "jsst.itemEditor.common.hintTitle": "Valid formats are:",
 
   "jsst.itemEditor.menus.resLocHint": "Must be of the form %s",
 
@@ -57,7 +58,6 @@
   "jsst.itemEditor.colour.weaponStats": "Weapon Stats Tooltips",
   "jsst.itemEditor.colour.custom": "Custom Colour",
   "jsst.itemEditor.colour.custom.remove": "Remove Custom Colour",
-  "jsst.itemEditor.colour.custom.hint": "Valid formats are:",
 
   "jsst.itemEditor.gradient.page": "Gradients",
   "jsst.itemEditor.gradient.page.playerHistory": "Gradient History",
@@ -97,6 +97,7 @@
   "jsst.itemEditor.potionEditor.setAmplifier": "Set Amplifier",
   "jsst.itemEditor.potionEditor.setDuration": "Set Duration",
   "jsst.itemEditor.potionEditor.noPotion": "No Potion",
+  "jsst.itemEditor.potionEditor.compensateForItemReductions": "Compensate for item-specific duration reduction",
 
   "jsst.itemEditor.labelMapNBTPrinter": "Stack NBT Printer",
   "jsst.itemEditor.labelMapNBTPrinter.hint": "Used for label map data files",

@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.GradientBuilder;
@@ -32,6 +33,17 @@ public interface Util {
                 }
             }
         }
+    }
+
+    static Component examples(@Nullable Boolean required, String... options) {
+        MutableComponent base = Component.empty().withStyle(Styles.MINOR_LABEL);
+        if (required != null) base.append(required ? "(" : "[");
+        for (int i = 0; i < options.length; i++) {
+            if (i != 0) base.append(Component.literal("|"));
+            base.append(Component.literal(options[i]).withStyle(Styles.EXAMPLE));
+        }
+        if (required != null) base.append(required ? ")" : "]");
+        return base;
     }
 
     static int slot(int column, int row) {

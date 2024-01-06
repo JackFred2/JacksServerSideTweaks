@@ -63,8 +63,9 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
     }
 
     protected final void drawPreview(int slot) {
-        this.setSlot(slot, GuiElementBuilder.from(this.stack.copy())
-                .setName(Util.getLabelAsTooltip(this.stack))
+        ItemStack result = getResult();
+        this.setSlot(slot, GuiElementBuilder.from(result.copy())
+                .setName(Util.getLabelAsTooltip(result))
                 .addLoreLine(Hints.leftClick(Translations.save()))
                 .addLoreLine(Hints.rightClick(Translations.reset()))
                 .setCallback(this::clickPreview));
@@ -84,9 +85,13 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
         this.stack = initial.copy();
     }
 
+    protected ItemStack getResult() {
+        return this.stack.copy();
+    }
+
     protected void complete() {
         Sounds.click(player);
-        this.callback.accept(this.stack);
+        this.callback.accept(getResult());
     }
 
     protected void cancel() {

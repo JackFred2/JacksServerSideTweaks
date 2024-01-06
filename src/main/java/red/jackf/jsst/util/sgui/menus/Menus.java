@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.Styles;
+import red.jackf.jsst.util.sgui.Util;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.selector.PaginatedSelectorMenu;
 import red.jackf.jsst.util.sgui.menus.selector.SinglePageSelectorMenu;
@@ -21,27 +22,37 @@ import java.util.regex.Pattern;
 public class Menus {
     private static final int PAGINATION_THRESHOLD = 52;
 
-    // colour
-    private static final Pattern SMALL_HEX = Pattern.compile("^#([\\da-fA-F]{3})$");
-    private static final Pattern HEX = Pattern.compile("^#([\\da-fA-F]{6})$");
-    private static final Pattern COMMA_SEPARATED = Pattern.compile("(?<red>\\d{1,3}) ?, ?(?<green>\\d{1,3}) ?, ?(?<blue>\\d{1,3})");
-    private static final Component SMALL_HEX_EXAMPLE = Component.literal("#§cF§aF§9F");
-    private static final Component HEX_EXAMPLE = Component.literal("#§cFF§aFF§9FF");
-    private static final Component COMMA_SEPARATED_EXAMPLE = Component.literal("§c255§r, §a255§r, §9255");
-    private static final Component INTEGER_EXAMPLE = Component.literal("16777215");
+    public static class ColourHints {
+        private static final Pattern SMALL_HEX = Pattern.compile("^#([\\da-fA-F]{3})$");
+        private static final Pattern HEX = Pattern.compile("^#([\\da-fA-F]{6})$");
+        private static final Pattern COMMA_SEPARATED = Pattern.compile("(?<red>\\d{1,3}) ?, ?(?<green>\\d{1,3}) ?, ?(?<blue>\\d{1,3})");
+
+        private static final Component SMALL_HEX_EXAMPLE = Component.literal("#§cF§aF§9F");
+        private static final Component HEX_EXAMPLE = Component.literal("#§cFF§aFF§9FF");
+        private static final Component COMMA_SEPARATED_EXAMPLE = Component.literal("§c255§r, §a255§r, §9255");
+        private static final Component INTEGER_EXAMPLE = Component.literal("16777215");
+    }
+
+    public static class Duration {
+        private static final Pattern INFINITE = Pattern.compile("^i|inf|infinite|∞$", Pattern.CASE_INSENSITIVE);
+        private static final Pattern TICKS = Pattern.compile("^\\+?(?<ticks>\\d+) ?(?:t|tick|ticks)?$", Pattern.CASE_INSENSITIVE);
+        private static final Pattern SECONDS = Pattern.compile("^\\+?(?<seconds>\\d+([,.]\\d+)?) ?(?:s|sec|secs|second|seconds)$", Pattern.CASE_INSENSITIVE);
+        private static final Pattern MINUTES = Pattern.compile("^\\+?(?<minutes>\\d+([,.]\\d+)?) ?(?:m|min|mins|minute|minutes)$", Pattern.CASE_INSENSITIVE);
+        private static final Pattern HOURS = Pattern.compile("^\\+?(?<hours>\\d+([,.]\\d+)?) ?(?:h|hr|hrs|hour|hours)$", Pattern.CASE_INSENSITIVE);
+        private static final Pattern CLOCK = Pattern.compile("^((?<hours>\\d+):)?(?<minutes>\\d+):(?<seconds>\\d+)([,.](?<ticks>\\d+))?$", Pattern.CASE_INSENSITIVE);
+
+        private static final Component INFINITE_EXAMPLE = Util.examples(null, "i", "inf", "infinite");
+        private static final Component TICKS_EXAMPLE = Component.literal("1234 ").append(Util.examples(false, "t", "tick", "ticks"));
+        private static final Component SECONDS_EXAMPLE = Component.literal("1800 ").append(Util.examples(true, "s", "sec", "secs", "second", "seconds"));
+        private static final Component MINUTES_EXAMPLE = Component.literal("7.5 ").append(Util.examples(true, "m", "min", "mins", "minute", "minutes"));
+        private static final Component HOURS_EXAMPLE = Component.literal("0.3 ").append(Util.examples(true, "h", "hr", "hrs", "hour", "hours"));
+        private static final Component CLOCK_EXAMPLE = Component.literal("02:45:34.15 ").append(Component.literal("(hours:minutes:seconds:ticks)").withStyle(Styles.EXAMPLE));
+    }
 
     // resource location
     private static final ItemStack DEFAULT_RESLOC_HINT = GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
             .setName(Component.translatable("jsst.itemEditor.menus.resLocHint", Component.literal("namespace:path").setStyle(Styles.EXAMPLE)))
             .asStack();
-
-    // duration
-    private static final Pattern INFINITE = Pattern.compile("^i|inf|infinite|∞$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern TICKS = Pattern.compile("^\\+?(?<ticks>\\d+) ?(?:t|tick|ticks)?$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern SECONDS = Pattern.compile("^\\+?(?<seconds>\\d+([,.]\\d+)?) ?(?:s|sec|secs|second|seconds)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern MINUTES = Pattern.compile("^\\+?(?<minutes>\\d+([,.]\\d+)?) ?(?:m|min|mins|minute|minutes)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern HOURS = Pattern.compile("^\\+?(?<hours>\\d+([,.]\\d+)?) ?(?:h|hr|hrs|hour|hours)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOCK = Pattern.compile("^((?<hours>\\d+):)?(?<minutes>\\d+):(?<seconds>\\d+)([,.](?<ticks>\\d+))?$", Pattern.CASE_INSENSITIVE);
 
     /**
      * Allows a user to select one of a collection of options. Will resize itself as needed, and will paginate. If paginated,
@@ -130,7 +141,7 @@ public class Menus {
     private static Result<Colour> parseColour(String str) {
         str = str.strip();
 
-        var smallHexMatch = SMALL_HEX.matcher(str);
+        var smallHexMatch = ColourHints.SMALL_HEX.matcher(str);
         if (smallHexMatch.matches()) {
             try {
                 String hexStr = smallHexMatch.group(1);
@@ -144,7 +155,7 @@ public class Menus {
             }
         }
 
-        var hexMatch = HEX.matcher(str);
+        var hexMatch = ColourHints.HEX.matcher(str);
         if (hexMatch.matches()) {
             try {
                 String hexStr = hexMatch.group(1);
@@ -155,7 +166,7 @@ public class Menus {
             }
         }
 
-        var commaMatch = COMMA_SEPARATED.matcher(str);
+        var commaMatch = ColourHints.COMMA_SEPARATED.matcher(str);
         if (commaMatch.matches()) {
             return Result.of(Colour.fromRGB(
                     Integer.parseInt(commaMatch.group("red")),
@@ -182,20 +193,20 @@ public class Menus {
                     if (colour.hasResult()) {
                         return GuiElementBuilder.from(new ItemStack(Items.GLOWSTONE))
                                                 .setName(Component.literal("|".repeat(30)).withColor(colour.result().toARGB()))
-                                                .addLoreLine(Component.translatable("jsst.itemEditor.colour.custom.hint"))
-                                                .addLoreLine(SMALL_HEX_EXAMPLE)
-                                                .addLoreLine(HEX_EXAMPLE)
-                                                .addLoreLine(COMMA_SEPARATED_EXAMPLE)
-                                                .addLoreLine(INTEGER_EXAMPLE)
+                                                .addLoreLine(Component.translatable("jsst.itemEditor.common.hintTitle"))
+                                                .addLoreLine(ColourHints.SMALL_HEX_EXAMPLE)
+                                                .addLoreLine(ColourHints.HEX_EXAMPLE)
+                                                .addLoreLine(ColourHints.COMMA_SEPARATED_EXAMPLE)
+                                                .addLoreLine(ColourHints.INTEGER_EXAMPLE)
                                                 .build();
                     } else {
                         return GuiElementBuilder.from(new ItemStack(Items.GRAY_CONCRETE))
                                                 .setName(Component.translatable("jsst.common.invalid").setStyle(Styles.NEGATIVE))
-                                                .addLoreLine(Component.translatable("jsst.itemEditor.colour.custom.hint"))
-                                                .addLoreLine(SMALL_HEX_EXAMPLE)
-                                                .addLoreLine(HEX_EXAMPLE)
-                                                .addLoreLine(COMMA_SEPARATED_EXAMPLE)
-                                                .addLoreLine(INTEGER_EXAMPLE)
+                                                .addLoreLine(Component.translatable("jsst.itemEditor.common.hintTitle"))
+                                                .addLoreLine(ColourHints.SMALL_HEX_EXAMPLE)
+                                                .addLoreLine(ColourHints.HEX_EXAMPLE)
+                                                .addLoreLine(ColourHints.COMMA_SEPARATED_EXAMPLE)
+                                                .addLoreLine(ColourHints.INTEGER_EXAMPLE)
                                                 .build();
                     }
                 })
@@ -206,16 +217,16 @@ public class Menus {
     private static Result<Integer> parseDuration(String str, double tickrate, boolean allowInfinite) {
         str = str.strip().toLowerCase();
 
-        if (allowInfinite && INFINITE.matcher(str).matches()) {
+        if (allowInfinite && Duration.INFINITE.matcher(str).matches()) {
             return Result.of(Integer.MAX_VALUE);
         }
 
-        var ticksMatch = TICKS.matcher(str);
+        var ticksMatch = Duration.TICKS.matcher(str);
         if (ticksMatch.matches()) {
             return Result.of(Integer.parseUnsignedInt(ticksMatch.group("ticks")));
         }
 
-        var secondsMatch = SECONDS.matcher(str);
+        var secondsMatch = Duration.SECONDS.matcher(str);
         if (secondsMatch.matches()) {
             double seconds = Double.parseDouble(secondsMatch.group("seconds"));
             if (Double.isFinite(seconds)) {
@@ -225,7 +236,7 @@ public class Menus {
             }
         }
 
-        var minutesMatch = MINUTES.matcher(str);
+        var minutesMatch = Duration.MINUTES.matcher(str);
         if (minutesMatch.matches()) {
             double minutes = Double.parseDouble(minutesMatch.group("minutes"));
             if (Double.isFinite(minutes)) {
@@ -235,7 +246,7 @@ public class Menus {
             }
         }
 
-        var hourMatch = HOURS.matcher(str);
+        var hourMatch = Duration.HOURS.matcher(str);
         if (hourMatch.matches()) {
             double hours = Double.parseDouble(hourMatch.group("hours"));
             if (Double.isFinite(hours)) {
@@ -245,7 +256,7 @@ public class Menus {
             }
         }
 
-        var clockMatch = CLOCK.matcher(str);
+        var clockMatch = Duration.CLOCK.matcher(str);
         if (clockMatch.matches()) {
             int hours = clockMatch.group("hours") != null ? Integer.parseUnsignedInt(clockMatch.group("hours")) : 0;
             int minutes = Integer.parseUnsignedInt(clockMatch.group("minutes"));
@@ -276,6 +287,14 @@ public class Menus {
                 .title(title)
                 .initial(initial)
                 .predicate(s -> parseDuration(s, player.server.tickRateManager().tickrate(), allowInfinite).hasResult())
+                .hint(GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+                              .setName(Component.translatable("jsst.itemEditor.common.hintTitle"))
+                              .addLoreLine(Duration.INFINITE_EXAMPLE)
+                              .addLoreLine(Duration.TICKS_EXAMPLE)
+                              .addLoreLine(Duration.SECONDS_EXAMPLE)
+                              .addLoreLine(Duration.MINUTES_EXAMPLE)
+                              .addLoreLine(Duration.HOURS_EXAMPLE)
+                              .addLoreLine(Duration.CLOCK_EXAMPLE))
                 .createAndShow(result -> callback.accept(result.flatMap(s -> parseDuration(s, player.server.tickRateManager().tickrate(), allowInfinite))));
     }
 }

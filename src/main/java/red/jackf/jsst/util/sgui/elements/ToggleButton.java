@@ -5,11 +5,13 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.GuiInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import red.jackf.jsst.util.sgui.Hints;
 import red.jackf.jsst.util.sgui.Inputs;
 import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.Translations;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ToggleButton implements GuiElementInterface {
@@ -67,10 +69,10 @@ public class ToggleButton implements GuiElementInterface {
 
     public static class Builder {
         private Component label;
-        private GuiElementInterface disabled;
-        private GuiElementInterface enabled;
+        private GuiElementInterface disabled = GuiElementBuilder.from(Items.RED_CONCRETE.getDefaultInstance()).build();
+        private GuiElementInterface enabled = GuiElementBuilder.from(Items.LIME_CONCRETE.getDefaultInstance()).build();
         private Consumer<Boolean> callback;
-        private boolean initial;
+        private boolean initial = false;
 
         private Builder() {}
 
@@ -110,6 +112,8 @@ public class ToggleButton implements GuiElementInterface {
         }
 
         public ToggleButton build() {
+            Objects.requireNonNull(label);
+            Objects.requireNonNull(callback);
             return new ToggleButton(label, disabled, enabled, initial, callback);
         }
     }
