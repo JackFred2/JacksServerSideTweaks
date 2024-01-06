@@ -269,12 +269,12 @@ public class Menus {
     public static void duration(
             ServerPlayer player,
             Component title,
-            long initial,
+            String initial,
             boolean allowInfinite,
             Consumer<Result<Integer>> callback) {
         stringBuilder(player)
                 .title(title)
-                .initial(initial + " ticks")
+                .initial(initial)
                 .predicate(s -> parseDuration(s, player.server.tickRateManager().tickrate(), allowInfinite).hasResult())
                 .createAndShow(result -> callback.accept(result.flatMap(s -> parseDuration(s, player.server.tickRateManager().tickrate(), allowInfinite))));
     }

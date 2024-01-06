@@ -149,6 +149,7 @@ public class PotionEditor extends GuiEditor {
                                                        })));
     }
 
+    // TODO move to lore editor
     private boolean isHidingAdditional() {
         return (((ItemStackAccessor) (Object) this.stack).jsst$itemEditor$getTooltipHideMask() & ItemStack.TooltipPart.ADDITIONAL.getMask()) != 0;
     }
@@ -240,11 +241,13 @@ public class PotionEditor extends GuiEditor {
                                      Sounds.click(player);
                                      Menus.duration(player,
                                                     Component.translatable("jsst.itemEditor.potionEditor.setDuration"),
-                                                    instance.getDuration(),
+                                                    instance.isInfiniteDuration() ? "infinite" : instance.getDuration() + " ticks",
                                                     true,
                                                     result -> {
-                                                        if (result.hasResult())
-                                                            this.effects.set(index, copy(instance, null, result.result(), null));
+                                                        if (result.hasResult()) {
+                                                            int newDuration = result.result();
+                                                            this.effects.set(index, copy(instance, null, newDuration == Integer.MAX_VALUE ? - 1 : result.result(), null));
+                                                        }
                                                         this.open();
                                                     });
                                  })).build(),
