@@ -1,5 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
+import eu.pb4.sgui.api.elements.AnimatedGuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.nbt.CompoundTag;
@@ -9,11 +10,15 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
+import red.jackf.jsst.mixins.itemeditor.ItemStackAccessor;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +39,8 @@ public class LoreEditor extends GuiEditor {
                                                                         .at(4, 9, 0, 6)
                                                                         .list(this.lore)
                                                                         .max(30)
-                                                                        .modifiable(() -> Component.literal("Lore Line").withStyle(Styles.MINOR_LABEL), true)
+                                                                        .modifiable(() -> Component.literal("Lore Line")
+                                                                                                   .withStyle(Styles.MINOR_LABEL), true)
                                                                         .onUpdate(this::redraw)
                                                                         .rowDraw(this::getLoreRow)
                                                                         .build();
@@ -112,6 +118,22 @@ public class LoreEditor extends GuiEditor {
             this.setSlot(Util.slot(3, row), CommonLabels.divider());
 
         this.setSlot(Util.slot(0, 5), CommonLabels.cancel(this::cancel));
+
+        this.setSlot(Util.slot(0, 4), GuiElementBuilder.from(Items.ENDER_EYE.getDefaultInstance())
+                                                       .setName(Component.translatable("jsst.itemEditor.lore.hideTooltipParts"))
+                                                       .addLoreLine(Hints.leftClick(Translations.open()))
+                                                       .setCallback(Inputs.leftClick(this::openTooltipPartHiding)));
+    }
+
+    private void openTooltipPartHiding() {
+        Sounds.click(player);
+        new TooltipPartHidingGui(player,
+                                 this.context,
+                                 this.stack,
+                                 stack -> {
+                                     this.stack = stack;
+                                     this.open();
+                                 }).open();
     }
 
     @Override
@@ -132,6 +154,130 @@ public class LoreEditor extends GuiEditor {
         this.drawPreview(Util.slot(1, 1));
 
         this.lorePaginator.draw();
+    }
+
+    private static class TooltipPartHidingGui extends GuiEditor {
+        private int mask;
+
+        public TooltipPartHidingGui(
+                ServerPlayer player,
+                EditorContext context,
+                ItemStack initial,
+                Consumer<ItemStack> callback) {
+            super(MenuType.GENERIC_9x2, player, context, initial, callback);
+            this.setTitle(Component.translatable("jsst.itemEditor.lore.hideTooltipParts"));
+            this.mask = ((ItemStackAccessor) (Object) this.stack).jsst$itemEditor$getTooltipHideMask();
+
+            this.drawStatic();
+        }
+
+        private void drawStatic() {
+            this.setSlot(Util.slot(7, 0), CommonLabels.divider());
+            this.setSlot(Util.slot(7, 1), CommonLabels.divider());
+
+            this.setSlot(Util.slot(8, 1), CommonLabels.cancel(this::cancel));
+
+            this.setSlot(Util.slot(0, 0), this.getPartButton(
+                    ItemStack.TooltipPart.ENCHANTMENTS,
+                    GuiElementBuilder.from(Items.ENCHANTING_TABLE.getDefaultInstance()).build()
+            ));
+
+            this.setSlot(Util.slot(1, 0), this.getPartButton(
+                    ItemStack.TooltipPart.MODIFIERS,
+                    GuiElementBuilder.from(Items.DIAMOND_SWORD.getDefaultInstance()).hideFlags().build()
+            ));
+
+            this.setSlot(Util.slot(2, 0), this.getPartButton(
+                    ItemStack.TooltipPart.UNBREAKABLE,
+                    GuiElementBuilder.from(Items.STONE_BRICKS.getDefaultInstance()).build()
+            ));
+
+            this.setSlot(Util.slot(3, 0), this.getPartButton(
+                    ItemStack.TooltipPart.CAN_DESTROY,
+                    GuiElementBuilder.from(Items.GOLDEN_PICKAXE.getDefaultInstance()).hideFlags().build()
+            ));
+
+            this.setSlot(Util.slot(4, 0), this.getPartButton(
+                    ItemStack.TooltipPart.CAN_PLACE,
+                    GuiElementBuilder.from(Items.OAK_PLANKS.getDefaultInstance()).build()
+            ));
+
+            this.setSlot(Util.slot(5, 0), this.getPartButton(
+                    ItemStack.TooltipPart.ADDITIONAL,
+                    makeAdditionalIcon()
+            ));
+
+            this.setSlot(Util.slot(6, 0), this.getPartButton(
+                    ItemStack.TooltipPart.DYE,
+                    GuiElementBuilder.from(DyeableLeatherItem.dyeArmor(Items.LEATHER_CHESTPLATE.getDefaultInstance(), List.of((DyeItem) Items.RED_DYE))).hideFlags().build()
+            ));
+
+            this.setSlot(Util.slot(0, 1), this.getPartButton(
+                    ItemStack.TooltipPart.UPGRADES,
+                    GuiElementBuilder.from(Items.EYE_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance()).hideFlags().build()
+            ));
+        }
+
+        private AnimatedGuiElement makeAdditionalIcon() {
+            var builder = new AnimatedGuiElementBuilderExt();
+            builder.setInterval(16);
+
+            for (var item : List.of(
+                    Items.BLUE_BANNER,
+                    Items.GLOBE_BANNER_PATTERN,
+                    Items.CROSSBOW,
+                    Items.ENCHANTED_BOOK,
+                    Items.FIREWORK_ROCKET,
+                    Items.PAINTING,
+                    Items.GOAT_HORN,
+                    Items.FILLED_MAP,
+                    Items.POTION,
+                    Items.MUSIC_DISC_WAIT,
+                    Items.WRITTEN_BOOK
+            )) {
+                builder.setItem(item).hideFlags().saveItemStack();
+            }
+
+            return builder.build();
+        }
+
+        private ToggleButton getPartButton(ItemStack.TooltipPart tooltipPart, GuiElementInterface icon) {
+            return ToggleButton.builder()
+                    .label(Component.translatable("jsst.itemEditor.lore.hideTooltipParts." + Util.snakeToCamelCase(tooltipPart.name().toLowerCase())))
+                    .makeEnabledGlow()
+                    .disabled(icon)
+                    .enabled(icon)
+                    .initial((this.mask & tooltipPart.getMask()) != 0)
+                    .setCallback(newVal -> {
+                        Sounds.click(player);
+                        if (newVal) {
+                            this.mask |= tooltipPart.getMask();
+                        } else {
+                            this.mask &= ~tooltipPart.getMask();
+                        }
+                        this.redraw();
+                    }).build();
+        }
+
+        @Override
+        protected void reset() {
+            super.reset();
+            this.mask = ((ItemStackAccessor) (Object) this.stack).jsst$itemEditor$getTooltipHideMask();
+        }
+
+        @Override
+        protected void redraw() {
+            this.applyMask();
+            this.drawPreview(Util.slot(8, 0));
+        }
+
+        private void applyMask() {
+            if (this.mask == 0) {
+                this.stack.removeTagKey("HideFlags");
+            } else {
+                this.stack.getOrCreateTag().putInt("HideFlags", this.mask);
+            }
+        }
     }
 
 

@@ -89,7 +89,15 @@
 
   "jsst.itemEditor.lore": "Lore Editor",
   "jsst.itemEditor.lore.line": "Edit Lore Line",
-  "jsst.itemEditor.lore.tooltip.hideAdditional": "Hide Additional Tooltips",
+  "jsst.itemEditor.lore.hideTooltipParts": "Hide Tooltip Parts",
+  "jsst.itemEditor.lore.hideTooltipParts.enchantments": "Enchantments",
+  "jsst.itemEditor.lore.hideTooltipParts.modifiers": "Modifiers and Stats",
+  "jsst.itemEditor.lore.hideTooltipParts.unbreakable": "Unbreakable",
+  "jsst.itemEditor.lore.hideTooltipParts.canDestroy": "Can Destroy",
+  "jsst.itemEditor.lore.hideTooltipParts.canPlace": "Can Place",
+  "jsst.itemEditor.lore.hideTooltipParts.additional": "Additional",
+  "jsst.itemEditor.lore.hideTooltipParts.dye": "Dyed Text",
+  "jsst.itemEditor.lore.hideTooltipParts.upgrades": "Upgrades and Trims",
 
   "jsst.itemEditor.durability": "Durability Editor",
 
@@ -101,6 +109,7 @@
   "jsst.itemEditor.potion.setDuration": "Set Duration",
   "jsst.itemEditor.potion.noPotion": "No Potion",
   "jsst.itemEditor.potion.compensateForItemReductions": "Compensate for item-specific duration reduction",
+  "jsst.itemEditor.potion.hideAdditionalTooltipPart": "Hide Additional Tooltips",
 
   "jsst.itemEditor.labelMapNBTPrinter": "Stack NBT Printer",
   "jsst.itemEditor.labelMapNBTPrinter.hint": "Used for label map data files",

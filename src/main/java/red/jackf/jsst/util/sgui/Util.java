@@ -20,6 +20,26 @@ import java.util.List;
 import java.util.OptionalInt;
 
 public interface Util {
+    static String snakeToCamelCase(String snakeCase) {
+        var builder = new StringBuilder();
+        String[] split = snakeCase.split("_");
+        for (int i = 0, splitLength = split.length; i < splitLength; i++) {
+            var part = split[i];
+            if (part.isBlank()) continue;
+            if (i != 0) {
+                char first = part.charAt(0);
+                if (Character.isLowerCase(first)) {
+                    builder.append(Character.toUpperCase(first));
+                    builder.append(part.substring(1));
+                } else {
+                    builder.append(part);
+                }
+            } else {
+                builder.append(part);
+            }
+        }
+        return builder.toString();
+    }
     static void returnItems(ServerPlayer player, Container container) {
         if (!player.isAlive() || player.hasDisconnected()) {
             for(int i = 0; i < container.getContainerSize(); ++i) {
@@ -184,6 +204,17 @@ public interface Util {
         }
 
         public <T> Iterable<SlotItemPair<T>> iterate(Iterable<T> elements) {
+            int index = 0;
+            var result = new ArrayList<SlotItemPair<T>>();
+            for (T element : elements) {
+                var slot = this.translate(index++);
+                if (slot.isEmpty()) return result;
+                result.add(new SlotItemPair<>(slot.getAsInt(), element));
+            }
+            return result;
+        }
+
+        public <T> Iterable<SlotItemPair<T>> iterate(T[] elements) {
             int index = 0;
             var result = new ArrayList<SlotItemPair<T>>();
             for (T element : elements) {

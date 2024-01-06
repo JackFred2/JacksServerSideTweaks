@@ -20,17 +20,20 @@ public class ToggleButton implements GuiElementInterface {
     private final GuiElementInterface enabled;
     private final Consumer<Boolean> callback;
 
+    private final boolean makeEnabledGlow;
     private boolean value;
 
     private ToggleButton(
             Component label,
             GuiElementInterface disabled,
             GuiElementInterface enabled,
+            boolean makeEnabledGlow,
             boolean initial,
             Consumer<Boolean> callback) {
         this.label = label;
         this.disabled = disabled;
         this.enabled = enabled;
+        this.makeEnabledGlow = makeEnabledGlow;
         this.value = initial;
         this.callback = callback;
     }
@@ -55,6 +58,7 @@ public class ToggleButton implements GuiElementInterface {
         if (this.value) {
             builder = GuiElementBuilder.from(enabled)
                                        .setName(this.label.copy().withStyle(Styles.POSITIVE));
+            if (this.makeEnabledGlow) builder.glow();
         } else {
             builder = GuiElementBuilder.from(disabled)
                                        .setName(this.label.copy().withStyle(Styles.NEGATIVE));
@@ -72,6 +76,7 @@ public class ToggleButton implements GuiElementInterface {
         private GuiElementInterface disabled = GuiElementBuilder.from(Items.RED_CONCRETE.getDefaultInstance()).build();
         private GuiElementInterface enabled = GuiElementBuilder.from(Items.LIME_CONCRETE.getDefaultInstance()).build();
         private Consumer<Boolean> callback;
+        private boolean makeEnabledGlow = false;
         private boolean initial = false;
 
         private Builder() {}
@@ -101,6 +106,11 @@ public class ToggleButton implements GuiElementInterface {
             return this;
         }
 
+        public Builder makeEnabledGlow() {
+            this.makeEnabledGlow = true;
+            return this;
+        }
+
         public Builder initial(boolean initial) {
             this.initial = initial;
             return this;
@@ -114,7 +124,7 @@ public class ToggleButton implements GuiElementInterface {
         public ToggleButton build() {
             Objects.requireNonNull(label);
             Objects.requireNonNull(callback);
-            return new ToggleButton(label, disabled, enabled, initial, callback);
+            return new ToggleButton(label, disabled, enabled, makeEnabledGlow, initial, callback);
         }
     }
 }

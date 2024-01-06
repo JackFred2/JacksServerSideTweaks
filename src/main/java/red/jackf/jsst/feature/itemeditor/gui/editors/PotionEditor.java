@@ -229,7 +229,7 @@ public class PotionEditor extends GuiEditor {
         this.setSlot(Util.slot(2, 4), ToggleButton.builder()
                                                   .disabled(Items.GLOWSTONE_DUST.getDefaultInstance())
                                                   .enabled(Items.GUNPOWDER.getDefaultInstance())
-                                                  .label(Component.translatable("jsst.itemEditor.lore.tooltip.hideAdditional"))
+                                                  .label(Component.translatable("jsst.itemEditor.potion.hideAdditionalTooltipPart"))
                                                   .initial(isHidingAdditional())
                                                   .setCallback(newValue -> {
                                                       Sounds.click(player);
