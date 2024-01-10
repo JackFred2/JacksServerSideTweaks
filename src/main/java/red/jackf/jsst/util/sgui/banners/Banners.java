@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.ArrayList;
@@ -49,6 +50,12 @@ public class Banners {
         ItemStack LEFT = fromPMCCode("12g1E");
         ItemStack RIGHT = fromPMCCode("1bg1e");
         ItemStack HORIZONTAL = fromPMCCode("1bu2s1o1v18");
+    }
+
+    public static ItemStack fromColours(DyeColor top, DyeColor bottom) {
+        return builder(top)
+                .add(BannerPatterns.GRADIENT_UP, bottom)
+                .build(false);
     }
 
     public static ItemStack fromPMCCode(String pmcCode) {

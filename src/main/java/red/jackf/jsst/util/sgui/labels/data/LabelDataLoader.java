@@ -68,7 +68,7 @@ public final class LabelDataLoader<T> implements SimpleResourceReloadListener<La
                             if (element != null) {
                                 labels.put(element, label.getValue());
                             } else {
-                                LOGGER.error("Unknown value for registry {}: {}. Ignoring...", getFolder(this.map.getRegistry().key()), label.getKey());
+                                LOGGER.debug("Unknown value for registry {}: {}. Ignoring...", getFolder(this.map.getRegistry().key()), label.getKey());
                             }
                         }
 
