@@ -21,7 +21,6 @@ import red.jackf.jsst.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 import red.jackf.jsst.feature.qualityoflife.QualityOfLife;
 import red.jackf.jsst.util.Scheduler;
-import red.jackf.jsst.util.ServerTracker;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 
 import java.util.List;
@@ -65,7 +64,6 @@ public class JSST implements ModInitializer {
         }
         CONFIG.instance();
         Scheduler.INSTANCE.setup();
-        ServerTracker.setup();
         LabelMaps.touch();
 
         CommandRegistrationCallback.EVENT.register(JSSTCommand::create);

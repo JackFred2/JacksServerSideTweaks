@@ -4,9 +4,9 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import red.jackf.jackfredlib.api.base.ServerTracker;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.ItemEditorCommand;
-import red.jackf.jsst.util.ServerTracker;
 
 import java.util.function.Predicate;
 
@@ -36,7 +36,7 @@ public class JSSTCommand {
     }
 
     public static void resendCommands() {
-        var server = ServerTracker.getServer();
+        var server = ServerTracker.INSTANCE.getServer();
         if (server != null) {
             server.getPlayerList().getPlayers().forEach(server.getCommands()::sendCommands);
         }

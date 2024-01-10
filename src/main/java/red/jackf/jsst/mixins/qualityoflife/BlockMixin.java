@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import red.jackf.jackfredlib.api.base.Ephemeral2;
 import red.jackf.jsst.feature.qualityoflife.QualityOfLife;
-import red.jackf.jsst.util.Ephemeral2;
 
 import java.util.List;
 import java.util.function.Consumer;

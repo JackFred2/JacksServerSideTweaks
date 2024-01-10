@@ -4,6 +4,7 @@ import blue.endless.jankson.Comment;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.Vec3;
 import org.slf4j.Logger;
+import red.jackf.jackfredlib.api.base.ServerTracker;
 import red.jackf.jackfredlib.api.lying.Tracker;
 import red.jackf.jackfredlib.api.lying.entity.EntityLie;
 import red.jackf.jackfredlib.api.lying.entity.EntityUtils;
@@ -23,7 +25,6 @@ import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.ToggleFeature;
 import red.jackf.jsst.mixins.containernames.ChunkMapAccessor;
 import red.jackf.jsst.util.Scheduler;
-import red.jackf.jsst.util.ServerTracker;
 
 import java.util.*;
 
@@ -135,9 +136,17 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
         getLabels(level).put(basePosition, new LabelLie(tracker, position));
     }
 
+    private static List<ServerLevel> getLoadedLevels() {
+        MinecraftServer server = ServerTracker.INSTANCE.getServer();
+        if (server == null) return Collections.emptyList();
+        List<ServerLevel> levels = new ArrayList<>();
+        server.getAllLevels().forEach(levels::add);
+        return levels;
+    }
+
     @Override
     public void disable() {
-        for (ServerLevel level : ServerTracker.eachLoadedLevel()) {
+        for (ServerLevel level : getLoadedLevels()) {
             getLabels(level).values().forEach(LabelLie::fade);
             getLabels(level).clear();
         }
@@ -145,7 +154,7 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
 
     @Override
     public void enable() {
-        var levels = ServerTracker.eachLoadedLevel();
+        var levels = getLoadedLevels();
         if (levels.isEmpty()) return;
         LOGGER.info("Adding labels to all loaded block entities; server may stutter for a bit.");
         for (ServerLevel level : levels) {
@@ -165,7 +174,7 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
     public void reload(Config current) {
         super.reload(current);
         if (current.enabled) {
-            for (ServerLevel level : ServerTracker.eachLoadedLevel()) {
+            for (ServerLevel level : getLoadedLevels()) {
                 for (LabelLie label : getLabels(level).values()) {
                     label.tracker().setFocus(label.position(), 6 * config().viewRange);
 
