@@ -100,6 +100,7 @@
   "jsst.itemEditor.lore.hideTooltipParts.upgrades": "Upgrades and Trims",
 
   "jsst.itemEditor.durability": "Durability Editor",
+  "jsst.itemEditor.durability.custom": "Set Custom Durability",
 
   "jsst.itemEditor.potion": "Potion Editor",
   "jsst.itemEditor.potion.setPotionItemType": "Change Potion Type",

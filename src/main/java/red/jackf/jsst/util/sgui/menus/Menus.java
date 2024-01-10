@@ -1,6 +1,7 @@
 package red.jackf.jsst.util.sgui.menus;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -86,24 +87,21 @@ public class Menus {
         }
     }
 
-    private static ItemStack makeIntegerHint(@Nullable Integer minimumInclusive, @Nullable Integer maximumInclusive) {
+    private static GuiElementBuilderInterface<?> makeIntegerHint(@Nullable Integer minimumInclusive, @Nullable Integer maximumInclusive) {
         if (minimumInclusive == null) {
             if (maximumInclusive == null) {
-                return ItemStack.EMPTY;
+                return GuiElementBuilder.from(ItemStack.EMPTY);
             } else {
                 return GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
-                        .setName(Component.literal("x ≤ " + maximumInclusive).withStyle(Styles.EXAMPLE))
-                        .asStack();
+                        .setName(Component.literal("x ≤ " + maximumInclusive).withStyle(Styles.EXAMPLE));
             }
         } else {
             if (maximumInclusive == null) {
                 return GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
-                                        .setName(Component.literal(minimumInclusive + " ≤ x").withStyle(Styles.EXAMPLE))
-                                        .asStack();
+                                        .setName(Component.literal(minimumInclusive + " ≤ x").withStyle(Styles.EXAMPLE));
             } else {
                 return GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
-                                        .setName(Component.literal(minimumInclusive + " ≤ x ≤ " + maximumInclusive).withStyle(Styles.EXAMPLE))
-                                        .asStack();
+                                        .setName(Component.literal(minimumInclusive + " ≤ x ≤ " + maximumInclusive).withStyle(Styles.EXAMPLE));
             }
         }
     }
@@ -120,8 +118,46 @@ public class Menus {
                 .title(title)
                 .initial(String.valueOf(initial))
                 .predicate(s -> parseInt(s, minimumInclusive, maximumInclusive).hasResult())
-                .hint(hint == null ? makeIntegerHint(minimumInclusive, maximumInclusive) : hint)
+                .hint(hint == null ? makeIntegerHint(minimumInclusive, maximumInclusive) : GuiElementBuilder.from(hint))
                 .createAndShow(result -> callback.accept(result.flatMap(s -> parseInt(s, minimumInclusive, maximumInclusive))));
+    }
+
+    private static Result<Integer> parseIntOrPercentage(String str, int maximumValueInclusive) {
+        var intOnly = parseInt(str, 0, maximumValueInclusive);
+        if (intOnly.hasResult()) return intOnly;
+
+        if (str.charAt(str.length() - 1) == '%') {
+            try {
+                double parsed = Double.parseDouble(str.substring(0, str.length() - 1));
+                if (parsed < 0.0 || parsed > 100.0) return Result.empty();
+                return Result.of((int) (maximumValueInclusive * parsed / 100));
+            } catch (NumberFormatException ex) {
+                return Result.empty();
+            }
+        } else {
+            return Result.empty();
+        }
+    }
+
+    private static GuiElementBuilderInterface<?> makeIntegerOrPercentageHint(int maximumValueInclusive) {
+        return GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+                .setName(Component.translatable("jsst.itemEditor.common.hintTitle"))
+                .addLoreLine(Component.literal("0 ≤ x ≤ " + maximumValueInclusive).withStyle(Styles.EXAMPLE))
+                .addLoreLine(Component.literal("0% ≤ x ≤ 100%").withStyle(Styles.EXAMPLE));
+    }
+
+    public static void integerOrPercentage(
+            ServerPlayer player,
+            Component title,
+            int initial,
+            int maximumValueInclusive,
+            Consumer<Result<Integer>> callback) {
+        stringBuilder(player)
+                .title(title)
+                .initial(String.valueOf(initial))
+                .predicate(s -> parseIntOrPercentage(s, maximumValueInclusive).hasResult())
+                .hint(makeIntegerOrPercentageHint(maximumValueInclusive))
+                .createAndShow(result -> callback.accept(result.flatMap(s -> parseIntOrPercentage(s, maximumValueInclusive))));
     }
 
     public static void resourceLocation(

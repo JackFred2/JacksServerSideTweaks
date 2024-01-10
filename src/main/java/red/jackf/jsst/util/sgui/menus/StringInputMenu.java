@@ -147,7 +147,8 @@ public class StringInputMenu extends SimpleGui {
         }
 
         public Builder hint(GuiElementBuilderInterface<?> hint) {
-            this.hint = ignored -> hint.build();
+            GuiElementInterface built = hint.build();
+            this.hint = ignored -> built;
             return this;
         }
 

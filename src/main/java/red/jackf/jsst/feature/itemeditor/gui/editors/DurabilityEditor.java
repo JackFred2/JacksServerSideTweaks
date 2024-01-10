@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.menus.Menus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,22 +29,40 @@ public class DurabilityEditor extends GuiEditor {
             EditorContext context,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x4, player, context, initial, callback);
+        super(MenuType.GENERIC_9x5, player, context, initial, callback);
         this.setTitle(Component.translatable("jsst.itemEditor.durability"));
 
-        this.setSlot(Util.slot(0, 3), CommonLabels.cancel(this::cancel));
+        this.setSlot(Util.slot(2, 3), GuiElementBuilder.from(Items.NAME_TAG.getDefaultInstance())
+                .setName(Component.translatable("jsst.itemEditor.durability.custom").withStyle(Styles.INPUT_HINT))
+                .addLoreLine(Hints.leftClick())
+                .setCallback(Inputs.leftClick(() -> {
+                    Sounds.click(player);
+                    Menus.integerOrPercentage(player,
+                            Component.translatable("jsst.itemEditor.durability.custom"),
+                            stack.getMaxDamage() - stack.getDamageValue(),
+                            stack.getMaxDamage(),
+                            result -> {
+                                if (result.hasResult()) stack.setDamageValue(stack.getMaxDamage() - result.result());
+                                this.open();
+                            });
+                })));
+
+        this.setSlot(Util.slot(0, 4), CommonLabels.cancel(this::cancel));
     }
 
     public static GuiElementBuilder getLabel() {
         return GuiElementBuilder.from(new ItemStack(Items.CRACKED_STONE_BRICKS))
-                                .setName(Component.translatable("jsst.itemEditor.durability"));
+                .setName(Component.translatable("jsst.itemEditor.durability"));
     }
 
     @Override
     protected void redraw() {
         this.drawPreview(Util.slot(1, 1));
 
-        for (int row = 0; row < 4; row++) this.setSlot(Util.slot(3, row), CommonLabels.divider());
+        this.setSlot(Util.slot(0, 3), GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+                .setName(Translations.current(Component.literal("" + (stack.getMaxDamage() - stack.getDamageValue())).withStyle(Styles.VARIABLE))));
+
+        for (int row = 0; row < 5; row++) this.setSlot(Util.slot(3, row), CommonLabels.divider());
 
         var options = new ArrayList<GuiElementInterface>();
         int maxDamage = stack.getMaxDamage();
@@ -56,13 +75,13 @@ public class DurabilityEditor extends GuiEditor {
                 var preview = stack.copy();
                 preview.setDamageValue(damage);
                 options.add(GuiElementBuilder.from(preview)
-                                             .setName(Component.translatable("optimizeWorld.progress.percentage", "%.0f".formatted(entry * 100)))
-                                             .addLoreLine(Hints.leftClick(Translations.select()))
-                                             .setCallback(Inputs.leftClick(() -> {
-                                                 Sounds.click(player);
-                                                 this.stack.setDamageValue(damage);
-                                                 this.redraw();
-                                             })).build());
+                        .setName(Component.translatable("optimizeWorld.progress.percentage", "%.0f".formatted(entry * 100)))
+                        .addLoreLine(Hints.leftClick(Translations.select()))
+                        .setCallback(Inputs.leftClick(() -> {
+                            Sounds.click(player);
+                            this.stack.setDamageValue(damage);
+                            this.redraw();
+                        })).build());
             }
 
             // durability numbers
@@ -72,39 +91,39 @@ public class DurabilityEditor extends GuiEditor {
                 var preview = stack.copy();
                 preview.setDamageValue(damage);
                 options.add(GuiElementBuilder.from(preview)
-                                             .setName(Component.literal(String.valueOf(entry)))
-                                             .addLoreLine(Hints.leftClick(Translations.select()))
-                                             .setCallback(Inputs.leftClick(() -> {
-                                                 Sounds.click(player);
-                                                 this.stack.setDamageValue(damage);
-                                                 this.redraw();
-                                             })).build());
+                        .setName(Component.literal(String.valueOf(entry)))
+                        .addLoreLine(Hints.leftClick(Translations.select()))
+                        .setCallback(Inputs.leftClick(() -> {
+                            Sounds.click(player);
+                            this.stack.setDamageValue(damage);
+                            this.redraw();
+                        })).build());
             }
 
             var preview = stack.copy();
             preview.setDamageValue(0);
             options.add(GuiElementBuilder.from(preview)
-                                         .glow()
-                                         .setName(Component.translatable("item.unbreakable").withStyle(Styles.POSITIVE))
-                                         .addLoreLine(Hints.leftClick(Translations.select()))
-                                         .setCallback(Inputs.leftClick(() -> {
-                                             Sounds.click(player);
-                                             stack.getOrCreateTag().putBoolean("Unbreakable", true);
-                                             this.redraw();
-                                         })).build());
+                    .glow()
+                    .setName(Component.translatable("item.unbreakable").withStyle(Styles.POSITIVE))
+                    .addLoreLine(Hints.leftClick(Translations.select()))
+                    .setCallback(Inputs.leftClick(() -> {
+                        Sounds.click(player);
+                        stack.getOrCreateTag().putBoolean("Unbreakable", true);
+                        this.redraw();
+                    })).build());
         } else {
             options.add(GuiElementBuilder.from(stack)
-                                         .glow()
-                                         .setName(Component.translatable("item.unbreakable").withStyle(Styles.NEGATIVE.withStrikethrough(true)))
-                                         .addLoreLine(Hints.leftClick(Translations.select()))
-                                         .setCallback(Inputs.leftClick(() -> {
-                                             Sounds.click(player);
-                                             stack.removeTagKey("Unbreakable");
-                                             this.redraw();
-                                         })).build());
+                    .glow()
+                    .setName(Component.translatable("item.unbreakable").withStyle(Styles.NEGATIVE.withStrikethrough(true)))
+                    .addLoreLine(Hints.leftClick(Translations.select()))
+                    .setCallback(Inputs.leftClick(() -> {
+                        Sounds.click(player);
+                        stack.removeTagKey("Unbreakable");
+                        this.redraw();
+                    })).build());
         }
 
-        var optionSlots = Util.slotTranslator(4, 9, 0, 4);
+        var optionSlots = Util.slotTranslator(4, 9, 0, 5);
         optionSlots.fill(this, ItemStack.EMPTY);
 
         for (var entry : optionSlots.iterate(options)) {

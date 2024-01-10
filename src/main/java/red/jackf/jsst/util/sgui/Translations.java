@@ -5,6 +5,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.DyeColor;
 
 public interface Translations {
+    static MutableComponent custom() {
+        return Component.translatable("generator.custom");
+    }
+
     static MutableComponent cancel() {
         return Component.translatable("gui.cancel");
     }
