@@ -21,6 +21,7 @@ public class ItemEditorGui extends SimpleGui {
             NameEditor.TYPE,
             LoreEditor.TYPE,
             DurabilityEditor.TYPE,
+            TrimEditor.TYPE,
             PotionEditor.TYPE,
             StackNBTPrinter.TYPE
     );
@@ -60,7 +61,7 @@ public class ItemEditorGui extends SimpleGui {
         final var editors = EDITORS.stream()
                                    .filter(type -> type.appliesTo().test(stack))
                                    .filter(type -> !context.cosmeticOnly() || type.cosmeticOnly())
-                                   .map(editorType -> new WrappedElement(editorType.labelSupplier().get().build(),
+                                   .map(editorType -> new WrappedElement(editorType.labelSupplier().apply(context).build(),
                                                                          List.of(Hints.leftClick(Translations.open())),
                                                                          (slot, guiClickType, rawClickType, gui) -> {
                                                                              if (guiClickType == ClickType.MOUSE_LEFT)

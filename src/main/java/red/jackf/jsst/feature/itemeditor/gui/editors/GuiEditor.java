@@ -31,8 +31,9 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
             ServerPlayer player,
             EditorContext context,
             ItemStack initial,
-            Consumer<ItemStack> callback) {
-        super(type, player, false);
+            Consumer<ItemStack> callback,
+            boolean usePlayerSlots) {
+        super(type, player, usePlayerSlots);
         this.context = context;
         this.initial = initial;
         this.callback = callback;
@@ -69,17 +70,15 @@ public abstract class GuiEditor extends SimpleGui implements Editor {
                 .setName(Util.getLabelAsTooltip(result))
                 .addLoreLine(Hints.leftClick(Translations.save()))
                 .addLoreLine(Hints.rightClick(Translations.reset()))
-                .setCallback(this::clickPreview));
-    }
-
-    private void clickPreview(ClickType type) {
-        if (type == ClickType.MOUSE_LEFT) {
-            this.complete();
-        } else if (type == ClickType.MOUSE_RIGHT) {
-            Sounds.clear(player);
-            this.reset();
-            this.redraw();
-        }
+                .setCallback(type -> {
+                    if (type == ClickType.MOUSE_LEFT) {
+                        this.complete();
+                    } else if (type == ClickType.MOUSE_RIGHT) {
+                        Sounds.clear(player);
+                        this.reset();
+                        this.redraw();
+                    }
+                }));
     }
 
     protected void reset() {

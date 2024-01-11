@@ -69,13 +69,13 @@ public class PotionEditor extends GuiEditor {
             EditorContext context,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x6, player, context, initial, callback);
+        super(MenuType.GENERIC_9x6, player, context, initial, callback, false);
         this.setTitle(Component.translatable("jsst.itemEditor.potion"));
         this.loadFromStack();
         this.drawStatic();
     }
 
-    private static AnimatedGuiElementBuilder createLabel() {
+    private static AnimatedGuiElementBuilder createLabel(EditorContext context) {
         AnimatedGuiElementBuilderExt builder = new AnimatedGuiElementBuilderExt();
 
         for (Colour colour : List.of(Colours.RED, Colours.ORANGE, Colours.YELLOW, Colours.GREEN, Colours.LIGHT_BLUE, Colours.BLUE, Colours.PURPLE, Colours.MAGENTA)) {

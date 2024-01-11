@@ -23,7 +23,7 @@ public class StackNBTPrinter implements Editor {
             StackNBTPrinter::new,
             true,
             ignored -> true,
-            () -> GuiElementBuilder.from(Items.ACACIA_SIGN.getDefaultInstance())
+            context -> GuiElementBuilder.from(Items.ACACIA_SIGN.getDefaultInstance())
                                    .setName(Component.translatable("jsst.itemEditor.labelMapNBTPrinter"))
                                    .addLoreLine(Component.translatable("jsst.itemEditor.labelMapNBTPrinter.hint").withStyle(Styles.MINOR_LABEL))
     );

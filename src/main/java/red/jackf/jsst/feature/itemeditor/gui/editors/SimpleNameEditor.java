@@ -26,11 +26,11 @@ public class SimpleNameEditor extends GuiEditor {
             EditorContext context,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x1, player, context, initial, callback);
+        super(MenuType.GENERIC_9x1, player, context, initial, callback, false);
         this.setTitle(Component.translatable("jsst.itemEditor.simpleName"));
     }
 
-    public static GuiElementBuilder getLabel() {
+    public static GuiElementBuilder getLabel(EditorContext context) {
         return GuiElementBuilder.from(new ItemStack(Items.PAPER))
                                 .setName(Component.translatable("jsst.itemEditor.simpleName"));
     }

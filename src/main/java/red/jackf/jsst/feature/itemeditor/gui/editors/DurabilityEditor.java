@@ -29,7 +29,7 @@ public class DurabilityEditor extends GuiEditor {
             EditorContext context,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x5, player, context, initial, callback);
+        super(MenuType.GENERIC_9x5, player, context, initial, callback, false);
         this.setTitle(Component.translatable("jsst.itemEditor.durability"));
 
         this.setSlot(Util.slot(2, 3), GuiElementBuilder.from(Items.NAME_TAG.getDefaultInstance())
@@ -50,7 +50,7 @@ public class DurabilityEditor extends GuiEditor {
         this.setSlot(Util.slot(0, 4), CommonLabels.cancel(this::cancel));
     }
 
-    public static GuiElementBuilder getLabel() {
+    public static GuiElementBuilder getLabel(EditorContext context) {
         return GuiElementBuilder.from(new ItemStack(Items.CRACKED_STONE_BRICKS))
                 .setName(Component.translatable("jsst.itemEditor.durability"));
     }

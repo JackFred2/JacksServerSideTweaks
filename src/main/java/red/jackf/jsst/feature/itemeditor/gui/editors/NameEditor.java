@@ -16,7 +16,7 @@ public class NameEditor implements Editor {
             NameEditor::new,
             true,
             ignored -> true,
-            () -> GuiElementBuilder.from(Items.ANVIL.getDefaultInstance())
+            context -> GuiElementBuilder.from(Items.ANVIL.getDefaultInstance())
                                    .setName(Component.translatable("jsst.itemEditor.name"))
     );
     private final ServerPlayer player;

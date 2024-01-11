@@ -6,8 +6,8 @@ import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Represents an action type to be done to an itemstack.
@@ -23,5 +23,5 @@ public interface Editor {
     record EditorType(Constructor<?> constructor,
                       boolean cosmeticOnly,
                       Predicate<ItemStack> appliesTo,
-                      Supplier<GuiElementBuilderInterface<?>> labelSupplier) {}
+                      Function<EditorContext, GuiElementBuilderInterface<?>> labelSupplier) {}
 }

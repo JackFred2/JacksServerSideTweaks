@@ -29,7 +29,7 @@ public class LoreEditor extends GuiEditor {
             LoreEditor::new,
             true,
             stack -> true,
-            () -> GuiElementBuilder.from(Items.WRITABLE_BOOK.getDefaultInstance())
+            context -> GuiElementBuilder.from(Items.WRITABLE_BOOK.getDefaultInstance())
                                    .setName(Component.translatable("jsst.itemEditor.lore"))
     );
 
@@ -50,7 +50,7 @@ public class LoreEditor extends GuiEditor {
             EditorContext context,
             ItemStack initial,
             Consumer<ItemStack> callback) {
-        super(MenuType.GENERIC_9x6, player, context, initial, callback);
+        super(MenuType.GENERIC_9x6, player, context, initial, callback, false);
         this.setTitle(Component.translatable("jsst.itemEditor.lore"));
         this.loadFromStack();
         this.drawStatic();
@@ -164,7 +164,7 @@ public class LoreEditor extends GuiEditor {
                 EditorContext context,
                 ItemStack initial,
                 Consumer<ItemStack> callback) {
-            super(MenuType.GENERIC_9x2, player, context, initial, callback);
+            super(MenuType.GENERIC_9x2, player, context, initial, callback, false);
             this.setTitle(Component.translatable("jsst.itemEditor.lore.hideTooltipParts"));
             this.mask = ((ItemStackAccessor) (Object) this.stack).jsst$itemEditor$getTooltipHideMask();
 
