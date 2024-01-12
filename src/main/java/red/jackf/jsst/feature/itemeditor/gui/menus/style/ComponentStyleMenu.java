@@ -153,9 +153,7 @@ public class ComponentStyleMenu extends SimpleGui {
         this.page.pageDraw.accept(this);
 
         this.setSlot(Util.slot(0, 4), GuiElementBuilder.from(new ItemStack(Items.GUNPOWDER))
-                                                       .setName(Component.translatable("jsst.itemEditor.style.removeColour")
-                                                                         .withStyle(Styles.INPUT_HINT))
-                                                       .addLoreLine(Hints.leftClick())
+                                                       .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.style.removeColour")))
                                                        .setCallback(Inputs.leftClick(() -> {
                                                            Sounds.clear(player);
                                                            this.colour = null;
@@ -252,9 +250,7 @@ public class ComponentStyleMenu extends SimpleGui {
 
         // misc
         this.setSlot(Util.slot(8, 3), GuiElementBuilder.from(new ItemStack(Items.WATER_BUCKET))
-                                                       .setName(Component.translatable("jsst.itemEditor.style.removeStyle")
-                                                                         .withStyle(Styles.INPUT_HINT))
-                                                       .addLoreLine(Hints.leftClick())
+                                                       .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.style.removeStyle")))
                                                        .setCallback(Inputs.leftClick(() -> {
                                                            Sounds.clear(player);
                                                            this.colour = null;

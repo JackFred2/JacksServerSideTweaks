@@ -42,19 +42,16 @@ public class SimpleNameEditor extends GuiEditor {
         this.setSlot(1, CommonLabels.divider());
 
         this.setSlot(2, GuiElementBuilder.from(new ItemStack(Items.WRITABLE_BOOK))
-                .setName(Component.translatable("jsst.itemEditor.simpleName.changeText").withStyle(Styles.INPUT_HINT))
-                .addLoreLine(Hints.leftClick())
+                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.simpleName.changeText")))
                 .setCallback(Inputs.leftClick(this::changeText)));
 
         this.setSlot(3, GuiElementBuilder.from(new ItemStack(Items.GLOWSTONE))
-                .setName(Component.translatable("jsst.itemEditor.simpleName.changeStyle").withStyle(Styles.INPUT_HINT))
-                .addLoreLine(Hints.leftClick())
+                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.simpleName.changeStyle")))
                 .setCallback(Inputs.leftClick(this::changeStyle)));
 
         if (this.stack.hasCustomHoverName()) {
             this.setSlot(7, GuiElementBuilder.from(new ItemStack(Items.GRINDSTONE))
-                                             .setName(Translations.clear().withStyle(Styles.INPUT_HINT))
-                                             .addLoreLine(Hints.leftClick())
+                                             .setName(Hints.leftClick(Translations.clear()))
                                              .setCallback(Inputs.leftClick(this::clearName)));
         } else {
             this.clearSlot(7);

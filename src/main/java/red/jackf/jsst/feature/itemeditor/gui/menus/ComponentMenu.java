@@ -71,8 +71,7 @@ public class ComponentMenu extends SimpleGui {
                                           });
                                  })).build(),
                 GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
-                                 .setName(Component.translatable("jsst.itemEditor.simpleName.changeStyle").withStyle(Styles.INPUT_HINT))
-                                 .addLoreLine(Hints.leftClick())
+                                 .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.simpleName.changeStyle")))
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
                                      EditorMenus.componentStyle(player, component, opt -> {

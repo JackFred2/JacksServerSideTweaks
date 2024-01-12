@@ -117,8 +117,7 @@ public class ListPaginator<T> {
                 // delete row
                 this.gui.setSlot(Util.slot(this.colTo - 1, row),
                                  GuiElementBuilder.from(Items.BARRIER.getDefaultInstance())
-                                                  .setName(Translations.delete().withStyle(Styles.INPUT_HINT))
-                                                  .addLoreLine(Hints.leftClick())
+                                                  .setName(Hints.leftClick(Translations.delete()))
                                                   .setCallback(Inputs.leftClick(() -> {
                                                       Sounds.click(this.gui.getPlayer());
                                                       this.listSupplier.get().remove(fullIndex);
@@ -173,8 +172,7 @@ public class ListPaginator<T> {
         if (this.modifiable && elements.size() < this.maxItems && this.page == this.maxPage) {
             this.gui.setSlot(Util.slot(this.colFrom, this.rowFrom + index),
                              GuiElementBuilder.from(Items.NETHER_STAR.getDefaultInstance())
-                                              .setName(Translations.add().withStyle(Styles.INPUT_HINT))
-                                              .addLoreLine(Hints.leftClick())
+                                              .setName(Hints.leftClick(Translations.add()))
                                               .setCallback(Inputs.leftClick(() -> {
                                                   Sounds.click(this.gui.getPlayer());
                                                   this.listSupplier.get().add(this.newElementSupplier.get());
@@ -227,8 +225,7 @@ public class ListPaginator<T> {
         } else {
             if (canGoPreviousPage) this.gui.setSlot(Util.slot(this.colTo - 3, lastRow),
                                                     GuiElementBuilder.from(Banners.Arrows.LEFT)
-                                                                     .setName(Translations.previous().withStyle(Styles.INPUT_HINT))
-                                                                     .addLoreLine(Hints.leftClick())
+                                                                     .setName(Hints.leftClick(Translations.previous()))
                                                                      .setCallback(Inputs.leftClick(() -> {
                                                                          this.page = Math.max(0, this.page - 1);
                                                                          Sounds.scroll(this.gui.getPlayer(), (float) this.page / this.maxPage);
@@ -240,8 +237,7 @@ public class ListPaginator<T> {
 
             if (canGoNextPage) this.gui.setSlot(Util.slot(this.colTo - 1, lastRow),
                                                 GuiElementBuilder.from(Banners.Arrows.RIGHT)
-                                                                 .setName(Translations.next().withStyle(Styles.INPUT_HINT))
-                                                                 .addLoreLine(Hints.leftClick())
+                                                                 .setName(Hints.leftClick(Translations.next()))
                                                                  .setCallback(Inputs.leftClick(() -> {
                                                                      this.page = Math.min(this.maxPage, this.page + 1);
                                                                      Sounds.scroll(this.gui.getPlayer(), (float) this.page / this.maxPage);

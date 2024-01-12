@@ -78,9 +78,7 @@ public class ColourMenu extends SimpleGui {
     private void drawStatic() {
         if (removable) {
             this.setSlot(Util.slot(4, 1), GuiElementBuilder.from(new ItemStack(Items.GUNPOWDER))
-                                                           .setName(Component.translatable("jsst.itemEditor.style.removeColour")
-                                                                             .withStyle(Styles.INPUT_HINT))
-                                                           .addLoreLine(Hints.leftClick())
+                                                           .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.style.removeColour")))
                                                            .setCallback(Inputs.leftClick(() -> {
                                                                Sounds.clear(player);
                                                                this.callback.accept(Result.of(null));

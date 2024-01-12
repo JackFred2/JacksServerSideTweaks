@@ -108,8 +108,7 @@ public class ExpandedBeaconScreen extends SimpleGui {
             item = GuiElementBuilder.from(CommonLabels.simple(Items.GRAY_CONCRETE, Component.translatable("jsst.beaconPowers.error.beaconPayment").withStyle(Styles.NEGATIVE)));
         } else {
             item = GuiElementBuilder.from(new ItemStack(Items.LIME_CONCRETE))
-                                    .setName(Translations.confirm().withStyle(Styles.INPUT_HINT))
-                                    .addLoreLine(Hints.leftClick())
+                                    .setName(Hints.leftClick(Translations.confirm()))
                                     .setCallback(Inputs.leftClick(this::confirmUpdate));
         }
         this.setSlot(Util.slot(2, 5), item);

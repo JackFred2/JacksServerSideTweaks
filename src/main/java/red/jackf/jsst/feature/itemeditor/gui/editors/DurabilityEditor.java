@@ -33,8 +33,7 @@ public class DurabilityEditor extends GuiEditor {
         this.setTitle(Component.translatable("jsst.itemEditor.durability"));
 
         this.setSlot(Util.slot(2, 3), GuiElementBuilder.from(Items.NAME_TAG.getDefaultInstance())
-                .setName(Component.translatable("jsst.itemEditor.durability.custom").withStyle(Styles.INPUT_HINT))
-                .addLoreLine(Hints.leftClick())
+                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.durability.custom")))
                 .setCallback(Inputs.leftClick(() -> {
                     Sounds.click(player);
                     Menus.integerOrPercentage(player,

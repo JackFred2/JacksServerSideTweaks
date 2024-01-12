@@ -46,8 +46,7 @@ public class GradientMenu extends SimpleGui {
                                     }).build(mode));
 
         this.setSlot(7, GuiElementBuilder.from(Items.ENDER_PEARL.getDefaultInstance())
-                                         .setName(Component.translatable("jsst.itemEditor.gradient.custom.swap").withStyle(Styles.INPUT_HINT))
-                                         .addLoreLine(Hints.leftClick())
+                                         .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.gradient.custom.swap")))
                                          .setCallback(Inputs.leftClick(() -> {
                                              Sounds.click(player);
                                              var temp = first;

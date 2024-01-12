@@ -12,15 +12,11 @@ public interface Hints {
                         .append(" ]");
     }
 
-    static Component leftClick() {
-        return wrap(Component.translatable("key.mouse.left"));
-    }
-
     static Component leftClick(Component prefix) {
         return Component.empty().withStyle(Styles.INPUT_HINT)
                         .append(prefix)
                         .append(CommonComponents.SPACE)
-                        .append(leftClick());
+                        .append(wrap(Component.translatable("key.mouse.left")));
     }
 
     static Component rightClick(Component prefix) {

@@ -56,7 +56,7 @@
   "jsst.itemEditor.colour.negativeTooltips": "Negative Tooltips",
   "jsst.itemEditor.colour.potionAppliedTooltips": "Potion 'When Applied' Tooltips",
   "jsst.itemEditor.colour.weaponStats": "Weapon Stats Tooltips",
-  "jsst.itemEditor.colour.custom": "Custom Colour",
+  "jsst.itemEditor.colour.custom": "Use Custom Colour",
   "jsst.itemEditor.colour.custom.remove": "Remove Custom Colour",
 
   "jsst.itemEditor.gradient.page": "Gradients",

@@ -163,8 +163,7 @@ public class PotionEditor extends GuiEditor {
         for (int col = 4; col < 9; col++) this.setSlot(Util.slot(col, 1), CommonLabels.divider());
 
         this.setSlot(Util.slot(0, 4), GuiElementBuilder.from(Items.RED_DYE.getDefaultInstance())
-                                                       .setName(Component.translatable("jsst.itemEditor.colour.custom"))
-                                                       .addLoreLine(Hints.leftClick(Translations.open()))
+                                                       .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.colour.custom")))
                                                        .setCallback(Inputs.leftClick(() -> {
                                                            Sounds.click(player);
                                                            EditorMenus.colour(player, result -> {
@@ -214,9 +213,7 @@ public class PotionEditor extends GuiEditor {
         // noinspection DataFlowIssue
         if (this.stack.hasTag() && this.stack.getTag().contains(PotionUtils.TAG_CUSTOM_POTION_COLOR, Tag.TAG_INT)) {
             this.setSlot(Util.slot(1, 4), GuiElementBuilder.from(Items.GUNPOWDER.getDefaultInstance())
-                                                           .setName(Component.translatable("jsst.itemEditor.colour.custom.remove")
-                                                                             .setStyle(Styles.INPUT_HINT))
-                                                           .addLoreLine(Hints.leftClick())
+                                                           .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.colour.custom.remove")))
                                                            .setCallback(Inputs.leftClick(() -> {
                                                                Sounds.clear(player);
                                                                setColour(this.stack, null);
@@ -242,8 +239,7 @@ public class PotionEditor extends GuiEditor {
         if (POTION_DURATION_REDUCTION.getOrDefault(this.stack.getItem(), 1) != 1) {
             this.setSlot(Util.slot(0, 3), ToggleButton.builder()
                                                       .disabled(Items.CLOCK.getDefaultInstance())
-                                                      .enabled(GuiElementBuilder.from(Items.CLOCK.getDefaultInstance())
-                                                                                .glow().asStack())
+                                                      .enabled(GuiElementBuilder.from(Items.CLOCK.getDefaultInstance()).glow().asStack())
                                                       .label(Component.translatable("jsst.itemEditor.potion.compensateForItemReductions"))
                                                       .initial(this.mitigateItemSpecificDurationReduction)
                                                       .setCallback(newValue -> {
@@ -258,9 +254,7 @@ public class PotionEditor extends GuiEditor {
 
         // standard potion selection
         this.setSlot(Util.slot(4, 0), GuiElementBuilder.from(LabelMaps.POTIONS.getLabel(PotionUtils.getPotion(this.stack)))
-                                                       .setName(Component.translatable("jsst.itemEditor.potion.setPotion")
-                                                                         .setStyle(Styles.INPUT_HINT))
-                                                       .addLoreLine(Hints.leftClick())
+                                                       .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.potion.setPotion")))
                                                        .setCallback(Inputs.leftClick(() -> {
                                                            Sounds.click(player);
                                                            List<Potion> potions = this.context.server().registryAccess()
@@ -300,9 +294,7 @@ public class PotionEditor extends GuiEditor {
                                                     });
                                  })).build(),
                 GuiElementBuilder.from(Items.CLOCK.getDefaultInstance())
-                                 .setName(Component.translatable("jsst.itemEditor.potion.setDuration")
-                                                   .setStyle(Styles.INPUT_HINT))
-                                 .addLoreLine(Hints.leftClick())
+                                 .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.potion.setDuration")))
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
                                      Menus.duration(player,
@@ -318,9 +310,7 @@ public class PotionEditor extends GuiEditor {
                                                     });
                                  })).build(),
                 GuiElementBuilder.from(Items.GLOWSTONE_DUST.getDefaultInstance())
-                                 .setName(Component.translatable("jsst.itemEditor.potion.setAmplifier")
-                                                   .setStyle(Styles.INPUT_HINT))
-                                 .addLoreLine(Hints.leftClick())
+                                 .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.potion.setAmplifier")))
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
                                      Menus.integer(player,
