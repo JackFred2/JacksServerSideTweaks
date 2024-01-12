@@ -15,9 +15,7 @@ import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.GradientBuilder;
 import red.jackf.jsst.mixins.itemeditor.ItemStackAccessor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalInt;
 
 public interface Util {
     static String snakeToCamelCase(String snakeCase) {
@@ -68,19 +66,6 @@ public interface Util {
 
     static int slot(int column, int row) {
         return row * 9 + column;
-    }
-
-    /**
-     * Translates a given index to a raw slot number in a 'rectangle'
-     * @param colFrom Start column, inclusive
-     * @param colTo End column, exclusive
-     * @param rowFrom Start row, inclusive
-     * @param rowTo End row, exclusive
-     */
-    static SlotTranslator slotTranslator(int colFrom, int colTo, int rowFrom, int rowTo) {
-        final int width = colTo - colFrom;
-        final int height = rowTo - rowFrom;
-        return new SlotTranslator(colFrom, rowFrom, width, height);
     }
 
     static void clear(SlotHolder holder, int colFrom, int colTo, int rowFrom, int rowTo) {
@@ -169,67 +154,4 @@ public interface Util {
         }
     }
 
-    final class SlotTranslator {
-        private final int colFrom;
-        private final int rowFrom;
-        private final int width;
-        private final int height;
-
-        public SlotTranslator(int colFrom, int rowFrom, int width, int height) {
-            this.colFrom = colFrom;
-            this.rowFrom = rowFrom;
-            this.width = width;
-            this.height = height;
-        }
-
-        public boolean outOfRange(int index) {
-            return index < 0 || index >= width * height;
-        }
-
-        public Iterable<Integer> slots() {
-            var list = new ArrayList<Integer>();
-            for (int col = 0; col < width; col++) {
-                for (int row = 0; row < height; row++) {
-                    list.add(colFrom + col + 9 * (row + rowFrom));
-                }
-            }
-            return list;
-        }
-
-        public OptionalInt translate(int index) {
-            if (outOfRange(index)) return OptionalInt.empty();
-            int row = index / width + rowFrom;
-            int column = index % width + colFrom;
-            return OptionalInt.of(row * 9 + column);
-        }
-
-        public <T> Iterable<SlotItemPair<T>> iterate(Iterable<T> elements) {
-            int index = 0;
-            var result = new ArrayList<SlotItemPair<T>>();
-            for (T element : elements) {
-                var slot = this.translate(index++);
-                if (slot.isEmpty()) return result;
-                result.add(new SlotItemPair<>(slot.getAsInt(), element));
-            }
-            return result;
-        }
-
-        public <T> Iterable<SlotItemPair<T>> iterate(T[] elements) {
-            int index = 0;
-            var result = new ArrayList<SlotItemPair<T>>();
-            for (T element : elements) {
-                var slot = this.translate(index++);
-                if (slot.isEmpty()) return result;
-                result.add(new SlotItemPair<>(slot.getAsInt(), element));
-            }
-            return result;
-        }
-
-        public void fill(SlotHolder gui, ItemStack fillMaterial) {
-            for (int slot : slots())
-                gui.setSlot(slot, fillMaterial);
-        }
-
-        public record SlotItemPair<T>(int slot, T item) {}
-    }
 }

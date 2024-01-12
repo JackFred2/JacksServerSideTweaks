@@ -113,7 +113,7 @@ public class ComponentStyleMenu extends SimpleGui {
     }
 
     private void drawColourPage(Map<ItemStack, Colour> colours) {
-        var colourSlots = Util.slotTranslator(0, 4, 0, 4);
+        var colourSlots = GridTranslator.between(0, 4, 0, 4);
         Util.fill(this, ItemStack.EMPTY, 0, 4, 0, 4);
 
         int index = 0;
@@ -131,7 +131,7 @@ public class ComponentStyleMenu extends SimpleGui {
     }
 
     private void drawGradients() {
-        var colourSlots = Util.slotTranslator(0, 4, 0, 4);
+        var colourSlots = GridTranslator.between(0, 4, 0, 4);
         Util.fill(this, ItemStack.EMPTY, 0, 4, 0, 4);
 
         int index = 0;

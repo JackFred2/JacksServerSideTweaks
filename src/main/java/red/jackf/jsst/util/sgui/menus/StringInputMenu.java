@@ -1,6 +1,7 @@
 package red.jackf.jsst.util.sgui.menus;
 
 import eu.pb4.sgui.api.ClickType;
+import eu.pb4.sgui.api.ScreenProperty;
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
@@ -97,7 +98,7 @@ public class StringInputMenu extends SimpleGui {
         }
 
         // clear level indicator
-        Util.sendAnvilCost(this.player, this.getSyncId(), 0);
+        this.sendProperty(ScreenProperty.LEVEL_COST, 0);
     }
 
     @Override

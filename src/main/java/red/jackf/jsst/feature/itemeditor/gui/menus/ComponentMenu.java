@@ -13,6 +13,7 @@ import net.minecraft.world.item.Items;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.menus.Menus;
+import red.jackf.jsst.util.sgui.pagination.ListPaginator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class ComponentMenu extends SimpleGui {
     private final Consumer<Result<Component>> callback;
     private final List<Component> parts = new ArrayList<>();
     private final ListPaginator<Component> paginator = ListPaginator.<Component>builder(this)
-                                                                    .at(4, 9, 0, 6)
+                                                                    .slots(4, 9, 0, 6)
                                                                     .list(this.parts)
                                                                     .max(50)
                                                                     .rowDraw(this::getRow)

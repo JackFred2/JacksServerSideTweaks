@@ -19,6 +19,7 @@ import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.mixins.itemeditor.ItemStackAccessor;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.elements.ToggleButton;
+import red.jackf.jsst.util.sgui.pagination.ListPaginator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class LoreEditor extends GuiEditor {
     private final List<Component> lore = new ArrayList<>();
 
     private final ListPaginator<Component> lorePaginator = ListPaginator.<Component>builder(this)
-                                                                        .at(4, 9, 0, 6)
+                                                                        .slots(4, 9, 0, 6)
                                                                         .list(this.lore)
                                                                         .max(30)
                                                                         .modifiable(() -> Component.literal("Lore Line")

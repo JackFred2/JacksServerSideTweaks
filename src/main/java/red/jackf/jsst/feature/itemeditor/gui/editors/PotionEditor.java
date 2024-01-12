@@ -29,6 +29,7 @@ import red.jackf.jsst.util.sgui.elements.SwitchButton;
 import red.jackf.jsst.util.sgui.elements.ToggleButton;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 import red.jackf.jsst.util.sgui.menus.Menus;
+import red.jackf.jsst.util.sgui.pagination.ListPaginator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class PotionEditor extends GuiEditor {
     private final List<MobEffectInstance> effects = new ArrayList<>();
     private boolean mitigateItemSpecificDurationReduction = false;
     private final ListPaginator<MobEffectInstance> effectPaginator = ListPaginator.<MobEffectInstance>builder(this)
-                                                                                  .at(4, 9, 2, 6)
+                                                                                  .slots(4, 9, 2, 6)
                                                                                   .list(this.effects)
                                                                                   .max(20)
                                                                                   .rowDraw(this::drawPageRow)

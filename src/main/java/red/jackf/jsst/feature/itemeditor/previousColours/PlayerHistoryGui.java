@@ -9,10 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.GradientBuilder;
-import red.jackf.jsst.util.sgui.Hints;
-import red.jackf.jsst.util.sgui.Inputs;
-import red.jackf.jsst.util.sgui.Translations;
-import red.jackf.jsst.util.sgui.Util;
+import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.banners.Banners;
 
 import java.util.List;
@@ -21,11 +18,11 @@ import java.util.function.Consumer;
 public interface PlayerHistoryGui {
     static void drawColours(SlotGuiInterface gui, int topLeftCol, int topLeftRow, Consumer<Colour> callback) {
         List<Colour> previous = ((EditorColourHistory) gui.getPlayer()).jsst$itemEditor$getPreviousColours();
-        Util.SlotTranslator slots = Util.slotTranslator(topLeftCol, topLeftCol + 4, topLeftRow, topLeftRow + 4);
+        GridTranslator slots = GridTranslator.between(topLeftCol, topLeftCol + 4, topLeftRow, topLeftRow + 4);
 
         slots.fill(gui, ItemStack.EMPTY);
 
-        for (Util.SlotTranslator.SlotItemPair<Colour> pair : slots.iterate(previous)) {
+        for (GridTranslator.SlotItemPair<Colour> pair : slots.iterate(previous)) {
             Colour colour = pair.item();
             gui.setSlot(pair.slot(), GuiElementBuilder.from(DyeItem.byColor(colour.closestDyeColour()).getDefaultInstance())
                     .setName(Component.literal("█".repeat(8)).withColor(colour.toARGB()))
@@ -37,11 +34,11 @@ public interface PlayerHistoryGui {
 
     static void drawGradients(SlotGuiInterface gui, int topLeftCol, int topLeftRow, Consumer<Gradient> callback) {
         List<Gradient> previous = ((EditorColourHistory) gui.getPlayer()).jsst$itemEditor$getPreviousGradients();
-        Util.SlotTranslator slots = Util.slotTranslator(topLeftCol, topLeftCol + 4, topLeftRow, topLeftRow + 4);
+        GridTranslator slots = GridTranslator.between(topLeftCol, topLeftCol + 4, topLeftRow, topLeftRow + 4);
 
         slots.fill(gui, ItemStack.EMPTY);
 
-        for (Util.SlotTranslator.SlotItemPair<Gradient> pair : slots.iterate(previous)) {
+        for (GridTranslator.SlotItemPair<Gradient> pair : slots.iterate(previous)) {
             Gradient gradient = pair.item();
 
             DyeColor from = gradient.sample(0).closestDyeColour();

@@ -1,4 +1,4 @@
-package red.jackf.jsst.util.sgui;
+package red.jackf.jsst.util.sgui.pagination;
 
 import blue.endless.jankson.annotation.Nullable;
 import eu.pb4.sgui.api.ClickType;
@@ -10,6 +10,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.JSST;
+import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.banners.Banners;
 
 import java.util.List;
@@ -17,9 +18,10 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * Automatically handles most of a page of items for you, with a vertical list of rows and automatic page button management
+ * Creates a paginated list of items which are drawn in rows. Has the capability for reordering elements and adding/removing
+ * new ones.
  *
- * @param <T>
+ * @param <T> Type of element being held in this list.
  */
 public class ListPaginator<T> {
 
@@ -206,8 +208,8 @@ public class ListPaginator<T> {
 
             var builder = GuiElementBuilder.from(icon).setName(Translations.page(this.page, this.maxPage));
 
-            if (canGoPreviousPage) builder.addLoreLine(Hints.rightClick(Component.translatable("jsst.common.previous")));
             if (canGoNextPage) builder.addLoreLine(Hints.leftClick(Component.translatable("jsst.common.next")));
+            if (canGoPreviousPage) builder.addLoreLine(Hints.rightClick(Component.translatable("jsst.common.previous")));
 
             if (canGoNextPage || canGoPreviousPage) builder.setCallback(clickType -> {
                 if (canGoNextPage && clickType == ClickType.MOUSE_LEFT) {
@@ -270,7 +272,7 @@ public class ListPaginator<T> {
             this.gui = gui;
         }
 
-        public Builder<T> at(int colFrom, int colTo, int rowFrom, int rowTo) {
+        public Builder<T> slots(int colFrom, int colTo, int rowFrom, int rowTo) {
             if (colFrom < 0 || colFrom > gui.getWidth())
                 throw new IllegalArgumentException("Out of bounds colFrom: " + colFrom);
             if (colTo < 0 || colTo > gui.getWidth())

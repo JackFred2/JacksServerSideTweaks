@@ -123,7 +123,7 @@ public class DurabilityEditor extends GuiEditor {
                     })).build());
         }
 
-        var optionSlots = Util.slotTranslator(4, 9, 0, 5);
+        var optionSlots = GridTranslator.between(4, 9, 0, 5);
         optionSlots.fill(this, ItemStack.EMPTY);
 
         for (var entry : optionSlots.iterate(options)) {

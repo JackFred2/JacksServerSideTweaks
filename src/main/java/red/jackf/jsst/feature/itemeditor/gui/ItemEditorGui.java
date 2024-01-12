@@ -72,10 +72,10 @@ public class ItemEditorGui extends SimpleGui {
                                    .toList();
 
         // update editors
-        final Util.SlotTranslator slotTranslator = Util.slotTranslator(4, 9, 0, 5);
-        slotTranslator.fill(this, ItemStack.EMPTY);
+        final GridTranslator gridTranslator = GridTranslator.between(4, 9, 0, 5);
+        gridTranslator.fill(this, ItemStack.EMPTY);
 
-        for (var pair : slotTranslator.iterate(editors)) {
+        for (var pair : gridTranslator.iterate(editors)) {
             this.setSlot(pair.slot(), pair.item());
         }
     }
