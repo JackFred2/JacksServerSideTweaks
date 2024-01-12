@@ -225,8 +225,8 @@ public class PotionEditor extends GuiEditor {
 
         // hide potion tooltips
         this.setSlot(Util.slot(2, 4), ToggleButton.builder()
-                                                  .disabled(Items.GLOWSTONE_DUST.getDefaultInstance())
-                                                  .enabled(Items.GUNPOWDER.getDefaultInstance())
+                                                  .disabled(Items.ENDER_PEARL.getDefaultInstance())
+                                                  .enabled(Items.ENDER_EYE.getDefaultInstance())
                                                   .label(Component.translatable("jsst.itemEditor.potion.hideAdditionalTooltipPart"))
                                                   .initial(isHidingAdditional())
                                                   .setCallback(newValue -> {
