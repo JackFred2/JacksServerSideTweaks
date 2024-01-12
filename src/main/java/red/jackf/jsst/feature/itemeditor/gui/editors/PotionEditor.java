@@ -21,6 +21,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Colours;
+import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.mixins.itemeditor.ItemStackAccessor;
@@ -51,7 +52,9 @@ public class PotionEditor extends GuiEditor {
     );
 
     public static final EditorType TYPE = new EditorType(
+            JSST.id("potion"),
             PotionEditor::new,
+            false,
             false,
             stack -> VALID_ITEMS.contains(stack.getItem()),
             PotionEditor::createLabel

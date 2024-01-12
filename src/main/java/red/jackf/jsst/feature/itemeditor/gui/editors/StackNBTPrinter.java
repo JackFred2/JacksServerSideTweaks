@@ -10,6 +10,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.Formatting;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.JSSTCodecs;
@@ -20,7 +21,9 @@ import java.util.function.Consumer;
 
 public class StackNBTPrinter implements Editor {
     public static EditorType TYPE = new EditorType(
+            JSST.id("stack_nbt_print"),
             StackNBTPrinter::new,
+            true,
             true,
             ignored -> true,
             context -> GuiElementBuilder.from(Items.ACACIA_SIGN.getDefaultInstance())

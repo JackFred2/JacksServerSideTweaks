@@ -17,6 +17,7 @@ import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.item.armortrim.TrimMaterials;
 import net.minecraft.world.item.armortrim.TrimPattern;
 import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
@@ -36,8 +37,10 @@ public class TrimEditor extends GuiEditor {
     }
 
     public static final EditorType TYPE = new EditorType(
+            JSST.id("trim"),
             TrimEditor::new,
             true,
+            false,
             stack -> stack.is(ItemTags.TRIMMABLE_ARMOR),
             TrimEditor::makeLabel
     );

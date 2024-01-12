@@ -14,6 +14,7 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.mixins.itemeditor.ItemStackAccessor;
@@ -27,8 +28,10 @@ import java.util.function.Consumer;
 
 public class LoreEditor extends GuiEditor {
     public static final EditorType TYPE = new EditorType(
+            JSST.id("lore"),
             LoreEditor::new,
             true,
+            false,
             stack -> true,
             context -> GuiElementBuilder.from(Items.WRITABLE_BOOK.getDefaultInstance())
                                    .setName(Component.translatable("jsst.itemEditor.lore"))

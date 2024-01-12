@@ -25,6 +25,8 @@
 
   "jsst.itemEditor.selectBaseItem": "Select a base item",
   "jsst.itemEditor.title": "Item Editor",
+  "jsst.itemEditor.title.developerMode": "Developer Mode",
+
   "jsst.itemEditor.common.hintTitle": "Valid formats are:",
 
   "jsst.itemEditor.menus.resLocHint": "Must be of the form %s",

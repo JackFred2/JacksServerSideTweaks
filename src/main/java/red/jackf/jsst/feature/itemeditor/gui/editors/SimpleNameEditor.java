@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.util.sgui.*;
@@ -15,8 +16,10 @@ import java.util.function.Consumer;
 
 public class SimpleNameEditor extends GuiEditor {
     public static final EditorType TYPE = new EditorType(
+            JSST.id("simple_name"),
             SimpleNameEditor::new,
             true,
+            false,
             ignored -> true,
             SimpleNameEditor::getLabel
     );

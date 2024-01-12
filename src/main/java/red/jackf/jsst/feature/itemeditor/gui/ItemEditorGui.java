@@ -3,31 +3,27 @@ package red.jackf.jsst.feature.itemeditor.gui;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.feature.itemeditor.gui.editors.*;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.ToggleButton;
 import red.jackf.jsst.util.sgui.elements.WrappedElement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemEditorGui extends SimpleGui {
-    private static final List<Editor.EditorType> EDITORS = List.of(
-            SimpleNameEditor.TYPE,
-            NameEditor.TYPE,
-            LoreEditor.TYPE,
-            DurabilityEditor.TYPE,
-            TrimEditor.TYPE,
-            PotionEditor.TYPE,
-            StackNBTPrinter.TYPE
-    );
     private final EquipmentSlot returnSlot;
     private final EditorContext context;
     private ItemStack stack;
+    private boolean developerMode;
 
     public ItemEditorGui(
             ServerPlayer player,
@@ -38,6 +34,8 @@ public class ItemEditorGui extends SimpleGui {
         this.stack = initialStack.copy();
         this.returnSlot = returnSlot;
         this.context = context;
+
+        this.developerMode = !context.cosmeticOnly() && FabricLoader.getInstance().isDevelopmentEnvironment();
 
         this.setTitle(Component.translatable("jsst.itemEditor.title"));
 
@@ -50,26 +48,39 @@ public class ItemEditorGui extends SimpleGui {
         this.setSlot(Util.slot(0, 4), CommonLabels.cancel(this::close));
     }
 
-    @Override
-    public void onOpen() {
-        // update result stack
-        this.setSlot(Util.slot(1, 1), GuiElementBuilder.from(stack.copy())
-                                                       .setName(Util.getLabelAsTooltip(stack))
-                                                       .addLoreLine(Hints.leftClick(Translations.save()))
-                                                       .setCallback(Inputs.leftClick(this::complete)));
+    private void redraw() {
+        if (!this.context.cosmeticOnly())
+            this.setSlot(Util.slot(0, 3), ToggleButton.builder()
+                    .initial(this.developerMode)
+                    .disabled(Items.COAL.getDefaultInstance())
+                    .enabled(Items.DIAMOND.getDefaultInstance())
+                    .label(Component.translatable("jsst.itemEditor.title.developerMode"))
+                    .setCallback(mode -> {
+                        Sounds.click(player);
+                        this.developerMode = mode;
+                        this.redraw();
+                    }).build());
 
-        final var editors = EDITORS.stream()
-                                   .filter(type -> type.appliesTo().test(stack))
-                                   .filter(type -> !context.cosmeticOnly() || type.cosmeticOnly())
-                                   .map(editorType -> new WrappedElement(editorType.labelSupplier().apply(context).build(),
-                                                                         List.of(Hints.leftClick(Translations.open())),
-                                                                         (slot, guiClickType, rawClickType, gui) -> {
-                                                                             if (guiClickType == ClickType.MOUSE_LEFT)
-                                                                                 editorType.constructor()
-                                                                                           .create(this.player, this.context, this.stack, this::onResult)
-                                                                                           .run();
-                                                                         }))
-                                   .toList();
+        final List<WrappedElement> editors = this.context.allowedEditors().stream()
+                .filter(type -> !type.developer() || this.developerMode)
+                .filter(type -> type.appliesTo().test(stack))
+                .map(editorType -> {
+                    List<Component> lore = new ArrayList<>();
+                    lore.add(Hints.leftClick(Translations.open()));
+                    if (this.developerMode)
+                        lore.add(Component.literal("ID: " + editorType.id()).withStyle(Styles.ID));
+
+                    return new WrappedElement(
+                            editorType.labelSupplier().apply(context).build(),
+                            lore,
+                            (slot, guiClickType, rawClickType, gui) -> {
+                                if (guiClickType == ClickType.MOUSE_LEFT)
+                                    editorType.constructor()
+                                            .create(this.player, this.context, this.stack, this::onResult)
+                                            .run();
+                            });
+                })
+                .toList();
 
         // update editors
         final GridTranslator gridTranslator = GridTranslator.between(4, 9, 0, 5);
@@ -78,6 +89,17 @@ public class ItemEditorGui extends SimpleGui {
         for (var pair : gridTranslator.iterate(editors)) {
             this.setSlot(pair.slot(), pair.item());
         }
+    }
+
+    @Override
+    public void onOpen() {
+        // update result stack
+        this.setSlot(Util.slot(1, 1), GuiElementBuilder.from(stack.copy())
+                .setName(Util.getLabelAsTooltip(stack))
+                .addLoreLine(Hints.leftClick(Translations.save()))
+                .setCallback(Inputs.leftClick(this::complete)));
+
+        this.redraw();
     }
 
     private void onResult(ItemStack result) {
