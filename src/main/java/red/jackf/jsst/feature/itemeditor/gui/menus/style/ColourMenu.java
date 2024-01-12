@@ -95,7 +95,6 @@ public class ColourMenu extends SimpleGui {
                                                                    ((EditorColourHistory) player).jsst$itemEditor$push(result.result());
                                                                    this.callback.accept(Result.of(result.result()));
                                                                }
-                                                               this.open();
                                                            });
                                                        })));
 
