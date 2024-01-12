@@ -32,7 +32,9 @@ public final class GridTranslator {
     }
 
     public static GridTranslator playerSlots(SlotGuiInterface gui, int colFrom, int colTo, int rowFrom, int rowTo) {
-        return new GridTranslator(gui.getVirtualSize(), colFrom, colTo, rowFrom, rowTo);
+        final int width = colTo - colFrom;
+        final int height = rowTo - rowFrom;
+        return new GridTranslator(gui.getVirtualSize(), colFrom, rowFrom, width, height);
     }
 
     public int size() {

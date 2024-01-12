@@ -33,6 +33,10 @@ public interface CommonLabels {
                                 .build();
     }
 
+    static GuiElementInterface disabled() {
+        return disabled(Component.empty());
+    }
+
     static GuiElementInterface disabled(Component text) {
         return GuiElementBuilder.from(new ItemStack(Items.GRAY_STAINED_GLASS_PANE))
                                 .setName(text)

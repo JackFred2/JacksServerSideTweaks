@@ -1,5 +1,7 @@
 package red.jackf.jsst.util.sgui.labels;
 
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
@@ -9,6 +11,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.armortrim.TrimMaterial;
+import net.minecraft.world.item.armortrim.TrimPattern;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,6 +31,14 @@ public interface LabelMaps {
         stack.setHoverName(Component.translatable(potion.getName(Items.POTION.getDescriptionId() + ".effect.")));
         return stack;
     });
+    LabelMap<Holder<TrimMaterial>> TRIM_MATERIALS = LabelMap.createStatic(Collections.emptyMap(), material -> GuiElementBuilder.from(material.value().ingredient().value().getDefaultInstance())
+            .setName(material.value().description())
+            .hideFlags()
+            .asStack());
+    LabelMap<Holder<TrimPattern>> TRIM_PATTERNS = LabelMap.createStatic(Collections.emptyMap(), pattern -> GuiElementBuilder.from(pattern.value().templateItem().value().getDefaultInstance())
+            .setName(pattern.value().description())
+            .hideFlags()
+            .asStack());
 
     static void touch() {}
 }
