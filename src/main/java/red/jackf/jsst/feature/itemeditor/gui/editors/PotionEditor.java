@@ -114,7 +114,7 @@ public class PotionEditor extends GuiEditor {
         return potionItem;
     }
 
-    private static Component describe(MobEffectInstance instance, float tickrate) {
+    public static Component describe(MobEffectInstance instance, float tickrate) {
         MutableComponent description = Component.translatable(instance.getDescriptionId());
         if (instance.getAmplifier() > 0) {
             description = Component.translatable(
@@ -124,13 +124,22 @@ public class PotionEditor extends GuiEditor {
             );
         }
 
+        Component durationText;
+        if (instance.getDuration() == -1) {
+            durationText = Component.translatable("effect.duration.infinite");
+        } else if (instance.getDuration() < 20) {
+            durationText = Component.literal(instance.getDuration() + " ticks");
+        } else {
+            durationText = MobEffectUtil.formatDuration(instance, 1f, tickrate);
+        }
+
         description = Component.translatable(
                 "potion.withDuration",
                 description,
-                instance.getDuration() < 20 ? instance.getDuration() + " ticks" : MobEffectUtil.formatDuration(instance, 1f, tickrate)
+                durationText
         );
 
-        return description;
+        return description.withStyle(instance.getEffect().getCategory().getTooltipFormatting());
     }
 
     private void loadFromStack() {
@@ -278,8 +287,7 @@ public class PotionEditor extends GuiEditor {
     }
 
     private List<GuiElementInterface> drawPageRow(int index, MobEffectInstance instance) {
-        return List.of(
-                GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(instance.getEffect()))
+        var effect = GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(instance.getEffect()))
                                  .setName(describe(instance, this.context.server().tickRateManager().tickrate()))
                                  .addLoreLine(Hints.leftClick(Component.translatable("jsst.itemEditor.potion.setEffect")))
                                  .setCallback(Inputs.leftClick(() -> {
@@ -295,8 +303,9 @@ public class PotionEditor extends GuiEditor {
                                                             this.effects.set(index, copy(instance, result.result(), null, null));
                                                         this.open();
                                                     });
-                                 })).build(),
-                GuiElementBuilder.from(Items.CLOCK.getDefaultInstance())
+                                 })).build();
+
+        var duration = GuiElementBuilder.from(Items.CLOCK.getDefaultInstance())
                                  .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.potion.setDuration")))
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
@@ -311,8 +320,9 @@ public class PotionEditor extends GuiEditor {
                                                         }
                                                         this.open();
                                                     });
-                                 })).build(),
-                GuiElementBuilder.from(Items.GLOWSTONE_DUST.getDefaultInstance())
+                                 })).build();
+
+        var amplifier = GuiElementBuilder.from(Items.GLOWSTONE_DUST.getDefaultInstance())
                                  .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.potion.setAmplifier")))
                                  .setCallback(Inputs.leftClick(() -> {
                                      Sounds.click(player);
@@ -327,8 +337,9 @@ public class PotionEditor extends GuiEditor {
                                                            this.effects.set(index, copy(instance, null, null, result.result()));
                                                        this.open();
                                                    });
-                                 })).build()
-        );
+                                 })).build();
+
+        return List.of(effect, duration, amplifier);
     }
 
 

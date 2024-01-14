@@ -10,6 +10,7 @@ import red.jackf.jsst.util.sgui.labels.data.LabelDataLoader;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -19,8 +20,12 @@ import java.util.function.Function;
 public interface LabelMap<T> {
     ItemStack getLabel(T key);
 
-    default LabelMap<T> withAdditional(Map<T, ItemStack> additional) {
+    default LabelMap<T> withAdditional(BiFunction<T, LabelMap<T>, ItemStack> additional) {
         return new Wrapped<>(this, additional);
+    }
+
+    default LabelMap<T> withAdditional(Map<T, ItemStack> additional) {
+        return new Wrapped<>(this, (item, map) -> additional.get(item));
     }
 
     static <T> Datapack<T> createDataManaged(Registry<T> registry, Function<T, ItemStack> defaultLabel, Function<T, Component> nameGetter) {
@@ -98,10 +103,10 @@ public interface LabelMap<T> {
         }
     }
 
-    record Wrapped<T>(LabelMap<T> base, Map<T, ItemStack> additional) implements LabelMap<T> {
+    record Wrapped<T>(LabelMap<T> base, BiFunction<T, LabelMap<T>, ItemStack> additional) implements LabelMap<T> {
         @Override
         public ItemStack getLabel(T key) {
-            ItemStack additional = additional().get(key);
+            ItemStack additional = additional().apply(key, base);
             if (additional != null) return additional;
             else return base.getLabel(key);
         }

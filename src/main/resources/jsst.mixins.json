@@ -11,6 +11,7 @@
     "itemeditor.ItemStackAccessor",
     "itemeditor.ServerGamePacketListenerImplMixin",
     "itemeditor.ServerPlayerMixin",
+    "itemeditor.SuspiciousStewItemAccessor",
     "itemeditor.tempsguifix.GuiHelperMixin",
     "qualityoflife.BlockMixin"
   ],

@@ -114,6 +114,9 @@
   "jsst.itemEditor.potion.compensateForItemReductions": "Compensate for item-specific duration reduction",
   "jsst.itemEditor.potion.hideAdditionalTooltipPart": "Hide Additional Tooltips",
 
+  "jsst.itemEditor.suspiciousStew": "Suspicious Stew Editor",
+  "jsst.itemEditor.suspiciousStew.choosePreset": "Choose Stew Preset",
+
   "jsst.itemEditor.trim": "Armour Trim Editor",
   "jsst.itemEditor.trim.add": "Add Trim",
   "jsst.itemEditor.trim.remove": "Remove Trim",
