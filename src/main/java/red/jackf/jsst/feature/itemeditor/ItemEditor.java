@@ -32,6 +32,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
             TrimEditor.TYPE,
             PotionEditor.TYPE,
             SuspiciousStewEditor.TYPE,
+            CustomModelDataEditor.TYPE,
             StackNBTPrinter.TYPE
     );
 

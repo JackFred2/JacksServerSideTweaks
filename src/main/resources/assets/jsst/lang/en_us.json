@@ -123,6 +123,8 @@
   "jsst.itemEditor.trim.material": "Trim Material",
   "jsst.itemEditor.trim.pattern": "Trim Pattern",
 
+  "jsst.itemEditor.customModelData": "Custom Model Data",
+
   "jsst.itemEditor.labelMapNBTPrinter": "Stack NBT Printer",
   "jsst.itemEditor.labelMapNBTPrinter.hint": "Used for label map data files",
   "jsst.itemEditor.labelMapNBTPrinter.copyInstruction": "Click to copy the label for this stack. Include quotes!",
