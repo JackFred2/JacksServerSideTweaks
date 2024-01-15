@@ -104,6 +104,10 @@
   "jsst.itemEditor.durability": "Durability Editor",
   "jsst.itemEditor.durability.custom": "Set Custom Durability",
 
+  "jsst.itemEditor.enchantment": "Enchantment Editor",
+  "jsst.itemEditor.enchantment.setEnchantment": "Set Enchantment",
+  "jsst.itemEditor.enchantment.setLevel": "Set Level",
+
   "jsst.itemEditor.potion": "Potion Editor",
   "jsst.itemEditor.potion.setPotionItemType": "Change Potion Type",
   "jsst.itemEditor.potion.setPotion": "Set Base Potion",

@@ -106,7 +106,7 @@ public class ComponentMenu extends SimpleGui {
 
         this.setSlot(Util.slot(0, 5), CommonLabels.cancel(() -> {
             Sounds.close(player);
-            this.close();
+            this.callback.accept(Result.empty());
         }));
 
         for (int row = 0; row < 6; row++) this.setSlot(Util.slot(3, row), CommonLabels.divider());

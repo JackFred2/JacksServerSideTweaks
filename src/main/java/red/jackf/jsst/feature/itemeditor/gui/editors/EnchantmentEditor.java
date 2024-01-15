@@ -1,0 +1,151 @@
+package red.jackf.jsst.feature.itemeditor.gui.editors;
+
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.elements.GuiElementInterface;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import red.jackf.jsst.JSST;
+import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
+import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.labels.LabelMaps;
+import red.jackf.jsst.util.sgui.menus.Menus;
+import red.jackf.jsst.util.sgui.pagination.ListPaginator;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.function.Consumer;
+
+public class EnchantmentEditor extends GuiEditor {
+    public static final EditorType TYPE = new EditorType(
+            JSST.id("enchantment"),
+            EnchantmentEditor::new,
+            false,
+            false,
+            stack -> true,
+            context -> GuiElementBuilder.from(Items.ENCHANTING_TABLE.getDefaultInstance())
+                    .setName(Component.translatable("jsst.itemEditor.enchantment"))
+    );
+
+    private final List<EnchantmentInstance> enchantments = new ArrayList<>();
+
+    private final ListPaginator<EnchantmentInstance> paginator = ListPaginator.<EnchantmentInstance>builder(this)
+            .max(50)
+            .onUpdate(this::redraw)
+            .list(this.enchantments)
+            .slots(4, 9, 0, 6)
+            .modifiable(() -> EnchantmentInstance.makeRandom(this.context.server().registryAccess()), false)
+            .rowDraw(this::drawRow)
+            .build();
+
+    public EnchantmentEditor(ServerPlayer player, EditorContext context, ItemStack initial, Consumer<ItemStack> callback) {
+        super(MenuType.GENERIC_9x6, player, context, initial, callback, false);
+        this.drawStatic();
+
+        this.loadFromStack();
+    }
+
+    private List<GuiElementInterface> drawRow(int index, EnchantmentInstance instance) {
+        var enchantment = GuiElementBuilder.from(LabelMaps.ENCHANTMENTS.getLabel(instance.enchantment))
+                .setName(instance.enchantment.getFullname(instance.level))
+                .addLoreLine(Hints.leftClick(Component.translatable("jsst.itemEditor.enchantment.setEnchantment")))
+                .setCallback(Inputs.leftClick(() -> {
+                    Sounds.click(player);
+                    var options = this.context.server()
+                            .registryAccess()
+                            .registryOrThrow(Registries.ENCHANTMENT)
+                            .stream().toList();
+
+                    Menus.selector(player,
+                            Component.translatable("jsst.itemEditor.enchantment.setEnchantment"),
+                            options,
+                            LabelMaps.ENCHANTMENTS,
+                            result -> {
+                                if (result.hasResult()) {
+                                    this.enchantments.set(index, new EnchantmentInstance(result.result(), instance.level));
+                                }
+                                this.open();
+                            });
+                }))
+                .build();
+
+        var level = GuiElementBuilder.from(Items.BOOKSHELF.getDefaultInstance())
+                .setCount(Mth.clamp(instance.level, 1, 64))
+                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.enchantment.setLevel")))
+                .setCallback(Inputs.leftClick(() -> {
+                    Sounds.click(player);
+
+                    Menus.integer(player,
+                            Component.translatable("jsst.itemEditor.enchantment.setLevel"),
+                            instance.level,
+                            1,
+                            255,
+                            null,
+                            result -> {
+                                if (result.hasResult()) {
+                                    this.enchantments.set(index, new EnchantmentInstance(instance.enchantment, result.result()));
+                                }
+                                this.open();
+                            });
+                }))
+                .build();
+
+        return List.of(enchantment, level);
+    }
+
+    private void loadFromStack() {
+        this.enchantments.clear();
+        this.enchantments.addAll(EnchantmentHelper.getEnchantments(this.stack).entrySet().stream()
+                .map(entry -> new EnchantmentInstance(entry.getKey(), entry.getValue()))
+                .toList());
+    }
+
+    private void applyToStack() {
+        var map = new LinkedHashMap<Enchantment, Integer>(this.enchantments.size());
+
+        for (EnchantmentInstance instance : this.enchantments)
+            map.put(instance.enchantment, instance.level);
+
+        EnchantmentHelper.setEnchantments(map, stack);
+    }
+
+    @Override
+    protected void reset() {
+        super.reset();
+        this.loadFromStack();
+    }
+
+    private void drawStatic() {
+        this.setSlot(Util.slot(0, 5), CommonLabels.cancel(this::cancel));
+
+        for (int row = 0; row < 6; row++)
+            this.setSlot(Util.slot(3, row), CommonLabels.divider());
+    }
+
+    @Override
+    protected void redraw() {
+        this.applyToStack();
+        this.drawPreview(Util.slot(1, 1));
+
+        this.paginator.draw();
+    }
+
+    public record EnchantmentInstance(Enchantment enchantment, int level) {
+        public static EnchantmentInstance makeRandom(RegistryAccess.Frozen registries) {
+            var ench = registries.registryOrThrow(Registries.ENCHANTMENT)
+                    .getRandom(RandomSource.create())
+                    .orElseThrow(IllegalStateException::new)
+                    .value();
+            return new EnchantmentInstance(ench, ench.getMaxLevel());
+        }
+    }
+}
