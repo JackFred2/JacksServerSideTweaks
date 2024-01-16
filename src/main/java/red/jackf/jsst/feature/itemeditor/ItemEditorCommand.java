@@ -66,7 +66,7 @@ public class ItemEditorCommand {
                                LabelMaps.ITEMS,
                                selection -> {
                                    if (selection.hasResult()) {
-                                       ItemEditor.INSTANCE.newSession(player, new ItemStack(selection.result()), null);
+                                       ItemEditor.INSTANCE.newSession(player, selection.result().getDefaultInstance(), null);
                                    } else {
                                        player.closeContainer();
                                    }

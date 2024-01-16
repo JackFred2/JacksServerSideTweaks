@@ -34,7 +34,7 @@ public abstract class LabelMaps {
     public static final LabelMap<Holder<TrimPattern>> TRIM_PATTERNS;
 
     static {
-        ITEMS = LabelMap.createStatic(Collections.emptyMap(), ItemStack::new);
+        ITEMS = LabelMap.createStatic(Collections.emptyMap(), Item::getDefaultInstance);
 
         ITEMS_WITH_SUSPICIOUS_STEW_EFFECTS = ITEMS.withAdditional((item, map) -> {
             var holder = SuspiciousEffectHolder.tryGet(item);
