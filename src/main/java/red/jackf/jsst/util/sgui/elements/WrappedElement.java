@@ -1,6 +1,5 @@
 package red.jackf.jsst.util.sgui.elements;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.GuiInterface;
 import net.minecraft.network.chat.Component;
@@ -22,7 +21,7 @@ public class WrappedElement implements GuiElementInterface {
     }
 
     private ItemStack buildStack(ItemStack in) {
-        var builder = GuiElementBuilder.from(in);
+        var builder = JSSTElementBuilder.from(in);
         this.additionalLore.forEach(builder::addLoreLine);
         return builder.asStack();
     }

@@ -1,7 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
 import com.mojang.serialization.JsonOps;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -16,6 +15,7 @@ import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.JSSTCodecs;
 import red.jackf.jsst.util.sgui.Sounds;
 import red.jackf.jsst.util.sgui.Styles;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 import java.util.function.Consumer;
 
@@ -26,7 +26,7 @@ public class StackNBTPrinter implements Editor {
             true,
             true,
             ignored -> true,
-            context -> GuiElementBuilder.from(Items.ACACIA_SIGN.getDefaultInstance())
+            context -> JSSTElementBuilder.from(Items.ACACIA_SIGN)
                                    .setName(Component.translatable("jsst.itemEditor.labelMapNBTPrinter"))
                                    .addLoreLine(Component.translatable("jsst.itemEditor.labelMapNBTPrinter.hint").withStyle(Styles.MINOR_LABEL))
     );

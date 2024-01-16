@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.command.Formatting;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
-import red.jackf.jsst.util.sgui.menus.Menus;
+import red.jackf.jsst.util.sgui.menus.selector.SelectorMenu;
 
 import java.util.function.Predicate;
 
@@ -59,7 +59,7 @@ public class ItemEditorCommand {
         if (handItem.isEmpty()) {
             var access = ItemEditor.INSTANCE.getAccessForPlayer(player);
             if (access == ItemEditor.EditorAccess.FULL) {
-                Menus.selector(player,
+                SelectorMenu.open(player,
                                Component.translatable("jsst.itemEditor.selectBaseItem"),
                                buildCtx.holderLookup(Registries.ITEM).listElements().map(Holder.Reference::value)
                                        .filter(item -> !(item == Items.AIR)).toList(),

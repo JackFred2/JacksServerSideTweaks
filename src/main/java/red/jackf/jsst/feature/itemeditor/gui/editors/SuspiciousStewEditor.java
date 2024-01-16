@@ -1,7 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
 import eu.pb4.sgui.api.elements.GuiElement;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -17,9 +16,13 @@ import net.minecraft.world.level.block.SuspiciousEffectHolder;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.mixins.itemeditor.SuspiciousStewItemAccessor;
-import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.CommonLabels;
+import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.sgui.Util;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 import red.jackf.jsst.util.sgui.menus.Menus;
+import red.jackf.jsst.util.sgui.menus.selector.SelectorMenu;
 import red.jackf.jsst.util.sgui.pagination.ListPaginator;
 
 import java.util.ArrayList;
@@ -34,8 +37,7 @@ public class SuspiciousStewEditor extends GuiEditor {
             false,
             false,
             stack -> stack.is(Items.SUSPICIOUS_STEW),
-            context -> GuiElementBuilder.from(Items.SUSPICIOUS_STEW.getDefaultInstance())
-                    .setName(Component.translatable("jsst.itemEditor.suspiciousStew"))
+            context -> JSSTElementBuilder.from(Items.SUSPICIOUS_STEW).setName(Component.translatable("jsst.itemEditor.suspiciousStew"))
     );
 
     private final List<SuspiciousEffectHolder.EffectEntry> effects = new ArrayList<>();
@@ -48,7 +50,9 @@ public class SuspiciousStewEditor extends GuiEditor {
         this.drawStatic();
 
         this.loadFromStack();
-    }    private final ListPaginator<SuspiciousEffectHolder.EffectEntry> paginator = ListPaginator.<SuspiciousEffectHolder.EffectEntry>builder(this)
+    }
+
+    private final ListPaginator<SuspiciousEffectHolder.EffectEntry> paginator = ListPaginator.<SuspiciousEffectHolder.EffectEntry>builder(this)
             .slots(4, 9, 0, 6)
             .list(this.effects)
             .modifiable(() -> new SuspiciousEffectHolder.EffectEntry(MobEffects.MOVEMENT_SPEED, 160), false)
@@ -63,19 +67,16 @@ public class SuspiciousStewEditor extends GuiEditor {
     }
 
     @Override
-    protected void reset() {
-        super.reset();
+    protected void onReset() {
         this.loadFromStack();
     }
 
     private List<GuiElementInterface> drawRow(int index, SuspiciousEffectHolder.EffectEntry entry) {
-        GuiElement effect = GuiElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(entry.effect()))
-                .setName(PotionEditor.describe(entry.createEffectInstance(), this.context.server().tickRateManager()
-                        .tickrate()))
-                .addLoreLine(Hints.leftClick(Component.translatable("jsst.itemEditor.potion.setEffect")))
-                .setCallback(Inputs.leftClick(() -> {
+        GuiElement effect = JSSTElementBuilder.from(LabelMaps.MOB_EFFECTS.getLabel(entry.effect()))
+                .setName(PotionEditor.describe(entry.createEffectInstance(), this.context.server().tickRateManager().tickrate()))
+                .leftClick(Component.translatable("jsst.itemEditor.potion.setEffect"), () -> {
                     Sounds.click(player);
-                    Menus.selector(player,
+                    SelectorMenu.open(player,
                             Component.translatable("jsst.itemEditor.potion.setEffect"),
                             this.context.server().registryAccess().registryOrThrow(Registries.MOB_EFFECT).stream()
                                     .toList(),
@@ -85,12 +86,10 @@ public class SuspiciousStewEditor extends GuiEditor {
                                     this.effects.set(index, new SuspiciousEffectHolder.EffectEntry(result.result(), entry.duration()));
                                 this.open();
                             });
-                }))
-                .build();
+                }).build();
 
-        GuiElement duration = GuiElementBuilder.from(Items.CLOCK.getDefaultInstance())
-                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.potion.setDuration")))
-                .setCallback(Inputs.leftClick(() -> {
+        GuiElement duration = JSSTElementBuilder.ui(Items.CLOCK)
+                .leftClick(Component.translatable("jsst.itemEditor.potion.setDuration"), () -> {
                     Sounds.click(player);
                     Menus.duration(player,
                             Component.translatable("jsst.itemEditor.potion.setDuration"),
@@ -103,7 +102,7 @@ public class SuspiciousStewEditor extends GuiEditor {
                                 }
                                 this.open();
                             });
-                })).build();
+                }).build();
 
         return List.of(effect, duration);
     }
@@ -111,9 +110,8 @@ public class SuspiciousStewEditor extends GuiEditor {
     private void drawStatic() {
         this.setSlot(Util.slot(0, 5), CommonLabels.cancel(this::cancel));
 
-        this.setSlot(Util.slot(0, 4), GuiElementBuilder.from(Items.OXEYE_DAISY.getDefaultInstance())
-                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.suspiciousStew.choosePreset")))
-                .setCallback(Inputs.leftClick(() -> {
+        this.setSlot(Util.slot(0, 4), JSSTElementBuilder.ui(Items.OXEYE_DAISY)
+                        .leftClick(Component.translatable("jsst.itemEditor.suspiciousStew.choosePreset"), () -> {
                     Sounds.click(player);
                     List<Item> options = SuspiciousEffectHolder.getAllEffectHolders().stream()
                             .map(holder -> {
@@ -127,7 +125,7 @@ public class SuspiciousStewEditor extends GuiEditor {
                             }).filter(Objects::nonNull)
                             .toList();
 
-                    Menus.selector(player,
+                    SelectorMenu.open(player,
                             Component.translatable("jsst.itemEditor.suspiciousStew.choosePreset"),
                             options,
                             LabelMaps.ITEMS_WITH_SUSPICIOUS_STEW_EFFECTS,
@@ -141,7 +139,7 @@ public class SuspiciousStewEditor extends GuiEditor {
                                 }
                                 this.open();
                             });
-                })));
+                }));
 
         for (int row = 0; row < 6; row++)
             this.setSlot(Util.slot(3, row), CommonLabels.divider());

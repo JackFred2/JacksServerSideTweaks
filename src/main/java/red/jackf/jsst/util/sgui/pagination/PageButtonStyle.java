@@ -1,15 +1,14 @@
 package red.jackf.jsst.util.sgui.pagination;
 
 import eu.pb4.sgui.api.ClickType;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SlotGuiInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.util.sgui.Hints;
-import red.jackf.jsst.util.sgui.Inputs;
 import red.jackf.jsst.util.sgui.Sounds;
 import red.jackf.jsst.util.sgui.Translations;
 import red.jackf.jsst.util.sgui.banners.Banners;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 import java.util.function.Consumer;
 
@@ -37,7 +36,8 @@ public sealed interface PageButtonStyle {
                 }
             }
 
-            var builder = GuiElementBuilder.from(icon).setName(Translations.page(page, maxPage));
+            var builder = JSSTElementBuilder.ui(icon)
+                    .setName(Translations.page(page, maxPage));
 
             if (canGoNextPage)
                 builder.addLoreLine(Hints.leftClick(Component.translatable("jsst.common.next")));
@@ -68,28 +68,26 @@ public sealed interface PageButtonStyle {
 
             if (canGoPreviousPage)
                 gui.setSlot(this.previousButtonSlot,
-                        GuiElementBuilder.from(arrowDirection == ArrowDirection.VERTICAL ? Banners.Arrows.UP : Banners.Arrows.LEFT)
-                                .setName(Hints.leftClick(Translations.previous()))
-                                .setCallback(Inputs.leftClick(() -> {
+                        JSSTElementBuilder.ui(arrowDirection == ArrowDirection.VERTICAL ? Banners.Arrows.UP : Banners.Arrows.LEFT)
+                                .leftClick(Translations.previous(), () -> {
                                     int newPage = Math.max(0, page - 1);
                                     Sounds.scroll(gui.getPlayer(), (float) newPage / maxPage);
                                     pageChangeCallback.accept(newPage);
-                                })));
+                                }));
             else
                 gui.clearSlot(this.previousButtonSlot);
 
             gui.setSlot(this.pageDisplay,
-                    GuiElementBuilder.from(Banners.Arrows.EMPTY).setName(Translations.page(page, maxPage)));
+                    JSSTElementBuilder.ui(Banners.Arrows.EMPTY).setName(Translations.page(page, maxPage)));
 
             if (canGoNextPage)
                 gui.setSlot(this.nextButtonSlot,
-                        GuiElementBuilder.from(arrowDirection == ArrowDirection.VERTICAL ? Banners.Arrows.DOWN : Banners.Arrows.RIGHT)
-                                .setName(Hints.leftClick(Translations.next()))
-                                .setCallback(Inputs.leftClick(() -> {
+                        JSSTElementBuilder.ui(arrowDirection == ArrowDirection.VERTICAL ? Banners.Arrows.DOWN : Banners.Arrows.RIGHT)
+                                .leftClick(Translations.next(), () -> {
                                     int newPage = Math.min(maxPage, page + 1);
                                     Sounds.scroll(gui.getPlayer(), (float) newPage / maxPage);
                                     pageChangeCallback.accept(newPage);
-                                })));
+                                }));
             else
                 gui.clearSlot(this.nextButtonSlot);
         }

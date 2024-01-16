@@ -1,4 +1,4 @@
-package red.jackf.jsst.feature.itemeditor.previousColours;
+package red.jackf.jsst.feature.itemeditor.previouscolours;
 
 import net.minecraft.server.level.ServerPlayer;
 import red.jackf.jackfredlib.api.colour.Colour;

@@ -1,6 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
 import java.util.ArrayList;
@@ -35,9 +36,8 @@ public class DurabilityEditor extends GuiEditor {
         super(MenuType.GENERIC_9x5, player, context, initial, callback, false);
         this.setTitle(Component.translatable("jsst.itemEditor.durability"));
 
-        this.setSlot(Util.slot(2, 3), GuiElementBuilder.from(Items.NAME_TAG.getDefaultInstance())
-                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.durability.custom")))
-                .setCallback(Inputs.leftClick(() -> {
+        this.setSlot(Util.slot(2, 3), JSSTElementBuilder.ui(Items.NAME_TAG)
+                        .leftClick(Component.translatable("jsst.itemEditor.durability.custom"), () -> {
                     Sounds.click(player);
                     Menus.integerOrPercentage(player,
                             Component.translatable("jsst.itemEditor.durability.custom"),
@@ -47,13 +47,13 @@ public class DurabilityEditor extends GuiEditor {
                                 if (result.hasResult()) stack.setDamageValue(stack.getMaxDamage() - result.result());
                                 this.open();
                             });
-                })));
+                }));
 
         this.setSlot(Util.slot(0, 4), CommonLabels.cancel(this::cancel));
     }
 
-    public static GuiElementBuilder getLabel(EditorContext context) {
-        return GuiElementBuilder.from(new ItemStack(Items.CRACKED_STONE_BRICKS))
+    public static GuiElementBuilderInterface<?> getLabel(EditorContext context) {
+        return JSSTElementBuilder.from(Items.CRACKED_STONE_BRICKS)
                 .setName(Component.translatable("jsst.itemEditor.durability"));
     }
 
@@ -61,7 +61,7 @@ public class DurabilityEditor extends GuiEditor {
     protected void redraw() {
         this.drawPreview(Util.slot(1, 1));
 
-        this.setSlot(Util.slot(0, 3), GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+        this.setSlot(Util.slot(0, 3), JSSTElementBuilder.from(Items.PAPER)
                 .setName(Translations.current(Component.literal("" + (stack.getMaxDamage() - stack.getDamageValue())).withStyle(Styles.VARIABLE))));
 
         for (int row = 0; row < 5; row++) this.setSlot(Util.slot(3, row), CommonLabels.divider());
@@ -76,14 +76,13 @@ public class DurabilityEditor extends GuiEditor {
                 final int damage = (int) (maxDamage * (1 - entry));
                 var preview = stack.copy();
                 preview.setDamageValue(damage);
-                options.add(GuiElementBuilder.from(preview)
+                options.add(JSSTElementBuilder.from(preview)
                         .setName(Component.translatable("optimizeWorld.progress.percentage", "%.0f".formatted(entry * 100)))
-                        .addLoreLine(Hints.leftClick(Translations.select()))
-                        .setCallback(Inputs.leftClick(() -> {
+                                .leftClick(Translations.select(), () -> {
                             Sounds.click(player);
                             this.stack.setDamageValue(damage);
                             this.redraw();
-                        })).build());
+                        }).build());
             }
 
             // durability numbers
@@ -92,37 +91,34 @@ public class DurabilityEditor extends GuiEditor {
                 final int damage = maxDamage - entry;
                 var preview = stack.copy();
                 preview.setDamageValue(damage);
-                options.add(GuiElementBuilder.from(preview)
+                options.add(JSSTElementBuilder.from(preview)
                         .setName(Component.literal(String.valueOf(entry)))
-                        .addLoreLine(Hints.leftClick(Translations.select()))
-                        .setCallback(Inputs.leftClick(() -> {
+                                .leftClick(Translations.select(), () -> {
                             Sounds.click(player);
                             this.stack.setDamageValue(damage);
                             this.redraw();
-                        })).build());
+                        }).build());
             }
 
             var preview = stack.copy();
             preview.setDamageValue(0);
-            options.add(GuiElementBuilder.from(preview)
+            options.add(JSSTElementBuilder.from(preview)
                     .glow()
                     .setName(Component.translatable("item.unbreakable").withStyle(Styles.POSITIVE))
-                    .addLoreLine(Hints.leftClick(Translations.select()))
-                    .setCallback(Inputs.leftClick(() -> {
+                            .leftClick(Translations.select(), () -> {
                         Sounds.click(player);
                         stack.getOrCreateTag().putBoolean("Unbreakable", true);
                         this.redraw();
-                    })).build());
+                    }).build());
         } else {
-            options.add(GuiElementBuilder.from(stack)
+            options.add(JSSTElementBuilder.from(stack)
                     .glow()
                     .setName(Component.translatable("item.unbreakable").withStyle(Styles.NEGATIVE.withStrikethrough(true)))
-                    .addLoreLine(Hints.leftClick(Translations.select()))
-                    .setCallback(Inputs.leftClick(() -> {
+                            .leftClick(Translations.select(), () -> {
                         Sounds.click(player);
                         stack.removeTagKey("Unbreakable");
                         this.redraw();
-                    })).build());
+                    }).build());
         }
 
         var optionSlots = GridTranslator.between(4, 9, 0, 5);

@@ -1,6 +1,5 @@
 package red.jackf.jsst.feature.itemeditor.gui.menus.style;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
@@ -10,10 +9,10 @@ import net.minecraft.world.item.alchemy.Potions;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.Gradients;
-import red.jackf.jsst.util.sgui.CommonLabels;
 import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.Translations;
 import red.jackf.jsst.util.sgui.Util;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,24 +49,24 @@ public class Colours {
     }
 
     public static void gradient(ItemStack base, Gradient gradient) {
-        GRADIENTS.put(GuiElementBuilder.from(base)
+        GRADIENTS.put(JSSTElementBuilder.from(base)
                               .addLoreLine(Util.colourise(Component.literal("|".repeat(40)), Component.empty(), gradient))
                               .asStack(), gradient);
     }
 
     private static ItemStack potion(Item item, Potion potion) {
-        return GuiElementBuilder.from(PotionUtils.setPotion(new ItemStack(item), potion)).hideFlags().asStack();
+        return JSSTElementBuilder.from(PotionUtils.setPotion(new ItemStack(item), potion)).hideFlags().asStack();
     }
 
     static {
 
         for (DyeColor colour : CANON_DYE_ORDER) {
-            put(DYES, CommonLabels.simple(DyeItem.byColor(colour), Translations.dye(colour)), colour.getTextColor());
+            put(DYES, JSSTElementBuilder.ui(DyeItem.byColor(colour)).setName(Translations.dye(colour)).asStack(), colour.getTextColor());
         }
 
         for (ChatFormatting format : ChatFormatting.values()) {
             if (!format.isColor()) continue;
-            ItemStack stack = GuiElementBuilder.from(new ItemStack(Items.LEATHER_CHESTPLATE))
+            ItemStack stack = JSSTElementBuilder.from(new ItemStack(Items.LEATHER_CHESTPLATE))
                     .setName(Component.literal("&" + format.getChar()))
                     .addLoreLine(Component.literal(format.getName()).withStyle(Styles.MINOR_LABEL))
                     .hideFlags().asStack();
@@ -75,41 +74,41 @@ public class Colours {
             put(CHAT_FORMATS, stack, format.getColor());
         }
 
-        put(EXTRA, CommonLabels.simple(Items.APPLE, Component.translatable("jsst.itemEditor.colour.common")), ChatFormatting.WHITE.getColor());
-        put(EXTRA, CommonLabels.simple(Items.EXPERIENCE_BOTTLE, Component.translatable("jsst.itemEditor.colour.uncommon")), ChatFormatting.YELLOW.getColor());
-        put(EXTRA, CommonLabels.simple(Items.GOLDEN_APPLE, Component.translatable("jsst.itemEditor.colour.rare")), ChatFormatting.AQUA.getColor());
-        put(EXTRA, CommonLabels.simple(Items.ENCHANTED_GOLDEN_APPLE, Component.translatable("jsst.itemEditor.colour.epic")), ChatFormatting.LIGHT_PURPLE.getColor());
-        put(EXTRA, CommonLabels.simple(Items.NAME_TAG, Component.translatable("jsst.itemEditor.colour.tooltips")), ChatFormatting.GRAY.getColor());
-        put(EXTRA, CommonLabels.simple(potion(Items.POTION, Potions.HEALING), Component.translatable("jsst.itemEditor.colour.positiveTooltips")), ChatFormatting.BLUE.getColor());
-        put(EXTRA, CommonLabels.simple(potion(Items.SPLASH_POTION, Potions.POISON), Component.translatable("jsst.itemEditor.colour.negativeTooltips")), ChatFormatting.RED.getColor());
-        put(EXTRA, CommonLabels.simple(potion(Items.TIPPED_ARROW, Potions.REGENERATION), Component.translatable("jsst.itemEditor.colour.potionAppliedTooltips")), ChatFormatting.DARK_PURPLE.getColor());
-        put(EXTRA, CommonLabels.simple(Items.DIAMOND_SWORD, Component.translatable("jsst.itemEditor.colour.weaponStats")), ChatFormatting.DARK_GREEN.getColor());
+        put(EXTRA, JSSTElementBuilder.ui(Items.APPLE).setName(Component.translatable("jsst.itemEditor.colour.common")).asStack(), ChatFormatting.WHITE.getColor());
+        put(EXTRA, JSSTElementBuilder.ui(Items.EXPERIENCE_BOTTLE).setName(Component.translatable("jsst.itemEditor.colour.uncommon")).asStack(), ChatFormatting.YELLOW.getColor());
+        put(EXTRA, JSSTElementBuilder.ui(Items.GOLDEN_APPLE).setName(Component.translatable("jsst.itemEditor.colour.rare")).asStack(), ChatFormatting.AQUA.getColor());
+        put(EXTRA, JSSTElementBuilder.ui(Items.ENCHANTED_GOLDEN_APPLE).setName(Component.translatable("jsst.itemEditor.colour.epic")).asStack(), ChatFormatting.LIGHT_PURPLE.getColor());
+        put(EXTRA, JSSTElementBuilder.ui(Items.NAME_TAG).setName(Component.translatable("jsst.itemEditor.colour.tooltips")).asStack(), ChatFormatting.GRAY.getColor());
+        put(EXTRA, JSSTElementBuilder.ui(potion(Items.POTION, Potions.HEALING)).setName(Component.translatable("jsst.itemEditor.colour.positiveTooltips")).asStack(), ChatFormatting.BLUE.getColor());
+        put(EXTRA, JSSTElementBuilder.ui(potion(Items.SPLASH_POTION, Potions.POISON)).setName(Component.translatable("jsst.itemEditor.colour.negativeTooltips")).asStack(), ChatFormatting.RED.getColor());
+        put(EXTRA, JSSTElementBuilder.ui(potion(Items.TIPPED_ARROW, Potions.REGENERATION)).setName(Component.translatable("jsst.itemEditor.colour.potionAppliedTooltips")).asStack(), ChatFormatting.DARK_PURPLE.getColor());
+        put(EXTRA, JSSTElementBuilder.ui(Items.DIAMOND_SWORD).setName(Component.translatable("jsst.itemEditor.colour.weaponStats")).asStack(), ChatFormatting.DARK_GREEN.getColor());
 
-        gradient(CommonLabels.simple(Items.APPLE, Component.translatable("jsst.itemEditor.gradient.rainbow")), Gradients.RAINBOW);
-        gradient(CommonLabels.simple(Items.AMETHYST_BLOCK, Component.translatable("jsst.itemEditor.gradient.vaporwave")), Gradient.linear(
+        gradient(JSSTElementBuilder.ui(Items.APPLE).setName(Component.translatable("jsst.itemEditor.gradient.rainbow")).asStack(), Gradients.RAINBOW);
+        gradient(JSSTElementBuilder.ui(Items.AMETHYST_BLOCK).setName(Component.translatable("jsst.itemEditor.gradient.vaporwave")).asStack(), Gradient.linear(
                 Colour.fromRGB(255, 0, 255),
                 Colour.fromRGB(0, 255, 255),
                 Gradient.LinearMode.RGB));
-        gradient(CommonLabels.simple(Items.GLOWSTONE, Component.translatable("jsst.itemEditor.gradient.solar")), Gradient.of(
+        gradient(JSSTElementBuilder.ui(Items.GLOWSTONE).setName(Component.translatable("jsst.itemEditor.gradient.solar")).asStack(), Gradient.of(
                 Colour.fromRGB(40, 23, 0),
                 red.jackf.jackfredlib.api.colour.Colours.YELLOW,
                 red.jackf.jackfredlib.api.colour.Colours.ORANGE,
                 red.jackf.jackfredlib.api.colour.Colours.WHITE
         ));
-        gradient(CommonLabels.simple(Items.MUSIC_DISC_FAR, Component.translatable("jsst.itemEditor.gradient.far")), Gradient.linear(
+        gradient(JSSTElementBuilder.ui(Items.MUSIC_DISC_FAR).setName(Component.translatable("jsst.itemEditor.gradient.far")).asStack(), Gradient.linear(
                 Colour.fromRGB(122, 221, 107),
                 Colour.fromRGB(254, 180, 61),
                 Gradient.LinearMode.HSV_SHORT
         ));
 
-        gradient(CommonLabels.simple(Items.PRISMARINE_SHARD, Component.translatable("jsst.itemEditor.gradient.gay")), Gradients.GAY);
-        gradient(CommonLabels.simple(Items.CAT_SPAWN_EGG, Component.translatable("jsst.itemEditor.gradient.lesbian")), Gradients.LESBIAN);
-        gradient(CommonLabels.simple(Items.TOTEM_OF_UNDYING, Component.translatable("jsst.itemEditor.gradient.bisexual")), Gradients.BISEXUAL);
-        gradient(CommonLabels.simple(Items.ENDER_EYE, Component.translatable("jsst.itemEditor.gradient.pansexual")), Gradients.PANSEXUAL);
-        gradient(CommonLabels.simple(Items.POTION.getDefaultInstance(), Component.translatable("jsst.itemEditor.gradient.intersex")), Gradients.INTERSEX_SHARP);
-        gradient(CommonLabels.simple(Items.ALLAY_SPAWN_EGG, Component.translatable("jsst.itemEditor.gradient.nonbinary")), Gradients.NONBINARY);
-        gradient(CommonLabels.simple(Items.EGG, Component.translatable("jsst.itemEditor.gradient.transgender")), Gradients.TRANS);
-        gradient(CommonLabels.simple(Items.BREAD, Component.translatable("jsst.itemEditor.gradient.asexual")), Gradients.ACE);
-        gradient(CommonLabels.simple(Items.STRUCTURE_VOID, Component.translatable("jsst.itemEditor.gradient.aromantic")), Gradients.ARO);
+        gradient(JSSTElementBuilder.ui(Items.PRISMARINE_SHARD).setName(Component.translatable("jsst.itemEditor.gradient.gay")).asStack(), Gradients.GAY);
+        gradient(JSSTElementBuilder.ui(Items.CAT_SPAWN_EGG).setName(Component.translatable("jsst.itemEditor.gradient.lesbian")).asStack(), Gradients.LESBIAN);
+        gradient(JSSTElementBuilder.ui(Items.TOTEM_OF_UNDYING).setName(Component.translatable("jsst.itemEditor.gradient.bisexual")).asStack(), Gradients.BISEXUAL);
+        gradient(JSSTElementBuilder.ui(Items.ENDER_EYE).setName(Component.translatable("jsst.itemEditor.gradient.pansexual")).asStack(), Gradients.PANSEXUAL);
+        gradient(JSSTElementBuilder.ui(Items.POTION.getDefaultInstance()).setName(Component.translatable("jsst.itemEditor.gradient.intersex")).asStack(), Gradients.INTERSEX_SHARP);
+        gradient(JSSTElementBuilder.ui(Items.ALLAY_SPAWN_EGG).setName(Component.translatable("jsst.itemEditor.gradient.nonbinary")).asStack(), Gradients.NONBINARY);
+        gradient(JSSTElementBuilder.ui(Items.EGG).setName(Component.translatable("jsst.itemEditor.gradient.transgender")).asStack(), Gradients.TRANS);
+        gradient(JSSTElementBuilder.ui(Items.BREAD).setName(Component.translatable("jsst.itemEditor.gradient.asexual")).asStack(), Gradients.ACE);
+        gradient(JSSTElementBuilder.ui(Items.STRUCTURE_VOID).setName(Component.translatable("jsst.itemEditor.gradient.aromantic")).asStack(), Gradients.ARO);
     }
 }

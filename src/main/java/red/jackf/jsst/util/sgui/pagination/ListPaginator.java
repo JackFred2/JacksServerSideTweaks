@@ -2,7 +2,6 @@ package red.jackf.jsst.util.sgui.pagination;
 
 import blue.endless.jankson.annotation.Nullable;
 import eu.pb4.sgui.api.ClickType;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SlotGuiInterface;
 import net.minecraft.network.chat.Component;
@@ -10,8 +9,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.JSST;
-import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.Hints;
+import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.sgui.Translations;
+import red.jackf.jsst.util.sgui.Util;
 import red.jackf.jsst.util.sgui.banners.Banners;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +45,6 @@ public class ListPaginator<T> {
 
     // -1: not yet calculated
     private int page = 0;
-    private int maxPage = 0;
 
     private ListPaginator(
             SlotGuiInterface gui,
@@ -84,9 +86,9 @@ public class ListPaginator<T> {
 
     public void draw() {
         List<T> elements = this.listSupplier.get();
-        int perPage = this.height - 1;
-        this.maxPage = Mth.clamp((elements.size() - 1) / perPage, 0, Mth.positiveCeilDiv(this.maxItems, perPage) - 1);
-        this.page = Math.min(this.page, this.maxPage);
+        final int perPage = this.height - 1;
+        final int maxPage = Mth.clamp((elements.size() - 1) / perPage, 0, Mth.positiveCeilDiv(this.maxItems, perPage) - 1);
+        this.page = Math.min(this.page, maxPage);
 
         Util.clear(this.gui, this.colFrom, this.colTo, this.rowFrom, this.rowTo);
 
@@ -116,13 +118,12 @@ public class ListPaginator<T> {
             if (this.modifiable) {
                 // delete row
                 this.gui.setSlot(Util.slot(this.colTo - 1, row),
-                                 GuiElementBuilder.from(Items.BARRIER.getDefaultInstance())
-                                                  .setName(Hints.leftClick(Translations.delete()))
-                                                  .setCallback(Inputs.leftClick(() -> {
-                                                      Sounds.click(this.gui.getPlayer());
-                                                      this.listSupplier.get().remove(fullIndex);
-                                                      this.onUpdate();
-                                                  })));
+                        JSSTElementBuilder.ui(Items.BARRIER)
+                                .leftClick(Translations.delete(), () -> {
+                                    Sounds.click(this.gui.getPlayer());
+                                    this.listSupplier.get().remove(fullIndex);
+                                    this.onUpdate();
+                                }));
 
                 // reorder if applicable
                 if (this.withReordering) {
@@ -144,7 +145,7 @@ public class ListPaginator<T> {
                         }
                     }
 
-                    var reorder = GuiElementBuilder.from(icon).setName(Component.translatable("jsst.common.reorder"));
+                    var reorder = JSSTElementBuilder.from(icon).setName(Component.translatable("jsst.common.reorder"));
 
                     if (canMoveDown)
                         reorder.addLoreLine(Hints.leftClick(Component.translatable("jsst.common.reorder.down")));
@@ -169,15 +170,14 @@ public class ListPaginator<T> {
         }
 
         // new element
-        if (this.modifiable && elements.size() < this.maxItems && this.page == this.maxPage) {
+        if (this.modifiable && elements.size() < this.maxItems && this.page == maxPage) {
             this.gui.setSlot(Util.slot(this.colFrom, this.rowFrom + index),
-                             GuiElementBuilder.from(Items.NETHER_STAR.getDefaultInstance())
-                                              .setName(Hints.leftClick(Translations.add()))
-                                              .setCallback(Inputs.leftClick(() -> {
-                                                  Sounds.click(this.gui.getPlayer());
-                                                  this.listSupplier.get().add(this.newElementSupplier.get());
-                                                  this.onUpdate();
-                                              })));
+                    JSSTElementBuilder.ui(Items.NETHER_STAR)
+                            .leftClick(Translations.add(), () -> {
+                                Sounds.click(this.gui.getPlayer());
+                                this.listSupplier.get().add(this.newElementSupplier.get());
+                                this.onUpdate();
+                            }));
         }
 
         // page buttons and indicator
@@ -186,64 +186,19 @@ public class ListPaginator<T> {
         final int lastRow = this.rowTo - 1;
 
         final boolean canGoPreviousPage = this.page > 0;
-        final boolean canGoNextPage = this.page < this.maxPage;
+        final boolean canGoNextPage = this.page < maxPage;
 
-        if (useSmall) {
-            ItemStack icon;
-            if (canGoPreviousPage) {
-                if (canGoNextPage) {
-                    icon = Banners.Arrows.HORIZONTAL;
-                } else {
-                    icon = Banners.Arrows.LEFT;
-                }
-            } else {
-                if (canGoNextPage) {
-                    icon = Banners.Arrows.RIGHT;
-                } else {
-                    icon = Banners.Arrows.EMPTY;
-                }
-            }
+        final PageButtonStyle pageButtons = useSmall ?
+                new PageButtonStyle.Compact(Util.slot(this.colTo - 1, lastRow)) :
+                new PageButtonStyle.Normal(Util.slot(this.colTo - 2, lastRow),
+                        Util.slot(this.colTo - 3, lastRow),
+                        Util.slot(this.colTo - 1, lastRow),
+                        PageButtonStyle.ArrowDirection.HORIZONTAL);
 
-            var builder = GuiElementBuilder.from(icon).setName(Translations.page(this.page, this.maxPage));
-
-            if (canGoNextPage) builder.addLoreLine(Hints.leftClick(Component.translatable("jsst.common.next")));
-            if (canGoPreviousPage) builder.addLoreLine(Hints.rightClick(Component.translatable("jsst.common.previous")));
-
-            if (canGoNextPage || canGoPreviousPage) builder.setCallback(clickType -> {
-                if (canGoNextPage && clickType == ClickType.MOUSE_LEFT) {
-                    this.page = Math.min(this.maxPage, this.page + 1);
-                    Sounds.scroll(this.gui.getPlayer(), (float) this.page / this.maxPage);
-                    this.draw();
-                } else if (canGoPreviousPage && clickType == ClickType.MOUSE_RIGHT) {
-                    this.page = Math.max(0, this.page - 1);
-                    Sounds.scroll(this.gui.getPlayer(), (float) this.page / this.maxPage);
-                    this.draw();
-                }
-            });
-
-            this.gui.setSlot(Util.slot(this.colTo - 1, lastRow), builder);
-        } else {
-            if (canGoPreviousPage) this.gui.setSlot(Util.slot(this.colTo - 3, lastRow),
-                                                    GuiElementBuilder.from(Banners.Arrows.LEFT)
-                                                                     .setName(Hints.leftClick(Translations.previous()))
-                                                                     .setCallback(Inputs.leftClick(() -> {
-                                                                         this.page = Math.max(0, this.page - 1);
-                                                                         Sounds.scroll(this.gui.getPlayer(), (float) this.page / this.maxPage);
-                                                                         this.draw();
-                                                                     })));
-
-            this.gui.setSlot(Util.slot(this.colTo - 2, lastRow),
-                             GuiElementBuilder.from(Banners.Arrows.EMPTY).setName(Translations.page(this.page, this.maxPage)));
-
-            if (canGoNextPage) this.gui.setSlot(Util.slot(this.colTo - 1, lastRow),
-                                                GuiElementBuilder.from(Banners.Arrows.RIGHT)
-                                                                 .setName(Hints.leftClick(Translations.next()))
-                                                                 .setCallback(Inputs.leftClick(() -> {
-                                                                     this.page = Math.min(this.maxPage, this.page + 1);
-                                                                     Sounds.scroll(this.gui.getPlayer(), (float) this.page / this.maxPage);
-                                                                     this.draw();
-                                                                 })));
-        }
+        pageButtons.draw(this.gui, this.page, maxPage, newPage -> {
+            this.page = newPage;
+            this.draw();
+        });
     }
 
     public interface RowDrawCallback<T> {
@@ -259,7 +214,8 @@ public class ListPaginator<T> {
         private int maxItems = Integer.MAX_VALUE;
         private Supplier<List<T>> listSupplier = null;
         private RowDrawCallback<T> rowDraw = null;
-        private Runnable onUpdate = () -> {};
+        private Runnable onUpdate = () -> {
+        };
         @Nullable
         private Supplier<T> newElementSupplier = null;
         private boolean withReordering = false;
@@ -327,16 +283,16 @@ public class ListPaginator<T> {
             Objects.requireNonNull(listSupplier);
             Objects.requireNonNull(rowDraw);
             return new ListPaginator<>(gui,
-                                       colFrom,
-                                       colTo,
-                                       rowFrom,
-                                       rowTo,
-                                       listSupplier,
-                                       maxItems,
-                                       rowDraw,
-                                       newElementSupplier,
-                                       withReordering,
-                                       onUpdate);
+                    colFrom,
+                    colTo,
+                    rowFrom,
+                    rowTo,
+                    listSupplier,
+                    maxItems,
+                    rowDraw,
+                    newElementSupplier,
+                    withReordering,
+                    onUpdate);
         }
     }
 }

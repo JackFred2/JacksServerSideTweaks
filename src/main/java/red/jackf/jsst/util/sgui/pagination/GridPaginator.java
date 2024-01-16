@@ -39,15 +39,16 @@ public class GridPaginator<T> {
     }
 
     public void draw() {
+        this.slots.fill(this.gui, ItemStack.EMPTY);
+
         List<T> elements = this.listSupplier.get();
+        if (elements.isEmpty()) return;
 
         int perPage = this.slots.size();
         int maxPage = Mth.clamp((elements.size() - 1) / perPage, 0, Mth.positiveCeilDiv(elements.size() - 1, perPage));
         this.page = Math.min(this.page, maxPage);
 
         List<T> sublist = elements.subList(this.page * perPage, Math.min(elements.size(), (this.page + 1) * perPage));
-
-        this.slots.fill(this.gui, ItemStack.EMPTY);
 
         for (GridTranslator.SlotItemPair<T> pair : this.slots.iterate(sublist)) {
             this.gui.setSlot(pair.slot(), this.drawFunc.apply(pair.item()));

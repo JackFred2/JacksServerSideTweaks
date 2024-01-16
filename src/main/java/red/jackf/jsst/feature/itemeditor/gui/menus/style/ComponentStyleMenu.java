@@ -1,8 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.menus.style;
 
-import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.ChatFormatting;
@@ -18,12 +16,14 @@ import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
-import red.jackf.jsst.feature.itemeditor.previousColours.EditorColourHistory;
-import red.jackf.jsst.feature.itemeditor.previousColours.PlayerHistoryGui;
+import red.jackf.jsst.feature.itemeditor.previouscolours.EditorColourHistory;
+import red.jackf.jsst.feature.itemeditor.previouscolours.PlayerHistoryGui;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.elements.SwitchButton;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.Menus;
+import red.jackf.jsst.util.sgui.menus.selector.SelectorMenu;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -71,10 +71,10 @@ public class ComponentStyleMenu extends SimpleGui {
     }
 
     protected static GuiElementInterface createPlayerGradientHistoryLabel(ServerPlayer player) {
-        return GuiElementBuilder.from(Items.PLAYER_HEAD.getDefaultInstance())
-                                .glow()
+        return JSSTElementBuilder.from(Items.PLAYER_HEAD)
                                 .setName(Component.translatable("jsst.itemEditor.gradient.page.playerHistory"))
                                 .setSkullOwner(player.getGameProfile(), null)
+                .glow()
                                 .build();
     }
 
@@ -99,15 +99,14 @@ public class ComponentStyleMenu extends SimpleGui {
             MutableComponent title,
             Supplier<Boolean> get,
             Consumer<Boolean> set) {
-        var builder = GuiElementBuilder.from(new ItemStack(base))
+        var builder = JSSTElementBuilder.from(new ItemStack(base))
                                        .setName(title.withStyle(get.get() ? Styles.POSITIVE : Styles.NEGATIVE))
-                                       .addLoreLine(Hints.leftClick(Translations.toggle()))
-                                       .hideFlags()
-                                       .setCallback(Inputs.leftClick(() -> {
+                .hideFlags()
+                .leftClick(Translations.toggle(), () -> {
                                            Sounds.click(player);
                                            set.accept(!get.get());
                                            this.redraw();
-                                       }));
+                                       });
         if (get.get()) builder.glow();
         return builder.build();
     }
@@ -120,13 +119,12 @@ public class ComponentStyleMenu extends SimpleGui {
         for (Map.Entry<ItemStack, Colour> entry : colours.entrySet()) {
             var slot = colourSlots.translate(index++);
             if (slot.isEmpty()) break;
-            this.setSlot(slot.getAsInt(), GuiElementBuilder.from(entry.getKey())
-                                                           .addLoreLine(Hints.leftClick(Translations.select()))
-                                                           .setCallback(Inputs.leftClick(() -> {
+            this.setSlot(slot.getAsInt(), JSSTElementBuilder.from(entry.getKey())
+                            .leftClick(Translations.select(), () -> {
                                                                Sounds.click(player);
                                                                this.colour = entry.getValue();
                                                                this.redraw();
-                                                           })));
+                                                           }));
         }
     }
 
@@ -138,13 +136,12 @@ public class ComponentStyleMenu extends SimpleGui {
         for (Map.Entry<ItemStack, Gradient> entry : Colours.GRADIENTS.entrySet()) {
             var slot = colourSlots.translate(index++);
             if (slot.isEmpty()) break;
-            this.setSlot(slot.getAsInt(), GuiElementBuilder.from(entry.getKey())
-                                                           .addLoreLine(Hints.leftClick(Translations.select()))
-                                                           .setCallback(Inputs.leftClick(() -> {
+            this.setSlot(slot.getAsInt(), JSSTElementBuilder.from(entry.getKey())
+                            .leftClick(Translations.select(), () -> {
                                                                Sounds.click(player);
                                                                this.colour = entry.getValue();
                                                                this.redraw();
-                                                           })));
+                                                           }));
         }
     }
 
@@ -152,18 +149,15 @@ public class ComponentStyleMenu extends SimpleGui {
         // colours
         this.page.pageDraw.accept(this);
 
-        this.setSlot(Util.slot(0, 4), GuiElementBuilder.from(new ItemStack(Items.GUNPOWDER))
-                                                       .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.style.removeColour")))
-                                                       .setCallback(Inputs.leftClick(() -> {
+        this.setSlot(Util.slot(0, 4), JSSTElementBuilder.ui(Items.GUNPOWDER)
+                        .leftClick(Component.translatable("jsst.itemEditor.style.removeColour"), () -> {
                                                            Sounds.clear(player);
                                                            this.colour = null;
                                                            this.redraw();
-                                                       })));
+                                                       }));
 
-        this.setSlot(Util.slot(1, 4), GuiElementBuilder.from(new ItemStack(Items.PAPER))
-                                                       .setName(Component.translatable("jsst.itemEditor.colour.custom"))
-                                                       .addLoreLine(Hints.leftClick(Translations.open()))
-                                                       .setCallback(Inputs.leftClick(() -> {
+        this.setSlot(Util.slot(1, 4), JSSTElementBuilder.ui(Items.PAPER)
+                        .leftClick(Component.translatable("jsst.itemEditor.colour.custom"), () -> {
                                                            Sounds.click(player);
                                                            Menus.customColour(player, result -> {
                                                                if (result.hasResult()) {
@@ -172,12 +166,11 @@ public class ComponentStyleMenu extends SimpleGui {
                                                                }
                                                                this.open();
                                                            });
-                                                       })));
+                                                       }));
 
-        this.setSlot(Util.slot(2, 4), GuiElementBuilder.from(Items.GLOWSTONE_DUST.getDefaultInstance())
+        this.setSlot(Util.slot(2, 4), JSSTElementBuilder.ui(Items.GLOWSTONE_DUST)
                                                        .setName(Component.translatable("jsst.itemEditor.gradient.custom"))
-                                                       .addLoreLine(Hints.leftClick(Translations.open()))
-                                                       .setCallback(Inputs.leftClick(() -> {
+                        .leftClick(Translations.open(), () -> {
                                                            Sounds.click(player);
                                                            EditorMenus.gradient(player, result -> {
                                                                if (result.hasResult()) {
@@ -186,7 +179,7 @@ public class ComponentStyleMenu extends SimpleGui {
                                                                }
                                                                this.open();
                                                            });
-                                                       })));
+                                                       }));
 
         this.setSlot(Util.slot(3, 4), SwitchButton.<Page>builder(Component.translatable("jsst.itemEditor.colour.page"))
                                                   .addOption(Page.DYES, ColourMenu.createDyeLabel())
@@ -236,7 +229,7 @@ public class ComponentStyleMenu extends SimpleGui {
                                                          () -> obfuscated,
                                                          b -> obfuscated = b));
 
-        this.setSlot(Util.slot(6, 1), GuiElementBuilder.from(new ItemStack(Items.WRITABLE_BOOK))
+        this.setSlot(Util.slot(6, 1), JSSTElementBuilder.ui(Items.WRITABLE_BOOK)
                                                        .setName(Component.empty()
                                                                          .append(Component.literal("Font")
                                                                                           .withStyle(Style.EMPTY.withFont(new ResourceLocation("minecraft:alt"))))
@@ -244,28 +237,29 @@ public class ComponentStyleMenu extends SimpleGui {
                                                                          .append(Component.translatable("jsst.itemEditor.style.font"))
                                                                          .append(Component.literal(")")))
                                                        .addLoreLine(Translations.current(this.font != null ? this.font.toString() : Translations.def()))
-                                                       .addLoreLine(Hints.leftClick(Translations.change()))
-                                                       .addLoreLine(Hints.rightClick(Translations.reset()))
-                                                       .setCallback(this::clickFont));
+                        .leftClick(Translations.change(), this::fontSelector)
+                        .rightClick(Translations.reset(), () -> {
+                            Sounds.clear(player);
+                            this.font = null;
+                            this.redraw();
+                        }));
 
         // misc
-        this.setSlot(Util.slot(8, 3), GuiElementBuilder.from(new ItemStack(Items.WATER_BUCKET))
-                                                       .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.style.removeStyle")))
-                                                       .setCallback(Inputs.leftClick(() -> {
+        this.setSlot(Util.slot(8, 3), JSSTElementBuilder.ui(Items.WATER_BUCKET)
+                        .leftClick(Component.translatable("jsst.itemEditor.style.removeStyle"), () -> {
                                                            Sounds.clear(player);
                                                            this.colour = null;
                                                            this.bold = this.italic = this.underline = this.strikethrough = this.obfuscated = false;
                                                            this.font = null;
                                                            this.redraw();
-                                                       })));
+                                                       }));
 
-        this.setSlot(Util.slot(6, 4), GuiElementBuilder.from(new ItemStack(Items.WRITTEN_BOOK))
+        this.setSlot(Util.slot(6, 4), JSSTElementBuilder.ui(Items.WRITTEN_BOOK)
                                                        .hideFlags()
                                                        .glow()
                                                        .setName(build())
-                                                       .addLoreLine(Hints.leftClick(Translations.save()))
-                                                       .addLoreLine(Hints.rightClick(Translations.reset()))
-                                                       .setCallback(this::clickPreview));
+                        .leftClick(Translations.save(), this::complete)
+                        .rightClick(Translations.reset(), this::reset));
 
         this.setSlot(Util.slot(8, 4), CommonLabels.cancel(() -> {
             Sounds.close(player);
@@ -273,40 +267,34 @@ public class ComponentStyleMenu extends SimpleGui {
         }));
     }
 
-    private void clickFont(ClickType type) {
-        if (type == ClickType.MOUSE_LEFT) {
-            Sounds.click(player);
-            HashMap<Fonts, ItemStack> options = new HashMap<>();
-            for (Fonts value : Fonts.values()) options.put(value, value.label.apply(build()));
-            Menus.selector(player,
-                           Component.translatable("jsst.itemEditor.style.changeFont"),
-                           Arrays.asList(Fonts.values()),
-                           LabelMap.createStatic(options),
-                           selection -> {
-                               if (selection.hasResult()) {
-                                   if (selection.result() == Fonts.CUSTOM) {
-                                       Menus.resourceLocation(player,
-                                                              Component.translatable("jsst.itemEditor.style.changeFont"),
-                                                              this.font != null ? this.font : Style.DEFAULT_FONT,
-                                                              null,
-                                                              result -> {
-                                                                  if (result.hasResult())
-                                                                      this.font = result.result().equals(Style.DEFAULT_FONT) ? null : result.result();
-                                                                  this.open();
-                                                              });
-                                   } else {
-                                       this.font = selection.result().id.equals(Style.DEFAULT_FONT) ? null : selection.result().id;
-                                       this.open();
-                                   }
+    private void fontSelector() {
+        Sounds.click(player);
+        HashMap<Fonts, ItemStack> options = new HashMap<>();
+        for (Fonts value : Fonts.values()) options.put(value, value.label.apply(build()));
+        SelectorMenu.open(player,
+                       Component.translatable("jsst.itemEditor.style.changeFont"),
+                       Arrays.asList(Fonts.values()),
+                       LabelMap.createStatic(options),
+                       selection -> {
+                           if (selection.hasResult()) {
+                               if (selection.result() == Fonts.CUSTOM) {
+                                   Menus.resourceLocation(player,
+                                                          Component.translatable("jsst.itemEditor.style.changeFont"),
+                                                          this.font != null ? this.font : Style.DEFAULT_FONT,
+                                                          null,
+                                                          result -> {
+                                                              if (result.hasResult())
+                                                                  this.font = result.result().equals(Style.DEFAULT_FONT) ? null : result.result();
+                                                              this.open();
+                                                          });
                                } else {
+                                   this.font = selection.result().id.equals(Style.DEFAULT_FONT) ? null : selection.result().id;
                                    this.open();
                                }
-                           });
-        } else if (type == ClickType.MOUSE_RIGHT) {
-            Sounds.clear(player);
-            this.font = null;
-            this.redraw();
-        }
+                           } else {
+                               this.open();
+                           }
+                       });
     }
 
     private void setCustom(Gradient gradient) {
@@ -316,15 +304,15 @@ public class ComponentStyleMenu extends SimpleGui {
         this.redraw();
     }
 
-    private void clickPreview(ClickType type) {
-        if (type == ClickType.MOUSE_LEFT) {
-            Sounds.click(player);
-            this.onResult.accept(Optional.of(build()));
-        } else if (type == ClickType.MOUSE_RIGHT) {
-            Sounds.clear(player);
-            this.load();
-            this.redraw();
-        }
+    private void complete() {
+        Sounds.click(player);
+        this.onResult.accept(Optional.of(build()));
+    }
+
+    private void reset() {
+        Sounds.clear(player);
+        this.load();
+        this.redraw();
     }
 
     private Component build() {
@@ -367,8 +355,7 @@ public class ComponentStyleMenu extends SimpleGui {
     private enum Fonts {
         DEFAULT(Style.DEFAULT_FONT, new ItemStack(Items.GRASS_BLOCK)),
         ALT(new ResourceLocation("alt"), new ItemStack(Items.ENCHANTING_TABLE)),
-        UNICODE(new ResourceLocation("uniform"), GuiElementBuilder.from(new ItemStack(Items.MUSIC_DISC_OTHERSIDE))
-                                                                  .hideFlags().asStack()),
+        UNICODE(new ResourceLocation("uniform"), JSSTElementBuilder.from(Items.MUSIC_DISC_OTHERSIDE).hideFlags().asStack()),
         ILLAGER(new ResourceLocation("illageralt"), Raid.getLeaderBannerInstance()),
         CUSTOM;
 
@@ -377,14 +364,12 @@ public class ComponentStyleMenu extends SimpleGui {
 
         Fonts() {
             this.id = new ResourceLocation("jsst", "shouldntseethis");
-            this.label = ignored -> GuiElementBuilder.from(new ItemStack(Items.ANVIL))
-                                                     .setName(Component.translatable("jsst.itemEditor.style.customFont"))
-                                                     .asStack();
+            this.label = ignored -> JSSTElementBuilder.from(Items.ANVIL).setName(Component.translatable("jsst.itemEditor.style.customFont")).asStack();
         }
 
         Fonts(ResourceLocation id, ItemStack label) {
             this.id = id;
-            this.label = text -> GuiElementBuilder.from(label)
+            this.label = text -> JSSTElementBuilder.from(label)
                                                   .setName(Component.literal(id.toString()).withStyle(Styles.INFO))
                                                   .addLoreLine(text.copy().withStyle(Style.EMPTY.withFont(id)))
                                                   .asStack();

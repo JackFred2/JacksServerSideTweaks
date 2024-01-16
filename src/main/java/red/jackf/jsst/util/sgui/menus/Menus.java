@@ -1,6 +1,5 @@
 package red.jackf.jsst.util.sgui.menus;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -12,16 +11,12 @@ import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.Util;
-import red.jackf.jsst.util.sgui.labels.LabelMap;
-import red.jackf.jsst.util.sgui.menus.selector.PaginatedSelectorMenu;
-import red.jackf.jsst.util.sgui.menus.selector.SinglePageSelectorMenu;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
-import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class Menus {
-    private static final int PAGINATION_THRESHOLD = 52;
 
     public static class ColourHints {
         private static final Pattern SMALL_HEX = Pattern.compile("^#([\\da-fA-F]{3})$");
@@ -51,26 +46,9 @@ public class Menus {
     }
 
     // resource location
-    private static final ItemStack DEFAULT_RESLOC_HINT = GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+    private static final ItemStack DEFAULT_RESLOC_HINT = JSSTElementBuilder.from(Items.PAPER)
             .setName(Component.translatable("jsst.itemEditor.menus.resLocHint", Component.literal("namespace:path").setStyle(Styles.EXAMPLE)))
             .asStack();
-
-    /**
-     * Allows a user to select one of a collection of options. Will resize itself as needed, and will paginate. If paginated,
-     * a search bar will also be available. Does not close itself; you'll need to do this in the callback.
-     */
-    public static <T> void selector(
-            ServerPlayer player,
-            Component title,
-            Collection<T> options,
-            LabelMap<T> labelMap,
-            Consumer<Result<T>> onSelect) {
-        if (options.size() > PAGINATION_THRESHOLD) {
-            new PaginatedSelectorMenu<>(player, title, options, onSelect, labelMap).open();
-        } else {
-            new SinglePageSelectorMenu<>(player, title, options, onSelect, labelMap).open();
-        }
-    }
 
     public static StringInputMenu.Builder stringBuilder(ServerPlayer player) {
         return new StringInputMenu.Builder(player);
@@ -90,17 +68,17 @@ public class Menus {
     private static GuiElementBuilderInterface<?> makeIntegerHint(@Nullable Integer minimumInclusive, @Nullable Integer maximumInclusive) {
         if (minimumInclusive == null) {
             if (maximumInclusive == null) {
-                return GuiElementBuilder.from(ItemStack.EMPTY);
+                return JSSTElementBuilder.from(Items.AIR);
             } else {
-                return GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+                return JSSTElementBuilder.from(Items.PAPER)
                         .setName(Component.literal("x ≤ " + maximumInclusive).withStyle(Styles.EXAMPLE));
             }
         } else {
             if (maximumInclusive == null) {
-                return GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+                return JSSTElementBuilder.from(Items.PAPER)
                                         .setName(Component.literal(minimumInclusive + " ≤ x").withStyle(Styles.EXAMPLE));
             } else {
-                return GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+                return JSSTElementBuilder.from(Items.PAPER)
                                         .setName(Component.literal(minimumInclusive + " ≤ x ≤ " + maximumInclusive).withStyle(Styles.EXAMPLE));
             }
         }
@@ -118,7 +96,7 @@ public class Menus {
                 .title(title)
                 .initial(String.valueOf(initial))
                 .predicate(s -> parseInt(s, minimumInclusive, maximumInclusive).hasResult())
-                .hint(hint == null ? makeIntegerHint(minimumInclusive, maximumInclusive) : GuiElementBuilder.from(hint))
+                .hint(hint == null ? makeIntegerHint(minimumInclusive, maximumInclusive) : JSSTElementBuilder.from(hint))
                 .createAndShow(result -> callback.accept(result.flatMap(s -> parseInt(s, minimumInclusive, maximumInclusive))));
     }
 
@@ -140,7 +118,7 @@ public class Menus {
     }
 
     private static GuiElementBuilderInterface<?> makeIntegerOrPercentageHint(int maximumValueInclusive) {
-        return GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+        return JSSTElementBuilder.from(Items.PAPER)
                 .setName(Component.translatable("jsst.itemEditor.common.hintTitle"))
                 .addLoreLine(Component.literal("0 ≤ x ≤ " + maximumValueInclusive).withStyle(Styles.EXAMPLE))
                 .addLoreLine(Component.literal("0% ≤ x ≤ 100%").withStyle(Styles.EXAMPLE));
@@ -227,7 +205,7 @@ public class Menus {
                 .hint(s -> {
                     var colour = parseColour(s);
                     if (colour.hasResult()) {
-                        return GuiElementBuilder.from(new ItemStack(Items.GLOWSTONE))
+                        return JSSTElementBuilder.from(Items.GLOWSTONE)
                                                 .setName(Component.literal("|".repeat(30)).withColor(colour.result().toARGB()))
                                                 .addLoreLine(Component.translatable("jsst.itemEditor.common.hintTitle"))
                                                 .addLoreLine(ColourHints.SMALL_HEX_EXAMPLE)
@@ -236,7 +214,7 @@ public class Menus {
                                                 .addLoreLine(ColourHints.INTEGER_EXAMPLE)
                                                 .build();
                     } else {
-                        return GuiElementBuilder.from(new ItemStack(Items.GRAY_CONCRETE))
+                        return JSSTElementBuilder.from(Items.GRAY_CONCRETE)
                                                 .setName(Component.translatable("jsst.common.invalid").setStyle(Styles.NEGATIVE))
                                                 .addLoreLine(Component.translatable("jsst.itemEditor.common.hintTitle"))
                                                 .addLoreLine(ColourHints.SMALL_HEX_EXAMPLE)
@@ -323,7 +301,7 @@ public class Menus {
                 .title(title)
                 .initial(initial)
                 .predicate(s -> parseDuration(s, player.server.tickRateManager().tickrate(), allowInfinite).hasResult())
-                .hint(GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
+                .hint(JSSTElementBuilder.from(Items.PAPER)
                               .setName(Component.translatable("jsst.itemEditor.common.hintTitle"))
                               .addLoreLine(Duration.INFINITE_EXAMPLE)
                               .addLoreLine(Duration.TICKS_EXAMPLE)

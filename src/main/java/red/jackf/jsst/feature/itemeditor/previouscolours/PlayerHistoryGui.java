@@ -1,6 +1,5 @@
-package red.jackf.jsst.feature.itemeditor.previousColours;
+package red.jackf.jsst.feature.itemeditor.previouscolours;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SlotGuiInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
@@ -9,8 +8,11 @@ import net.minecraft.world.item.ItemStack;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.GradientBuilder;
-import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.GridTranslator;
+import red.jackf.jsst.util.sgui.Translations;
+import red.jackf.jsst.util.sgui.Util;
 import red.jackf.jsst.util.sgui.banners.Banners;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,11 +26,10 @@ public interface PlayerHistoryGui {
 
         for (GridTranslator.SlotItemPair<Colour> pair : slots.iterate(previous)) {
             Colour colour = pair.item();
-            gui.setSlot(pair.slot(), GuiElementBuilder.from(DyeItem.byColor(colour.closestDyeColour()).getDefaultInstance())
+            gui.setSlot(pair.slot(), JSSTElementBuilder.from(DyeItem.byColor(colour.closestDyeColour()))
                     .setName(Component.literal("█".repeat(8)).withColor(colour.toARGB()))
                     .addLoreLine(Util.formatAsHex(colour))
-                    .addLoreLine(Hints.leftClick(Translations.select()))
-                    .setCallback(Inputs.leftClick(() -> callback.accept(colour))));
+                    .leftClick(Translations.select(), () -> callback.accept(colour)));
         }
     }
 
@@ -44,12 +45,11 @@ public interface PlayerHistoryGui {
             DyeColor from = gradient.sample(0).closestDyeColour();
             DyeColor to = gradient.sample(GradientBuilder.END).closestDyeColour();
 
-            gui.setSlot(pair.slot(), GuiElementBuilder.from(Banners.fromColours(from, to))
+            gui.setSlot(pair.slot(), JSSTElementBuilder.from(Banners.fromColours(from, to))
                     .setName(Component.translatable("jsst.itemEditor.gradient.custom"))
                     .hideFlags()
                     .addLoreLine(Util.colourise(Component.literal("|".repeat(40)), Component.empty(), gradient))
-                    .addLoreLine(Hints.leftClick(Translations.select()))
-                    .setCallback(Inputs.leftClick(() -> callback.accept(gradient))));
+                    .leftClick(Translations.select(), () -> callback.accept(gradient)));
         }
     }
 }

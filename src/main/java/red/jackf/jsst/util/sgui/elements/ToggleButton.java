@@ -1,6 +1,5 @@
 package red.jackf.jsst.util.sgui.elements;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.GuiInterface;
 import net.minecraft.network.chat.Component;
@@ -54,13 +53,13 @@ public class ToggleButton implements GuiElementInterface {
         var disabled = this.disabled.getItemStackForDisplay(gui);
         var enabled = this.enabled.getItemStackForDisplay(gui);
 
-        GuiElementBuilder builder;
+        JSSTElementBuilder builder;
         if (this.value) {
-            builder = GuiElementBuilder.from(enabled)
+            builder = JSSTElementBuilder.from(enabled)
                                        .setName(this.label.copy().withStyle(Styles.POSITIVE));
             if (this.makeEnabledGlow) builder.glow();
         } else {
-            builder = GuiElementBuilder.from(disabled)
+            builder = JSSTElementBuilder.from(disabled)
                                        .setName(this.label.copy().withStyle(Styles.NEGATIVE));
         }
 
@@ -73,8 +72,8 @@ public class ToggleButton implements GuiElementInterface {
 
     public static class Builder {
         private Component label;
-        private GuiElementInterface disabled = GuiElementBuilder.from(Items.RED_CONCRETE.getDefaultInstance()).build();
-        private GuiElementInterface enabled = GuiElementBuilder.from(Items.LIME_CONCRETE.getDefaultInstance()).build();
+        private GuiElementInterface disabled = JSSTElementBuilder.from(Items.RED_CONCRETE).build();
+        private GuiElementInterface enabled = JSSTElementBuilder.from(Items.LIME_CONCRETE).build();
         private Consumer<Boolean> callback;
         private boolean makeEnabledGlow = false;
         private boolean initial = false;
@@ -92,7 +91,7 @@ public class ToggleButton implements GuiElementInterface {
         }
 
         public Builder disabled(ItemStack disabled) {
-            this.disabled = GuiElementBuilder.from(disabled).build();
+            this.disabled = JSSTElementBuilder.from(disabled).build();
             return this;
         }
 
@@ -102,7 +101,7 @@ public class ToggleButton implements GuiElementInterface {
         }
 
         public Builder enabled(ItemStack enabled) {
-            this.enabled = GuiElementBuilder.from(enabled).build();
+            this.enabled = JSSTElementBuilder.from(enabled).build();
             return this;
         }
 

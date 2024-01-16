@@ -1,6 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
@@ -9,7 +9,10 @@ import net.minecraft.world.item.Items;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
-import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.CommonLabels;
+import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.sgui.Translations;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
 import java.util.function.Consumer;
@@ -33,9 +36,8 @@ public class SimpleNameEditor extends GuiEditor {
         this.setTitle(Component.translatable("jsst.itemEditor.simpleName"));
     }
 
-    public static GuiElementBuilder getLabel(EditorContext context) {
-        return GuiElementBuilder.from(new ItemStack(Items.PAPER))
-                                .setName(Component.translatable("jsst.itemEditor.simpleName"));
+    public static GuiElementBuilderInterface<?> getLabel(EditorContext context) {
+        return JSSTElementBuilder.from(Items.PAPER).setName(Component.translatable("jsst.itemEditor.simpleName"));
     }
 
     @Override
@@ -44,18 +46,15 @@ public class SimpleNameEditor extends GuiEditor {
 
         this.setSlot(1, CommonLabels.divider());
 
-        this.setSlot(2, GuiElementBuilder.from(new ItemStack(Items.WRITABLE_BOOK))
-                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.simpleName.changeText")))
-                .setCallback(Inputs.leftClick(this::changeText)));
+        this.setSlot(2, JSSTElementBuilder.ui(Items.WRITABLE_BOOK)
+                .leftClick(Component.translatable("jsst.itemEditor.simpleName.changeText"), this::changeText));
 
-        this.setSlot(3, GuiElementBuilder.from(new ItemStack(Items.GLOWSTONE))
-                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.simpleName.changeStyle")))
-                .setCallback(Inputs.leftClick(this::changeStyle)));
+        this.setSlot(3, JSSTElementBuilder.ui(Items.GLOWSTONE)
+                .leftClick(Component.translatable("jsst.itemEditor.simpleName.changeStyle"), this::changeStyle));
 
         if (this.stack.hasCustomHoverName()) {
-            this.setSlot(7, GuiElementBuilder.from(new ItemStack(Items.GRINDSTONE))
-                                             .setName(Hints.leftClick(Translations.clear()))
-                                             .setCallback(Inputs.leftClick(this::clearName)));
+            this.setSlot(7, JSSTElementBuilder.ui(Items.GRINDSTONE)
+                    .leftClick(Translations.clear(), this::clearName));
         } else {
             this.clearSlot(7);
         }
@@ -65,23 +64,24 @@ public class SimpleNameEditor extends GuiEditor {
     private void changeStyle() {
         Sounds.click(player);
         EditorMenus.componentStyle(player,
-                                   this.stack.getHoverName(),
-                          opt -> {
-                              opt.ifPresent(this.stack::setHoverName);
-                              this.open();
-                          });
+                this.stack.getHoverName(),
+                opt -> {
+                    opt.ifPresent(this.stack::setHoverName);
+                    this.open();
+                });
     }
 
     private void changeText() {
         Sounds.click(player);
         Menus.stringBuilder(player)
-             .title(Component.translatable("jsst.itemEditor.simpleName.changeText"))
-             .initial(stack.getHoverName().getString())
-             .createAndShow(result -> {
-                 if (result.hasResult())
-                    this.stack.setHoverName(Component.literal(result.result()).setStyle(this.stack.getHoverName().getStyle()));
-                 this.open();
-             });
+                .title(Component.translatable("jsst.itemEditor.simpleName.changeText"))
+                .initial(stack.getHoverName().getString())
+                .createAndShow(result -> {
+                    if (result.hasResult())
+                        this.stack.setHoverName(Component.literal(result.result())
+                                .setStyle(this.stack.getHoverName().getStyle()));
+                    this.open();
+                });
     }
 
     private void clearName() {

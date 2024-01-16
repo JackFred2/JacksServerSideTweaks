@@ -1,6 +1,5 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +8,7 @@ import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 import java.util.function.Consumer;
 
@@ -19,7 +19,7 @@ public class NameEditor implements Editor {
             true,
             false,
             ignored -> true,
-            context -> GuiElementBuilder.from(Items.ANVIL.getDefaultInstance())
+            context -> JSSTElementBuilder.from(Items.ANVIL.getDefaultInstance())
                                    .setName(Component.translatable("jsst.itemEditor.name"))
     );
     private final ServerPlayer player;

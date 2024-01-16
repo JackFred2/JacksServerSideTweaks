@@ -1,34 +1,28 @@
 package red.jackf.jsst.util.sgui;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
-import java.util.Arrays;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 public interface CommonLabels {
     static GuiElementInterface close(Runnable closeCallback) {
-        return GuiElementBuilder.from(new ItemStack(Items.BARRIER))
-                                .setName(Hints.leftClick(Translations.close()))
-                                .setCallback(Inputs.leftClick(closeCallback))
-                                .build();
+        return JSSTElementBuilder.ui(Items.BARRIER)
+                .leftClick(Translations.close(), closeCallback)
+                .build();
     }
 
     static GuiElementInterface cancel(Runnable cancelCallback) {
-        return GuiElementBuilder.from(new ItemStack(Items.BARRIER))
-                                .setName(Hints.leftClick(Translations.cancel()))
-                                .setCallback(Inputs.leftClick(cancelCallback))
-                                .build();
+        return JSSTElementBuilder.ui(Items.BARRIER)
+                .leftClick(Translations.cancel(), cancelCallback)
+                .build();
     }
 
     static GuiElementInterface divider() {
-        return GuiElementBuilder.from(new ItemStack(Items.LIGHT_BLUE_STAINED_GLASS_PANE))
-                                .setName(CommonComponents.EMPTY)
-                                .build();
+        return JSSTElementBuilder.ui(Items.LIGHT_BLUE_STAINED_GLASS_PANE)
+                .setName(CommonComponents.EMPTY)
+                .build();
     }
 
     static GuiElementInterface disabled() {
@@ -36,20 +30,8 @@ public interface CommonLabels {
     }
 
     static GuiElementInterface disabled(Component text) {
-        return GuiElementBuilder.from(new ItemStack(Items.GRAY_STAINED_GLASS_PANE))
-                                .setName(text)
-                                .build();
-    }
-
-    static ItemStack simple(Item item, Component name, Component... lore) {
-        return simple(item.getDefaultInstance(), name, lore);
-    }
-
-    static ItemStack simple(ItemStack stack, Component name, Component... lore) {
-        return Styles.unclean(GuiElementBuilder.from(stack)
-                                .hideFlags()
-                                .setName(name)
-                                .setLore(Arrays.asList(lore))
-                                .asStack());
+        return JSSTElementBuilder.ui(Items.GRAY_STAINED_GLASS_PANE)
+                .setName(text)
+                .build();
     }
 }

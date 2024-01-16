@@ -1,7 +1,5 @@
 package red.jackf.jsst.util.sgui.menus.selector;
 
-import eu.pb4.sgui.api.ClickType;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.labels.LabelMap;
 import red.jackf.jsst.util.sgui.menus.Menus;
 import red.jackf.jsst.util.sgui.pagination.GridPaginator;
@@ -22,23 +21,13 @@ import java.util.function.Consumer;
 
 public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
     protected final List<T> filteredOptions = new ArrayList<>();
-    private String filter = "";
     private final GridPaginator<T> paginator = GridPaginator.<T>builder(this)
             .list(() -> filteredOptions)
             .drawFunc(this::getLabelFor)
             .slots(GridTranslator.between(0, 8, 0, 6))
             .normalButtons(Util.slot(8, 1), Util.slot(8, 0), Util.slot(8, 2), PageButtonStyle.ArrowDirection.VERTICAL)
             .build();
-
-    private GuiElementInterface getLabelFor(T t) {
-        ItemStack label = labelMap.getLabel(t);
-        return GuiElementBuilder.from(label)
-                .addLoreLine(Hints.leftClick(Translations.select()))
-                .setCallback(Inputs.leftClick(() -> {
-                    Sounds.click(player);
-                    this.finish(Result.of(t));
-                })).build();
-    }
+    private String filter = "";
 
     public PaginatedSelectorMenu(ServerPlayer player, Component title, Collection<T> options, Consumer<Result<T>> onSelect, LabelMap<T> labelMap) {
         super(MenuType.GENERIC_9x6, title, player, options, onSelect, labelMap);
@@ -50,11 +39,20 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
         }));
     }
 
+    private GuiElementInterface getLabelFor(T t) {
+        ItemStack label = labelMap.getLabel(t);
+        return JSSTElementBuilder.from(label)
+                .leftClick(Translations.select(), () -> {
+                    Sounds.click(player);
+                    this.finish(Result.of(t));
+                }).build();
+    }
+
     private void calculateFiltered() {
         this.filteredOptions.clear();
         this.filteredOptions.addAll(this.options.stream()
-                                                .filter(opt -> labelMap.getLabel(opt).getDisplayName().getString().toLowerCase().contains(this.filter))
-                                                .toList());
+                .filter(opt -> labelMap.getLabel(opt).getDisplayName().getString().toLowerCase().contains(this.filter))
+                .toList());
         this.refresh();
     }
 
@@ -67,28 +65,23 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
         this.paginator.draw();
 
         // search
-        this.setSlot(Util.slot(8, 4), GuiElementBuilder.from(new ItemStack(Items.NAME_TAG))
-                .setName(Component.translatable("jsst.common.searchFilter", Component.literal(this.filter).setStyle(Styles.VARIABLE)))
-                .addLoreLine(Hints.leftClick(Translations.change()))
-                .addLoreLine(Hints.rightClick(Translations.clear()))
-                .setCallback(this::openFilter));
-    }
-
-    private void openFilter(ClickType type) {
-        if (type == ClickType.MOUSE_LEFT) {
-            Sounds.click(player);
-            Menus.stringBuilder(player)
-                 .title(Translations.search())
-                 .initial(this.filter)
-                 .createAndShow(result -> {
-                     if (result.hasResult())
-                         this.filter = result.result();
-                     this.open();
-                 });
-        } else if (type == ClickType.MOUSE_RIGHT) {
-            Sounds.clear(player);
-            this.filter = "";
-            this.calculateFiltered();
-        }
+        this.setSlot(Util.slot(8, 4), JSSTElementBuilder.from(Items.NAME_TAG)
+                .setName(Component.translatable("jsst.common.searchFilter", Component.literal(this.filter)
+                        .setStyle(Styles.VARIABLE)))
+                .leftClick(Translations.change(), () -> {
+                    Sounds.click(player);
+                    Menus.stringBuilder(player)
+                            .title(Translations.search())
+                            .initial(this.filter)
+                            .createAndShow(result -> {
+                                if (result.hasResult())
+                                    this.filter = result.result();
+                                this.open();
+                            });
+                }).rightClick(Translations.clear(), () -> {
+                    Sounds.clear(player);
+                    this.filter = "";
+                    this.calculateFiltered();
+                }));
     }
 }

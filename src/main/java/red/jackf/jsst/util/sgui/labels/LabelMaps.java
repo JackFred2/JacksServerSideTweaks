@@ -1,6 +1,6 @@
 package red.jackf.jsst.util.sgui.labels;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,6 +19,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.SuspiciousEffectHolder;
 import red.jackf.jackfredlib.api.base.ServerTracker;
 import red.jackf.jsst.feature.itemeditor.gui.editors.PotionEditor;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 import java.util.Collections;
 import java.util.Map;
@@ -38,7 +39,7 @@ public abstract class LabelMaps {
         ITEMS_WITH_SUSPICIOUS_STEW_EFFECTS = ITEMS.withAdditional((item, map) -> {
             var holder = SuspiciousEffectHolder.tryGet(item);
             if (holder == null) return null;
-            var builder = GuiElementBuilder.from(map.getLabel(item));
+            var builder = JSSTElementBuilder.from(map.getLabel(item));
 
             var server = ServerTracker.INSTANCE.getServer();
 
@@ -54,7 +55,7 @@ public abstract class LabelMaps {
             ItemStack stack = Items.ENCHANTED_BOOK.getDefaultInstance();
             EnchantmentHelper.setEnchantments(Map.of(ench, ench.getMaxLevel()), stack);
             return stack;
-        }, ench -> ench.getFullname(ench.getMaxLevel()));
+        }, ench -> Component.translatable(ench.getDescriptionId()).withStyle(ench.isCurse() ? ChatFormatting.RED : ChatFormatting.GRAY));
 
         MOB_EFFECTS = LabelMap.createDataManaged(BuiltInRegistries.MOB_EFFECT,
                 effect -> Items.POTION.getDefaultInstance(),
@@ -71,14 +72,14 @@ public abstract class LabelMaps {
             return stack;
         });
 
-        TRIM_MATERIALS = LabelMap.createStatic(Collections.emptyMap(), material -> GuiElementBuilder.from(material.value()
-                        .ingredient().value().getDefaultInstance())
+        TRIM_MATERIALS = LabelMap.createStatic(Collections.emptyMap(), material -> JSSTElementBuilder.from(material.value()
+                        .ingredient().value())
                 .setName(material.value().description())
                 .hideFlags()
                 .asStack());
 
-        TRIM_PATTERNS = LabelMap.createStatic(Collections.emptyMap(), pattern -> GuiElementBuilder.from(pattern.value()
-                        .templateItem().value().getDefaultInstance())
+        TRIM_PATTERNS = LabelMap.createStatic(Collections.emptyMap(), pattern -> JSSTElementBuilder.from(pattern.value()
+                        .templateItem().value())
                 .setName(pattern.value().description())
                 .hideFlags()
                 .asStack());

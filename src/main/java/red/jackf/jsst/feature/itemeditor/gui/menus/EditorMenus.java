@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jsst.feature.itemeditor.gui.menus.style.ColourMenu;
-import red.jackf.jsst.feature.itemeditor.gui.menus.style.GradientMenu;
 import red.jackf.jsst.feature.itemeditor.gui.menus.style.ComponentStyleMenu;
+import red.jackf.jsst.feature.itemeditor.gui.menus.style.GradientMenu;
 import red.jackf.jsst.util.Result;
 
 import java.util.Optional;

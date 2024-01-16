@@ -1,6 +1,5 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,6 +8,7 @@ import net.minecraft.world.item.Items;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
 import java.util.function.Consumer;
@@ -22,7 +22,7 @@ public class CustomModelDataEditor implements Editor {
             true,
             false,
             ignored -> true,
-            context -> GuiElementBuilder.from(Items.SPAWNER.getDefaultInstance())
+            context -> JSSTElementBuilder.from(Items.SPAWNER)
                     .hideFlags()
                     .setName(Component.translatable("jsst.itemEditor.customModelData"))
     );

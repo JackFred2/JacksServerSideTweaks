@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jsst.feature.itemeditor.ItemEditor;
-import red.jackf.jsst.feature.itemeditor.previousColours.EditorColourHistory;
+import red.jackf.jsst.feature.itemeditor.previouscolours.EditorColourHistory;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,7 +14,7 @@ import red.jackf.jsst.feature.Feature;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.ItemEditorGui;
 import red.jackf.jsst.feature.itemeditor.gui.editors.*;
-import red.jackf.jsst.feature.itemeditor.previousColours.EditorColourHistory;
+import red.jackf.jsst.feature.itemeditor.previouscolours.EditorColourHistory;
 
 import java.util.HashSet;
 import java.util.List;

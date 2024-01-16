@@ -1,7 +1,6 @@
 package red.jackf.jsst.util.sgui.elements;
 
 import eu.pb4.sgui.api.ClickType;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.GuiInterface;
 import eu.pb4.sgui.api.gui.SlotGuiInterface;
@@ -44,6 +43,7 @@ public class SwitchButton<T> implements GuiElementInterface {
         List<Component> names = new ArrayList<>();
         ItemStack shown = ItemStack.EMPTY;
         for (Map.Entry<T, GuiElementInterface> entry : this.labels.entrySet()) {
+            //ItemStack stack = entry.getValue().getItemStackForDisplay(gui); // tick all for animated
             ItemStack stack = Styles.unclean(entry.getValue().getItemStackForDisplay(gui).copy()); // tick all for animated
             if (entry.getKey() == current) {
                 shown = stack;
@@ -53,7 +53,7 @@ public class SwitchButton<T> implements GuiElementInterface {
             }
         }
 
-        var builder = GuiElementBuilder.from(shown).setName(this.name);
+        var builder = JSSTElementBuilder.from(shown).setName(this.name);
 
         names.forEach(builder::addLoreLine);
 
@@ -103,7 +103,7 @@ public class SwitchButton<T> implements GuiElementInterface {
         public Builder<T> addOption(T option, ItemStack label) {
             if (this.labels.containsKey(option)) throw new IllegalArgumentException("Duplicate element");
             this.options.add(option);
-            this.labels.put(option, GuiElementBuilder.from(label).build());
+            this.labels.put(option, JSSTElementBuilder.from(label).build());
             return this;
         }
 

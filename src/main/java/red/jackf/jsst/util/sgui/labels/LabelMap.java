@@ -1,11 +1,11 @@
 package red.jackf.jsst.util.sgui.labels;
 
 import blue.endless.jankson.annotation.Nullable;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.util.sgui.Styles;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.labels.data.LabelDataLoader;
 
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public interface LabelMap<T> {
         @Override
         public ItemStack getLabel(@Nullable T key) {
             ItemStack base = labels.getOrDefault(key, defaultLabel == null ? fallback.apply(key) : defaultLabel);
-            return GuiElementBuilder.from(base)
+            return JSSTElementBuilder.from(base)
                     .setName(nameGetter.apply(key))
                     .addLoreLine(Component.literal(String.valueOf(this.registry.getKey(key))).setStyle(Styles.ID))
                     .hideFlags()

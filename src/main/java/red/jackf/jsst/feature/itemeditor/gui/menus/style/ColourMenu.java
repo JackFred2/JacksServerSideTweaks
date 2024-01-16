@@ -1,7 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.menus.style;
 
 import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
@@ -12,11 +11,12 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jackfredlib.api.colour.Colour;
-import red.jackf.jsst.util.sgui.elements.SwitchButton;
-import red.jackf.jsst.feature.itemeditor.previousColours.EditorColourHistory;
-import red.jackf.jsst.feature.itemeditor.previousColours.PlayerHistoryGui;
+import red.jackf.jsst.feature.itemeditor.previouscolours.EditorColourHistory;
+import red.jackf.jsst.feature.itemeditor.previouscolours.PlayerHistoryGui;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.util.sgui.elements.SwitchButton;
 import red.jackf.jsst.util.sgui.menus.Menus;
 
 import java.util.Map;
@@ -43,7 +43,7 @@ public class ColourMenu extends SimpleGui {
     }
 
     protected static GuiElementInterface createFormattingLabel() {
-        return GuiElementBuilder.from(new ItemStack(Items.WRITABLE_BOOK))
+        return JSSTElementBuilder.from(Items.WRITABLE_BOOK)
                                 .setName(Component.translatable("jsst.itemEditor.colour.page.chatFormatting"))
                                 .build();
     }
@@ -63,13 +63,13 @@ public class ColourMenu extends SimpleGui {
     }
 
     protected static GuiElementInterface createExtraLabel() {
-        return GuiElementBuilder.from(new ItemStack(Items.CHORUS_FRUIT))
+        return JSSTElementBuilder.from(Items.CHORUS_FRUIT)
                                 .setName(Component.translatable("jsst.itemEditor.colour.page.extra"))
                                 .build();
     }
 
     protected static GuiElementInterface createPlayerColourHistoryLabel(ServerPlayer player) {
-        return GuiElementBuilder.from(Items.PLAYER_HEAD.getDefaultInstance())
+        return JSSTElementBuilder.from(Items.PLAYER_HEAD)
                                 .setName(Component.translatable("jsst.itemEditor.colour.page.playerHistory"))
                                 .setSkullOwner(player.getGameProfile(), null)
                                 .build();
@@ -77,18 +77,15 @@ public class ColourMenu extends SimpleGui {
 
     private void drawStatic() {
         if (removable) {
-            this.setSlot(Util.slot(4, 1), GuiElementBuilder.from(new ItemStack(Items.GUNPOWDER))
-                                                           .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.style.removeColour")))
-                                                           .setCallback(Inputs.leftClick(() -> {
+            this.setSlot(Util.slot(4, 1), JSSTElementBuilder.from(Items.GUNPOWDER)
+                                                           .leftClick(Component.translatable("jsst.itemEditor.style.removeColour"), () -> {
                                                                Sounds.clear(player);
                                                                this.callback.accept(Result.of(null));
-                                                           })));
+                                                           }));
         }
 
-        this.setSlot(Util.slot(4, 3), GuiElementBuilder.from(new ItemStack(Items.PAPER))
-                                                       .setName(Component.translatable("jsst.itemEditor.colour.custom"))
-                                                       .addLoreLine(Hints.leftClick(Translations.select()))
-                                                       .setCallback(Inputs.leftClick(() -> {
+        this.setSlot(Util.slot(4, 3), JSSTElementBuilder.from(Items.PAPER)
+                        .leftClick(Component.translatable("jsst.itemEditor.colour.custom"), () -> {
                                                            Sounds.click(player);
                                                            Menus.customColour(player, result -> {
                                                                if (result.hasResult()) {
@@ -96,7 +93,7 @@ public class ColourMenu extends SimpleGui {
                                                                    this.callback.accept(Result.of(result.result()));
                                                                }
                                                            });
-                                                       })));
+                                                       }));
 
         this.setSlot(Util.slot(8, 3), CommonLabels.cancel(() -> {
             Sounds.close(player);
@@ -112,7 +109,7 @@ public class ColourMenu extends SimpleGui {
                                                       this.page = page;
                                                       this.page.pageDraw.accept(this);
                                                   })
-                                                  .build(this.page));
+                .build(this.page));
     }
 
     private void redraw() {
@@ -127,9 +124,8 @@ public class ColourMenu extends SimpleGui {
         for (Map.Entry<ItemStack, Colour> entry : colours.entrySet()) {
             var slot = colourSlots.translate(index++);
             if (slot.isEmpty()) break;
-            this.setSlot(slot.getAsInt(), GuiElementBuilder.from(entry.getKey())
-                                                           .addLoreLine(Hints.leftClick(Translations.select()))
-                                                           .setCallback(Inputs.leftClick(() -> select(entry.getValue(), false))));
+            this.setSlot(slot.getAsInt(), JSSTElementBuilder.from(entry.getKey())
+                            .leftClick(Translations.select(), () -> select(entry.getValue(), false)));
         }
     }
 

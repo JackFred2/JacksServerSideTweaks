@@ -19,6 +19,7 @@ import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.mixins.itemeditor.ItemStackAccessor;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.elements.ToggleButton;
 import red.jackf.jsst.util.sgui.pagination.ListPaginator;
 
@@ -33,21 +34,21 @@ public class LoreEditor extends GuiEditor {
             true,
             false,
             stack -> true,
-            context -> GuiElementBuilder.from(Items.WRITABLE_BOOK.getDefaultInstance())
-                                   .setName(Component.translatable("jsst.itemEditor.lore"))
+            context -> JSSTElementBuilder.from(Items.WRITABLE_BOOK)
+                    .setName(Component.translatable("jsst.itemEditor.lore"))
     );
 
     private final List<Component> lore = new ArrayList<>();
 
     private final ListPaginator<Component> lorePaginator = ListPaginator.<Component>builder(this)
-                                                                        .slots(4, 9, 0, 6)
-                                                                        .list(this.lore)
-                                                                        .max(30)
-                                                                        .modifiable(() -> Component.literal("Lore Line")
-                                                                                                   .withStyle(Styles.MINOR_LABEL), true)
-                                                                        .onUpdate(this::redraw)
-                                                                        .rowDraw(this::getLoreRow)
-                                                                        .build();
+            .slots(4, 9, 0, 6)
+            .list(this.lore)
+            .max(30)
+            .modifiable(() -> Component.literal("Lore Line")
+                    .withStyle(Styles.MINOR_LABEL), true)
+            .onUpdate(this::redraw)
+            .rowDraw(this::getLoreRow)
+            .build();
 
     public LoreEditor(
             ServerPlayer player,
@@ -91,27 +92,26 @@ public class LoreEditor extends GuiEditor {
     }
 
     private List<GuiElementInterface> getLoreRow(int index, Component component) {
-        var main = GuiElementBuilder.from(Items.PAPER.getDefaultInstance())
-                                    .setName(component)
-                                    .addLoreLine(Hints.leftClick(Translations.change()))
-                                    .setCallback(Inputs.leftClick(() -> {
-                                        Sounds.click(player);
-                                        EditorMenus.component(player,
-                                                              Component.translatable("jsst.itemEditor.lore.line"),
-                                                              component,
-                                                              newComponent -> {
-                                                                  ItemStack copy = this.stack.copy();
-                                                                  var lore = getLore(copy);
-                                                                  lore.set(index, newComponent);
-                                                                  setLore(copy, lore);
-                                                                  return copy;
-                                                              },
-                                                              result -> {
-                                                                  if (result.hasResult())
-                                                                      this.lore.set(index, result.result());
-                                                                  this.open();
-                                                              });
-                                    })).build();
+        var main = JSSTElementBuilder.from(Items.PAPER)
+                .setName(component)
+                .leftClick(Translations.change(), () -> {
+                    Sounds.click(player);
+                    EditorMenus.component(player,
+                            Component.translatable("jsst.itemEditor.lore.line"),
+                            component,
+                            newComponent -> {
+                                ItemStack copy = this.stack.copy();
+                                var lore = getLore(copy);
+                                lore.set(index, newComponent);
+                                setLore(copy, lore);
+                                return copy;
+                            },
+                            result -> {
+                                if (result.hasResult())
+                                    this.lore.set(index, result.result());
+                                this.open();
+                            });
+                }).build();
         return List.of(main);
     }
 
@@ -123,26 +123,23 @@ public class LoreEditor extends GuiEditor {
 
         this.setSlot(Util.slot(0, 5), CommonLabels.cancel(this::cancel));
 
-        this.setSlot(Util.slot(0, 4), GuiElementBuilder.from(Items.ENDER_EYE.getDefaultInstance())
-                                                       .setName(Component.translatable("jsst.itemEditor.lore.hideTooltipParts"))
-                                                       .addLoreLine(Hints.leftClick(Translations.open()))
-                                                       .setCallback(Inputs.leftClick(this::openTooltipPartHiding)));
+        this.setSlot(Util.slot(0, 4), JSSTElementBuilder.ui(Items.ENDER_EYE)
+                        .leftClick(Component.translatable("jsst.itemEditor.lore.hideTooltipParts"), this::openTooltipPartHiding));
     }
 
     private void openTooltipPartHiding() {
         Sounds.click(player);
         new TooltipPartHidingGui(player,
-                                 this.context,
-                                 this.stack,
-                                 stack -> {
-                                     this.stack = stack;
-                                     this.open();
-                                 }).open();
+                this.context,
+                this.stack,
+                stack -> {
+                    this.stack = stack;
+                    this.open();
+                }).open();
     }
 
     @Override
-    protected void reset() {
-        super.reset();
+    protected void onReset() {
         this.loadFromStack();
     }
 
@@ -183,27 +180,27 @@ public class LoreEditor extends GuiEditor {
 
             this.setSlot(Util.slot(0, 0), this.getPartButton(
                     ItemStack.TooltipPart.ENCHANTMENTS,
-                    GuiElementBuilder.from(Items.ENCHANTING_TABLE.getDefaultInstance()).build()
+                    JSSTElementBuilder.from(Items.ENCHANTING_TABLE).build()
             ));
 
             this.setSlot(Util.slot(1, 0), this.getPartButton(
                     ItemStack.TooltipPart.MODIFIERS,
-                    GuiElementBuilder.from(Items.DIAMOND_SWORD.getDefaultInstance()).hideFlags().build()
+                    JSSTElementBuilder.from(Items.DIAMOND_SWORD).hideFlags().build()
             ));
 
             this.setSlot(Util.slot(2, 0), this.getPartButton(
                     ItemStack.TooltipPart.UNBREAKABLE,
-                    GuiElementBuilder.from(Items.STONE_BRICKS.getDefaultInstance()).build()
+                    JSSTElementBuilder.from(Items.STONE_BRICKS).build()
             ));
 
             this.setSlot(Util.slot(3, 0), this.getPartButton(
                     ItemStack.TooltipPart.CAN_DESTROY,
-                    GuiElementBuilder.from(Items.GOLDEN_PICKAXE.getDefaultInstance()).hideFlags().build()
+                    JSSTElementBuilder.from(Items.GOLDEN_PICKAXE).hideFlags().build()
             ));
 
             this.setSlot(Util.slot(4, 0), this.getPartButton(
                     ItemStack.TooltipPart.CAN_PLACE,
-                    GuiElementBuilder.from(Items.OAK_PLANKS.getDefaultInstance()).build()
+                    JSSTElementBuilder.from(Items.OAK_PLANKS).build()
             ));
 
             this.setSlot(Util.slot(5, 0), this.getPartButton(
@@ -213,12 +210,13 @@ public class LoreEditor extends GuiEditor {
 
             this.setSlot(Util.slot(6, 0), this.getPartButton(
                     ItemStack.TooltipPart.DYE,
-                    GuiElementBuilder.from(DyeableLeatherItem.dyeArmor(Items.LEATHER_CHESTPLATE.getDefaultInstance(), List.of((DyeItem) Items.RED_DYE))).hideFlags().build()
+                    JSSTElementBuilder.from(DyeableLeatherItem.dyeArmor(Items.LEATHER_CHESTPLATE.getDefaultInstance(), List.of((DyeItem) Items.RED_DYE)))
+                            .hideFlags().build()
             ));
 
             this.setSlot(Util.slot(0, 1), this.getPartButton(
                     ItemStack.TooltipPart.UPGRADES,
-                    GuiElementBuilder.from(Items.EYE_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance()).hideFlags().build()
+                    JSSTElementBuilder.from(Items.EYE_ARMOR_TRIM_SMITHING_TEMPLATE).hideFlags().build()
             ));
         }
 
@@ -247,7 +245,8 @@ public class LoreEditor extends GuiEditor {
 
         private ToggleButton getPartButton(ItemStack.TooltipPart tooltipPart, GuiElementInterface icon) {
             return ToggleButton.builder()
-                    .label(Component.translatable("jsst.itemEditor.lore.hideTooltipParts." + Util.snakeToCamelCase(tooltipPart.name().toLowerCase())))
+                    .label(Component.translatable("jsst.itemEditor.lore.hideTooltipParts." + Util.snakeToCamelCase(tooltipPart.name()
+                            .toLowerCase())))
                     .makeEnabledGlow()
                     .disabled(icon)
                     .enabled(icon)
@@ -264,8 +263,7 @@ public class LoreEditor extends GuiEditor {
         }
 
         @Override
-        protected void reset() {
-            super.reset();
+        protected void onReset() {
             this.mask = ((ItemStackAccessor) (Object) this.stack).jsst$itemEditor$getTooltipHideMask();
         }
 
@@ -283,6 +281,8 @@ public class LoreEditor extends GuiEditor {
             }
         }
     }
+
+
 
 
 }

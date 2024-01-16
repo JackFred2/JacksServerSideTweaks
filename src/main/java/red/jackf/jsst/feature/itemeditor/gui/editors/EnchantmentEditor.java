@@ -1,6 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -15,9 +15,13 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
-import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.CommonLabels;
+import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.sgui.Util;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 import red.jackf.jsst.util.sgui.menus.Menus;
+import red.jackf.jsst.util.sgui.menus.selector.SelectorMenu;
 import red.jackf.jsst.util.sgui.pagination.ListPaginator;
 
 import java.util.ArrayList;
@@ -32,7 +36,7 @@ public class EnchantmentEditor extends GuiEditor {
             false,
             false,
             stack -> true,
-            context -> GuiElementBuilder.from(Items.ENCHANTING_TABLE.getDefaultInstance())
+            context -> JSSTElementBuilder.from(Items.ENCHANTING_TABLE)
                     .setName(Component.translatable("jsst.itemEditor.enchantment"))
     );
 
@@ -55,17 +59,16 @@ public class EnchantmentEditor extends GuiEditor {
     }
 
     private List<GuiElementInterface> drawRow(int index, EnchantmentInstance instance) {
-        var enchantment = GuiElementBuilder.from(LabelMaps.ENCHANTMENTS.getLabel(instance.enchantment))
+        GuiElement enchantment = JSSTElementBuilder.ui(LabelMaps.ENCHANTMENTS.getLabel(instance.enchantment))
                 .setName(instance.enchantment.getFullname(instance.level))
-                .addLoreLine(Hints.leftClick(Component.translatable("jsst.itemEditor.enchantment.setEnchantment")))
-                .setCallback(Inputs.leftClick(() -> {
+                .leftClick(Component.translatable("jsst.itemEditor.enchantment.setEnchantment"), () -> {
                     Sounds.click(player);
                     var options = this.context.server()
                             .registryAccess()
                             .registryOrThrow(Registries.ENCHANTMENT)
                             .stream().toList();
 
-                    Menus.selector(player,
+                    SelectorMenu.open(player,
                             Component.translatable("jsst.itemEditor.enchantment.setEnchantment"),
                             options,
                             LabelMaps.ENCHANTMENTS,
@@ -75,13 +78,11 @@ public class EnchantmentEditor extends GuiEditor {
                                 }
                                 this.open();
                             });
-                }))
-                .build();
+                }).build();
 
-        var level = GuiElementBuilder.from(Items.BOOKSHELF.getDefaultInstance())
+        GuiElement level = JSSTElementBuilder.ui(Items.BOOKSHELF)
                 .setCount(Mth.clamp(instance.level, 1, 64))
-                .setName(Hints.leftClick(Component.translatable("jsst.itemEditor.enchantment.setLevel")))
-                .setCallback(Inputs.leftClick(() -> {
+                .leftClick(Component.translatable("jsst.itemEditor.enchantment.setLevel"), () -> {
                     Sounds.click(player);
 
                     Menus.integer(player,
@@ -96,8 +97,7 @@ public class EnchantmentEditor extends GuiEditor {
                                 }
                                 this.open();
                             });
-                }))
-                .build();
+                }).build();
 
         return List.of(enchantment, level);
     }
@@ -119,8 +119,7 @@ public class EnchantmentEditor extends GuiEditor {
     }
 
     @Override
-    protected void reset() {
-        super.reset();
+    protected void onReset() {
         this.loadFromStack();
     }
 

@@ -1,7 +1,5 @@
 package red.jackf.jsst.feature.itemeditor.gui;
 
-import eu.pb4.sgui.api.ClickType;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
@@ -11,8 +9,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
-import red.jackf.jsst.feature.itemeditor.gui.editors.*;
 import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.elements.ToggleButton;
 import red.jackf.jsst.util.sgui.elements.WrappedElement;
 
@@ -73,14 +71,10 @@ public class ItemEditorGui extends SimpleGui {
                     return new WrappedElement(
                             editorType.labelSupplier().apply(context).build(),
                             lore,
-                            (slot, guiClickType, rawClickType, gui) -> {
-                                if (guiClickType == ClickType.MOUSE_LEFT)
-                                    editorType.constructor()
-                                            .create(this.player, this.context, this.stack, this::onResult)
-                                            .run();
-                            });
-                })
-                .toList();
+                            Inputs.leftClick(() -> editorType.constructor()
+                                    .create(this.player, this.context, this.stack, this::onResult)
+                                    .run()));
+                }).toList();
 
         // update editors
         final GridTranslator gridTranslator = GridTranslator.between(4, 9, 0, 5);
@@ -94,10 +88,9 @@ public class ItemEditorGui extends SimpleGui {
     @Override
     public void onOpen() {
         // update result stack
-        this.setSlot(Util.slot(1, 1), GuiElementBuilder.from(stack.copy())
+        this.setSlot(Util.slot(1, 1), JSSTElementBuilder.from(stack)
                 .setName(Util.getLabelAsTooltip(stack))
-                .addLoreLine(Hints.leftClick(Translations.save()))
-                .setCallback(Inputs.leftClick(this::complete)));
+                .leftClick(Translations.save(), this::complete));
 
         this.redraw();
     }

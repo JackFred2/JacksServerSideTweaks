@@ -3,7 +3,6 @@ package red.jackf.jsst.util.sgui.menus;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.ScreenProperty;
 import eu.pb4.sgui.api.elements.GuiElement;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -14,7 +13,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.util.Result;
-import red.jackf.jsst.util.sgui.*;
+import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.sgui.Styles;
+import red.jackf.jsst.util.sgui.Translations;
+import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -51,22 +53,12 @@ public class StringInputMenu extends SimpleGui {
         this.text = initial;
 
         this.setTitle(title);
-        this.setSlot(INPUT, GuiElementBuilder.from(new ItemStack(Items.BARRIER))
+        this.setSlot(INPUT, JSSTElementBuilder.from(Items.BARRIER)
                                              .setName(Component.literal(initial))
-                                             .addLoreLine(Hints.leftClick(Translations.cancel()))
-                                             .addLoreLine(Hints.rightClick(Translations.reset()))
-                                             .setCallback(type -> {
-                                                 if (type == ClickType.MOUSE_LEFT) {
-                                                     Sounds.close(player);
-                                                     this.callback.accept(Result.empty());
-                                                 } else if (type == ClickType.MOUSE_RIGHT) {
-                                                     Sounds.clear(player);
-                                                     this.text = initial;
-                                                     this.updateOutput();
-                                                 }
-                                             }));
+                        .leftClick(Translations.cancel(), this::cancel)
+                        .rightClick(Translations.reset(), this::reset));
 
-        updateOutput();
+        this.updateOutput();
     }
 
     public void onTextUpdate(String text) {
@@ -83,18 +75,17 @@ public class StringInputMenu extends SimpleGui {
 
     public void updateOutput() { // update result
         if (this.text.equals(initial)) {
-            this.setSlot(OUTPUT, GuiElementBuilder.from(new ItemStack(INVALID))
+            this.setSlot(OUTPUT, JSSTElementBuilder.from(INVALID)
                                                   .setName(Component.literal(this.text).withStyle(Styles.LABEL))
                                                   .addLoreLine(Component.translatable("jsst.common.noChanges").setStyle(Styles.NEGATIVE)));
         } else if (!this.predicate.test(this.text)) {
-            this.setSlot(OUTPUT, GuiElementBuilder.from(new ItemStack(INVALID))
+            this.setSlot(OUTPUT, JSSTElementBuilder.from(INVALID)
                                                   .setName(Component.literal(this.text).withStyle(Styles.LABEL))
                                                   .addLoreLine(Component.translatable("jsst.common.invalid").setStyle(Styles.NEGATIVE)));
         } else {
-            this.setSlot(OUTPUT, GuiElementBuilder.from(new ItemStack(VALID))
+            this.setSlot(OUTPUT, JSSTElementBuilder.from(VALID)
                                                   .setName(Component.literal(this.text))
-                                                  .addLoreLine(Hints.leftClick(Translations.confirm()))
-                                                  .setCallback(Inputs.leftClick(this::onAccept)));
+                                                  .leftClick(Translations.confirm(), this::complete));
         }
 
         // clear level indicator
@@ -106,7 +97,18 @@ public class StringInputMenu extends SimpleGui {
         this.callback.accept(Result.empty());
     }
 
-    private void onAccept() {
+    private void cancel() {
+        Sounds.close(player);
+        this.callback.accept(Result.empty());
+    }
+
+    private void reset() {
+        Sounds.clear(player);
+        this.text = initial;
+        this.updateOutput();
+    }
+
+    private void complete() {
         Sounds.click(player);
         this.callback.accept(Result.of(this.text));
     }
@@ -154,11 +156,11 @@ public class StringInputMenu extends SimpleGui {
         }
 
         public Builder hint(ItemStack hint) {
-            return hint(GuiElementBuilder.from(hint));
+            return hint(JSSTElementBuilder.from(hint));
         }
 
         public Builder hint(Component hint) {
-            return hint(GuiElementBuilder.from(Items.PAPER.getDefaultInstance()).setName(hint));
+            return hint(JSSTElementBuilder.from(Items.PAPER).setName(hint));
         }
 
         public void createAndShow(Consumer<Result<String>> callback) {
