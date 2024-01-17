@@ -19,14 +19,13 @@ import red.jackf.jsst.util.sgui.CommonLabels;
 import red.jackf.jsst.util.sgui.Sounds;
 import red.jackf.jsst.util.sgui.Util;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.util.sgui.elements.ToggleButton;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 import red.jackf.jsst.util.sgui.menus.Menus;
 import red.jackf.jsst.util.sgui.menus.selector.SelectorMenu;
 import red.jackf.jsst.util.sgui.pagination.ListPaginator;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class EnchantmentEditor extends GuiEditor {
@@ -66,18 +65,27 @@ public class EnchantmentEditor extends GuiEditor {
                     var options = this.context.server()
                             .registryAccess()
                             .registryOrThrow(Registries.ENCHANTMENT)
-                            .stream().toList();
+                            .entrySet()
+                            .stream()
+                            .sorted(Comparator.comparing(e -> e.getKey().location()))
+                            .map(Map.Entry::getValue)
+                            .toList();
 
-                    SelectorMenu.open(player,
-                            Component.translatable("jsst.itemEditor.enchantment.setEnchantment"),
-                            options,
-                            LabelMaps.ENCHANTMENTS,
-                            result -> {
-                                if (result.hasResult()) {
-                                    this.enchantments.set(index, new EnchantmentInstance(result.result(), instance.level));
-                                }
-                                this.open();
-                            });
+                    SelectorMenu.<Enchantment>builder(player)
+                                .title(Component.translatable("jsst.itemEditor.enchantment.setEnchantment"))
+                                .options(options)
+                                .labelMap(LabelMaps.ENCHANTMENTS)
+                                .filter(() -> ToggleButton.builder()
+                                        .label(Component.translatable("jsst.itemEditor.enchantment.showApplicableOnly"))
+                                        .disabled(Items.NETHER_STAR.getDefaultInstance())
+                                        .enabled(JSSTElementBuilder.from(this.stack.copy()).hideFlags().asStack()),
+                                        ench -> ench.canEnchant(this.stack))
+                                .createAndShow(result -> {
+                                    if (result.hasResult()) {
+                                        this.enchantments.set(index, new EnchantmentInstance(result.result(), instance.level));
+                                    }
+                                    this.open();
+                                });
                 }).build();
 
         GuiElement level = JSSTElementBuilder.ui(Items.BOOKSHELF)

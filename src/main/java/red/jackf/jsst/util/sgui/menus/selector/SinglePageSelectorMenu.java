@@ -15,23 +15,43 @@ import red.jackf.jsst.util.sgui.labels.LabelMap;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public class SinglePageSelectorMenu<T> extends SelectorMenu<T> {
-    public SinglePageSelectorMenu(ServerPlayer player, Component title, Collection<T> options, Consumer<Result<T>> onSelect, LabelMap<T> labelMap) {
-        super(getSmallestFitting(options.size()).getFirst(), title, player, options, onSelect, labelMap);
-
-        for (int i = 0; i < this.options.size(); i++) {
-            T option = this.options.get(i);
-            this.setSlot(i, JSSTElementBuilder.from(labelMap.getLabel(option))
-                            .leftClick(Translations.select(), () -> {
-                                Sounds.click(player);
-                                this.finish(Result.of(option));
-                            }));
-        }
+public final class SinglePageSelectorMenu<T> extends SelectorMenu<T> {
+    SinglePageSelectorMenu(ServerPlayer player, Component title, Collection<T> options, Filter<T> filter, LabelMap<T> labelMap, Consumer<Result<T>> callback) {
+        super(getSmallestFitting(options.size()).getFirst(), title, player, options, filter, labelMap, callback);
 
         this.setSlot(getSmallestFitting(this.options.size()).getSecond() - 1, CommonLabels.cancel(() -> {
             Sounds.close(player);
             this.finish(Result.empty());
         }));
+
+        this.redraw();
+    }
+
+    private void redraw() {
+        var options = getOptions();
+
+        for (int i = 0; i < getSmallestFitting(this.options.size()).getSecond() - 2; i++) {
+            if (i < options.size()) {
+                T option = options.get(i);
+                this.setSlot(i, JSSTElementBuilder.from(labelMap.getLabel(option))
+                        .leftClick(Translations.select(), () -> {
+                            Sounds.click(player);
+                            this.finish(Result.of(option));
+                        }));
+            } else {
+                this.clearSlot(i);
+            }
+        }
+
+        if (this.filter != null) {
+            this.setSlot(getSmallestFitting(this.options.size()).getSecond() - 2, this.filter.filter().buttonBuilder().get()
+                    .initial(this.filter.active())
+                    .setCallback(filterActive -> {
+                        Sounds.click(player);
+                        this.filter.setActive(filterActive);
+                        this.redraw();
+                    }).build());
+        }
     }
 
     private static Pair<MenuType<? extends AbstractContainerMenu>, Integer> getSmallestFitting(int options) {

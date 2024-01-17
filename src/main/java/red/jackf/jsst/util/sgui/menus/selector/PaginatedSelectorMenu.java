@@ -19,19 +19,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
-    protected final List<T> filteredOptions = new ArrayList<>();
+public final class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
+    private final List<T> filteredOptions = new ArrayList<>();
     private final GridPaginator<T> paginator = GridPaginator.<T>builder(this)
             .list(() -> filteredOptions)
             .drawFunc(this::getLabelFor)
             .slots(GridTranslator.between(0, 8, 0, 6))
             .normalButtons(Util.slot(8, 1), Util.slot(8, 0), Util.slot(8, 2), PageButtonStyle.ArrowDirection.VERTICAL)
             .build();
-    private String filter = "";
+    private String nameFilter = "";
 
-    public PaginatedSelectorMenu(ServerPlayer player, Component title, Collection<T> options, Consumer<Result<T>> onSelect, LabelMap<T> labelMap) {
-        super(MenuType.GENERIC_9x6, title, player, options, onSelect, labelMap);
-        this.filteredOptions.addAll(this.options);
+    PaginatedSelectorMenu(ServerPlayer player, Component title, Collection<T> options, Filter<T> filter, LabelMap<T> labelMap, Consumer<Result<T>> callback) {
+        super(MenuType.GENERIC_9x6, title, player, options, filter, labelMap, callback);
+        this.filteredOptions.addAll(getOptions());
 
         this.setSlot(Util.slot(8, 5), CommonLabels.cancel(() -> {
             Sounds.close(player);
@@ -50,10 +50,10 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
 
     private void calculateFiltered() {
         this.filteredOptions.clear();
-        this.filteredOptions.addAll(this.options.stream()
-                .filter(opt -> labelMap.getLabel(opt).getDisplayName().getString().toLowerCase().contains(this.filter))
+        this.filteredOptions.addAll(getOptions().stream()
+                .filter(opt -> labelMap.getLabel(opt).getDisplayName().getString().toLowerCase().contains(this.nameFilter))
                 .toList());
-        this.refresh();
+        this.redraw();
     }
 
     @Override
@@ -61,27 +61,38 @@ public class PaginatedSelectorMenu<T> extends SelectorMenu<T> {
         this.calculateFiltered();
     }
 
-    private void refresh() {
+    private void redraw() {
         this.paginator.draw();
 
         // search
         this.setSlot(Util.slot(8, 4), JSSTElementBuilder.from(Items.NAME_TAG)
-                .setName(Component.translatable("jsst.common.searchFilter", Component.literal(this.filter)
+                .setName(Component.translatable("jsst.common.searchFilter", Component.literal(this.nameFilter)
                         .setStyle(Styles.VARIABLE)))
                 .leftClick(Translations.change(), () -> {
                     Sounds.click(player);
                     Menus.stringBuilder(player)
                             .title(Translations.search())
-                            .initial(this.filter)
+                            .initial(this.nameFilter)
                             .createAndShow(result -> {
                                 if (result.hasResult())
-                                    this.filter = result.result();
+                                    this.nameFilter = result.result();
                                 this.open();
                             });
                 }).rightClick(Translations.clear(), () -> {
                     Sounds.clear(player);
-                    this.filter = "";
+                    this.nameFilter = "";
                     this.calculateFiltered();
                 }));
+
+
+        if (this.filter != null) {
+            this.setSlot(Util.slot(8, 3), this.filter.filter().buttonBuilder().get()
+                    .initial(this.filter.active())
+                    .setCallback(filterActive -> {
+                        Sounds.click(player);
+                        this.filter.setActive(filterActive);
+                        this.redraw();
+                    }).build());
+        }
     }
 }

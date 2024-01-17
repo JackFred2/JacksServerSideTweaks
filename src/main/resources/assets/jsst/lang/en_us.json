@@ -107,6 +107,7 @@
   "jsst.itemEditor.enchantment": "Enchantment Editor",
   "jsst.itemEditor.enchantment.setEnchantment": "Set Enchantment",
   "jsst.itemEditor.enchantment.setLevel": "Set Level",
+  "jsst.itemEditor.enchantment.showApplicableOnly": "Show Applicable Only",
 
   "jsst.itemEditor.potion": "Potion Editor",
   "jsst.itemEditor.potion.setPotionItemType": "Change Potion Type",
