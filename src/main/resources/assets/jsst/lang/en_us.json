@@ -132,7 +132,7 @@
 
   "jsst.itemEditor.labelMapNBTPrinter": "Stack NBT Printer",
   "jsst.itemEditor.labelMapNBTPrinter.hint": "Used for label map data files",
-  "jsst.itemEditor.labelMapNBTPrinter.copyInstruction": "Click to copy the label for this stack. Include quotes!",
+  "jsst.itemEditor.labelMapNBTPrinter.copyInstruction": "Click to copy the label for this stack.",
 
   "jsst.command.config.open_wiki": "Click to open the wiki page for this option",
   "jsst.command.config.check": "%s: %s",

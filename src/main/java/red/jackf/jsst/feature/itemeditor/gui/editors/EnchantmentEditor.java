@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.sgui.CommonLabels;
@@ -40,13 +41,12 @@ public class EnchantmentEditor extends GuiEditor {
     );
 
     private final List<EnchantmentInstance> enchantments = new ArrayList<>();
-
     private final ListPaginator<EnchantmentInstance> paginator = ListPaginator.<EnchantmentInstance>builder(this)
             .max(50)
             .onUpdate(this::redraw)
             .list(this.enchantments)
             .slots(4, 9, 0, 6)
-            .modifiable(() -> EnchantmentInstance.makeRandom(this.context.server().registryAccess()), false)
+            .modifiable(() -> EnchantmentInstance.makeRandom(this.stack, this.context.server().registryAccess()), false)
             .rowDraw(this::drawRow)
             .build();
 
@@ -72,20 +72,21 @@ public class EnchantmentEditor extends GuiEditor {
                             .toList();
 
                     SelectorMenu.<Enchantment>builder(player)
-                                .title(Component.translatable("jsst.itemEditor.enchantment.setEnchantment"))
-                                .options(options)
-                                .labelMap(LabelMaps.ENCHANTMENTS)
-                                .filter(() -> ToggleButton.builder()
-                                        .label(Component.translatable("jsst.itemEditor.enchantment.showApplicableOnly"))
-                                        .disabled(Items.NETHER_STAR.getDefaultInstance())
-                                        .enabled(JSSTElementBuilder.from(this.stack.copy()).hideFlags().asStack()),
-                                        ench -> ench.canEnchant(this.stack))
-                                .createAndShow(result -> {
-                                    if (result.hasResult()) {
-                                        this.enchantments.set(index, new EnchantmentInstance(result.result(), instance.level));
-                                    }
-                                    this.open();
-                                });
+                            .title(Component.translatable("jsst.itemEditor.enchantment.setEnchantment"))
+                            .options(options)
+                            .labelMap(LabelMaps.ENCHANTMENTS)
+                            .filter(() -> ToggleButton.builder()
+                                            .label(Component.translatable("jsst.itemEditor.enchantment.showApplicableOnly"))
+                                            .disabled(Items.NETHER_STAR.getDefaultInstance())
+                                            .enabled(JSSTElementBuilder.from(this.stack.copy()).hideFlags().asStack()),
+                                    ench -> ench.canEnchant(this.stack),
+                                    true)
+                            .createAndShow(result -> {
+                                if (result.hasResult()) {
+                                    this.enchantments.set(index, new EnchantmentInstance(result.result(), result.result().getMaxLevel()));
+                                }
+                                this.open();
+                            });
                 }).build();
 
         GuiElement level = JSSTElementBuilder.ui(Items.BOOKSHELF)
@@ -147,12 +148,16 @@ public class EnchantmentEditor extends GuiEditor {
     }
 
     public record EnchantmentInstance(Enchantment enchantment, int level) {
-        public static EnchantmentInstance makeRandom(RegistryAccess.Frozen registries) {
-            var ench = registries.registryOrThrow(Registries.ENCHANTMENT)
-                    .getRandom(RandomSource.create())
-                    .orElseThrow(IllegalStateException::new)
-                    .value();
+        public static EnchantmentInstance makeRandom(ItemStack stack, RegistryAccess.Frozen registries) {
+            var available = registries.registryOrThrow(Registries.ENCHANTMENT).stream()
+                    .filter(ench2 -> ench2.canEnchant(stack))
+                    .toList();
+            Enchantment ench = available.isEmpty() ?
+                    Enchantments.VANISHING_CURSE :
+                    available.get(RandomSource.create().nextInt(available.size()));
             return new EnchantmentInstance(ench, ench.getMaxLevel());
         }
     }
+
+
 }

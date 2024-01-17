@@ -1,5 +1,6 @@
 package red.jackf.jsst.util.sgui.elements;
 
+import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.GuiInterface;
 import net.minecraft.network.chat.Component;
@@ -90,6 +91,11 @@ public class ToggleButton implements GuiElementInterface {
             return this;
         }
 
+        public Builder disabled(GuiElementBuilderInterface<?> disabled) {
+            this.disabled = disabled.build();
+            return this;
+        }
+
         public Builder disabled(ItemStack disabled) {
             this.disabled = JSSTElementBuilder.from(disabled).build();
             return this;
@@ -97,6 +103,11 @@ public class ToggleButton implements GuiElementInterface {
 
         public Builder enabled(GuiElementInterface enabled) {
             this.enabled = enabled;
+            return this;
+        }
+
+        public Builder enabled(GuiElementBuilderInterface<?> enabled) {
+            this.enabled = enabled.build();
             return this;
         }
 

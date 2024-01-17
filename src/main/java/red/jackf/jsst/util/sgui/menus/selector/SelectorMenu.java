@@ -108,8 +108,8 @@ public sealed abstract class SelectorMenu<T> extends SimpleGui permits Paginated
             return this;
         }
 
-        public Builder<T> filter(Supplier<ToggleButton.Builder> filterSupplier, Predicate<T> predicate) {
-            this.filter = new Filter<>(filterSupplier, predicate);
+        public Builder<T> filter(Supplier<ToggleButton.Builder> filterSupplier, Predicate<T> predicate, boolean startEnabled) {
+            this.filter = new Filter<>(filterSupplier, predicate, startEnabled);
             return this;
         }
 
@@ -132,14 +132,15 @@ public sealed abstract class SelectorMenu<T> extends SimpleGui permits Paginated
         }
     }
 
-    protected record Filter<T>(Supplier<ToggleButton.Builder> buttonBuilder, Predicate<T> predicate) {}
+    protected record Filter<T>(Supplier<ToggleButton.Builder> buttonBuilder, Predicate<T> predicate, boolean startEnabled) {}
 
     protected static class FilterInstance<T> {
         private final Filter<T> filter;
-        private boolean active = false;
+        private boolean active;
 
         protected FilterInstance(Filter<T> filter) {
             this.filter = filter;
+            this.active = filter.startEnabled;
         }
 
         public Filter<T> filter() {
