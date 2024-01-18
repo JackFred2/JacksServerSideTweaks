@@ -5,10 +5,12 @@ import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.WrittenBookItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
@@ -32,6 +34,7 @@ public abstract class LabelMaps {
     public static final LabelMap<Potion> POTIONS;
     public static final LabelMap<Holder<TrimMaterial>> TRIM_MATERIALS;
     public static final LabelMap<Holder<TrimPattern>> TRIM_PATTERNS;
+    public static final LabelMap<Integer> BOOK_GENERATIONS;
 
     static {
         ITEMS = LabelMap.createStatic(Collections.emptyMap(), Item::getDefaultInstance);
@@ -83,6 +86,18 @@ public abstract class LabelMaps {
                 .setName(pattern.value().description())
                 .hideFlags()
                 .asStack());
+
+        BOOK_GENERATIONS = i -> {
+            i = Mth.clamp(i, 0, 3);
+            var stack = JSSTElementBuilder.ui(Items.WRITTEN_BOOK)
+                    .setName(Component.translatable("book.generation." + i))
+                    .setCount(i + 1)
+                    .hideFlags()
+                    .glow()
+                    .asStack();
+            stack.getOrCreateTag().putInt(WrittenBookItem.TAG_GENERATION, i);
+            return stack;
+        };
     }
 
     public static void touch() {

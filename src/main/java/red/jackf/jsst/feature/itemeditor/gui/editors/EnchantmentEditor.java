@@ -53,6 +53,7 @@ public class EnchantmentEditor extends GuiEditor {
 
     public EnchantmentEditor(ServerPlayer player, EditorContext context, ItemStack initial, Consumer<ItemStack> callback) {
         super(MenuType.GENERIC_9x6, player, context, initial, callback, false);
+        this.setTitle(Component.translatable("jsst.itemEditor.enchantment"));
         this.drawStatic();
 
         this.loadFromStack();

@@ -130,6 +130,13 @@
 
   "jsst.itemEditor.customModelData": "Custom Model Data",
 
+  "jsst.itemEditor.book": "Book Editor",
+  "jsst.itemEditor.book.editTitle": "Edit Title",
+  "jsst.itemEditor.book.editAuthor": "Edit Author",
+  "jsst.itemEditor.book.editGeneration": "Edit Generation",
+  "jsst.itemEditor.book.unsign": "Unsign Book",
+  "jsst.itemEditor.book.unsign.warning": "This will remove all formatting!",
+
   "jsst.itemEditor.labelMapNBTPrinter": "Stack NBT Printer",
   "jsst.itemEditor.labelMapNBTPrinter.hint": "Used for label map data files",
   "jsst.itemEditor.labelMapNBTPrinter.copyInstruction": "Click to copy the label for this stack.",

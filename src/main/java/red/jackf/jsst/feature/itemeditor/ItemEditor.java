@@ -33,6 +33,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
             EnchantmentEditor.TYPE,
             PotionEditor.TYPE,
             SuspiciousStewEditor.TYPE,
+            WrittenBookEditor.TYPE,
             CustomModelDataEditor.TYPE,
             StackNBTPrinter.TYPE
     );
