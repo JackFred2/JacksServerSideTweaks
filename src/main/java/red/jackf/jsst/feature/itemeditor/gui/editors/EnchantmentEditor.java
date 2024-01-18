@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -124,6 +125,7 @@ public class EnchantmentEditor extends GuiEditor {
         for (EnchantmentInstance instance : this.enchantments)
             map.put(instance.enchantment, instance.level);
 
+        if (stack.is(Items.ENCHANTED_BOOK)) stack.removeTagKey(EnchantedBookItem.TAG_STORED_ENCHANTMENTS);
         EnchantmentHelper.setEnchantments(map, stack);
     }
 

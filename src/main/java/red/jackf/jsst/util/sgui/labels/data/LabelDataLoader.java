@@ -57,23 +57,25 @@ public final class LabelDataLoader<T> implements SimpleResourceReloadListener<La
                 for (Resource resource : entry.getValue()) {
                     try (Reader reader = resource.openAsReader()) {
                         JsonElement json = JsonParser.parseReader(reader);
-                        LabelFile labelFile = LabelFile.CODEC.parse(new Dynamic<>(JsonOps.INSTANCE, json)).getOrThrow(false, LOGGER::error);
+                        LabelFile labelFile = LabelFile.CODEC.parse(new Dynamic<>(JsonOps.INSTANCE, json))
+                                .getOrThrow(false, LOGGER::error);
+
+                        var newLabels = new HashMap<T, ItemStack>(labelFile.labels().size());
+
+                        for (Map.Entry<ResourceLocation, ItemStack> label : labelFile.labels().entrySet()) {
+                            T element = this.map.getRegistry().getOrThrow(ResourceKey.create(this.map.getRegistry().key(), label.getKey()));
+                            newLabels.put(element, label.getValue());
+                        }
+
+                        // valid file, apply
                         if (labelFile.replace().isPresent() && labelFile.replace().get()) {
                             labels.clear();
                             defaultLabel = null;
                         }
                         if (labelFile.defaultLabel().isPresent()) defaultLabel = labelFile.defaultLabel().get();
-                        for (Map.Entry<ResourceLocation, ItemStack> label : labelFile.labels().entrySet()) {
-                            T element = this.map.getRegistry().get(label.getKey());
-                            if (element != null) {
-                                labels.put(element, label.getValue());
-                            } else {
-                                LOGGER.debug("Unknown value for registry {}: {}. Ignoring...", getFolder(this.map.getRegistry().key()), label.getKey());
-                            }
-                        }
-
+                        labels.putAll(newLabels);
                     } catch (Exception e) {
-                        LOGGER.error("Couldn't read label file {} from data pack {}", getFolder(this.map.getRegistry().key()), resource.sourcePackId());
+                        LOGGER.error("Couldn't read label file {} from {} in datapack '{}'", getFolder(this.map.getRegistry().key()), entry.getKey(), resource.sourcePackId(), e);
                     }
                 }
             }
