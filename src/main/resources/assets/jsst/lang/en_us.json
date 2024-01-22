@@ -137,6 +137,8 @@
   "jsst.itemEditor.book.unsign": "Unsign Book",
   "jsst.itemEditor.book.unsign.warning": "This will remove all formatting!",
 
+  "jsst.itemEditor.playerHead": "Player Head Editor",
+
   "jsst.itemEditor.labelMapNBTPrinter": "Stack NBT Printer",
   "jsst.itemEditor.labelMapNBTPrinter.hint": "Used for label map data files",
   "jsst.itemEditor.labelMapNBTPrinter.copyInstruction": "Click to copy the label for this stack.",

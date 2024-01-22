@@ -34,6 +34,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
             PotionEditor.TYPE,
             SuspiciousStewEditor.TYPE,
             WrittenBookEditor.TYPE,
+            PlayerHeadEditor.TYPE,
             CustomModelDataEditor.TYPE,
             StackNBTPrinter.TYPE
     );
@@ -66,7 +67,12 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
                 .filter(type -> access == EditorAccess.FULL || type.cosmeticOnly())
                 .toList();
 
-        new ItemEditorGui(player, handItem, returnSlot, new EditorContext(player.server, access == EditorAccess.COSMETIC, editors)).open();
+        EditorContext context = new EditorContext(player, player.server, access == EditorAccess.COSMETIC, editors);
+
+        new ItemEditorGui(player,
+                handItem,
+                returnSlot,
+                context).open();
     }
 
     public EditorAccess getAccessForPlayer(@Nullable ServerPlayer player) {
