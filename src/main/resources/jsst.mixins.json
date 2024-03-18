@@ -12,7 +12,6 @@
     "itemeditor.ServerGamePacketListenerImplMixin",
     "itemeditor.ServerPlayerMixin",
     "itemeditor.SuspiciousStewItemAccessor",
-    "itemeditor.tempsguifix.GuiHelperMixin",
     "qualityoflife.BlockMixin"
   ],
   "injectors": {
