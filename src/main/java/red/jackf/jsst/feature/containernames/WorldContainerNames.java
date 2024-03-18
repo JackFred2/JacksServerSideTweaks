@@ -156,7 +156,7 @@ public class WorldContainerNames extends ToggleFeature<WorldContainerNames.Confi
     public void enable() {
         var levels = getLoadedLevels();
         if (levels.isEmpty()) return;
-        LOGGER.info("Adding labels to all loaded block entities; server may stutter for a bit.");
+        LOGGER.debug("Adding labels to all loaded block entities; server may stutter for a bit.");
         for (ServerLevel level : levels) {
             Scheduler.INSTANCE.scheduleNextTick(level, level1 -> {
                 for (ChunkHolder chunk : ((ChunkMapAccessor) level1.getChunkSource().chunkMap).jsst$containernames$getChunks()) {
