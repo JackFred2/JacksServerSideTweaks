@@ -4,16 +4,15 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Banners {
     private Banners() {}
@@ -40,6 +39,8 @@ public class Banners {
 
     public interface Misc {
         ItemStack ERROR = fromPMCCode("1e718");
+
+        ItemStack JSST = fromPMCCode("6adei6cgbgbeb");
     }
 
     public interface Arrows {
@@ -50,6 +51,12 @@ public class Banners {
         ItemStack LEFT = fromPMCCode("12g1E");
         ItemStack RIGHT = fromPMCCode("1bg1e");
         ItemStack HORIZONTAL = fromPMCCode("1bu2s1o1v18");
+    }
+
+    public static MutableComponent name(Holder<BannerPattern> pattern, DyeColor colour) {
+        return Component.translatable(pattern.unwrapKey()
+                .map(key -> "block.minecraft.banner." + key.location().toShortLanguageKey() + "." + colour.getName())
+                .orElse("jsst.itemEditor.banner.unknownPattern"));
     }
 
     public static ItemStack fromColours(DyeColor top, DyeColor bottom) {
@@ -79,6 +86,21 @@ public class Banners {
         if (!keepLore) result.hideTooltipPart(ItemStack.TooltipPart.ADDITIONAL);
 
         return result;
+    }
+
+    public static String toPMCCode(DyeColor baseColour, List<Pair<Holder<BannerPattern>, DyeColor>> patterns) {
+        StringBuilder builder = new StringBuilder(1 + patterns.size() * 2);
+        builder.append(PMC.COLOURS.inverse().get(baseColour));
+
+        for (var pattern : patterns) {
+            Optional<ResourceKey<BannerPattern>> key = pattern.getFirst().unwrapKey();
+            if (key.isPresent()) {
+                builder.append(PMC.COLOURS.inverse().get(pattern.getSecond()));
+                builder.append(PMC.PATTERNS.inverse().get(key.get()));
+            }
+        }
+
+        return builder.toString();
     }
 
     public static Builder builder(DyeColor baseColour) {

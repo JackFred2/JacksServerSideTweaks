@@ -1,6 +1,7 @@
 package red.jackf.jsst.util.sgui;
 
 import eu.pb4.sgui.api.SlotHolder;
+import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -73,6 +74,14 @@ public interface Util {
     }
 
     static void fill(SlotHolder holder, ItemStack stack, int colFrom, int colTo, int rowFrom, int rowTo) {
+        for (int col = colFrom; col < colTo; col++) {
+            for (int row = rowFrom; row < rowTo; row++) {
+                holder.setSlot(slot(col, row), stack);
+            }
+        }
+    }
+
+    static void fill(SlotHolder holder, GuiElementInterface stack, int colFrom, int colTo, int rowFrom, int rowTo) {
         for (int col = colFrom; col < colTo; col++) {
             for (int row = rowFrom; row < rowTo; row++) {
                 holder.setSlot(slot(col, row), stack);

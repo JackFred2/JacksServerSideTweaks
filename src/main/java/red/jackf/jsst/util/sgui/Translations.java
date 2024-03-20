@@ -2,6 +2,7 @@ package red.jackf.jsst.util.sgui;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.DyeColor;
 
 public interface Translations {
@@ -54,7 +55,7 @@ public interface Translations {
     }
 
     static MutableComponent dye(DyeColor colour) {
-        return Component.translatable("color.minecraft." + colour.getName());
+        return Component.translatable("color.minecraft." + colour.getName()).withStyle(Style.EMPTY.withColor(colour.getTextColor()));
     }
 
     static MutableComponent select() {

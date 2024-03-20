@@ -50,6 +50,8 @@ public class DurabilityEditor extends GuiEditor {
                 }));
 
         this.setSlot(Util.slot(0, 4), CommonLabels.cancel(this::cancel));
+
+        for (int row = 0; row < 5; row++) this.setSlot(Util.slot(3, row), CommonLabels.divider());
     }
 
     public static GuiElementBuilderInterface<?> getLabel(EditorContext context) {
@@ -63,8 +65,6 @@ public class DurabilityEditor extends GuiEditor {
 
         this.setSlot(Util.slot(0, 3), JSSTElementBuilder.from(Items.PAPER)
                 .setName(Translations.current(Component.literal("" + (stack.getMaxDamage() - stack.getDamageValue())).withStyle(Styles.VARIABLE))));
-
-        for (int row = 0; row < 5; row++) this.setSlot(Util.slot(3, row), CommonLabels.divider());
 
         var options = new ArrayList<GuiElementInterface>();
         int maxDamage = stack.getMaxDamage();

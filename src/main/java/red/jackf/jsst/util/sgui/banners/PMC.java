@@ -2,12 +2,24 @@ package red.jackf.jsst.util.sgui.banners;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 
-class PMC {
+public class PMC {
+    public static final ItemStack ICON = GuiElementBuilder.from(Items.PLAYER_HEAD.getDefaultInstance())
+            // https://minecraft-heads.com/custom-heads/head/221-planet-minecraft-globe
+            .setSkullOwner("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjFkZDRmZTRhNDI5YWJkNjY1ZGZkYjNlMjEzMjFkNmVmYTZhNmI1ZTdiOTU2ZGI5YzVkNTljOWVmYWIyNSJ9fX0=")
+            .asStack();
+    public static final Component NAME = Component.literal("Planet ").withStyle(Style.EMPTY.withColor(0x6EC310))
+            .append(Component.literal("Minecraft").withStyle(Style.EMPTY.withColor(0xA3692B)));
+
     protected static final BiMap<Character, DyeColor> COLOURS = HashBiMap.create(16);
     static {
         COLOURS.put('1', DyeColor.BLACK);

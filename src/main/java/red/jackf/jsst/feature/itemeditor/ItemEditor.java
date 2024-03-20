@@ -31,6 +31,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
             DurabilityEditor.TYPE,
             TrimEditor.TYPE,
             EnchantmentEditor.TYPE,
+            BannerEditor.TYPE,
             PotionEditor.TYPE,
             SuspiciousStewEditor.TYPE,
             WrittenBookEditor.TYPE,
@@ -99,6 +100,12 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
                 Options: true, false
                 Default: false""")
         public boolean cosmeticOnlyModeAvailable = false;
+
+        @Comment("""
+                Whether to enable the Planet Minecraft import / export button in the Banner Editor.
+                Options: true, false
+                Default: true""")
+        public boolean planetMinecraftButton = true;
 
         @Comment("""
                 Adds a dedicated /itemEditor command to open the item editor as an alternative to /jsst itemEditor.

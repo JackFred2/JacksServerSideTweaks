@@ -88,7 +88,9 @@ public class TrimEditor extends GuiEditor {
 
     private void loadFromStack() {
         this.trim = ArmorTrim.getTrim(this.context.server().registryAccess(), this.stack, true).orElse(null);
-    }    private final GridPaginator<Holder<TrimPattern>> patternPaginator = GridPaginator.<Holder<TrimPattern>>builder(this)
+    }
+
+    private final GridPaginator<Holder<TrimPattern>> patternPaginator = GridPaginator.<Holder<TrimPattern>>builder(this)
             .slots(patternSlots)
             .list(this.context.server().registryAccess().registryOrThrow(Registries.TRIM_PATTERN).holders()
                     .map(ref -> (Holder<TrimPattern>) ref).toList())

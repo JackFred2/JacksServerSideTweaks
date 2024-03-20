@@ -7,10 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.WrittenBookItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
@@ -19,16 +16,22 @@ import net.minecraft.world.item.armortrim.TrimPattern;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.SuspiciousEffectHolder;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import red.jackf.jackfredlib.api.base.ServerTracker;
 import red.jackf.jsst.feature.itemeditor.gui.editors.PotionEditor;
+import red.jackf.jsst.util.sgui.Translations;
+import red.jackf.jsst.util.sgui.banners.Banners;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Function;
 
 public abstract class LabelMaps {
     public static final LabelMap<Item> ITEMS;
     public static final LabelMap<Item> ITEMS_WITH_SUSPICIOUS_STEW_EFFECTS;
+    public static final LabelMap<DyeColor> DYES;
+    public static final Function<DyeColor, LabelMap<Holder<BannerPattern>>> BANNER_PATTERNS;
     public static final LabelMap<Enchantment> ENCHANTMENTS;
     public static final LabelMap<MobEffect> MOB_EFFECTS;
     public static final LabelMap<Potion> POTIONS;
@@ -54,11 +57,28 @@ public abstract class LabelMaps {
             return builder.asStack();
         });
 
+        DYES = LabelMap.createStatic(Collections.emptyMap(), colour -> {
+            ItemStack stack = DyeItem.byColor(colour).getDefaultInstance();
+            stack.setHoverName(Translations.dye(colour));
+            return stack;
+        });
+
+        BANNER_PATTERNS = colour -> {
+            DyeColor base = colour == DyeColor.WHITE ? DyeColor.BLACK : DyeColor.WHITE;
+            return pattern -> JSSTElementBuilder.ui(Banners.builder(base)
+                            .add(pattern, colour)
+                            .build(false))
+                    .setName(Banners.name(pattern, colour))
+                    .hideFlags()
+                    .asStack();
+        };
+
         ENCHANTMENTS = LabelMap.createDataManaged(BuiltInRegistries.ENCHANTMENT, ench -> {
             ItemStack stack = Items.ENCHANTED_BOOK.getDefaultInstance();
             EnchantmentHelper.setEnchantments(Map.of(ench, ench.getMaxLevel()), stack);
             return stack;
-        }, ench -> Component.translatable(ench.getDescriptionId()).withStyle(ench.isCurse() ? ChatFormatting.RED : ChatFormatting.GRAY));
+        }, ench -> Component.translatable(ench.getDescriptionId())
+                .withStyle(ench.isCurse() ? ChatFormatting.RED : ChatFormatting.GRAY));
 
         MOB_EFFECTS = LabelMap.createDataManaged(BuiltInRegistries.MOB_EFFECT,
                 effect -> Items.POTION.getDefaultInstance(),
