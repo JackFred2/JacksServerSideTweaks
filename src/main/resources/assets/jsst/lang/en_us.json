@@ -126,6 +126,9 @@
   "jsst.itemEditor.banner.loadPMC.import.hint2.button": "Remix Banner",
   "jsst.itemEditor.banner.loadPMC.export": "Export to Banner Editor",
   "jsst.itemEditor.banner.loadPMC.notAffiliated": "JSST is not affiliated with %s.",
+  "jsst.itemEditor.banner.colourChange": "Change All Patterns With Colour",
+  "jsst.itemEditor.banner.colourChange.old": "Select Old Colour",
+  "jsst.itemEditor.banner.colourChange.new": "Select New Colour",
 
   "jsst.itemEditor.potion": "Potion Editor",
   "jsst.itemEditor.potion.setPotionItemType": "Change Potion Type",

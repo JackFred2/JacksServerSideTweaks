@@ -31,10 +31,7 @@ import red.jackf.jsst.util.sgui.menus.Menus;
 import red.jackf.jsst.util.sgui.menus.selector.SelectorMenu;
 import red.jackf.jsst.util.sgui.pagination.ListPaginator;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -242,6 +239,44 @@ public class BannerEditor extends GuiEditor {
                         this.player.sendSystemMessage(Formatting.successLine(Component.literal(url).withStyle(style)));
                     })
                     .addLoreLine(Component.translatable("jsst.itemEditor.banner.loadPMC.notAffiliated", PMC.NAME).withStyle(Styles.NEGATIVE)));
+
+        this.setSlot(Util.slot(0, 3), JSSTElementBuilder.ui(Banners.fromPMCCode("dce2zby1317"))
+                .hideFlags()
+                .leftClick(Component.translatable("jsst.itemEditor.banner.colourChange"), () -> {
+                    Sounds.click(player);
+                    SelectorMenu.open(player,
+                            Component.translatable("jsst.itemEditor.banner.colourChange.old"),
+                            List.of(DyeColor.values()),
+                            LabelMaps.DYES,
+                            oldColour -> {
+                                if (oldColour.hasResult()) {
+                                    SelectorMenu.open(player,
+                                            Component.translatable("jsst.itemEditor.banner.colourChange.new"),
+                                            Arrays.stream(DyeColor.values()).filter(col -> col != oldColour.result()).toList(),
+                                            LabelMaps.DYES,
+                                            newColour -> {
+                                                if (newColour.hasResult())
+                                                    this.changeColour(oldColour.result(), newColour.result());
+                                                this.open();
+                                            });
+                                } else {
+                                    this.open();
+                                }
+                            });
+                }));
+    }
+
+    private void changeColour(DyeColor oldCol, DyeColor newCol) {
+        if (this.baseColour == oldCol)
+            this.baseColour = newCol;
+
+        List<Pair<Holder<BannerPattern>, DyeColor>> pairs = this.patterns;
+        for (int i = 0; i < pairs.size(); i++) {
+            Pair<Holder<BannerPattern>, DyeColor> pair = pairs.get(i);
+            if (pair.getSecond() == oldCol) {
+                patterns.set(i, Pair.of(pair.getFirst(), newCol));
+            }
+        }
     }
 
     @Override
