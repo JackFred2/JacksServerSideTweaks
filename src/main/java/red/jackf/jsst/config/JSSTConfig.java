@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.config.Config;
 import red.jackf.jsst.feature.anvilenhancement.AnvilEnhancement;
 import red.jackf.jsst.feature.beaconenhancement.BeaconEnhancement;
+import red.jackf.jsst.feature.campfiretimes.CampfireTimes;
 import red.jackf.jsst.feature.containernames.WorldContainerNames;
 import red.jackf.jsst.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
@@ -34,6 +35,10 @@ public class JSSTConfig implements Config<JSSTConfig> {
             Tweaks to the anvil to make them less frustrating to use; mainly removing the XP cost and damage from renaming
             items.""")
     public AnvilEnhancement.Config anvilEnhancement = new AnvilEnhancement.Config();
+
+    @Comment("""
+            Adds text above campfire items detailing how much time is left.""")
+    public CampfireTimes.Config campfireTimes = new CampfireTimes.Config();
 
     @Comment("""
             Tiny gameplay mechanics tweaks to reduce frustration when playing.""")

@@ -6,6 +6,7 @@
     "anvilenhancement.AnvilMenuMixin",
     "beaconenhancement.BeaconBlockEntityMixin",
     "beaconenhancement.ConduitBlockEntityMixin",
+    "campfirestimes.CampfireBlockEntityMixin",
     "containernames.ChunkMapAccessor",
     "containernames.ServerLevelMixin",
     "itemeditor.ItemStackAccessor",
