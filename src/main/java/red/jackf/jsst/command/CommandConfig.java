@@ -321,6 +321,7 @@ public class CommandConfig {
         root.then(makeItemEditorNode());
         root.then(makePortableCraftingNode());
         root.then(makeWorldContainerNamesNode());
+        root.then(makeCampfireTimesNode());
         root.then(makeBeaconEnhancementNode(context));
         root.then(makeAnvilEnhancementNode());
         root.then(makeQolNode());
@@ -328,57 +329,21 @@ public class CommandConfig {
         return root;
     }
 
-    private static LiteralArgumentBuilder<CommandSourceStack> makeItemEditorNode() {
-        var root = Commands.literal("itemEditor");
+    private static LiteralArgumentBuilder<CommandSourceStack> makeAnvilEnhancementNode() {
+        var root = Commands.literal("anvilEnhancement");
 
-        root.then(makeBoolean("cosmeticOnlyModeAvailable",
-                              "itemEditor.cosmeticOnlyModeAvailable",
-                              WikiPage.ITEM_EDITOR,
-                              config -> config.itemEditor.cosmeticOnlyModeAvailable,
-                              (config, newVal) -> config.itemEditor.cosmeticOnlyModeAvailable = newVal));
+        root.then(makeEnum("renameCost",
+                "anvilEnhancement.renameCost",
+                WikiPage.ANVIL_ENHANCEMENT,
+                AnvilEnhancement.RenameCost.class,
+                config -> config.anvilEnhancement.renameCost,
+                (config, newVal) -> config.anvilEnhancement.renameCost = newVal));
 
-        root.then(makeBoolean("dedicatedCommand",
-                              "itemEditor.dedicatedCommand",
-                              WikiPage.ITEM_EDITOR,
-                              config -> config.itemEditor.dedicatedCommand,
-                              (config, newVal) -> config.itemEditor.dedicatedCommand = newVal));
-
-        return root;
-    }
-
-    private static LiteralArgumentBuilder<CommandSourceStack> makePortableCraftingNode() {
-        var root = Commands.literal("portableCrafting");
-
-        root.then(makeBoolean("enabled",
-                              "portableCrafting.enabled",
-                              WikiPage.PORTABLE_CRAFTING,
-                              config -> config.portableCrafting.enabled,
-                              (config, newVal) -> config.portableCrafting.enabled = newVal));
-
-        root.then(makeBoolean("requireSneak",
-                              "portableCrafting.requireSneak",
-                              WikiPage.PORTABLE_CRAFTING,
-                              config -> config.portableCrafting.requireSneak,
-                              (config, newVal) -> config.portableCrafting.requireSneak = newVal));
-
-        return root;
-    }
-
-    private static LiteralArgumentBuilder<CommandSourceStack> makeWorldContainerNamesNode() {
-        var root = Commands.literal("worldContainerNames");
-
-        root.then(makeBoolean("enabled",
-                              "worldContainerNames.enabled",
-                              WikiPage.WORLD_CONTAINER_NAMES,
-                              config -> config.worldContainerNames.enabled,
-                              (config, newVal) -> config.worldContainerNames.enabled = newVal));
-
-        root.then(makeDoubleRange("viewRange",
-                                  "worldContainerNames.viewRange",
-                                  WikiPage.WORLD_CONTAINER_NAMES,
-                                  4, 16,
-                                  config -> config.worldContainerNames.viewRange,
-                                  (config, newVal) -> config.worldContainerNames.viewRange = newVal));
+        root.then(makeBoolean("renameDoesNotDamageAnvil",
+                "anvilEnhancement.renameDoesNotDamageAnvil",
+                WikiPage.ANVIL_ENHANCEMENT,
+                config -> config.anvilEnhancement.renameDoesNotDamageAnvil,
+                (config, newVal) -> config.anvilEnhancement.renameDoesNotDamageAnvil = newVal));
 
         return root;
     }
@@ -387,31 +352,31 @@ public class CommandConfig {
         var root = Commands.literal("beaconEnhancement");
 
         root.then(makeBoolean("enabled",
-                              "beaconEnhancement.enabled",
-                              WikiPage.BEACON_ENHANCEMENT,
-                              config -> config.beaconEnhancement.enabled,
-                              (config, newVal) -> config.beaconEnhancement.enabled = newVal));
+                "beaconEnhancement.enabled",
+                WikiPage.BEACON_ENHANCEMENT,
+                config -> config.beaconEnhancement.enabled,
+                (config, newVal) -> config.beaconEnhancement.enabled = newVal));
 
         root.then(makeDoubleRange("conduitRangeMultiplier",
-                                  "beaconEnhancement.conduitRangeMultiplier",
-                                  WikiPage.BEACON_ENHANCEMENT,
-                                  0.5, 4,
-                                  config -> config.beaconEnhancement.conduitRangeMultiplier,
-                                  (config, newVal) -> config.beaconEnhancement.conduitRangeMultiplier = newVal));
+                "beaconEnhancement.conduitRangeMultiplier",
+                WikiPage.BEACON_ENHANCEMENT,
+                0.5, 4,
+                config -> config.beaconEnhancement.conduitRangeMultiplier,
+                (config, newVal) -> config.beaconEnhancement.conduitRangeMultiplier = newVal));
 
         root.then(makeDoubleRange("rangeMultiplier",
-                                  "beaconEnhancement.rangeMultiplier",
-                                  WikiPage.BEACON_ENHANCEMENT,
-                                  0.5, 8,
-                                  config -> config.beaconEnhancement.rangeMultiplier,
-                                  (config, newVal) -> config.beaconEnhancement.rangeMultiplier = newVal));
+                "beaconEnhancement.rangeMultiplier",
+                WikiPage.BEACON_ENHANCEMENT,
+                0.5, 8,
+                config -> config.beaconEnhancement.rangeMultiplier,
+                (config, newVal) -> config.beaconEnhancement.rangeMultiplier = newVal));
 
         root.then(makeIntRange("maxBeaconLevel",
-                               "beaconEnhancement.maxBeaconLevel",
-                               WikiPage.BEACON_ENHANCEMENT,
-                               4, 6,
-                               config -> config.beaconEnhancement.maxBeaconLevel,
-                               (config, newVal) -> config.beaconEnhancement.maxBeaconLevel = newVal));
+                "beaconEnhancement.maxBeaconLevel",
+                WikiPage.BEACON_ENHANCEMENT,
+                4, 6,
+                config -> config.beaconEnhancement.maxBeaconLevel,
+                (config, newVal) -> config.beaconEnhancement.maxBeaconLevel = newVal));
 
         root.then(makeBeaconEnhancementPowersNode(context));
 
@@ -427,16 +392,16 @@ public class CommandConfig {
 
             ctx.getSource().sendSuccess(() -> Formatting.infoLine(
                     Component.empty()
-                             .append(makeHover("powerSet", fullName, WikiPage.BEACON_ENHANCEMENT))
-                             .append(literal(":"))
+                            .append(makeHover("powerSet", fullName, WikiPage.BEACON_ENHANCEMENT))
+                            .append(literal(":"))
             ), false);
 
             for (int level = 1; level <= 6; level++) {
                 int finalLevel = level;
                 ctx.getSource().sendSuccess(() -> Formatting.infoLine(
                         Component.literal("  ")
-                                 .append(translatable("jsst.command.config.powerListHeader", finalLevel))
-                                 .append(":")
+                                .append(translatable("jsst.command.config.powerListHeader", finalLevel))
+                                .append(":")
                 ), false);
 
                 var powers = powerSet.getAtLevel(level);
@@ -450,7 +415,7 @@ public class CommandConfig {
                         ResourceLocation id = BuiltInRegistries.MOB_EFFECT.getKey(power);
                         ctx.getSource().sendSuccess(() -> Formatting.infoLine(
                                 Component.literal("  ")
-                                         .append(Formatting.listItem(Formatting.variable(String.valueOf(id))))
+                                        .append(Formatting.listItem(Formatting.variable(String.valueOf(id))))
                         ), false);
                     }
                 }
@@ -467,8 +432,8 @@ public class CommandConfig {
             levelNode.executes(ctx -> {
                 ctx.getSource().sendSuccess(() -> Formatting.infoLine(
                         Component.empty()
-                                 .append(translatable("jsst.command.config.powerListHeader", finalLevel))
-                                 .append(":")
+                                .append(translatable("jsst.command.config.powerListHeader", finalLevel))
+                                .append(":")
                 ), false);
 
                 var powers = getConfig().beaconEnhancement.powers.getAtLevel(finalLevel);
@@ -490,74 +455,74 @@ public class CommandConfig {
             });
 
             levelNode.then(Commands.literal("add")
-                                   .then(Commands.argument("effect", ResourceArgument.resource(context, Registries.MOB_EFFECT))
-                                                 .suggests((ctx, builder) -> {
-                                                     var existing = getConfig().beaconEnhancement.powers.getAtLevel(finalLevel);
-                                                     return SharedSuggestionProvider.suggestResource(BuiltInRegistries.MOB_EFFECT.entrySet().stream()
-                                                                                                                                 .filter(entry -> !existing.contains(entry.getValue()))
-                                                                                                                                 .map(e -> e.getKey().location()),
-                                                                                                     builder);
-                                                 })
-                                                 .executes(ctx -> {
-                                                     var effect = ResourceArgument.getMobEffect(ctx, "effect");
-                                                     var powers = getConfig().beaconEnhancement.powers;
-                                                     var atThisLevel = powers.getAtLevel(finalLevel);
-                                                     if (atThisLevel.contains(effect.value())) {
-                                                         ctx.getSource().sendFailure(Formatting.errorLine(
-                                                                 translatable("jsst.command.config.list.alreadyContains",
-                                                                              makeHover(name,
-                                                                                        fullName,
-                                                                                        WikiPage.BEACON_ENHANCEMENT),
-                                                                              Formatting.variable(effect.key().location().toString()))
-                                                         ));
-                                                         return 0;
-                                                     } else {
-                                                         powers.addPower(finalLevel, effect.value());
-                                                         verifySafeAndLoad();
-                                                         ctx.getSource().sendSuccess(() -> Formatting.successLine(
-                                                                 translatable("jsst.command.config.list.added",
-                                                                              makeHover(name,
-                                                                                        fullName,
-                                                                                        WikiPage.BEACON_ENHANCEMENT),
-                                                                              Formatting.variable(effect.key().location().toString()))
-                                                         ), true);
-                                                         return 1;
-                                                     }
-                                                 })));
+                    .then(Commands.argument("effect", ResourceArgument.resource(context, Registries.MOB_EFFECT))
+                            .suggests((ctx, builder) -> {
+                                var existing = getConfig().beaconEnhancement.powers.getAtLevel(finalLevel);
+                                return SharedSuggestionProvider.suggestResource(BuiltInRegistries.MOB_EFFECT.entrySet().stream()
+                                                .filter(entry -> !existing.contains(entry.getValue()))
+                                                .map(e -> e.getKey().location()),
+                                        builder);
+                            })
+                            .executes(ctx -> {
+                                var effect = ResourceArgument.getMobEffect(ctx, "effect");
+                                var powers = getConfig().beaconEnhancement.powers;
+                                var atThisLevel = powers.getAtLevel(finalLevel);
+                                if (atThisLevel.contains(effect.value())) {
+                                    ctx.getSource().sendFailure(Formatting.errorLine(
+                                            translatable("jsst.command.config.list.alreadyContains",
+                                                    makeHover(name,
+                                                            fullName,
+                                                            WikiPage.BEACON_ENHANCEMENT),
+                                                    Formatting.variable(effect.key().location().toString()))
+                                    ));
+                                    return 0;
+                                } else {
+                                    powers.addPower(finalLevel, effect.value());
+                                    verifySafeAndLoad();
+                                    ctx.getSource().sendSuccess(() -> Formatting.successLine(
+                                            translatable("jsst.command.config.list.added",
+                                                    makeHover(name,
+                                                            fullName,
+                                                            WikiPage.BEACON_ENHANCEMENT),
+                                                    Formatting.variable(effect.key().location().toString()))
+                                    ), true);
+                                    return 1;
+                                }
+                            })));
 
             levelNode.then(Commands.literal("remove")
-                                   .then(Commands.argument("effect", ResourceArgument.resource(context, Registries.MOB_EFFECT))
-                                                 .suggests((ctx, builder) -> {
-                                                     var existing = getConfig().beaconEnhancement.powers.getAtLevel(finalLevel);
-                                                     return SharedSuggestionProvider.suggestResource(existing.stream().map(BuiltInRegistries.MOB_EFFECT::getKey),
-                                                                                                     builder);
-                                                 })
-                                                 .executes(ctx -> {
-                                                     var effect = ResourceArgument.getMobEffect(ctx, "effect");
-                                                     var powers = getConfig().beaconEnhancement.powers;
-                                                     var atThisLevel = powers.getAtLevel(finalLevel);
-                                                     if (!atThisLevel.contains(effect.value())) {
-                                                         ctx.getSource().sendFailure(Formatting.errorLine(
-                                                                 translatable("jsst.command.config.list.doesNotContain",
-                                                                              makeHover(name,
-                                                                                        fullName,
-                                                                                        WikiPage.BEACON_ENHANCEMENT),
-                                                                              Formatting.variable(effect.key().location().toString()))
-                                                         ));
-                                                         return 0;
-                                                     } else {
-                                                         powers.removePower(finalLevel, effect.value());
-                                                         verifySafeAndLoad();
-                                                         ctx.getSource().sendSuccess(() -> Formatting.successLine(
-                                                                 translatable("jsst.command.config.list.removed",
-                                                                              makeHover(name,
-                                                                                        fullName,
-                                                                                        WikiPage.BEACON_ENHANCEMENT),
-                                                                              Formatting.variable(effect.key().location().toString()))
-                                                         ), true);
-                                                         return 1;
-                                                     }
-                                                 })));
+                    .then(Commands.argument("effect", ResourceArgument.resource(context, Registries.MOB_EFFECT))
+                            .suggests((ctx, builder) -> {
+                                var existing = getConfig().beaconEnhancement.powers.getAtLevel(finalLevel);
+                                return SharedSuggestionProvider.suggestResource(existing.stream().map(BuiltInRegistries.MOB_EFFECT::getKey),
+                                        builder);
+                            })
+                            .executes(ctx -> {
+                                var effect = ResourceArgument.getMobEffect(ctx, "effect");
+                                var powers = getConfig().beaconEnhancement.powers;
+                                var atThisLevel = powers.getAtLevel(finalLevel);
+                                if (!atThisLevel.contains(effect.value())) {
+                                    ctx.getSource().sendFailure(Formatting.errorLine(
+                                            translatable("jsst.command.config.list.doesNotContain",
+                                                    makeHover(name,
+                                                            fullName,
+                                                            WikiPage.BEACON_ENHANCEMENT),
+                                                    Formatting.variable(effect.key().location().toString()))
+                                    ));
+                                    return 0;
+                                } else {
+                                    powers.removePower(finalLevel, effect.value());
+                                    verifySafeAndLoad();
+                                    ctx.getSource().sendSuccess(() -> Formatting.successLine(
+                                            translatable("jsst.command.config.list.removed",
+                                                    makeHover(name,
+                                                            fullName,
+                                                            WikiPage.BEACON_ENHANCEMENT),
+                                                    Formatting.variable(effect.key().location().toString()))
+                                    ), true);
+                                    return 1;
+                                }
+                            })));
 
             root.then(levelNode);
         }
@@ -565,21 +530,75 @@ public class CommandConfig {
         return root;
     }
 
-    private static LiteralArgumentBuilder<CommandSourceStack> makeAnvilEnhancementNode() {
-        var root = Commands.literal("anvilEnhancement");
+    private static LiteralArgumentBuilder<CommandSourceStack> makeCampfireTimesNode() {
+        var root = Commands.literal("campfireTimes");
 
-        root.then(makeEnum("renameCost",
-                           "anvilEnhancement.renameCost",
-                           WikiPage.ANVIL_ENHANCEMENT,
-                           AnvilEnhancement.RenameCost.class,
-                           config -> config.anvilEnhancement.renameCost,
-                           (config, newVal) -> config.anvilEnhancement.renameCost = newVal));
+        root.then(makeBoolean("enabled",
+                "campfireTimes.enabled",
+                WikiPage.CAMPFIRE_TIMES,
+                config -> config.campfireTimes.enabled,
+                (config, newVal) -> config.campfireTimes.enabled = newVal));
 
-        root.then(makeBoolean("renameDoesNotDamageAnvil",
-                              "anvilEnhancement.renameDoesNotDamageAnvil",
-                              WikiPage.ANVIL_ENHANCEMENT,
-                              config -> config.anvilEnhancement.renameDoesNotDamageAnvil,
-                              (config, newVal) -> config.anvilEnhancement.renameDoesNotDamageAnvil = newVal));
+        return root;
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> makeWorldContainerNamesNode() {
+        var root = Commands.literal("worldContainerNames");
+
+        root.then(makeBoolean("enabled",
+                "worldContainerNames.enabled",
+                WikiPage.WORLD_CONTAINER_NAMES,
+                config -> config.worldContainerNames.enabled,
+                (config, newVal) -> config.worldContainerNames.enabled = newVal));
+
+        root.then(makeDoubleRange("viewRange",
+                "worldContainerNames.viewRange",
+                WikiPage.WORLD_CONTAINER_NAMES,
+                4, 16,
+                config -> config.worldContainerNames.viewRange,
+                (config, newVal) -> config.worldContainerNames.viewRange = newVal));
+
+        return root;
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> makeItemEditorNode() {
+        var root = Commands.literal("itemEditor");
+
+        root.then(makeBoolean("cosmeticOnlyModeAvailable",
+                              "itemEditor.cosmeticOnlyModeAvailable",
+                              WikiPage.ITEM_EDITOR,
+                              config -> config.itemEditor.cosmeticOnlyModeAvailable,
+                              (config, newVal) -> config.itemEditor.cosmeticOnlyModeAvailable = newVal));
+
+        root.then(makeBoolean("dedicatedCommand",
+                "itemEditor.dedicatedCommand",
+                WikiPage.ITEM_EDITOR,
+                config -> config.itemEditor.dedicatedCommand,
+                (config, newVal) -> config.itemEditor.dedicatedCommand = newVal));
+
+        root.then(makeBoolean("planetMinecraftButton",
+                "itemEditor.planetMinecraftButton",
+                WikiPage.ITEM_EDITOR,
+                config -> config.itemEditor.planetMinecraftButton,
+                (config, newVal) -> config.itemEditor.planetMinecraftButton = newVal));
+
+        return root;
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> makePortableCraftingNode() {
+        var root = Commands.literal("portableCrafting");
+
+        root.then(makeBoolean("enabled",
+                              "portableCrafting.enabled",
+                              WikiPage.PORTABLE_CRAFTING,
+                              config -> config.portableCrafting.enabled,
+                              (config, newVal) -> config.portableCrafting.enabled = newVal));
+
+        root.then(makeBoolean("requireSneak",
+                              "portableCrafting.requireSneak",
+                              WikiPage.PORTABLE_CRAFTING,
+                              config -> config.portableCrafting.requireSneak,
+                              (config, newVal) -> config.portableCrafting.requireSneak = newVal));
 
         return root;
     }
@@ -606,6 +625,7 @@ public class CommandConfig {
         String PORTABLE_CRAFTING = "Portable-Crafting";
         String BEACON_ENHANCEMENT = "Beacon-Enhancement";
         String WORLD_CONTAINER_NAMES = "World-Container-Names";
+        String CAMPFIRE_TIMES = "Campfire-Times";
         String ITEM_EDITOR = "Item-Editor";
         String QOL = "Quality-Of-Life";
         String ANVIL_ENHANCEMENT = "Anvil-Enhancement";
