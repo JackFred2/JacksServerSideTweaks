@@ -40,8 +40,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class BannerEditor extends GuiEditor {
-    private static final Pattern PMC_CODE_GRAB = Pattern.compile("[a-zA-Z0-9]++$");
-    private static final String PMC_URL_BASE = "https://www.planetminecraft.com/banner/?e=";
     public static final EditorType TYPE = new EditorType(
             JSST.id("banner"),
             BannerEditor::new,
@@ -50,6 +48,9 @@ public class BannerEditor extends GuiEditor {
             stack -> stack.is(Items.SHIELD) || stack.is(ItemTags.BANNERS),
             BannerEditor::getLabel
     );
+
+    private static final Pattern PMC_CODE_GRAB = Pattern.compile("[a-zA-Z0-9]++$");
+    private static final String PMC_URL_BASE = "https://www.planetminecraft.com/banner/?e=";
     private static final Map<DyeColor, Item> BY_COLOUR = new LinkedHashMap<>();
 
     static {
@@ -213,6 +214,14 @@ public class BannerEditor extends GuiEditor {
                         Sounds.click(player);
                         Menus.stringBuilder(player)
                                 .title(Component.translatable("jsst.itemEditor.banner.loadPMC.import.title"))
+                                .predicate(s -> s.strip().length() % 2 == 1)
+                                .hint(JSSTElementBuilder.ui(PMC.ICON)
+                                        .setName(Component.translatable("jsst.itemEditor.banner.loadPMC.import.hint1"))
+                                        .addLoreLine(
+                                                Component.literal(PMC_URL_BASE).append(Component.literal("6adei6cgbgbeb").withStyle(Styles.EXAMPLE)).withStyle(Styles.MINOR_LABEL)
+                                        ).addLoreLine(Component.translatable("jsst.itemEditor.banner.loadPMC.import.hint2",
+                                                Component.translatable("jsst.itemEditor.banner.loadPMC.import.hint2.button").withStyle(Styles.POSITIVE)))
+                                        .asStack())
                                 .createAndShow(result -> {
                                     if (result.hasResult()) {
                                         var matcher = PMC_CODE_GRAB.matcher(result.result().strip());
@@ -280,8 +289,4 @@ public class BannerEditor extends GuiEditor {
         BANNER,
         SHIELD
     }
-
-
-
-
 }

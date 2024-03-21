@@ -121,6 +121,9 @@
   "jsst.itemEditor.banner.changeColour": "Change Colour",
   "jsst.itemEditor.banner.loadPMC.import": "Import from Banner Editor",
   "jsst.itemEditor.banner.loadPMC.import.title": "Import from PMC",
+  "jsst.itemEditor.banner.loadPMC.import.hint1": "Input the code at the end of the URL. Example:",
+  "jsst.itemEditor.banner.loadPMC.import.hint2": "To import an existing banner, click '%s'.",
+  "jsst.itemEditor.banner.loadPMC.import.hint2.button": "Remix Banner",
   "jsst.itemEditor.banner.loadPMC.export": "Export to Banner Editor",
   "jsst.itemEditor.banner.loadPMC.notAffiliated": "JSST is not affiliated with %s.",
 
