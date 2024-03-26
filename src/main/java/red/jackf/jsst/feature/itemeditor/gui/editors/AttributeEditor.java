@@ -1,6 +1,5 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
-import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
@@ -31,7 +30,10 @@ import red.jackf.jsst.util.sgui.menus.Menus;
 import red.jackf.jsst.util.sgui.menus.selector.SelectorMenu;
 import red.jackf.jsst.util.sgui.pagination.ListPaginator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class AttributeEditor extends GuiEditor {
@@ -80,7 +82,7 @@ public class AttributeEditor extends GuiEditor {
                 text,
                 Component.translatable(instance.attribute().getDescriptionId())
         ).withStyle(positive ? ChatFormatting.BLUE : ChatFormatting.RED);
-        JSSTElementBuilder attributeElementBuilder = JSSTElementBuilder.ui(Items.BOOK)
+        JSSTElementBuilder attributeElementBuilder = JSSTElementBuilder.ui(LabelMaps.ATTRIBUTES.getLabel(instance.attribute()))
                 .setName(title);
         if (instance.slot() != AttributeSlot.ANY)
             attributeElementBuilder.addLoreLine(Component.translatable(

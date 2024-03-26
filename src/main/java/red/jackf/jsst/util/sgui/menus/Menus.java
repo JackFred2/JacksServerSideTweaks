@@ -13,7 +13,6 @@ import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.Util;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
-import java.text.DecimalFormat;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 

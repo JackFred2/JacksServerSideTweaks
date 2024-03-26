@@ -1,0 +1,18 @@
+{
+  "labels": {
+    "minecraft:generic.armor": "minecraft:diamond_chestplate",
+    "minecraft:generic.armor_toughness": "minecraft:netherite_chestplate",
+    "minecraft:generic.attack_damage": "minecraft:grindstone",
+    "minecraft:generic.attack_knockback": "minecraft:piston",
+    "minecraft:generic.attack_speed": {"id":"minecraft:potion","Count":1,"tag":{"Potion":"minecraft:swiftness","HideFlags":32}},
+    "minecraft:generic.flying_speed": "minecraft:elytra",
+    "minecraft:generic.follow_range": "minecraft:ender_eye",
+    "minecraft:horse.jump_strength": "minecraft:saddle",
+    "minecraft:generic.knockback_resistance": "minecraft:sticky_piston",
+    "minecraft:generic.luck": "minecraft:lapis_lazuli",
+    "minecraft:generic.max_absorption": "minecraft:golden_apple",
+    "minecraft:generic.max_health": "minecraft:apple",
+    "minecraft:generic.movement_speed": "minecraft:sugar",
+    "minecraft:zombie.spawn_reinforcements": "minecraft:zombie_head"
+  }
+}
