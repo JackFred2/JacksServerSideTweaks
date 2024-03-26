@@ -1,5 +1,6 @@
 package red.jackf.jsst.feature.itemeditor.gui.editors;
 
+import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -111,6 +112,12 @@ public class TrimEditor extends GuiEditor {
         this.loadFromStack();
     }
 
+    @Override
+    public boolean onAnyClick(int index, ClickType type, net.minecraft.world.inventory.ClickType action) {
+        this.sendGui();
+        return super.onAnyClick(index, type, action);
+    }
+
     private void buildOutput() {
         if (this.trim != null) {
             ArmorTrim.setTrim(this.context.server().registryAccess(), this.stack, this.trim);
@@ -176,11 +183,11 @@ public class TrimEditor extends GuiEditor {
                         this.redraw();
                     }));
 
-            this.setSlot(Slots.MATERIAL, LabelMaps.TRIM_MATERIALS.getLabel(this.trim.material()));
-            this.setSlot(Slots.PATTERN, LabelMaps.TRIM_PATTERNS.getLabel(this.trim.pattern()));
-
             this.materialPaginator.draw();
             this.patternPaginator.draw();
+
+            this.setSlot(Slots.MATERIAL, LabelMaps.TRIM_MATERIALS.getLabel(this.trim.material()));
+            this.setSlot(Slots.PATTERN, LabelMaps.TRIM_PATTERNS.getLabel(this.trim.pattern()));
         }
     }
 
@@ -190,8 +197,4 @@ public class TrimEditor extends GuiEditor {
         int MATERIAL = 2;
         int OUTPUT = 3;
     }
-
-
-
-
 }
