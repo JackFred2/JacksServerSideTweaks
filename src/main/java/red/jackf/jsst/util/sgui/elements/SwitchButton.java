@@ -5,6 +5,7 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import eu.pb4.sgui.api.gui.GuiInterface;
 import eu.pb4.sgui.api.gui.SlotGuiInterface;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.util.sgui.*;
 
@@ -13,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class SwitchButton<T> implements GuiElementInterface {
     private final Component name;
@@ -104,6 +106,13 @@ public class SwitchButton<T> implements GuiElementInterface {
             if (this.labels.containsKey(option)) throw new IllegalArgumentException("Duplicate element");
             this.options.add(option);
             this.labels.put(option, JSSTElementBuilder.from(label).build());
+            return this;
+        }
+
+        public Builder<T> addOptions(T[] options, Function<T, ItemStack> labelGrabber) {
+            for (T option : options) {
+                addOption(option, labelGrabber.apply(option));
+            }
             return this;
         }
 

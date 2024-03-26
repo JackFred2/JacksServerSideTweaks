@@ -30,6 +30,7 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
             LoreEditor.TYPE,
             DurabilityEditor.TYPE,
             TrimEditor.TYPE,
+            AttributeEditor.TYPE,
             EnchantmentEditor.TYPE,
             BannerEditor.TYPE,
             PotionEditor.TYPE,

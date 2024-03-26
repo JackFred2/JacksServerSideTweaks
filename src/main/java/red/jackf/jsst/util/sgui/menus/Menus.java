@@ -13,6 +13,7 @@ import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.Util;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
+import java.text.DecimalFormat;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -76,10 +77,10 @@ public class Menus {
         } else {
             if (maximumInclusive == null) {
                 return JSSTElementBuilder.from(Items.PAPER)
-                                        .setName(Component.literal(minimumInclusive + " ≤ x").withStyle(Styles.EXAMPLE));
+                        .setName(Component.literal(minimumInclusive + " ≤ x").withStyle(Styles.EXAMPLE));
             } else {
                 return JSSTElementBuilder.from(Items.PAPER)
-                                        .setName(Component.literal(minimumInclusive + " ≤ x ≤ " + maximumInclusive).withStyle(Styles.EXAMPLE));
+                        .setName(Component.literal(minimumInclusive + " ≤ x ≤ " + maximumInclusive).withStyle(Styles.EXAMPLE));
             }
         }
     }
@@ -98,6 +99,55 @@ public class Menus {
                 .predicate(s -> parseInt(s, minimumInclusive, maximumInclusive).hasResult())
                 .hint(hint == null ? makeIntegerHint(minimumInclusive, maximumInclusive) : JSSTElementBuilder.from(hint))
                 .createAndShow(result -> callback.accept(result.flatMap(s -> parseInt(s, minimumInclusive, maximumInclusive))));
+    }
+
+    private static Result<Double> parseDouble(String str, @Nullable Double minimumInclusive, @Nullable Double maximumInclusive) {
+        try {
+            double parsed = Double.parseDouble(str);
+            if (!Double.isFinite(parsed)) return Result.empty();
+            if (minimumInclusive != null && parsed < minimumInclusive) return Result.empty();
+            if (maximumInclusive != null && parsed > maximumInclusive) return Result.empty();
+            return Result.of(parsed);
+        } catch (NumberFormatException ignored) {
+            return Result.empty();
+        }
+    }
+
+    private static GuiElementBuilderInterface<?> makeDoubleHint(@Nullable Double minimumInclusive, @Nullable Double maximumInclusive) {
+        String minimumText = minimumInclusive == null ? null : "%.2f".formatted(minimumInclusive);
+        String maximumText = maximumInclusive == null ? null : "%.2f".formatted(maximumInclusive);
+        if (minimumInclusive == null) {
+            if (maximumInclusive == null) {
+                return JSSTElementBuilder.from(Items.AIR);
+            } else {
+                return JSSTElementBuilder.from(Items.PAPER)
+                        .setName(Component.literal("x ≤ " + maximumText).withStyle(Styles.EXAMPLE));
+            }
+        } else {
+            if (maximumInclusive == null) {
+                return JSSTElementBuilder.from(Items.PAPER)
+                        .setName(Component.literal(minimumText + " ≤ x").withStyle(Styles.EXAMPLE));
+            } else {
+                return JSSTElementBuilder.from(Items.PAPER)
+                        .setName(Component.literal(minimumText + " ≤ x ≤ " + maximumText).withStyle(Styles.EXAMPLE));
+            }
+        }
+    }
+
+    public static void ddouble(
+            ServerPlayer player,
+            Component title,
+            double initial,
+            @Nullable Double minimumInclusive,
+            @Nullable Double maximumInclusive,
+            @Nullable ItemStack hint,
+            Consumer<Result<Double>> callback) {
+        stringBuilder(player)
+                .title(title)
+                .initial(String.valueOf(initial))
+                .predicate(s -> parseDouble(s, minimumInclusive, maximumInclusive).hasResult())
+                .hint(hint == null ? makeDoubleHint(minimumInclusive, maximumInclusive) : JSSTElementBuilder.from(hint))
+                .createAndShow(result -> callback.accept(result.flatMap(s -> parseDouble(s, minimumInclusive, maximumInclusive))));
     }
 
     private static Result<Integer> parseIntOrPercentage(String str, int maximumValueInclusive) {

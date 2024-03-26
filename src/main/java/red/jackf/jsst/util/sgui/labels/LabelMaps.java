@@ -7,6 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
@@ -38,6 +39,7 @@ public abstract class LabelMaps {
     public static final LabelMap<Holder<TrimMaterial>> TRIM_MATERIALS;
     public static final LabelMap<Holder<TrimPattern>> TRIM_PATTERNS;
     public static final LabelMap<Integer> BOOK_GENERATIONS;
+    public static final LabelMap<Attribute> ATTRIBUTES;
 
     static {
         ITEMS = LabelMap.createStatic(Collections.emptyMap(), Item::getDefaultInstance);
@@ -118,6 +120,10 @@ public abstract class LabelMaps {
             stack.getOrCreateTag().putInt(WrittenBookItem.TAG_GENERATION, i);
             return stack;
         };
+
+        ATTRIBUTES = LabelMap.createDataManaged(BuiltInRegistries.ATTRIBUTE,
+                attribute -> Items.BOOK.getDefaultInstance(),
+                attribute -> Component.translatable(attribute.getDescriptionId()));
     }
 
     public static void touch() {
