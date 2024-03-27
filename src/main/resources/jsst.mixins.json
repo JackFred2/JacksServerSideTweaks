@@ -9,6 +9,7 @@
     "campfirestimes.CampfireBlockEntityMixin",
     "containernames.ChunkMapAccessor",
     "containernames.ServerLevelMixin",
+    "events.ServerGamePacketListenerImplMixin",
     "itemeditor.ItemStackAccessor",
     "itemeditor.ServerGamePacketListenerImplMixin",
     "itemeditor.ServerPlayerMixin",
