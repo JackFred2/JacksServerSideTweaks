@@ -24,7 +24,6 @@ import red.jackf.jsst.util.sgui.Translations;
 import red.jackf.jsst.util.sgui.banners.Banners;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -42,7 +41,7 @@ public abstract class LabelMaps {
     public static final LabelMap<Attribute> ATTRIBUTES;
 
     static {
-        ITEMS = LabelMap.createStatic(Collections.emptyMap(), Item::getDefaultInstance);
+        ITEMS = LabelMap.createStatic(Item::getDefaultInstance);
 
         ITEMS_WITH_SUSPICIOUS_STEW_EFFECTS = ITEMS.withAdditional((item, map) -> {
             var holder = SuspiciousEffectHolder.tryGet(item);
@@ -59,7 +58,7 @@ public abstract class LabelMaps {
             return builder.asStack();
         });
 
-        DYES = LabelMap.createStatic(Collections.emptyMap(), colour -> {
+        DYES = LabelMap.createStatic(colour -> {
             ItemStack stack = DyeItem.byColor(colour).getDefaultInstance();
             stack.setHoverName(Translations.dye(colour));
             return stack;
@@ -67,12 +66,12 @@ public abstract class LabelMaps {
 
         BANNER_PATTERNS = colour -> {
             DyeColor base = colour == DyeColor.WHITE ? DyeColor.BLACK : DyeColor.WHITE;
-            return pattern -> JSSTElementBuilder.ui(Banners.builder(base)
+            return LabelMap.createStatic(pattern -> JSSTElementBuilder.ui(Banners.builder(base)
                             .add(pattern, colour)
                             .build(false))
                     .setName(Banners.name(pattern, colour))
                     .hideFlags()
-                    .asStack();
+                    .asStack());
         };
 
         ENCHANTMENTS = LabelMap.createDataManaged(BuiltInRegistries.ENCHANTMENT, ench -> {
@@ -97,19 +96,19 @@ public abstract class LabelMaps {
             return stack;
         });
 
-        TRIM_MATERIALS = LabelMap.createStatic(Collections.emptyMap(), material -> JSSTElementBuilder.from(material.value()
+        TRIM_MATERIALS = LabelMap.createStatic(material -> JSSTElementBuilder.from(material.value()
                         .ingredient().value())
                 .setName(material.value().description())
                 .hideFlags()
                 .asStack());
 
-        TRIM_PATTERNS = LabelMap.createStatic(Collections.emptyMap(), pattern -> JSSTElementBuilder.from(pattern.value()
+        TRIM_PATTERNS = LabelMap.createStatic(pattern -> JSSTElementBuilder.from(pattern.value()
                         .templateItem().value())
                 .setName(pattern.value().description())
                 .hideFlags()
                 .asStack());
 
-        BOOK_GENERATIONS = i -> {
+        BOOK_GENERATIONS = LabelMap.createStatic(i -> {
             i = Mth.clamp(i, 0, 3);
             var stack = JSSTElementBuilder.ui(Items.WRITTEN_BOOK)
                     .setName(Component.translatable("book.generation." + i))
@@ -119,7 +118,7 @@ public abstract class LabelMaps {
                     .asStack();
             stack.getOrCreateTag().putInt(WrittenBookItem.TAG_GENERATION, i);
             return stack;
-        };
+        });
 
         ATTRIBUTES = LabelMap.createDataManaged(BuiltInRegistries.ATTRIBUTE,
                 attribute -> Items.BOOK.getDefaultInstance(),

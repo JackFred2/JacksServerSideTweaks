@@ -8,6 +8,7 @@ import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.labels.data.LabelDataLoader;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -34,6 +35,10 @@ public interface LabelMap<T> {
         return map;
     }
 
+    static <T> LabelMap<T> createStatic(Function<T, ItemStack> defaultGetter) {
+        return createStatic(Collections.emptyMap(), defaultGetter);
+    }
+
     static <T> LabelMap<T> createStatic(Map<T, ItemStack> labels, Function<T, ItemStack> defaultGetter) {
         Static<T> map = new Static<>(defaultGetter);
         labels.forEach(map::addLabel);
@@ -41,11 +46,9 @@ public interface LabelMap<T> {
     }
 
     static <T> LabelMap<T> createStatic(Map<T, ItemStack> labels) {
-        Static<T> map = new Static<>(t -> {
+        return createStatic(labels, t -> {
             throw new IllegalArgumentException("Unknown key");
         });
-        labels.forEach(map::addLabel);
-        return map;
     }
 
     class Datapack<T> implements LabelMap<T> {
