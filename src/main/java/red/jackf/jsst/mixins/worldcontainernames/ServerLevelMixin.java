@@ -1,4 +1,4 @@
-package red.jackf.jsst.mixins.containernames;
+package red.jackf.jsst.mixins.worldcontainernames;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

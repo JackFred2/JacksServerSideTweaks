@@ -23,7 +23,7 @@ import red.jackf.jackfredlib.api.lying.entity.EntityUtils;
 import red.jackf.jackfredlib.api.lying.entity.builders.EntityBuilders;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.ToggleFeature;
-import red.jackf.jsst.mixins.containernames.ChunkMapAccessor;
+import red.jackf.jsst.mixins.worldcontainernames.ChunkMapAccessor;
 import red.jackf.jsst.util.Scheduler;
 
 import java.util.*;

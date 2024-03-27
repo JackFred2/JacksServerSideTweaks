@@ -6,15 +6,15 @@
     "anvilenhancement.AnvilMenuMixin",
     "beaconenhancement.BeaconBlockEntityMixin",
     "beaconenhancement.ConduitBlockEntityMixin",
-    "campfirestimes.CampfireBlockEntityMixin",
-    "containernames.ChunkMapAccessor",
-    "containernames.ServerLevelMixin",
+    "campfiretimes.CampfireBlockEntityMixin",
     "events.ServerGamePacketListenerImplMixin",
     "itemeditor.ItemStackAccessor",
     "itemeditor.ServerGamePacketListenerImplMixin",
     "itemeditor.ServerPlayerMixin",
     "itemeditor.SuspiciousStewItemAccessor",
-    "qualityoflife.BlockMixin"
+    "qualityoflife.BlockMixin",
+    "worldcontainernames.ChunkMapAccessor",
+    "worldcontainernames.ServerLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

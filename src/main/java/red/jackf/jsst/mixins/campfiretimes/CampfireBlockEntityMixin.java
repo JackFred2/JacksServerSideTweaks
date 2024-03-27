@@ -1,4 +1,4 @@
-package red.jackf.jsst.mixins.campfirestimes;
+package red.jackf.jsst.mixins.campfiretimes;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
