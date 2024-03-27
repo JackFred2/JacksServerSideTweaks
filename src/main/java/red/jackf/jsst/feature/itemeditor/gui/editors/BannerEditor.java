@@ -169,16 +169,11 @@ public class BannerEditor extends GuiEditor {
     }
 
     private void loadPatternsFromStack(ItemStack stack) {
-        if (stack.getItem() instanceof BannerItem bannerItem) {
-            this.baseColour = bannerItem.getColor();
-        } else if (stack.is(Items.SHIELD)) {
-            this.baseColour = ShieldItem.getColor(stack);
-        }
+        Banners.BannerPatterns loaded = Banners.parseStack(stack);
 
+        this.baseColour = loaded.baseColour();
         this.patterns.clear();
-        List<Pair<Holder<BannerPattern>, DyeColor>> patterns = BannerBlockEntity.createPatterns(DyeColor.WHITE, BannerBlockEntity.getItemPatterns(stack));
-        patterns.remove(0);
-        this.patterns.addAll(patterns);
+        this.patterns.addAll(loaded.patterns());
     }
 
     private void loadItemTypeFromStack(ItemStack stack) {

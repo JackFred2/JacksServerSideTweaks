@@ -20,7 +20,7 @@ public class PMC {
     public static final Component NAME = Component.literal("Planet ").withStyle(Style.EMPTY.withColor(0x6EC310))
             .append(Component.literal("Minecraft").withStyle(Style.EMPTY.withColor(0xA3692B)));
 
-    protected static final BiMap<Character, DyeColor> COLOURS = HashBiMap.create(16);
+    public static final BiMap<Character, DyeColor> COLOURS = HashBiMap.create(16);
     static {
         COLOURS.put('1', DyeColor.BLACK);
         COLOURS.put('2', DyeColor.RED);

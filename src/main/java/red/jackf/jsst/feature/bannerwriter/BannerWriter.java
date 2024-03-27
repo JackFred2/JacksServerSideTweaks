@@ -1,22 +1,30 @@
 package red.jackf.jsst.feature.bannerwriter;
 
 import blue.endless.jankson.Comment;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.DyeColor;
+import org.slf4j.Logger;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.Feature;
 
 public class BannerWriter extends Feature<BannerWriter.Config> {
     public static final BannerWriter INSTANCE = new BannerWriter();
+    private static final Logger LOGGER = JSST.getLogger("BannerWriter");
 
     private BannerWriter() {}
 
     @Override
     public void setup() {
-
+        Characters.INSTANCE.setup();
     }
 
     @Override
     protected Config config() {
         return JSST.CONFIG.instance().bannerWriter;
+    }
+
+    public void start(ServerPlayer player, DyeColor backgroundColour, DyeColor textColour, String text) {
+        LOGGER.debug("Starting banner writer for {} (fg:{}, bg:{}, text:{})", player.getGameProfile().getName(), textColour, backgroundColour, text);
     }
 
     public static class Config extends Feature.Config {

@@ -6,6 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import red.jackf.jackfredlib.api.base.ServerTracker;
 import red.jackf.jsst.JSST;
+import red.jackf.jsst.feature.bannerwriter.BannerWriterCommand;
 import red.jackf.jsst.feature.itemeditor.ItemEditorCommand;
 
 import java.util.function.Predicate;
@@ -20,17 +21,24 @@ public class JSSTCommand {
             Commands.CommandSelection ignored) {
         var root = Commands.literal("jsst");
 
-        root.requires(CONFIG_PREDICATE.or(ItemEditorCommand.PREDICATE));
+        root.requires(CONFIG_PREDICATE.or(ItemEditorCommand.PREDICATE).or(BannerWriterCommand.PREDICATE));
 
         root.then(CommandConfig.createCommandNode(buildContext)
-                               .requires(CONFIG_PREDICATE));
+                .requires(CONFIG_PREDICATE));
 
         var itemEditor = ItemEditorCommand.create(buildContext)
-                                          .requires(ItemEditorCommand.PREDICATE);
+                .requires(ItemEditorCommand.PREDICATE);
 
         root.then(itemEditor);
 
         if (JSST.CONFIG.instance().itemEditor.dedicatedCommand) dispatcher.register(itemEditor);
+
+        var bannerWriter = BannerWriterCommand.create(buildContext)
+                .requires(BannerWriterCommand.PREDICATE);
+
+        root.then(bannerWriter);
+
+        if (JSST.CONFIG.instance().bannerWriter.dedicatedCommand) dispatcher.register(bannerWriter);
 
         dispatcher.register(root);
     }

@@ -23,6 +23,9 @@
   "jsst.beaconPowers.error.beaconPayment": "Place payment item to the left",
   "jsst.beaconPowers.error.needsPrimary": "Select a primary power",
 
+  "jsst.bannerWriter.invalid": "Invalid characters: %s. Ignoring them.",
+  "jsst.bannerWriter.needBanners": "No blank banners in hand!",
+
   "jsst.itemEditor.selectBaseItem": "Select a base item",
   "jsst.itemEditor.title": "Item Editor",
   "jsst.itemEditor.title.developerMode": "Developer Mode",
