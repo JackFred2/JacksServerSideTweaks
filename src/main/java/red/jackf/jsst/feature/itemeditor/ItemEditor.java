@@ -112,8 +112,8 @@ public class ItemEditor extends Feature<ItemEditor.Config> {
                 Adds a dedicated /itemEditor command to open the item editor as an alternative to /jsst itemEditor.
                 Requires a server restart or world reload to take effect.
                 Options: true, false
-                Default: false""")
-        public boolean dedicatedCommand = false;
+                Default: true""")
+        public boolean dedicatedCommand = true;
 
         @Comment("""
                 A list of globally disabled editors. The IDs for editors are shown when 'developer mode' is enabled in the GUI.

@@ -3,24 +3,24 @@ package red.jackf.jsst;
 import blue.endless.jankson.JsonObject;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import red.jackf.jackfredlib.api.config.ConfigHandler;
-import red.jackf.jsst.command.Formatting;
 import red.jackf.jsst.command.JSSTCommand;
 import red.jackf.jsst.config.JSSTConfig;
 import red.jackf.jsst.config.JSSTConfigMigrator;
 import red.jackf.jsst.feature.Feature;
 import red.jackf.jsst.feature.ToggleFeature;
+import red.jackf.jsst.feature.anvilenhancement.AnvilEnhancement;
+import red.jackf.jsst.feature.bannerwriter.BannerWriter;
 import red.jackf.jsst.feature.beaconenhancement.BeaconEnhancement;
 import red.jackf.jsst.feature.beaconenhancement.BeaconPowerSet;
 import red.jackf.jsst.feature.campfiretimes.CampfireTimes;
-import red.jackf.jsst.feature.containernames.WorldContainerNames;
 import red.jackf.jsst.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.feature.portablecrafting.PortableCrafting;
 import red.jackf.jsst.feature.qualityoflife.QualityOfLife;
+import red.jackf.jsst.feature.worldcontainernames.WorldContainerNames;
 import red.jackf.jsst.util.Scheduler;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;
 
@@ -31,8 +31,6 @@ public class JSST implements ModInitializer {
         return LoggerFactory.getLogger("red.jackf.jsst.JSST" + (suffix.isBlank() ? "" : "/" + suffix));
     }
     public static final Logger LOGGER = getLogger("");
-
-    public static final Component STYLIZED = Formatting.STYLIZED;
     public static final String MODID = "jsst";
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MODID, path);
@@ -50,12 +48,14 @@ public class JSST implements ModInitializer {
             .build();
 
     private static final List<Feature<?>> FEATURES = List.of(
-            ItemEditor.INSTANCE,
-            PortableCrafting.INSTANCE,
-            WorldContainerNames.INSTANCE,
+            AnvilEnhancement.INSTANCE,
+            BannerWriter.INSTANCE,
             BeaconEnhancement.INSTANCE,
             CampfireTimes.INSTANCE,
-            QualityOfLife.INSTANCE
+            ItemEditor.INSTANCE,
+            PortableCrafting.INSTANCE,
+            QualityOfLife.INSTANCE,
+            WorldContainerNames.INSTANCE
     );
 
     @Override

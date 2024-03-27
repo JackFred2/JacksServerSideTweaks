@@ -4,8 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import red.jackf.jsst.feature.containernames.ContainerLabelTracker;
-import red.jackf.jsst.feature.containernames.LabelLie;
+import red.jackf.jsst.feature.worldcontainernames.ContainerLabelTracker;
+import red.jackf.jsst.feature.worldcontainernames.LabelLie;
 
 import java.util.HashMap;
 import java.util.Map;

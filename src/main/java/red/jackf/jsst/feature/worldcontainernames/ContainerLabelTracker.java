@@ -1,4 +1,4 @@
-package red.jackf.jsst.feature.containernames;
+package red.jackf.jsst.feature.worldcontainernames;
 
 import net.minecraft.core.BlockPos;
 

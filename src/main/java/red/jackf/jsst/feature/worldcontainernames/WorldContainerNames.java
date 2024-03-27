@@ -1,4 +1,4 @@
-package red.jackf.jsst.feature.containernames;
+package red.jackf.jsst.feature.worldcontainernames;
 
 import blue.endless.jankson.Comment;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;

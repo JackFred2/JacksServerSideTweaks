@@ -1,4 +1,4 @@
-package red.jackf.jsst.feature.containernames;
+package red.jackf.jsst.feature.worldcontainernames;
 
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.phys.Vec3;
