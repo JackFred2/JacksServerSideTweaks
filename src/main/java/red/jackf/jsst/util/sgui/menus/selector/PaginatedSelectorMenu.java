@@ -7,6 +7,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.util.Result;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.labels.LabelMap;

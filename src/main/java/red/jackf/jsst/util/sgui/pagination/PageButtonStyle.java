@@ -5,7 +5,7 @@ import eu.pb4.sgui.api.gui.SlotGuiInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.util.sgui.Hints;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.Translations;
 import red.jackf.jsst.util.sgui.banners.Banners;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;

@@ -17,7 +17,7 @@ import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.mixins.itemeditor.SuspiciousStewItemAccessor;
 import red.jackf.jsst.util.sgui.CommonLabels;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.Util;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;

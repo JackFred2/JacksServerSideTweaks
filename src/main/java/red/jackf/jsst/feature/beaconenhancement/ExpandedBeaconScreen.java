@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.Streams;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;

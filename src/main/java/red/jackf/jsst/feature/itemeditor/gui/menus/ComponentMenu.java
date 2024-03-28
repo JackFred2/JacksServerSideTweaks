@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.CommonLabels;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.Translations;
 import red.jackf.jsst.util.sgui.Util;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;

@@ -21,6 +21,7 @@ import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.Formatting;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.feature.itemeditor.gui.menus.style.Colours;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.banners.Banners;
 import red.jackf.jsst.util.sgui.banners.PMC;

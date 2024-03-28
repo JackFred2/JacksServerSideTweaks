@@ -22,7 +22,7 @@ import red.jackf.jsst.command.Formatting;
 import red.jackf.jsst.events.AfterPlacePlaceBlock;
 import red.jackf.jsst.feature.Feature;
 import red.jackf.jsst.util.Scheduler;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.banners.Banners;
 

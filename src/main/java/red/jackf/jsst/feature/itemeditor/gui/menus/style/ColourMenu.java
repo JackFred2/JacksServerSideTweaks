@@ -14,6 +14,7 @@ import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jsst.feature.itemeditor.previouscolours.EditorColourHistory;
 import red.jackf.jsst.feature.itemeditor.previouscolours.PlayerHistoryGui;
 import red.jackf.jsst.util.Result;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.elements.SwitchButton;

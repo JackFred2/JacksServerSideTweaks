@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.menus.Menus;
 

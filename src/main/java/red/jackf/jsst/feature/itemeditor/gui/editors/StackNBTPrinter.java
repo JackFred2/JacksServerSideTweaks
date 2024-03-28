@@ -13,7 +13,7 @@ import red.jackf.jsst.JSST;
 import red.jackf.jsst.command.Formatting;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
 import red.jackf.jsst.util.JSSTCodecs;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.Styles;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 

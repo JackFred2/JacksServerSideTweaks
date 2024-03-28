@@ -7,7 +7,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import red.jackf.jsst.util.Result;
 import red.jackf.jsst.util.sgui.CommonLabels;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.Translations;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.labels.LabelMap;

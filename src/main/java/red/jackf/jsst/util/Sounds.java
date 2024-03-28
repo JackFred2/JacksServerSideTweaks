@@ -1,4 +1,4 @@
-package red.jackf.jsst.util.sgui;
+package red.jackf.jsst.util;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;

@@ -19,6 +19,7 @@ import net.minecraft.world.item.armortrim.TrimPattern;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.JSST;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.*;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.labels.LabelMaps;

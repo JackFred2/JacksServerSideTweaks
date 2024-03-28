@@ -6,7 +6,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import red.jackf.jsst.feature.itemeditor.gui.EditorContext;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.Translations;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 

@@ -26,7 +26,7 @@ import red.jackf.jsst.feature.itemeditor.gui.menus.EditorMenus;
 import red.jackf.jsst.mixins.itemeditor.ItemStackAccessor;
 import red.jackf.jsst.util.sgui.AnimatedGuiElementBuilderExt;
 import red.jackf.jsst.util.sgui.CommonLabels;
-import red.jackf.jsst.util.sgui.Sounds;
+import red.jackf.jsst.util.Sounds;
 import red.jackf.jsst.util.sgui.Util;
 import red.jackf.jsst.util.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.util.sgui.elements.SwitchButton;
