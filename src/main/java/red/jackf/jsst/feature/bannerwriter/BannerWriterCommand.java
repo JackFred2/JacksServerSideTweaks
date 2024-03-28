@@ -13,12 +13,9 @@ import net.minecraft.commands.arguments.ColorArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.command.Formatting;
 import red.jackf.jsst.util.sgui.Styles;
-import red.jackf.jsst.util.sgui.banners.Banners;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -43,8 +40,8 @@ public class BannerWriterCommand {
                         throw ColorArgument.ERROR_INVALID_VALUE.create(textColourText);
 
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
-                    Optional<DyeColor> backgroundColour = getColourFromStack(player.getItemInHand(InteractionHand.MAIN_HAND))
-                            .or(() -> getColourFromStack(player.getItemInHand(InteractionHand.OFF_HAND)));
+                    Optional<DyeColor> backgroundColour = BannerWriter.getBaseColourFromBlankBanner(player.getItemInHand(InteractionHand.MAIN_HAND))
+                            .or(() -> BannerWriter.getBaseColourFromBlankBanner(player.getItemInHand(InteractionHand.OFF_HAND)));
                     if (backgroundColour.isEmpty()) {
                         ctx.getSource().sendFailure(Formatting.errorLine(Component.translatable("jsst.bannerWriter.needBanners")));
                         return 0;
@@ -56,7 +53,13 @@ public class BannerWriterCommand {
                             "jsst.bannerWriter.invalid", Component.literal(invalid).withStyle(Styles.EXAMPLE)
                     ))));
 
-                    BannerWriter.INSTANCE.start(ctx.getSource().getPlayerOrException(), backgroundColour.get(), textColour, processed.text());
+                    String validText = processed.text().strip();
+                    if (validText.isBlank()) {
+                        ctx.getSource().sendFailure(Formatting.errorLine(Component.translatable("jsst.bannerWriter.emptyString")));
+                        return 0;
+                    }
+
+                    BannerWriter.INSTANCE.start(ctx.getSource().getPlayerOrException(), backgroundColour.get(), textColour, validText);
                     return processed.text().length();
                 });
 
@@ -64,14 +67,6 @@ public class BannerWriterCommand {
         root.then(colour);
 
         return root;
-    }
-
-    private static Optional<DyeColor> getColourFromStack(ItemStack stack) {
-        if (stack.isEmpty()) return Optional.empty();
-        if (!(stack.getItem() instanceof BannerItem)) return Optional.empty();
-        var patterns = Banners.parseStack(stack);
-        if (!patterns.patterns().isEmpty()) return Optional.empty();
-        return Optional.ofNullable(patterns.baseColour());
     }
 
     private static CompletableFuture<Suggestions> textUnknownWarning(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {

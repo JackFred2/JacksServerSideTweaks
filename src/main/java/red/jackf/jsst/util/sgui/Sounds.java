@@ -43,4 +43,8 @@ public interface Sounds {
                                                           pitch,
                                                           player.getRandom().nextLong()));
     }
+
+    static void ding(ServerPlayer player, float pitch) {
+        playSound(player, SoundEvents.EXPERIENCE_ORB_PICKUP, VOLUME, pitch);
+    }
 }
