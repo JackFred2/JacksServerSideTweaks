@@ -57,6 +57,7 @@ public class BannerWriter extends Feature<BannerWriter.Config> {
                 Session session = entry.getValue();
                 if (session.isEmpty()) {
                     this.sessions.remove(player);
+                    player.sendSystemMessage(Formatting.successLine(Component.translatable("jsst.bannerWriter.complete")));
                     Sounds.ding(player, 1.2f);
                 } else if (!session.stillValid(player)) {
                     terminateSession(player);
@@ -101,6 +102,8 @@ public class BannerWriter extends Feature<BannerWriter.Config> {
                 if (be instanceof BannerBlockEntity bbe)
                     bbe.fromItem(letter);
             }
+
+            Sounds.ding(player, 1f);
         });
     }
 
@@ -123,6 +126,7 @@ public class BannerWriter extends Feature<BannerWriter.Config> {
     // errored or cancelled
     public void terminateSession(ServerPlayer player) {
         this.sessions.remove(player);
+        player.sendSystemMessage(Formatting.errorLine(Component.translatable("jsst.bannerWriter.cancelled")));
         Sounds.ding(player, 0.8f);
     }
 

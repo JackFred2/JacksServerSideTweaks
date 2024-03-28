@@ -27,6 +27,8 @@
   "jsst.bannerWriter.needBanners": "No blank banners in hand!",
   "jsst.bannerWriter.emptyString": "Need 1 or more characters.",
   "jsst.bannerWriter.start": "Writing \"%s\" with %s text, %s background.",
+  "jsst.bannerWriter.cancelled": "Writing cancelled.",
+  "jsst.bannerWriter.complete": "Writing complete.",
 
   "jsst.itemEditor.selectBaseItem": "Select a base item",
   "jsst.itemEditor.title": "Item Editor",
