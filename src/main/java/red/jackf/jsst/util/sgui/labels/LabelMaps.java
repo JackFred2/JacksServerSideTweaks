@@ -3,6 +3,7 @@ package red.jackf.jsst.util.sgui.labels;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -50,7 +51,7 @@ public abstract class LabelMaps {
 
             var server = ServerTracker.INSTANCE.getServer();
 
-            for (SuspiciousEffectHolder.EffectEntry effect : holder.getSuspiciousEffects()) {
+            for (var effect : holder.getSuspiciousEffects().effects()) {
                 builder.addLoreLine(PotionEditor.describe(effect.createEffectInstance(), server != null ? server.tickRateManager()
                         .tickrate() : SharedConstants.TICKS_PER_SECOND));
             }
@@ -60,7 +61,7 @@ public abstract class LabelMaps {
 
         DYES = LabelMap.createStatic(colour -> {
             ItemStack stack = DyeItem.byColor(colour).getDefaultInstance();
-            stack.setHoverName(Translations.dye(colour));
+            stack.set(DataComponents.CUSTOM_NAME, Translations.dye(colour));
             return stack;
         });
 

@@ -134,7 +134,7 @@ public class SuspiciousStewEditor extends GuiEditor {
                                     var holder = SuspiciousEffectHolder.tryGet(result.result());
                                     if (holder != null) {
                                         this.effects.clear();
-                                        this.effects.addAll(holder.getSuspiciousEffects());
+                                        this.effects.addAll(holder.getSuspiciousEffects().effects());
                                     }
                                 }
                                 this.open();

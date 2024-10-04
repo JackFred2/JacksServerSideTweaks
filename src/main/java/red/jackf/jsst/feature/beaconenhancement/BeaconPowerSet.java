@@ -8,6 +8,7 @@ import blue.endless.jankson.api.DeserializationException;
 import blue.endless.jankson.api.Marshaller;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.SetMultimap;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
@@ -18,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class BeaconPowerSet {
-    private final SetMultimap<Integer, MobEffect> powers = MultimapBuilder.treeKeys().hashSetValues().build();
+    private final SetMultimap<Integer, Holder<MobEffect>> powers = MultimapBuilder.treeKeys().hashSetValues().build();
 
     public static BeaconPowerSet getDefault() {
         var def = new BeaconPowerSet();
@@ -35,14 +36,14 @@ public class BeaconPowerSet {
         return def;
     }
 
-    public void removePower(int level, MobEffect effect) {
+    public void removePower(int level, Holder<MobEffect> effect) {
         this.powers.entries().removeIf(entry -> {
             if (effect != entry.getValue()) return false;
             return level <= 3 ? entry.getKey() <= 3 : entry.getKey() >= 4;
         });
     }
 
-    public void addPower(int level, MobEffect effect) {
+    public void addPower(int level, Holder<MobEffect> effect) {
         if (level < 1 || level > 6) return;
 
         if (level <= 3)
@@ -55,23 +56,23 @@ public class BeaconPowerSet {
         this.powers.put(level, effect);
     }
 
-    public List<MobEffect> getPrimaries(int level) {
-        List<MobEffect> effects = new ArrayList<>();
+    public List<Holder<MobEffect>> getPrimaries(int level) {
+        List<Holder<MobEffect>> effects = new ArrayList<>();
         for (int i = 1; i <= 3 && i <= level; i++){
             effects.addAll(this.powers.get(i));
         }
         return effects;
     }
 
-    public List<MobEffect> getSecondaries(int level) {
-        List<MobEffect> effects = new ArrayList<>();
+    public List<Holder<MobEffect>> getSecondaries(int level) {
+        List<Holder<MobEffect>> effects = new ArrayList<>();
         for (int i = 4; i <= 6 && i <= level; i++){
             effects.addAll(this.powers.get(i));
         }
         return effects;
     }
 
-    public Collection<MobEffect> getAtLevel(int level) {
+    public Collection<Holder<MobEffect>> getAtLevel(int level) {
         return this.powers.get(level);
     }
 
@@ -93,7 +94,7 @@ public class BeaconPowerSet {
                         for (JsonElement effectId : array) {
                             if (effectId instanceof JsonPrimitive prim) {
                                 if (prim.getValue() instanceof String) {
-                                    MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(marshaller.marshall(ResourceLocation.class, prim));
+                                    Holder<MobEffect> effect = BuiltInRegistries.MOB_EFFECT.get(marshaller.marshall(ResourceLocation.class, prim));
                                     if (effect != null) {
                                         powers.addPower(level, effect);
                                     } else {
