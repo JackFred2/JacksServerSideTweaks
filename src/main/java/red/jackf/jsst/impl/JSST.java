@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import red.jackf.jsst.impl.feature.portablecrafting.PortableCrafting;
 
 public class JSST implements ModInitializer {
 	public static final String MOD_ID = "jsst";
@@ -25,6 +26,6 @@ public class JSST implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-
+		PortableCrafting.setup();
 	}
 }
