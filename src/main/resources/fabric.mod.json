@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "jsst",
+	"version": "${version}",
+	"name": "Jack's Server Side Tweaks",
+	"description": "todo",
+	"authors": [
+		"JackFred"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "ARR",
+	"icon": "assets/jsst/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"red.jackf.jsst.impl.JSST"
+		],
+		"client": [
+			"red.jackf.jsst.client.impl.JSSTClient"
+		]
+	},
+	"mixins": [
+		"jsst.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.5",
+		"minecraft": ">=${mcVersion}",
+		"java": ">=${javaRequirement}",
+		"fabric-api": "*"
+	},
+	"suggests": {
+
+	}
+}
