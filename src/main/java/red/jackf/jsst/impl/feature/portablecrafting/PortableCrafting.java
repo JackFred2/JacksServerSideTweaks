@@ -1,9 +1,9 @@
 package red.jackf.jsst.impl.feature.portablecrafting;
 
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -12,17 +12,20 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import red.jackf.jsst.impl.JSST;
+import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.mixinutils.JSSTItemValidation;
+import red.jackf.jsst.impl.utils.StringUtils;
 
 public class PortableCrafting {
-    public static final TagKey<Item> TAG = TagKey.create(Registries.ITEM, JSST.id("portable_crafting"));
-
     public static void setup() {
         UseItemCallback.EVENT.register((player, level, hand) -> {
-            if (!level.isClientSide && isValidCraftingTable(level.registryAccess(), player.getItemInHand(hand))) {
+            JSSTConfig.PortableCrafting config = JSSTConfig.INSTANCE.instance().portableCrafting;
+
+            if (!level.isClientSide
+                    && config.enabled
+                    && (player.isShiftKeyDown() || !config.requiresSneak)
+                    && isValidCraftingTable(level.registryAccess(), player.getItemInHand(hand))) {
                 openMenuForPlayer(player, (ServerLevel) level, hand);
                 return InteractionResultHolder.success(ItemStack.EMPTY);
             }
@@ -43,6 +46,16 @@ public class PortableCrafting {
     }
 
     public static boolean isValidCraftingTable(RegistryAccess registryAccess, ItemStack stack) {
-        return TagUtil.isIn(registryAccess, TAG, stack.getItem());
+        String config = JSSTConfig.INSTANCE.instance().portableCrafting.itemIdOrTag;
+        if (!StringUtils.isValidReslocOrTag(config)) return false;
+
+        if (config.startsWith("#")) {
+            return stack.is(TagKey.create(Registries.ITEM, StringUtils.resloc(config.substring(1))));
+        } else {
+            return registryAccess.registryOrThrow(Registries.ITEM)
+                    .getHolder(ResourceKey.create(Registries.ITEM, StringUtils.resloc(config)))
+                    .map(stack::is)
+                    .orElse(false);
+        }
     }
 }

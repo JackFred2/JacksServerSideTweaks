@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:crafting_table",
+    {
+      "id": "#c:player_workstations/crafting_tables",
+      "required": false
+    }
+  ]
+}

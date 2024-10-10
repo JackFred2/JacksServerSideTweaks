@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"red.jackf.jsst.client.impl.JSSTClient"
+		],
+		"modmenu": [
+			"red.jackf.jsst.client.impl.compat.JSSTModMenu"
 		]
 	},
 	"mixins": [
@@ -29,6 +32,7 @@
 		"fabricloader": ">=0.16.5",
 		"minecraft": ">=${mcVersion}",
 		"java": ">=${javaRequirement}",
+		"yet_another_config_lib_v3": ">=3.5.0",
 		"fabric-api": "*"
 	},
 	"suggests": {

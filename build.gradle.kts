@@ -41,18 +41,16 @@ loom {
 
 repositories {
 	// Parchment Mappings
-	maven {
+	maven("https://maven.parchmentmc.org") {
 		name = "ParchmentMC"
-		url = uri("https://maven.parchmentmc.org")
 		content {
 			includeGroup("org.parchmentmc.data")
 		}
 	}
 
 	// Mod Menu, EMI
-	maven {
+	maven("https://maven.terraformersmc.com/releases/") {
 		name = "TerraformersMC"
-		url = uri("https://maven.terraformersmc.com/releases/")
 		content {
 			includeGroup("com.terraformersmc")
 			includeGroup("dev.emi")
@@ -60,11 +58,18 @@ repositories {
 	}
 
 	// JackFredLib
-	maven {
+	maven("https://maven.jackf.red/releases") {
 		name = "JackFredMaven"
-		url = uri("https://maven.jackf.red/releases")
 		content {
 			includeGroupAndSubgroups("red.jackf")
+		}
+	}
+
+	maven("https://maven.isxander.dev/releases") {
+		name = "Xander Maven"
+		content {
+			includeGroupAndSubgroups("dev.isxander")
+			includeGroupAndSubgroups("org.quiltmc")
 		}
 	}
 }
@@ -72,6 +77,7 @@ repositories {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${properties["deps.minecraft"]}")
+	@Suppress("UnstableApiUsage")
 	mappings(loom.layered {
 		officialMojangMappings()
 		parchment("org.parchmentmc.data:parchment-${properties["deps.parchment"]}@zip")
@@ -80,6 +86,8 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${properties["deps.fabric_api"]}")
+
+	modImplementation("dev.isxander:yet-another-config-lib:${properties["deps.yacl"]}")
 
 	modCompileOnly("com.terraformersmc:modmenu:${properties["deps.modmenu"]}")
 	modLocalRuntime("com.terraformersmc:modmenu:${properties["deps.modmenu"]}")

@@ -1,0 +1,8 @@
+{
+  "jsst.title": "Jack's Server Side Tweaks",
+  "jsst.config.enabled": "Enabled",
+  "jsst.config.portableCrafting": "Portable Crafting",
+  "jsst.config.portableCrafting.itemIdOrTag": "Crafting Table ID",
+  "jsst.config.portableCrafting.itemIdOrTag.description": "Can either be a raw item ID or an item tag prefix with a hashtag '#'.",
+  "jsst.config.portableCrafting.requiresSneak": "Requires Sneaking"
+}

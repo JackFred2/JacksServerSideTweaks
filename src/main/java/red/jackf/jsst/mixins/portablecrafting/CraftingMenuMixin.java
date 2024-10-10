@@ -1,5 +1,6 @@
 package red.jackf.jsst.mixins.portablecrafting;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingMenu;
@@ -25,7 +26,9 @@ public class CraftingMenuMixin implements JSSTItemValidation {
 
     @Inject(method = "stillValid", at = @At("HEAD"), cancellable = true)
     private void checkIfHandItemIsUsed(Player player, CallbackInfoReturnable<Boolean> cir) {
-        if (handToCheck != null && PortableCrafting.isValidCraftingTable(player.registryAccess(), player.getItemInHand(handToCheck))) {
+        if (handToCheck != null
+                && player.level() instanceof ServerLevel serverLevel
+                && PortableCrafting.isValidCraftingTable(serverLevel.registryAccess(), player.getItemInHand(handToCheck))) {
             cir.setReturnValue(true);
         }
     }
