@@ -17,9 +17,9 @@ import static net.minecraft.network.chat.Component.translatable;
 
 public interface JSSTConfigScreen {
     static Screen create(Screen screen) {
-
         Collection<ConfigCategory> categories = List.of(
-                createPortableCrafting(JSSTConfig.INSTANCE)
+                createPortableCrafting(JSSTConfig.INSTANCE),
+                createCampfireTimers(JSSTConfig.INSTANCE)
         );
 
         return YetAnotherConfigLib.createBuilder()
@@ -29,7 +29,7 @@ public interface JSSTConfigScreen {
                 .generateScreen(screen);
     }
 
-    static ConfigCategory createPortableCrafting(ConfigClassHandler<JSSTConfig> handler) {
+    private static ConfigCategory createPortableCrafting(ConfigClassHandler<JSSTConfig> handler) {
         return ConfigCategory.createBuilder()
                 .name(translatable("jsst.config.portableCrafting"))
                 .option(Option.<Boolean>createBuilder()
@@ -62,4 +62,18 @@ public interface JSSTConfigScreen {
                 .build();
     }
 
+    private static ConfigCategory createCampfireTimers(ConfigClassHandler<JSSTConfig> handler) {
+        return ConfigCategory.createBuilder()
+                .name(translatable("jsst.config.campfireTimers"))
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.enabled"))
+                        .binding(handler.defaults().campfireTimers.enabled,
+                                () -> handler.instance().campfireTimers.enabled,
+                                b -> handler.instance().campfireTimers.enabled = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .build();
+    }
 }

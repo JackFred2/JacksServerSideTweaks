@@ -89,6 +89,8 @@ dependencies {
 
 	modImplementation("dev.isxander:yet-another-config-lib:${properties["deps.yacl"]}")
 
+	include(modImplementation("red.jackf.jackfredlib:jackfredlib:${properties["deps.jackfredlib"]}")!!)
+
 	modCompileOnly("com.terraformersmc:modmenu:${properties["deps.modmenu"]}")
 	modLocalRuntime("com.terraformersmc:modmenu:${properties["deps.modmenu"]}")
 }

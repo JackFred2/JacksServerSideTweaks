@@ -26,4 +26,11 @@ public class JSSTConfig {
 
         public String itemIdOrTag = "#jsst:portable_crafting";
     }
+
+    @SerialEntry
+    public CampfireTimers campfireTimers = new CampfireTimers();
+
+    public static class CampfireTimers {
+        public boolean enabled = true;
+    }
 }

@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import red.jackf.jsst.impl.config.JSSTConfig;
+import red.jackf.jsst.impl.feature.campfiretimers.CampfireTimers;
 import red.jackf.jsst.impl.feature.portablecrafting.PortableCrafting;
 
 public class JSST implements ModInitializer {
@@ -30,5 +31,6 @@ public class JSST implements ModInitializer {
 		JSSTConfig.INSTANCE.load();
 
 		PortableCrafting.setup();
+		CampfireTimers.setup();
 	}
 }

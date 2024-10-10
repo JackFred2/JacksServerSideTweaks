@@ -14,7 +14,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.impl.config.JSSTConfig;
-import red.jackf.jsst.impl.mixinutils.JSSTItemValidation;
+import red.jackf.jsst.impl.mixinutils.JSSTItemValidatedMenu;
 import red.jackf.jsst.impl.utils.StringUtils;
 
 public class PortableCrafting {
@@ -38,7 +38,7 @@ public class PortableCrafting {
         player.openMenu(new SimpleMenuProvider(
                 (containerId, inventory, _player) -> {
                     CraftingMenu menu = new CraftingMenu(containerId, inventory, ContainerLevelAccess.create(level, _player.blockPosition()));
-                    ((JSSTItemValidation) menu).jsst$markAsItemValidation(hand);
+                    ((JSSTItemValidatedMenu) menu).jsst$markAsItemValidation(hand);
                     return menu;
                 },
                 player.getItemInHand(hand).getHoverName()

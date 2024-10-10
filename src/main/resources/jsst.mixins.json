@@ -3,6 +3,7 @@
   "package": "red.jackf.jsst.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "campfiretimers.CampfireBlockEntityMixin",
     "portablecrafting.CraftingMenuMixin"
   ],
   "injectors": {

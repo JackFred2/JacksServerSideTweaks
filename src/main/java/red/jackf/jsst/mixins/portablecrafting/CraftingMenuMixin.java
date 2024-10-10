@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import red.jackf.jsst.impl.feature.portablecrafting.PortableCrafting;
-import red.jackf.jsst.impl.mixinutils.JSSTItemValidation;
+import red.jackf.jsst.impl.mixinutils.JSSTItemValidatedMenu;
 
 @Mixin(CraftingMenu.class)
-public class CraftingMenuMixin implements JSSTItemValidation {
+public class CraftingMenuMixin implements JSSTItemValidatedMenu {
     @Unique
     @Nullable
     private InteractionHand handToCheck = null;
