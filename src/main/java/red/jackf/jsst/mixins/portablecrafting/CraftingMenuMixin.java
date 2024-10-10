@@ -25,7 +25,7 @@ public class CraftingMenuMixin implements JSSTItemValidation {
 
     @Inject(method = "stillValid", at = @At("HEAD"), cancellable = true)
     private void checkIfHandItemIsUsed(Player player, CallbackInfoReturnable<Boolean> cir) {
-        if (handToCheck != null && PortableCrafting.isValidCraftingTable(player.getItemInHand(handToCheck))) {
+        if (handToCheck != null && PortableCrafting.isValidCraftingTable(player.registryAccess(), player.getItemInHand(handToCheck))) {
             cir.setReturnValue(true);
         }
     }
