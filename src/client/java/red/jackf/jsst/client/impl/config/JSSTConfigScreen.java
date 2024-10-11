@@ -7,6 +7,7 @@ import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import net.minecraft.client.gui.screens.Screen;
+import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.utils.StringUtils;
 
@@ -34,6 +35,10 @@ public interface JSSTConfigScreen {
                 .name(translatable("jsst.config.portableCrafting"))
                 .option(Option.<Boolean>createBuilder()
                         .name(translatable("jsst.config.enabled"))
+                        .description(OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.portableCrafting.description"))
+                                .image(JSST.id("textures/config/portable_crafting.png"),320, 240)
+                                .build())
                         .binding(handler.defaults().portableCrafting.enabled,
                                 () -> handler.instance().portableCrafting.enabled,
                                 b -> handler.instance().portableCrafting.enabled = b)
@@ -67,6 +72,10 @@ public interface JSSTConfigScreen {
                 .name(translatable("jsst.config.campfireTimers"))
                 .option(Option.<Boolean>createBuilder()
                         .name(translatable("jsst.config.enabled"))
+                        .description(OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.campfireTimers.description"))
+                                .image(JSST.id("textures/config/campfire_timers.png"),320, 240)
+                                .build())
                         .binding(handler.defaults().campfireTimers.enabled,
                                 () -> handler.instance().campfireTimers.enabled,
                                 b -> handler.instance().campfireTimers.enabled = b)
