@@ -33,4 +33,12 @@ public class JSSTConfig {
     public static class CampfireTimers {
         public boolean enabled = true;
     }
+
+    @SerialEntry
+    public ItemNudging itemNudging = new ItemNudging();
+
+    public static class ItemNudging {
+        public boolean shiftUp = true;
+        public boolean shiftTowardsPlayer = true;
+    }
 }

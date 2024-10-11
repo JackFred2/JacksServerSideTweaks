@@ -90,6 +90,7 @@ dependencies {
 	modImplementation("dev.isxander:yet-another-config-lib:${properties["deps.yacl"]}")
 
 	include(modImplementation("red.jackf.jackfredlib:jackfredlib:${properties["deps.jackfredlib"]}")!!)
+	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${properties["deps.mixinextras"]}")!!)!!)
 
 	modCompileOnly("com.terraformersmc:modmenu:${properties["deps.modmenu"]}")
 	modLocalRuntime("com.terraformersmc:modmenu:${properties["deps.modmenu"]}")

@@ -7,5 +7,10 @@
   "jsst.config.portableCrafting.itemIdOrTag.description": "Can either be a raw item ID or an item tag prefix with a hashtag '#'.",
   "jsst.config.portableCrafting.requiresSneak": "Requires Sneaking",
   "jsst.config.campfireTimers": "Campfire Timers",
-  "jsst.config.campfireTimers.description": "Shows progress bars above items on a campfire."
+  "jsst.config.campfireTimers.description": "Shows progress bars above items on a campfire.",
+  "jsst.config.itemNudging": "Item Nudging",
+  "jsst.config.itemNudging.shiftUp": "Shift Items Upward",
+  "jsst.config.itemNudging.shiftUp.description": "Whether block drops will be moved upwards a small amount. This is enough to always pick it up when mined from above.",
+  "jsst.config.itemNudging.shiftTowardsPlayer": "Shift Towards Player",
+  "jsst.config.itemNudging.shiftTowardsPlayer.description": "Whether block drops will be moved towards the player that mined them."
 }

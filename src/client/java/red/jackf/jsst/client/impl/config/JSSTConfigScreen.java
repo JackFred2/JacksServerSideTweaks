@@ -20,7 +20,8 @@ public interface JSSTConfigScreen {
     static Screen create(Screen screen) {
         Collection<ConfigCategory> categories = List.of(
                 createPortableCrafting(JSSTConfig.INSTANCE),
-                createCampfireTimers(JSSTConfig.INSTANCE)
+                createCampfireTimers(JSSTConfig.INSTANCE),
+                createItemNudging(JSSTConfig.INSTANCE)
         );
 
         return YetAnotherConfigLib.createBuilder()
@@ -79,6 +80,32 @@ public interface JSSTConfigScreen {
                         .binding(handler.defaults().campfireTimers.enabled,
                                 () -> handler.instance().campfireTimers.enabled,
                                 b -> handler.instance().campfireTimers.enabled = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .build();
+    }
+
+    private static ConfigCategory createItemNudging(ConfigClassHandler<JSSTConfig> handler) {
+        return ConfigCategory.createBuilder()
+                .name(translatable("jsst.config.itemNudging"))
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.itemNudging.shiftUp"))
+                        .description(OptionDescription.of(translatable("jsst.config.itemNudging.shiftUp.description")))
+                        .binding(handler.defaults().itemNudging.shiftUp,
+                                () -> handler.instance().itemNudging.shiftUp,
+                                b -> handler.instance().itemNudging.shiftUp = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.itemNudging.shiftTowardsPlayer"))
+                        .description(OptionDescription.of(translatable("jsst.config.itemNudging.shiftTowardsPlayer.description")))
+                        .binding(handler.defaults().itemNudging.shiftTowardsPlayer,
+                                () -> handler.instance().itemNudging.shiftTowardsPlayer,
+                                b -> handler.instance().itemNudging.shiftTowardsPlayer = b)
                         .controller(opt -> BooleanControllerBuilder.create(opt)
                                 .coloured(true)
                                 .yesNoFormatter())
