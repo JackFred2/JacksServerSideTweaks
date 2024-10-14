@@ -111,7 +111,7 @@ tasks.withType<ProcessResources>().configureEach {
 	inputs.property("mcVersion", mcVersion)
 
 	// server translations
-	from("src/main/resources/assets/jsst/lang") {
+	from("../../src/main/resources/assets/jsst/lang") {
 		into("data/jsst/lang")
 	}
 
@@ -135,6 +135,8 @@ tasks.named<Jar>("sourcesJar") {
 }
 
 tasks.jar {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
 	from("LICENSE") {
 		rename { "${it}_${properties["archivesBaseName"]}"}
 	}
