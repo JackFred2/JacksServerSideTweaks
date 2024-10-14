@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import static net.minecraft.network.chat.Component.literal;
 
-public interface StringUtils {
+public interface TextUtils {
     static Component formatReslocOrTag(String input) {
         if (!isValidReslocOrTag(input)) {
             return literal(input).withStyle(ChatFormatting.RED);

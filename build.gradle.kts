@@ -72,6 +72,14 @@ repositories {
 			includeGroupAndSubgroups("org.quiltmc")
 		}
 	}
+
+	// server translations
+	maven("https://maven.nucleoid.xyz") {
+		name = "Nucleoid Maven"
+		content {
+			includeGroupAndSubgroups("xyz.nucleoid")
+		}
+	}
 }
 
 dependencies {
@@ -90,6 +98,7 @@ dependencies {
 	modImplementation("dev.isxander:yet-another-config-lib:${properties["deps.yacl"]}")
 
 	include(modImplementation("red.jackf.jackfredlib:jackfredlib:${properties["deps.jackfredlib"]}")!!)
+	include(modImplementation("xyz.nucleoid:server-translations-api:${properties["deps.servertranslations"]}")!!)
 	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${properties["deps.mixinextras"]}")!!)!!)
 
 	modCompileOnly("com.terraformersmc:modmenu:${properties["deps.modmenu"]}")
@@ -100,6 +109,11 @@ tasks.withType<ProcessResources>().configureEach {
 	inputs.property("version", project.version)
 	inputs.property("javaRequirement", javaRequirement)
 	inputs.property("mcVersion", mcVersion)
+
+	// server translations
+	from("src/main/resources/assets/jsst/lang") {
+		into("data/jsst/lang")
+	}
 
 	filesMatching("fabric.mod.json") {
 		expand(inputs.properties)

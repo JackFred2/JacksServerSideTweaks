@@ -6,8 +6,10 @@ import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import red.jackf.jsst.impl.config.JSSTConfig;
+import red.jackf.jsst.impl.feature.bannerwriter.BannerWriter;
 import red.jackf.jsst.impl.feature.campfiretimers.CampfireTimers;
 import red.jackf.jsst.impl.feature.portablecrafting.PortableCrafting;
+import red.jackf.jsst.impl.utils.Scheduler;
 
 public class JSST implements ModInitializer {
 	public static final String MOD_ID = "jsst";
@@ -30,7 +32,10 @@ public class JSST implements ModInitializer {
 	public void onInitialize() {
 		JSSTConfig.INSTANCE.load();
 
-		PortableCrafting.setup();
+		Scheduler.setup();
+
+		BannerWriter.setup();
 		CampfireTimers.setup();
+		PortableCrafting.setup();
 	}
 }

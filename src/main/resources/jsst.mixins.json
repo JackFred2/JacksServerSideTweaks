@@ -3,6 +3,8 @@
   "package": "red.jackf.jsst.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "bannerwriter.BannerItemMixin",
+    "bannerwriter.BlockItemMixin",
     "campfiretimers.CampfireBlockEntityMixin",
     "itemnudge.BlockMixin",
     "portablecrafting.CraftingMenuMixin"

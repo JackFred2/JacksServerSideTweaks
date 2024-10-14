@@ -39,6 +39,16 @@ public class JSSTConfig {
 
     public static class ItemNudging {
         public boolean shiftUp = true;
+
         public boolean shiftTowardsPlayer = true;
+    }
+
+    @SerialEntry
+    public BannerWriter bannerWriter = new BannerWriter();
+
+    public static class BannerWriter {
+        public boolean enabled = true;
+
+        public int permissionlevel = 0;
     }
 }

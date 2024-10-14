@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.mixinutils.JSSTItemValidatedMenu;
-import red.jackf.jsst.impl.utils.StringUtils;
+import red.jackf.jsst.impl.utils.TextUtils;
 
 public class PortableCrafting {
     public static void setup() {
@@ -47,13 +47,13 @@ public class PortableCrafting {
 
     public static boolean isValidCraftingTable(RegistryAccess registryAccess, ItemStack stack) {
         String config = JSSTConfig.INSTANCE.instance().portableCrafting.itemIdOrTag;
-        if (!StringUtils.isValidReslocOrTag(config)) return false;
+        if (!TextUtils.isValidReslocOrTag(config)) return false;
 
         if (config.startsWith("#")) {
-            return stack.is(TagKey.create(Registries.ITEM, StringUtils.resloc(config.substring(1))));
+            return stack.is(TagKey.create(Registries.ITEM, TextUtils.resloc(config.substring(1))));
         } else {
             return registryAccess.registryOrThrow(Registries.ITEM)
-                    .getHolder(ResourceKey.create(Registries.ITEM, StringUtils.resloc(config)))
+                    .getHolder(ResourceKey.create(Registries.ITEM, TextUtils.resloc(config)))
                     .map(stack::is)
                     .orElse(false);
         }
