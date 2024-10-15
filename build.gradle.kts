@@ -115,6 +115,29 @@ tasks.withType<ProcessResources>().configureEach {
 		into("data/jsst/lang")
 	}
 
+	// rename tag folders for lower versions
+	if (stonecutter.eval(mcVersion, "<1.21")) {
+		val renames = mapOf(
+			"block" to "blocks",
+			"item" to "items",
+			"entity_type" to "entity_types",
+			"fluid" to "fluids",
+			"game_event" to "game_events",
+			"function" to "functions"
+		)
+
+		renames.forEach {
+			val folder = project.file("../../src/main/resources/data/jsst/tags/${it.key}")
+
+			if (folder.isDirectory) {
+				from(folder) {
+					into("data/jsst/tags/${it.value}")
+				}
+				exclude("data/jsst/tags/${it.key}")
+			}
+		}
+	}
+
 	filesMatching("fabric.mod.json") {
 		expand(inputs.properties)
 	}
