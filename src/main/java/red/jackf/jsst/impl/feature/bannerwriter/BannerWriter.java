@@ -103,6 +103,8 @@ public class BannerWriter {
                     return 0;
                 }
 
+                // check if banner is valid (no patterns)
+
                 ItemStack handStack = player.getItemInHand(InteractionHand.MAIN_HAND);
 
                 Optional<DyeColor> bannerColour = getHeldBannerColour(handStack);
