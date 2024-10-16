@@ -17,14 +17,12 @@ public class JSSTConfig {
             .build();
 
     @SerialEntry
-    public PortableCrafting portableCrafting = new PortableCrafting();
+    public BannerWriter bannerWriter = new BannerWriter();
 
-    public static class PortableCrafting {
+    public static class BannerWriter {
         public boolean enabled = true;
 
-        public boolean requiresSneak = false;
-
-        public String itemIdOrTag = "#jsst:portable_crafting";
+        public int permissionlevel = 0;
     }
 
     @SerialEntry
@@ -32,6 +30,15 @@ public class JSSTConfig {
 
     public static class CampfireTimers {
         public boolean enabled = true;
+    }
+
+    @SerialEntry
+    public ItemEditor itemEditor = new ItemEditor();
+
+    public static class ItemEditor {
+        public boolean enabled = true;
+
+        public boolean nonOpsCanUseCosmeticMode = true;
     }
 
     @SerialEntry
@@ -44,11 +51,13 @@ public class JSSTConfig {
     }
 
     @SerialEntry
-    public BannerWriter bannerWriter = new BannerWriter();
+    public PortableCrafting portableCrafting = new PortableCrafting();
 
-    public static class BannerWriter {
+    public static class PortableCrafting {
         public boolean enabled = true;
 
-        public int permissionlevel = 0;
+        public boolean requiresSneak = false;
+
+        public String itemIdOrTag = "#jsst:portable_crafting";
     }
 }

@@ -78,6 +78,7 @@ repositories {
 		name = "Nucleoid Maven"
 		content {
 			includeGroupAndSubgroups("xyz.nucleoid")
+			includeGroupAndSubgroups("eu.pb4")
 		}
 	}
 }
@@ -98,6 +99,7 @@ dependencies {
 	modImplementation("dev.isxander:yet-another-config-lib:${properties["deps.yacl"]}")
 
 	include(modImplementation("red.jackf.jackfredlib:jackfredlib:${properties["deps.jackfredlib"]}")!!)
+	include(modImplementation("eu.pb4:sgui:${properties["deps.sgui"]}")!!)
 	include(modImplementation("xyz.nucleoid:server-translations-api:${properties["deps.servertranslations"]}")!!)
 	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${properties["deps.mixinextras"]}")!!)!!)
 
