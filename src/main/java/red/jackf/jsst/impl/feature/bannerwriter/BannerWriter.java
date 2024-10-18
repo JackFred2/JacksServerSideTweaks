@@ -78,7 +78,8 @@ public class BannerWriter {
                 String text = StringArgumentType.getString(context, "text").strip().toLowerCase(Locale.ROOT);
 
                 if (!JSSTConfig.INSTANCE.instance().bannerWriter.enabled) {
-                    player.sendSystemMessage(Component.translatable("jsst.bannerWriter.disabled"));
+                    player.sendSystemMessage(Component.translatable("jsst.feature.disabled"));
+                    return 0;
                 }
 
                 // check if empty somehow

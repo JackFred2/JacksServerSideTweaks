@@ -38,7 +38,7 @@ public class JSSTConfig {
     public static class ItemEditor {
         public boolean enabled = true;
 
-        public boolean nonOpsCanUseCosmeticMode = true;
+        public boolean nonOpsCanUseCosmeticMode = false;
     }
 
     @SerialEntry
