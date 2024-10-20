@@ -1,0 +1,119 @@
+package red.jackf.jsst.impl.utils.sgui.elements;
+
+import eu.pb4.sgui.api.ClickType;
+import eu.pb4.sgui.api.elements.GuiElement;
+import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
+import eu.pb4.sgui.api.elements.GuiElementInterface;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Unit;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
+import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.impl.utils.sgui.Hints;
+import red.jackf.jsst.impl.utils.sgui.Styles;
+
+import java.util.function.UnaryOperator;
+
+public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElementBuilder> {
+    private final ItemStack stack;
+
+    private boolean cleanText = true;
+    private GuiElementInterface.ClickCallback callback = (a, b, c, d) -> {};
+    private boolean isUIElement = false;
+
+    private JSSTElementBuilder(ItemStack stack) {
+        this.stack = stack;
+    }
+
+    public static JSSTElementBuilder from(ItemStack stack) {
+        return new JSSTElementBuilder(stack.copy());
+    }
+
+    public JSSTElementBuilder ui() {
+        this.isUIElement = true;
+        return this;
+    }
+
+    public JSSTElementBuilder cleanText(boolean shouldClean) {
+        this.cleanText = shouldClean;
+        return this;
+    }
+
+    public JSSTElementBuilder setName(@Nullable Component name) {
+        this.stack.set(DataComponents.CUSTOM_NAME, this.cleanText ? Component.empty().withStyle(Styles.CLEAN).append(name) : name);
+        return this;
+    }
+
+    public JSSTElementBuilder addLoreLine(Component line) {
+        this.stack.update(DataComponents.LORE, ItemLore.EMPTY, this.cleanText ? Component.empty().withStyle(Styles.CLEAN).append(line) : line, ItemLore::withLineAdded);
+        return this;
+    }
+
+    private static <T> void ifNotNull(ItemStack stack, DataComponentType<T> type, UnaryOperator<T> op) {
+        stack.update(type, null, comp -> comp != null ? op.apply(comp) : null);
+    }
+
+    public JSSTElementBuilder hideDefaultTooltip() {
+        ifNotNull(this.stack, DataComponents.TRIM, comp -> comp.withTooltip(false));
+        ifNotNull(this.stack, DataComponents.UNBREAKABLE, comp -> comp.withTooltip(false));
+        ifNotNull(this.stack, DataComponents.ENCHANTMENTS, comp -> comp.withTooltip(false));
+        ifNotNull(this.stack, DataComponents.STORED_ENCHANTMENTS, comp -> comp.withTooltip(false));
+        ifNotNull(this.stack, DataComponents.ATTRIBUTE_MODIFIERS, comp -> comp.withTooltip(false));
+        ifNotNull(this.stack, DataComponents.DYED_COLOR, comp -> comp.withTooltip(false));
+        ifNotNull(this.stack, DataComponents.CAN_BREAK, comp -> comp.withTooltip(false));
+        ifNotNull(this.stack, DataComponents.CAN_PLACE_ON, comp -> comp.withTooltip(false));
+        this.stack.set(DataComponents.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
+        return this;
+    }
+
+    public JSSTElementBuilder leftClick(Component label, Runnable onLeftClick) {
+        final GuiElementInterface.ClickCallback oldCallback = this.callback;
+        this.callback = (slot, sguiClick, mcClick, gui) -> {
+            if (sguiClick == ClickType.MOUSE_LEFT) {
+                onLeftClick.run();
+            } else {
+                oldCallback.click(slot, sguiClick, mcClick, gui);
+            }
+        };
+        if (!this.stack.has(DataComponents.CUSTOM_NAME) && this.isUIElement) {
+            this.stack.set(DataComponents.CUSTOM_NAME, Hints.leftClick(label));
+        } else {
+            this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.leftClick(label), ItemLore::withLineAdded);
+        }
+        return this;
+    }
+
+    public JSSTElementBuilder rightClick(Component label, Runnable onRightClick) {
+        final GuiElementInterface.ClickCallback oldCallback = this.callback;
+        this.callback = (slot, sguiClick, mcClick, gui) -> {
+            if (sguiClick == ClickType.MOUSE_RIGHT) {
+                onRightClick.run();
+            } else {
+                oldCallback.click(slot, sguiClick, mcClick, gui);
+            }
+        };
+        if (!this.stack.has(DataComponents.CUSTOM_NAME) && this.isUIElement) {
+            this.stack.set(DataComponents.CUSTOM_NAME, Hints.rightClick(label));
+        } else {
+            this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.leftClick(label), ItemLore::withLineAdded);
+        }
+        return this;
+    }
+
+    @Override
+    public JSSTElementBuilder setCallback(GuiElementInterface.ClickCallback callback) {
+        this.callback = callback;
+        return this;
+    }
+
+    public ItemStack asStack() {
+        return this.stack.copy();
+    }
+
+    @Override
+    public GuiElementInterface build() {
+        return new GuiElement(this.stack, this.callback);
+    }
+}

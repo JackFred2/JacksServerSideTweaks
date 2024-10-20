@@ -10,15 +10,27 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import org.slf4j.Logger;
+import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.config.JSSTConfig;
+import red.jackf.jsst.impl.feature.itemeditor.gui.MainGui;
+import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
+import red.jackf.jsst.impl.feature.itemeditor.gui.editors.SimpleNameEditor;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ItemEditor {
+    public static final Logger LOGGER = JSST.getLogger("Item Editor");
+
+    public static final List<Editor.Type<?>> EDITORS = List.of(
+            SimpleNameEditor.TYPE
+    );
+
     private static final Map<ServerPlayer, EditSession> CURRENT_SESSIONS = new HashMap<>();
 
     public static void setup() {
@@ -35,7 +47,7 @@ public class ItemEditor {
                 EditSession value = iterator.next();
                 if (!value.stillValid()) {
                     iterator.remove();
-                    value.cancel();
+                    value.end();
                 }
             }
         });
@@ -65,14 +77,22 @@ public class ItemEditor {
 
         // TODO check non-cosmetic and offer item choice
 
+        ctx.getSource().sendSystemMessage(Component.translatable("jsst.itemEditor.noItem"));
         return 0;
     }
 
-    private static void start(ServerPlayer player, ItemStack stack, Supplier<Boolean> stillValid, Consumer<ItemStack> onComplete) {
-        EditSession session = new EditSession(player, stack, stillValid, onComplete);
+    private static void start(ServerPlayer player, ItemStack initial, Supplier<Boolean> stillValid, Consumer<ItemStack> onComplete) {
+        EditSession session = new EditSession(player, initial, stillValid);
 
         CURRENT_SESSIONS.put(player, session);
 
-        new MainGui(session).open();
+        MainGui gui = new MainGui(session, result -> {
+            if (result.hasResult()) {
+                onComplete.accept(result.result());
+            }
+            session.end();
+        });
+
+        gui.open();
     }
 }

@@ -9,6 +9,24 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 
 public interface Sounds {
+    float VOLUME = 0.5f;
+
+    static void click(ServerPlayer player) {
+        playSound(player, SoundEvents.UI_BUTTON_CLICK, VOLUME, 1f);
+    }
+
+    static void close(ServerPlayer player) {
+        playSound(player, SoundEvents.UI_BUTTON_CLICK, VOLUME, 0.85f);
+    }
+
+    static void finish(ServerPlayer player) {
+        playSound(player, SoundEvents.UI_BUTTON_CLICK, VOLUME,  1.2f);
+    }
+
+    static void reset(ServerPlayer player) {
+        playSound(player, SoundEvents.BUCKET_EMPTY, VOLUME, 1f);
+    }
+
     static void ding(ServerPlayer player) {
         ding(player, 1f);
     }
@@ -22,7 +40,7 @@ public interface Sounds {
     }
 
     static void ding(ServerPlayer player, float pitch) {
-        playSound(player, SoundEvents.ARROW_HIT_PLAYER, 1f, pitch);
+        playSound(player, SoundEvents.ARROW_HIT_PLAYER, VOLUME, pitch);
     }
 
     static void playSound(ServerPlayer player, SoundEvent sound, float volume, float pitch) {

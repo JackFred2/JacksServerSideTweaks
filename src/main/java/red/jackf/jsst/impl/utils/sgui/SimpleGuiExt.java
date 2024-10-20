@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 
 public abstract class SimpleGuiExt extends SimpleGui {
     public SimpleGuiExt(MenuType<?> type, ServerPlayer player, boolean manipulatePlayerSlots) {
@@ -36,4 +37,20 @@ public abstract class SimpleGuiExt extends SimpleGui {
     public void setSlotRedirect(int column, int row, Slot slot) {
         this.setSlotRedirect(getSlotFor(column, row), slot);
     }
+
+    @Override
+    @MustBeInvokedByOverriders
+    public void beforeOpen() {
+        this.refresh();
+    }
+
+    /**
+     * Add unchanging content here.
+     */
+    protected void drawStatic() {}
+
+    /**
+     * Add content that changes (lists of elements, items, etc)
+     */
+    protected void refresh() {}
 }

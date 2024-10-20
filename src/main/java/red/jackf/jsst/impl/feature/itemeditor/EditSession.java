@@ -2,25 +2,23 @@ package red.jackf.jsst.impl.feature.itemeditor;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class EditSession {
     private final ServerPlayer player;
     private final ItemStack initial;
     private final Supplier<Boolean> stillValid;
-    private final Consumer<ItemStack> onComplete;
+    private boolean hasEnded = false;
     private ItemStack stack;
 
-    public EditSession(ServerPlayer player,
+    protected EditSession(ServerPlayer player,
                        ItemStack initial,
-                       Supplier<Boolean> stillValid,
-                       Consumer<ItemStack> onComplete) {
+                       Supplier<Boolean> stillValid) {
         this.player = player;
         this.initial = initial;
         this.stillValid = stillValid;
-        this.onComplete = onComplete;
 
         this.setStack(this.getInitial());
     }
@@ -30,9 +28,10 @@ public class EditSession {
     }
 
     public ItemStack getStack() {
-        return this.stack;
+        return this.stack.copy();
     }
 
+    @ApiStatus.Internal
     public void setStack(ItemStack stack) {
         this.stack = stack;
     }
@@ -42,10 +41,11 @@ public class EditSession {
     }
 
     public boolean stillValid() {
-        return !this.player.isRemoved() && this.stillValid.get();
+        return !hasEnded && !this.player.isRemoved() && this.stillValid.get();
     }
 
-    public void cancel() {
+    public void end() {
         this.player.closeContainer();
+        this.hasEnded = true;
     }
 }
