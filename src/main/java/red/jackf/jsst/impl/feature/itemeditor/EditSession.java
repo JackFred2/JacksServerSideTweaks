@@ -1,8 +1,10 @@
 package red.jackf.jsst.impl.feature.itemeditor;
 
+import eu.pb4.sgui.virtual.VirtualScreenHandlerInterface;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
+import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 
 import java.util.function.Supplier;
 
@@ -45,7 +47,9 @@ public class EditSession {
     }
 
     public void end() {
-        this.player.closeContainer();
+        if (this.player.containerMenu instanceof VirtualScreenHandlerInterface virtual && virtual.getGui() instanceof SimpleGuiExt gui) {
+            gui.close();
+        }
         this.hasEnded = true;
     }
 }

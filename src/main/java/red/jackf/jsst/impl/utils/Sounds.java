@@ -27,6 +27,10 @@ public interface Sounds {
         playSound(player, SoundEvents.BUCKET_EMPTY, VOLUME, 1f);
     }
 
+    static void grind(ServerPlayer player) {
+        playSound(player, SoundEvents.GRINDSTONE_USE, VOLUME, 1f);
+    }
+
     static void ding(ServerPlayer player) {
         ding(player, 1f);
     }

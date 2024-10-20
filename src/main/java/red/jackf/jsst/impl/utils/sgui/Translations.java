@@ -28,4 +28,8 @@ public interface Translations {
     static MutableComponent cancel() {
         return translatable("jsst.ui.cancel");
     }
+
+    static MutableComponent clear() {
+        return translatable("jsst.ui.clear");
+    }
 }

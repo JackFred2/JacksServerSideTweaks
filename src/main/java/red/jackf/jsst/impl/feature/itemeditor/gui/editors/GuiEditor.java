@@ -71,7 +71,7 @@ public abstract class GuiEditor extends SimpleGuiExt implements Editor {
      * Draws the current stack at a given slot
      */
     protected void drawPreview(int slot) {
-        this.setSlot(slot, JSSTElementBuilder.from(this.session.getStack().copy())
+        this.setSlot(slot, JSSTElementBuilder.from(this.stack.copy())
                 .leftClick(Translations.save(), this::complete)
                 .rightClick(Translations.reset(), this::reset));
     }

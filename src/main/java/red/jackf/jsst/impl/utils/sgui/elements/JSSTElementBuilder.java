@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.impl.utils.sgui.Hints;
 import red.jackf.jsst.impl.utils.sgui.Styles;
@@ -29,6 +30,10 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
 
     public static JSSTElementBuilder from(ItemStack stack) {
         return new JSSTElementBuilder(stack.copy());
+    }
+
+    public static JSSTElementBuilder from(ItemLike item) {
+        return new JSSTElementBuilder(item.asItem().getDefaultInstance());
     }
 
     public JSSTElementBuilder ui() {
@@ -97,7 +102,7 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         if (!this.stack.has(DataComponents.CUSTOM_NAME) && this.isUIElement) {
             this.stack.set(DataComponents.CUSTOM_NAME, Hints.rightClick(label));
         } else {
-            this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.leftClick(label), ItemLore::withLineAdded);
+            this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.rightClick(label), ItemLore::withLineAdded);
         }
         return this;
     }
