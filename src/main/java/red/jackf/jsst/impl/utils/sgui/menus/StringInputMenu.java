@@ -11,6 +11,7 @@ import net.minecraft.world.item.Rarity;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
+import red.jackf.jsst.impl.utils.sgui.Styles;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
 
@@ -77,10 +78,12 @@ public class StringInputMenu extends SimpleGuiExt {
     private void updateOutput() {
         if (this.currentText.equals(this.initial)) {
             this.setSlot(2, JSSTElementBuilder.from(Items.RED_CONCRETE).ui()
-                    .setName(Component.translatable("jsst.itemEditor.stringInput.noChanges")));
+                    .setName(Component.literal(this.currentText))
+                    .addLoreLine(Component.translatable("jsst.itemEditor.stringInput.noChanges").setStyle(Styles.NEGATIVE)));
         } else if (!this.validator.test(this.currentText)) {
             this.setSlot(2, JSSTElementBuilder.from(Items.RED_CONCRETE).ui()
-                    .setName(Component.translatable("jsst.itemEditor.stringInput.invalid")));
+                    .setName(Component.literal(this.currentText))
+                    .addLoreLine(Component.translatable("jsst.itemEditor.stringInput.invalid").setStyle(Styles.NEGATIVE)));
         } else {
             this.setSlot(2, JSSTElementBuilder.from(Items.LIME_CONCRETE).ui()
                     .setName(Component.literal(this.currentText))

@@ -15,9 +15,6 @@ import red.jackf.jsst.impl.feature.bannerwriter.BannerWriter;
 public class BlockItemMixin {
     @Inject(method = "place",
     at = @At(value = "INVOKE",
-            //? if <=1.20.1 {
-            /*target = "Lnet/minecraft/world/level/Level;gameEvent(Lnet/minecraft/world/level/gameevent/GameEvent;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/gameevent/GameEvent$Context;)V"))
-            *///?} else
             target = "Lnet/minecraft/world/level/Level;gameEvent(Lnet/minecraft/core/Holder;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/gameevent/GameEvent$Context;)V"))
 private void updateBannerIfNeeded(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir) {
         if (context.getPlayer() instanceof ServerPlayer serverPlayer && context.getLevel() instanceof ServerLevel serverLevel) {

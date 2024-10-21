@@ -15,9 +15,6 @@ import red.jackf.jsst.impl.utils.Scheduler;
 public class JSST implements ModInitializer {
 	public static final String MOD_ID = "jsst";
 	public static ResourceLocation id(String path) {
-		//? if <=1.20.6 {
-		/*return new ResourceLocation(MOD_ID, path);
-		*///?} else
 		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 

@@ -9,4 +9,7 @@ public interface Styles {
     Style INPUT_HINT = CLEAN.withColor(ChatFormatting.GREEN);
     Style INPUT_DECOR = CLEAN.withColor(ChatFormatting.AQUA);
     Style INPUT_KEY = CLEAN.withColor(ChatFormatting.WHITE);
+
+    Style POSITIVE = CLEAN.withColor(ChatFormatting.GREEN);
+    Style NEGATIVE = CLEAN.withColor(ChatFormatting.RED);
 }

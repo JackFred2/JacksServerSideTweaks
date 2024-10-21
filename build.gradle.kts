@@ -8,11 +8,7 @@ group = properties["maven_group"]!!
 
 // stonecutter constants
 val mcVersion = stonecutter.current.version
-val javaRequirement = if (stonecutter.eval(mcVersion, ">=1.20.5")) {
-	21
-} else {
-	17
-}
+val javaRequirement = 21
 
 base {
 	archivesName.set(properties["archive_name"].toString())
@@ -118,28 +114,6 @@ tasks.withType<ProcessResources>().configureEach {
 	}
 
 	// rename tag folders for lower versions
-	if (stonecutter.eval(mcVersion, "<1.21")) {
-		val renames = mapOf(
-			"block" to "blocks",
-			"item" to "items",
-			"entity_type" to "entity_types",
-			"fluid" to "fluids",
-			"game_event" to "game_events",
-			"function" to "functions"
-		)
-
-		renames.forEach {
-			val folder = project.file("../../src/main/resources/data/jsst/tags/${it.key}")
-
-			if (folder.isDirectory) {
-				from(folder) {
-					into("data/jsst/tags/${it.value}")
-				}
-				exclude("data/jsst/tags/${it.key}")
-			}
-		}
-	}
-
 	filesMatching("fabric.mod.json") {
 		expand(inputs.properties)
 	}

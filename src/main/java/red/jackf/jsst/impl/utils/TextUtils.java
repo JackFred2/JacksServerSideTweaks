@@ -24,16 +24,6 @@ public interface TextUtils {
     static boolean isValidReslocOrTag(String input) {
         if (input.isEmpty()) return false;
         if (input.charAt(0) == '#') input = input.substring(1);
-        //? if <=1.20.6 {
-        /*return ResourceLocation.read(input).result().isPresent();
-        *///?} else
         return ResourceLocation.read(input).isSuccess();
-    }
-
-    static ResourceLocation resloc(String raw) {
-        //? if <=1.20.6 {
-        /*return new ResourceLocation(raw);
-        *///?} else
-        return ResourceLocation.parse(raw);
     }
 }

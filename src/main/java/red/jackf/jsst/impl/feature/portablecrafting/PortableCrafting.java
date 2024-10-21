@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -50,10 +51,10 @@ public class PortableCrafting {
         if (!TextUtils.isValidReslocOrTag(config)) return false;
 
         if (config.startsWith("#")) {
-            return stack.is(TagKey.create(Registries.ITEM, TextUtils.resloc(config.substring(1))));
+            return stack.is(TagKey.create(Registries.ITEM, ResourceLocation.parse(config.substring(1))));
         } else {
             return registryAccess.registryOrThrow(Registries.ITEM)
-                    .getHolder(ResourceKey.create(Registries.ITEM, TextUtils.resloc(config)))
+                    .getHolder(ResourceKey.create(Registries.ITEM, ResourceLocation.parse(config)))
                     .map(stack::is)
                     .orElse(false);
         }

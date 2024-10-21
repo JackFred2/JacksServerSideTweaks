@@ -7,10 +7,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
-//? if >=1.21.1
 import net.minecraft.core.component.DataComponents;
-//? if <1.21.1
-/*import net.minecraft.nbt.CompoundTag;*/
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -18,13 +15,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BannerItem;
-//? if <1.21.1
-/*import net.minecraft.world.item.BlockItem;*/
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.BannerBlock;
-//? if >=1.21.1
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -110,12 +104,7 @@ public class BannerWriter {
 
                 Optional<DyeColor> bannerColour = getHeldBannerColour(handStack);
 
-                //? if >=1.21.1 {
                 if (bannerColour.isEmpty() || !handStack.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY).layers().isEmpty()) {
-                //?} else {
-                /*CompoundTag beData = BlockItem.getBlockEntityData(handStack);
-                if (bannerColour.isEmpty() || (beData != null && beData.contains("Patterns"))) {
-                *///?}
                     player.sendSystemMessage(Component.translatable("jsst.bannerWriter.invalidBanner"));
                     return 0;
                 }

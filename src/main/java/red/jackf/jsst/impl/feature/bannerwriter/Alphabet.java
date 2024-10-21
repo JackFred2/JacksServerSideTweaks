@@ -4,19 +4,11 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
-//? if >=1.21.1
 import net.minecraft.core.component.DataComponents;
-//? if <1.21.1 {
-/*import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.BlockItem;
-*///?}
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BannerPattern;
-//? if >=1.21.1
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
-//? if <1.21.1
-/*import net.minecraft.world.level.block.entity.BlockEntityType;*/
 import org.slf4j.Logger;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.utils.Banners;
@@ -52,7 +44,6 @@ public class Alphabet {
         return stack;
     }
 
-    //? if >=1.21.1 {
     private void applyPatterns(ItemStack stack, List<Pair<Holder<BannerPattern>, DyeColor>> patterns) {
         BannerPatternLayers.Builder builder = new BannerPatternLayers.Builder();
 
@@ -62,17 +53,6 @@ public class Alphabet {
 
         stack.set(DataComponents.BANNER_PATTERNS, builder.build());
     }
-    //?} else {
-    /*private void applyPatterns(ItemStack stack, List<Pair<Holder<BannerPattern>, DyeColor>> patterns) {
-        CompoundTag tag = new CompoundTag();
-
-        var builder = new BannerPattern.Builder();
-        patterns.forEach(builder::addPattern);
-        tag.put("Patterns", builder.toListTag());
-
-        BlockItem.setBlockEntityData(stack, BlockEntityType.BANNER, tag);
-    }
-    *///?}
 
     private void tryLoad(RegistryAccess.Frozen registries, char character, String PMCcode) {
         DataResult<Pair<DyeColor, List<Pair<Holder<BannerPattern>, DyeColor>>>> parsed = Banners.PMC.parsePMCCode(registries, PMCcode);
