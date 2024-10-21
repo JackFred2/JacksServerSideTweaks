@@ -7,7 +7,8 @@
     "bannerwriter.BlockItemMixin",
     "campfiretimers.CampfireBlockEntityMixin",
     "itemnudge.BlockMixin",
-    "portablecrafting.CraftingMenuMixin"
+    "portablecrafting.CraftingMenuMixin",
+    "sgui.ServerGamePacketListenerImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1

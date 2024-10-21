@@ -25,6 +25,10 @@ public interface Translations {
         return translatable("jsst.ui.close");
     }
 
+    static MutableComponent confirm() {
+        return translatable("jsst.ui.confirm");
+    }
+
     static MutableComponent cancel() {
         return translatable("jsst.ui.cancel");
     }

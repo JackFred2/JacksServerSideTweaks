@@ -62,7 +62,7 @@ public class BannerWriter {
 
             toRemove.forEach(player -> {
                 removeAndTerminate(player);
-                Sounds.fail(player);
+                Sounds.Ding.fail(player);
             });
         });
 
@@ -206,9 +206,9 @@ public class BannerWriter {
 
         if (session.hasFinished()) {
             removeAndTerminate(player);
-            Sounds.success(player);
+            Sounds.Ding.success(player);
         } else {
-            Sounds.ding(player);
+            Sounds.Ding.ding(player);
         }
     }
 }

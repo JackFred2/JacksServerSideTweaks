@@ -32,7 +32,7 @@ public abstract class GuiEditor extends SimpleGuiExt implements Editor {
     @Override
     @MustBeInvokedByOverriders
     public void start() {
-        Sounds.click(player);
+        Sounds.UI.click(player);
         this.open();
     }
 
@@ -42,18 +42,18 @@ public abstract class GuiEditor extends SimpleGuiExt implements Editor {
     }
 
     protected void complete() {
-        Sounds.click(this.session.getPlayer());
+        Sounds.UI.click(this.session.getPlayer());
         this.resultConsumer.accept(Result.of(this.stack));
     }
 
     protected void cancel() {
-        Sounds.close(this.session.getPlayer());
+        Sounds.UI.close(this.session.getPlayer());
         this.resultConsumer.accept(Result.empty());
     }
 
     @MustBeInvokedByOverriders
     protected void reset() {
-        Sounds.reset(this.session.getPlayer());
+        Sounds.UI.reset(this.session.getPlayer());
         this.stack = this.session.getStack();
         this.refresh();
     }

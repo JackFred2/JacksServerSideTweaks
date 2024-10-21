@@ -9,6 +9,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +52,11 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         return this;
     }
 
+    public JSSTElementBuilder setRarity(Rarity rarity) {
+        this.stack.set(DataComponents.RARITY, rarity);
+        return this;
+    }
+
     public JSSTElementBuilder addLoreLine(Component line) {
         this.stack.update(DataComponents.LORE, ItemLore.EMPTY, this.cleanText ? Component.empty().withStyle(Styles.CLEAN).append(line) : line, ItemLore::withLineAdded);
         return this;
@@ -82,11 +88,13 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
                 oldCallback.click(slot, sguiClick, mcClick, gui);
             }
         };
+        /*
         if (!this.stack.has(DataComponents.CUSTOM_NAME) && this.isUIElement) {
             this.stack.set(DataComponents.CUSTOM_NAME, Hints.leftClick(label));
         } else {
             this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.leftClick(label), ItemLore::withLineAdded);
-        }
+        }*/
+        this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.leftClick(label), ItemLore::withLineAdded);
         return this;
     }
 
@@ -99,11 +107,13 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
                 oldCallback.click(slot, sguiClick, mcClick, gui);
             }
         };
+        /*
         if (!this.stack.has(DataComponents.CUSTOM_NAME) && this.isUIElement) {
             this.stack.set(DataComponents.CUSTOM_NAME, Hints.rightClick(label));
         } else {
             this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.rightClick(label), ItemLore::withLineAdded);
-        }
+        }*/
+        this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.rightClick(label), ItemLore::withLineAdded);
         return this;
     }
 
@@ -114,11 +124,28 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
     }
 
     public ItemStack asStack() {
-        return this.stack.copy();
+        ItemStack stack = this.stack;
+
+        ItemLore lore = stack.get(DataComponents.LORE);
+
+        // if a ui element, shift any lore lines up 1 to use name as one
+        if (this.isUIElement && !this.stack.has(DataComponents.CUSTOM_NAME) && lore != null && !lore.lines().isEmpty()) {
+            ItemStack copy = this.stack.copy();
+            copy.set(DataComponents.CUSTOM_NAME, lore.lines().getFirst());
+
+            if (lore.lines().size() == 1) {
+                copy.remove(DataComponents.LORE);
+            } else {
+                copy.set(DataComponents.LORE, new ItemLore(lore.lines().subList(1, lore.lines().size())));
+            }
+
+            stack = copy;
+        }
+        return stack.copy();
     }
 
     @Override
     public GuiElementInterface build() {
-        return new GuiElement(this.stack, this.callback);
+        return new GuiElement(this.asStack(), this.callback);
     }
 }

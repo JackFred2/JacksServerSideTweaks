@@ -32,7 +32,7 @@ public class MainGui extends SimpleGuiExt {
         UIRegion.column(this, 3).fillStack(CommonLabels::divider);
 
         this.setSlot(0, 5, CommonLabels.close(() -> {
-            Sounds.close(player);
+            Sounds.UI.close(player);
             this.session.end();
         }));
     }
@@ -57,7 +57,7 @@ public class MainGui extends SimpleGuiExt {
     }
 
     private void complete() {
-        Sounds.success(player);
+        Sounds.Ding.success(player);
         this.resultConsumer.accept(Result.of(this.session.getStack()));
         this.session.end();
     }

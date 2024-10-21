@@ -11,51 +11,51 @@ import net.minecraft.sounds.SoundSource;
 public interface Sounds {
     float VOLUME = 0.5f;
 
-    static void click(ServerPlayer player) {
-        playSound(player, SoundEvents.UI_BUTTON_CLICK, VOLUME, 1f);
+    interface Ding {
+        static void ding(ServerPlayer player) {
+            ding(player, 1f);
+        }
+
+        static void success(ServerPlayer player) {
+            ding(player, 1.2f);
+        }
+
+        static void fail(ServerPlayer player) {
+            ding(player, 0.8f);
+        }
+
+        static void ding(ServerPlayer player, float pitch) {
+            playSound(player, SoundEvents.ARROW_HIT_PLAYER, pitch);
+        }
     }
 
-    static void close(ServerPlayer player) {
-        playSound(player, SoundEvents.UI_BUTTON_CLICK, VOLUME, 0.85f);
+    interface UI {
+        static void click(ServerPlayer player) {
+            playSound(player, SoundEvents.UI_BUTTON_CLICK, 1f);
+        }
+
+        static void close(ServerPlayer player) {
+            playSound(player, SoundEvents.UI_BUTTON_CLICK, 0.85f);
+        }
+
+        static void reset(ServerPlayer player) {
+            playSound(player, SoundEvents.BUCKET_EMPTY, 1f);
+        }
+
+        static void grind(ServerPlayer player) {
+            playSound(player, SoundEvents.GRINDSTONE_USE, 1f);
+        }
     }
 
-    static void finish(ServerPlayer player) {
-        playSound(player, SoundEvents.UI_BUTTON_CLICK, VOLUME,  1.2f);
+    static void playSound(ServerPlayer player, SoundEvent sound, float pitch) {
+        playSound(player, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound), pitch);
     }
 
-    static void reset(ServerPlayer player) {
-        playSound(player, SoundEvents.BUCKET_EMPTY, VOLUME, 1f);
-    }
-
-    static void grind(ServerPlayer player) {
-        playSound(player, SoundEvents.GRINDSTONE_USE, VOLUME, 1f);
-    }
-
-    static void ding(ServerPlayer player) {
-        ding(player, 1f);
-    }
-
-    static void success(ServerPlayer player) {
-        ding(player, 1.2f);
-    }
-
-    static void fail(ServerPlayer player) {
-        ding(player, 0.8f);
-    }
-
-    static void ding(ServerPlayer player, float pitch) {
-        playSound(player, SoundEvents.ARROW_HIT_PLAYER, VOLUME, pitch);
-    }
-
-    static void playSound(ServerPlayer player, SoundEvent sound, float volume, float pitch) {
-        playSound(player, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound), volume, pitch);
-    }
-
-    static void playSound(ServerPlayer player, Holder<SoundEvent> sound, float volume, float pitch) {
+    static void playSound(ServerPlayer player, Holder<SoundEvent> sound, float pitch) {
         player.connection.send(new ClientboundSoundPacket(sound,
                 SoundSource.PLAYERS,
                 player.getX(), player.getY(), player.getZ(),
-                volume,
+                VOLUME,
                 pitch,
                 player.getRandom().nextLong()));
     }

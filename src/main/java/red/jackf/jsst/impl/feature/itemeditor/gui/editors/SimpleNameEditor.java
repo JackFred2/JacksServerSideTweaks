@@ -11,6 +11,7 @@ import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.CommonLabels;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 
 import java.util.function.Consumer;
 
@@ -52,12 +53,19 @@ public class SimpleNameEditor extends GuiEditor {
     }
 
     private void clearName() {
-        Sounds.grind(player);
+        Sounds.UI.grind(player);
         this.stack.remove(DataComponents.CUSTOM_NAME);
         this.refresh();
     }
 
     private void changeText() {
-        Sounds.click(player);
+        Sounds.UI.click(player);
+        InputMenus.string(player)
+                        .initial(this.stack.getHoverName().getString())
+                        .title(Component.translatable("jsst.itemEditor.changeText"))
+                        .start(result -> {
+                            result.ifPresent(s -> this.stack.set(DataComponents.CUSTOM_NAME, Component.literal(s).setStyle(this.stack.getHoverName().getStyle())));
+                            this.open();
+                        });
     }
 }
