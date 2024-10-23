@@ -8,7 +8,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+//? if <=1.21.1 {
+/*import net.minecraft.world.InteractionResultHolder;
+*///?} else
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
@@ -28,10 +31,16 @@ public class PortableCrafting {
                     && (player.isShiftKeyDown() || !config.requiresSneak)
                     && isValidCraftingTable(level.registryAccess(), player.getItemInHand(hand))) {
                 openMenuForPlayer(player, (ServerLevel) level, hand);
-                return InteractionResultHolder.success(ItemStack.EMPTY);
+                //? if <=1.21.1 {
+                /*return InteractionResultHolder.success(ItemStack.EMPTY);
+                *///?} else
+                return InteractionResult.PASS;
             }
 
-            return InteractionResultHolder.pass(ItemStack.EMPTY);
+            //? if <=1.21.1 {
+            /*return InteractionResultHolder.success(ItemStack.EMPTY);
+            *///?} else
+            return InteractionResult.PASS;
         });
     }
 
@@ -53,8 +62,13 @@ public class PortableCrafting {
         if (config.startsWith("#")) {
             return stack.is(TagKey.create(Registries.ITEM, ResourceLocation.parse(config.substring(1))));
         } else {
-            return registryAccess.registryOrThrow(Registries.ITEM)
-                    .getHolder(ResourceKey.create(Registries.ITEM, ResourceLocation.parse(config)))
+            //? if <=1.21.1 {
+            /*return registryAccess.registryOrThrow(Registries.ITEM)
+                  .getHolder(ResourceKey.create(Registries.ITEM, ResourceLocation.parse(config)))
+            *///?} else {
+            return registryAccess.lookupOrThrow(Registries.ITEM)
+                    .get(ResourceKey.create(Registries.ITEM, ResourceLocation.parse(config)))
+            //?}
                     .map(stack::is)
                     .orElse(false);
         }

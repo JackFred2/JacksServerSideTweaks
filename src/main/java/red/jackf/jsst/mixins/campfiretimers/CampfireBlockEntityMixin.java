@@ -3,7 +3,11 @@ package red.jackf.jsst.mixins.campfiretimers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Display;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.crafting.CampfireCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
+//? if <=1.21.1
+/*import net.minecraft.world.level.Level;*/
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Final;
@@ -43,10 +47,17 @@ public class CampfireBlockEntityMixin implements JSSTCampfireExt {
         return this.cookingTime[slot];
     }
 
+    @SuppressWarnings("InvalidInjectorMethodSignature")
     @Inject(method = "cookTick", at = @At("TAIL"))
-    private static void updateLabels(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity, CallbackInfo ci) {
+    //? if <=1.21.1 {
+    /*private static void updateLabels(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity, CallbackInfo ci) {
         if (level instanceof ServerLevel serverLevel) {
             CampfireTimers.cookTick(serverLevel, pos, state, blockEntity, (JSSTCampfireExt) blockEntity);
         }
     }
+    *///?} else {
+    private static void updateLabels(ServerLevel level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity, RecipeManager.CachedCheck<SingleRecipeInput, CampfireCookingRecipe> cachedCheck, CallbackInfo ci) {
+        CampfireTimers.cookTick(level, pos, state, blockEntity, (JSSTCampfireExt) blockEntity);
+    }
+    //?}
 }

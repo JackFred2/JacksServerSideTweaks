@@ -103,7 +103,10 @@ public interface Banners {
             if (!COLOURS.containsKey(backgroundChar)) return DataResult.error(() -> "Invalid colour '%s'".formatted(backgroundChar));
             DyeColor background = COLOURS.get(backgroundChar);
 
-            Registry<BannerPattern> registry = registries.registryOrThrow(Registries.BANNER_PATTERN);
+            //? if <=1.21.1 {
+            /*Registry<BannerPattern> registry = registries.registryOrThrow(Registries.BANNER_PATTERN);
+            *///?} else
+            Registry<BannerPattern> registry = registries.lookupOrThrow(Registries.BANNER_PATTERN);
             List<Pair<Holder<BannerPattern>, DyeColor>> layers = new ArrayList<>();
 
             for (int i = 1; i < code.length(); i += 2) {
@@ -114,7 +117,10 @@ public interface Banners {
                 char layerPatternChar = code.charAt(i + 1);
                 if (!PATTERNS.containsKey(layerPatternChar)) return DataResult.error(() -> "Invalid pattern '%s'".formatted(layerPatternChar));
                 ResourceKey<BannerPattern> layerPatternKey = PATTERNS.get(layerPatternChar);
-                Optional<Holder.Reference<BannerPattern>> layerPattern = registry.getHolder(layerPatternKey);
+                //? if <=1.21.1 {
+                /*Optional<Holder.Reference<BannerPattern>> layerPattern = registry.getHolder(layerPatternKey);
+                *///?} else
+                Optional<Holder.Reference<BannerPattern>> layerPattern = registry.get(layerPatternKey);
                 if (layerPattern.isEmpty()) return DataResult.error(() -> "Invalid pattern key '%s'".formatted(layerPatternKey.location()));
                 layers.add(Pair.of(layerPattern.get(), layerColour));
             }
