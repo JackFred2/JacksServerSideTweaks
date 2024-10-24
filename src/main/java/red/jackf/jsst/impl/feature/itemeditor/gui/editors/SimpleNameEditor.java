@@ -38,6 +38,9 @@ public class SimpleNameEditor extends GuiEditor {
 
         this.setSlot(2, JSSTElementBuilder.from(Items.PAPER).ui()
                 .leftClick(Component.translatable("jsst.itemEditor.changeText"), this::changeText));
+
+        this.setSlot(3, JSSTElementBuilder.from(Items.BLACK_DYE).ui()
+                .leftClick(Component.translatable("jsst.itemEditor.changeStyle"), this::changeStyle));
     }
 
     @Override
@@ -67,5 +70,13 @@ public class SimpleNameEditor extends GuiEditor {
                             result.ifPresent(s -> this.stack.set(DataComponents.CUSTOM_NAME, Component.literal(s).setStyle(this.stack.getHoverName().getStyle())));
                             this.open();
                         });
+    }
+
+    private void changeStyle() {
+        Sounds.UI.click(player);
+        InputMenus.style(player, this.stack.getHoverName(), comp -> {
+            comp.ifPresent(component -> this.stack.set(DataComponents.CUSTOM_NAME, component));
+            this.open();
+        });
     }
 }

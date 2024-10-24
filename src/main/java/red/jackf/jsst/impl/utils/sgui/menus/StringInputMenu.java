@@ -9,6 +9,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import org.jetbrains.annotations.Nullable;
+import red.jackf.jsst.impl.utils.Callbacks;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 import red.jackf.jsst.impl.utils.sgui.Styles;
@@ -27,7 +28,6 @@ public class StringInputMenu extends SimpleGuiExt {
     private final Function<String, @Nullable GuiElementInterface> hintFactory;
     private final Predicate<String> validator;
     private final Consumer<Optional<String>> callback;
-    private boolean complete = false;
 
     private String currentText;
 
@@ -36,7 +36,7 @@ public class StringInputMenu extends SimpleGuiExt {
         this.initial = initial;
         this.hintFactory = hintFactory;
         this.validator = validator;
-        this.callback = callback;
+        this.callback = Callbacks.singleUse(callback);
 
         this.currentText = this.initial;
 
@@ -104,14 +104,10 @@ public class StringInputMenu extends SimpleGuiExt {
     }
 
     private void complete() {
-        if (this.complete) return;
-        this.complete = true;
         this.callback.accept(Optional.of(this.currentText));
     }
 
     private void cancel() {
-        if (this.complete) return;
-        this.complete = true;
         this.callback.accept(Optional.empty());
     }
 

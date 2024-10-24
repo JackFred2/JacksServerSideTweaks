@@ -7,6 +7,7 @@ import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
+import red.jackf.jsst.impl.utils.Callbacks;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 import red.jackf.jsst.impl.utils.sgui.Translations;
@@ -21,7 +22,7 @@ public abstract class GuiEditor extends SimpleGuiExt implements Editor {
 
     public GuiEditor(EditSession session, Consumer<Result> resultConsumer, Component title, MenuType<?> type, boolean manipulatePlayerSlots) {
         super(type, session.getPlayer(), manipulatePlayerSlots);
-        this.resultConsumer = resultConsumer;
+        this.resultConsumer = Callbacks.singleUse(resultConsumer);
         this.session = session;
         this.stack = session.getStack();
         this.drawStatic();

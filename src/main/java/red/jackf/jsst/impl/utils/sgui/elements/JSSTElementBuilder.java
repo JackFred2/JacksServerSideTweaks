@@ -1,6 +1,5 @@
 package red.jackf.jsst.impl.utils.sgui.elements;
 
-import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
@@ -14,6 +13,7 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.impl.utils.sgui.Hints;
+import red.jackf.jsst.impl.utils.sgui.Inputs;
 import red.jackf.jsst.impl.utils.sgui.Styles;
 
 import java.util.function.UnaryOperator;
@@ -57,6 +57,11 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         return this;
     }
 
+    public JSSTElementBuilder glow() {
+        this.stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+        return this;
+    }
+
     public JSSTElementBuilder addLoreLine(Component line) {
         this.stack.update(DataComponents.LORE, ItemLore.EMPTY, this.cleanText ? Component.empty().withStyle(Styles.CLEAN).append(line) : line, ItemLore::withLineAdded);
         return this;
@@ -80,39 +85,13 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
     }
 
     public JSSTElementBuilder leftClick(Component label, Runnable onLeftClick) {
-        final GuiElementInterface.ClickCallback oldCallback = this.callback;
-        this.callback = (slot, sguiClick, mcClick, gui) -> {
-            if (sguiClick == ClickType.MOUSE_LEFT) {
-                onLeftClick.run();
-            } else {
-                oldCallback.click(slot, sguiClick, mcClick, gui);
-            }
-        };
-        /*
-        if (!this.stack.has(DataComponents.CUSTOM_NAME) && this.isUIElement) {
-            this.stack.set(DataComponents.CUSTOM_NAME, Hints.leftClick(label));
-        } else {
-            this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.leftClick(label), ItemLore::withLineAdded);
-        }*/
+        this.callback = Inputs.leftClick(onLeftClick, this.callback);
         this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.leftClick(label), ItemLore::withLineAdded);
         return this;
     }
 
     public JSSTElementBuilder rightClick(Component label, Runnable onRightClick) {
-        final GuiElementInterface.ClickCallback oldCallback = this.callback;
-        this.callback = (slot, sguiClick, mcClick, gui) -> {
-            if (sguiClick == ClickType.MOUSE_RIGHT) {
-                onRightClick.run();
-            } else {
-                oldCallback.click(slot, sguiClick, mcClick, gui);
-            }
-        };
-        /*
-        if (!this.stack.has(DataComponents.CUSTOM_NAME) && this.isUIElement) {
-            this.stack.set(DataComponents.CUSTOM_NAME, Hints.rightClick(label));
-        } else {
-            this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.rightClick(label), ItemLore::withLineAdded);
-        }*/
+        this.callback = Inputs.rightClick(onRightClick, this.callback);
         this.stack.update(DataComponents.LORE, ItemLore.EMPTY, Hints.rightClick(label), ItemLore::withLineAdded);
         return this;
     }

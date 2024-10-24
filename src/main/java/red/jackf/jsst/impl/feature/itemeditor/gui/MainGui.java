@@ -45,11 +45,10 @@ public class MainGui extends SimpleGuiExt {
         List<WrappedElement<GuiElementInterface>> buttons = ItemEditor.EDITORS.stream()
                 .filter(type -> type.appliesTo(this.session))
                 .map(type -> WrappedElement.builder(type.getIcon(this.session))
-                        .addLore(Hints.leftClick(Translations.open()))
-                        .setCallback(Inputs.leftClick(() -> {
+                        .leftClick(Hints.leftClick(Translations.open()), () -> {
                             Editor editor = type.create(this.session, this::onResult);
                             editor.start();
-                        })).build())
+                        }).build())
                 .toList();
 
         UIRegion.rectangle(this, 4, 0, 9, this.getHeight())

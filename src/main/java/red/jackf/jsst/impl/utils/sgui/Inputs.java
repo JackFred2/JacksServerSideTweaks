@@ -12,10 +12,30 @@ public interface Inputs {
         };
     }
 
+    static GuiElementInterface.ClickCallback leftClick(Runnable onLeftClick, GuiElementInterface.ClickCallback otherwise) {
+        return (slot, sguiClick, mcClick, gui) -> {
+            if (sguiClick == ClickType.MOUSE_LEFT)  {
+                onLeftClick.run();
+            } else {
+                otherwise.click(slot, sguiClick, mcClick, gui);
+            }
+        };
+    }
+
     static GuiElementInterface.ClickCallback rightClick(Runnable onRightClick) {
         return (slot, sguiClick, mcClick, gui) -> {
             if (sguiClick == ClickType.MOUSE_RIGHT)  {
                 onRightClick.run();
+            }
+        };
+    }
+
+    static GuiElementInterface.ClickCallback rightClick(Runnable onRightClick, GuiElementInterface.ClickCallback otherwise) {
+        return (slot, sguiClick, mcClick, gui) -> {
+            if (sguiClick == ClickType.MOUSE_RIGHT)  {
+                onRightClick.run();
+            } else {
+                otherwise.click(slot, sguiClick, mcClick, gui);
             }
         };
     }
