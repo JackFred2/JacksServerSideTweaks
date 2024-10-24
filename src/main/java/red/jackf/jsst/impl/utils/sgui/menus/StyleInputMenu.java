@@ -14,10 +14,7 @@ import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jsst.impl.utils.Callbacks;
 import red.jackf.jsst.impl.utils.Sounds;
-import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
-import red.jackf.jsst.impl.utils.sgui.Styles;
-import red.jackf.jsst.impl.utils.sgui.Translations;
-import red.jackf.jsst.impl.utils.sgui.UIRegion;
+import red.jackf.jsst.impl.utils.sgui.*;
 import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.ToggleButton;
 
@@ -43,7 +40,7 @@ public class StyleInputMenu extends SimpleGuiExt {
         this.onResult = Callbacks.singleUse(onResult);
 
         this.setTitle(Component.translatable("jsst.itemEditor.changeStyle"));
-        this.loadDefaultStyle();
+        this.loadFromStyle(this.initial.getStyle());
 
         this.drawStatic();
     }
@@ -100,15 +97,24 @@ public class StyleInputMenu extends SimpleGuiExt {
                     this.obfuscated = b;
                     this.refresh();
                 }));
+
+        this.setSlot(8, 3, JSSTElementBuilder.from(Items.GRINDSTONE).ui()
+                .leftClick(Translations.clear(), () -> {
+                    Sounds.UI.grind(player);
+                    this.loadFromStyle(Style.EMPTY);
+                    this.refresh();
+                }));
+
+        this.setSlot(8, 4, CommonLabels.cancel(this::cancel));
     }
 
-    private void loadDefaultStyle() {
-        this.colour = this.initial.getStyle().getColor() != null ? Colour.fromInt(this.initial.getStyle().getColor().getValue()) : null;
-        this.bold = this.initial.getStyle().isBold();
-        this.italics = this.initial.getStyle().isItalic();
-        this.underline = this.initial.getStyle().isUnderlined();
-        this.strikethrough = this.initial.getStyle().isStrikethrough();
-        this.obfuscated = this.initial.getStyle().isObfuscated();
+    private void loadFromStyle(Style style) {
+        this.colour = style.getColor() != null ? Colour.fromInt(style.getColor().getValue()) : null;
+        this.bold = style.isBold();
+        this.italics = style.isItalic();
+        this.underline = style.isUnderlined();
+        this.strikethrough = style.isStrikethrough();
+        this.obfuscated = style.isObfuscated();
     }
 
     private Style buildStyle() {
@@ -165,7 +171,14 @@ public class StyleInputMenu extends SimpleGuiExt {
 
         this.setSlot(6, 3, JSSTElementBuilder.from(Items.PAPER).ui()
                 .setName(buildOutput())
-                .leftClick(Translations.confirm(), this::complete));
+                .leftClick(Translations.confirm(), this::complete)
+                .rightClick(Translations.reset(), this::reset));
+    }
+
+    private void reset() {
+        Sounds.UI.reset(player);
+        this.loadFromStyle(this.initial.getStyle());
+        this.refresh();
     }
 
     @Override
