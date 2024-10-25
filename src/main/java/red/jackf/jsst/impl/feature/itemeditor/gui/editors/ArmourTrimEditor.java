@@ -1,5 +1,7 @@
 package red.jackf.jsst.impl.feature.itemeditor.gui.editors;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -19,6 +21,7 @@ import red.jackf.jsst.impl.utils.sgui.UIRegion;
 import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.pagination.GridPaginator;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ArmourTrimEditor extends GuiEditor {
@@ -32,22 +35,9 @@ public class ArmourTrimEditor extends GuiEditor {
                     .build()
     );
 
-    private final GridPaginator<TrimMaterial> materialPages = GridPaginator.<TrimMaterial>builder(this)
-            .slots(UIRegion.playerRectangle(this, 2, 0, 5, 3))
-            .fullButtons(this.getPlayerSlotFor(2, 3), this.getPlayerSlotFor(3, 3), this.getPlayerSlotFor(4, 3))
-            .elements(this.session.getPlayer().registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL).stream().toList())
-            .drawFunction(material -> JSSTElementBuilder.from(material.ingredient().value())
-                    .setName(material.description())
-                    .leftClick(Translations.select(), () -> {
-                        Sounds.UI.click(player);
-                        this.setMaterial(material);
-                        this.refresh();
-                    }).build())
-            .build();
-
     private final GridPaginator<TrimPattern> patternPages = GridPaginator.<TrimPattern>builder(this)
-            .slots(UIRegion.playerRectangle(this, 6, 0, 9, 3))
-            .fullButtons(this.getPlayerSlotFor(6, 3), this.getPlayerSlotFor(7, 3), this.getPlayerSlotFor(8, 3))
+            .slots(UIRegion.playerRectangle(this, 0, 0, 3, 3))
+            .fullButtons(this.getPlayerSlotFor(0, 3), this.getPlayerSlotFor(1, 3), this.getPlayerSlotFor(2, 3))
             .elements(this.session.getPlayer().registryAccess().lookupOrThrow(Registries.TRIM_PATTERN).stream().toList())
             .drawFunction(pattern -> JSSTElementBuilder.from(pattern.templateItem().value())
                     .setName(pattern.description())
@@ -59,40 +49,100 @@ public class ArmourTrimEditor extends GuiEditor {
                     }).build())
             .build();
 
+    private final GridPaginator<TrimMaterial> materialPages = GridPaginator.<TrimMaterial>builder(this)
+            .slots(UIRegion.playerRectangle(this, 4, 0, 7, 3))
+            .fullButtons(this.getPlayerSlotFor(4, 3), this.getPlayerSlotFor(5, 3), this.getPlayerSlotFor(6, 3))
+            .elements(this.session.getPlayer().registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL).stream().toList())
+            .drawFunction(material -> JSSTElementBuilder.from(material.ingredient().value())
+                    .setName(material.description())
+                    .leftClick(Translations.select(), () -> {
+                        Sounds.UI.click(player);
+                        this.setMaterial(material);
+                        this.refresh();
+                    }).build())
+            .build();
+
     public ArmourTrimEditor(EditSession session, Consumer<Result> resultConsumer) {
         super(session, resultConsumer, Component.translatable("jsst.itemEditor.editor.armourTrim"), MenuType.SMITHING, true);
     }
 
     @Override
     protected void drawStatic() {
-        UIRegion.playerColumn(this, 1).fillStack(CommonLabels::divider);
-        UIRegion.playerColumn(this, 5).fillStack(CommonLabels::divider);
+        UIRegion.playerColumn(this, 3).fillStack(CommonLabels::divider);
+        UIRegion.playerColumn(this, 7).fillStack(CommonLabels::divider);
 
-        this.setPlayerSlot(0, 3, CommonLabels.cancel(this::cancel));
+        this.setSlot(1, CommonLabels.cancel(this::cancel));
     }
 
     @Override
     protected void refresh() {
-        materialPages.draw();
-        patternPages.draw();
+        this.drawPreview(3);
 
         if (this.stack.has(DataComponents.TRIM)) {
-            this.setPlayerSlot(0, 2, JSSTElementBuilder.from(Items.GRINDSTONE).ui()
+            ArmorTrim currentTrim = this.stack.get(DataComponents.TRIM);
+            TrimPattern pattern = currentTrim.pattern().value();
+            TrimMaterial material = currentTrim.material().value();
+
+            this.materialPages.draw();
+            this.patternPages.draw();
+
+            this.setSlot(0, JSSTElementBuilder.from(pattern.templateItem().value())
+                    .setName(pattern.description())
+                    .hideDefaultTooltip());
+
+            this.setSlot(2, JSSTElementBuilder.from(material.ingredient().value())
+                    .setName(material.description())
+                    .hideDefaultTooltip());
+
+            this.setPlayerSlot(8, 0, JSSTElementBuilder.from(Items.GRINDSTONE).ui()
                     .leftClick(Translations.clear(), () -> {
                         Sounds.UI.grind(player);
                         this.stack.remove(DataComponents.TRIM);
                         this.refresh();
                     }));
         } else {
-            this.clearPlayerSlot(0, 2);
+            this.clearPlayerSlot(8, 0);
+
+            this.materialPages.fillDisabled();
+            this.patternPages.fillDisabled();
+
+            this.clearSlot(0);
+            this.clearSlot(2);
+
+            this.setPlayerSlot(8, 0, JSSTElementBuilder.from(Items.NETHER_STAR).ui()
+                    .leftClick(Component.translatable("jsst.itemEditor.editor.armourTrim.addRandomTrim"), () -> {
+                        Sounds.UI.click(player);
+                        RegistryAccess registries = this.player.serverLevel().registryAccess();
+
+                        Optional<Holder.Reference<TrimMaterial>> material = registries.lookupOrThrow(Registries.TRIM_MATERIAL).getRandom(this.player.getRandom());
+                        Optional<Holder.Reference<TrimPattern>> pattern = registries.lookupOrThrow(Registries.TRIM_PATTERN).getRandom(this.player.getRandom());
+
+                        if (material.isPresent() && pattern.isPresent()) {
+                            this.stack.set(DataComponents.TRIM, new ArmorTrim(material.get(), pattern.get()));
+                        }
+
+                        this.refresh();
+                    }));
         }
     }
 
     private void setMaterial(TrimMaterial material) {
-        
+        ArmorTrim old = this.stack.get(DataComponents.TRIM);
+        if (old == null) return;
+
+        this.stack.set(DataComponents.TRIM, new ArmorTrim(
+                this.player.serverLevel().registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL).wrapAsHolder(material),
+                old.pattern()
+        ));
     }
 
     private void setPattern(TrimPattern pattern) {
+        ArmorTrim old = this.stack.get(DataComponents.TRIM);
+        if (old == null) return;
 
+        this.stack.set(DataComponents.TRIM, new ArmorTrim(
+                old.material(),
+                this.player.serverLevel().registryAccess().lookupOrThrow(Registries.TRIM_PATTERN).wrapAsHolder(pattern)
+        ));
     }
 }

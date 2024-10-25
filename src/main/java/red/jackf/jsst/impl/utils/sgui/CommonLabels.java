@@ -28,4 +28,10 @@ public interface CommonLabels {
                 .hideDefaultTooltip()
                 .build();
     }
+
+    static ItemStack disabled() {
+        return GuiElementBuilder.from(Items.GRAY_STAINED_GLASS_PANE.getDefaultInstance())
+                .hideTooltip()
+                .asStack();
+    }
 }

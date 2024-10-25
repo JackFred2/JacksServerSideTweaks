@@ -59,12 +59,12 @@ public abstract class SimpleGuiExt extends SimpleGui {
         this.setSlotRedirect(getSlotFor(column, row), slot);
     }
 
-    public void clearSlot(int column, int row) {
-        this.clearSlot(getSlotFor(column, row));
-    }
-
     public void clearPlayerSlot(int column, int row) {
         this.clearSlot(getPlayerSlotFor(column, row));
+    }
+
+    public void clearSlot(int column, int row) {
+        this.clearSlot(getSlotFor(column, row));
     }
 
     @Override

@@ -3,6 +3,7 @@ package red.jackf.jsst.impl.utils.sgui.elements.pagination;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.util.Mth;
 import red.jackf.jsst.impl.utils.Arguments;
+import red.jackf.jsst.impl.utils.sgui.CommonLabels;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 import red.jackf.jsst.impl.utils.sgui.UIRegion;
 
@@ -57,6 +58,11 @@ public class GridPaginator<T> {
 
     public static <T> Builder<T> builder(SimpleGuiExt gui) {
         return new Builder<>(gui);
+    }
+
+    public void fillDisabled() {
+        this.valueSlots.fillStack(CommonLabels::disabled);
+        this.pageButtons.forEach(slot -> this.gui.setSlot(slot, CommonLabels.disabled()));
     }
 
     public static class Builder<T> {

@@ -19,6 +19,7 @@
   "jsst.itemEditor.stringInput.invalid": "Invalid Input",
   "jsst.itemEditor.editor.simpleName": "Name Editor (Simple)",
   "jsst.itemEditor.editor.armourTrim": "Armour Trim Editor",
+  "jsst.itemEditor.editor.armourTrim.addRandomTrim": "Add Random Trim",
   "jsst.ui.cancel": "Cancel",
   "jsst.ui.clear": "Clear",
   "jsst.ui.close": "Close",
