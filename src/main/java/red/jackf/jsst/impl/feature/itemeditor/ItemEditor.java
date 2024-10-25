@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.feature.itemeditor.gui.MainGui;
+import red.jackf.jsst.impl.feature.itemeditor.gui.editors.ArmourTrimEditor;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.SimpleNameEditor;
 
@@ -28,7 +29,8 @@ public class ItemEditor {
     public static final Logger LOGGER = JSST.getLogger("Item Editor");
 
     public static final List<Editor.Type<?>> EDITORS = List.of(
-            SimpleNameEditor.TYPE
+            SimpleNameEditor.TYPE,
+            ArmourTrimEditor.TYPE
     );
 
     private static final Map<ServerPlayer, EditSession> CURRENT_SESSIONS = new HashMap<>();

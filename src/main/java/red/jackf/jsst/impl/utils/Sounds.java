@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 
 public interface Sounds {
     float VOLUME = 0.5f;
@@ -32,6 +33,11 @@ public interface Sounds {
     interface UI {
         static void click(ServerPlayer player) {
             playSound(player, SoundEvents.UI_BUTTON_CLICK, 1f);
+        }
+
+        static void progress(ServerPlayer player, float progress) {
+            float pitch = Mth.clamp(progress, 0f, 1f) * 0.3f + 0.85f;
+            playSound(player, SoundEvents.UI_BUTTON_CLICK, pitch);
         }
 
         static void close(ServerPlayer player) {

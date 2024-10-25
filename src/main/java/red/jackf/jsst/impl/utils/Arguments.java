@@ -8,6 +8,11 @@ public interface Arguments {
             throw makeException(message, value, args);
     }
 
+    static void isGreaterOrEq(int a, int b, String message, Object... args) {
+        if (a < b)
+            throw makeException(message, a, b, args);
+    }
+
     static void isLessOrEq(int a, int b, String message, Object... args) {
         if (a > b)
             throw makeException(message, a, b, args);

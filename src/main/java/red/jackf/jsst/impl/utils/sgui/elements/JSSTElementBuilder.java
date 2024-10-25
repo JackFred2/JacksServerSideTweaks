@@ -6,6 +6,7 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -49,6 +50,11 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
 
     public JSSTElementBuilder setName(@Nullable Component name) {
         this.stack.set(DataComponents.CUSTOM_NAME, this.cleanText ? Component.empty().withStyle(Styles.CLEAN).append(name) : name);
+        return this;
+    }
+
+    public JSSTElementBuilder setCount(int count) {
+        this.stack.setCount(Mth.clamp(count, 1, 99));
         return this;
     }
 

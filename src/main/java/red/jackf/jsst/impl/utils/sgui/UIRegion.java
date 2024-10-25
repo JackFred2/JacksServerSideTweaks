@@ -4,9 +4,11 @@ import com.google.common.collect.Streams;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import red.jackf.jsst.impl.utils.Arguments;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -15,7 +17,7 @@ import java.util.stream.Stream;
  * Designates a set of slots for an SGUI UI. Contains methods for filling regions, populating with list elements.
  */
 @SuppressWarnings("UnstableApiUsage")
-public class UIRegion {
+public class UIRegion implements Iterable<Integer> {
     private final SimpleGuiExt gui;
     private final List<Integer> slots;
 
@@ -88,6 +90,35 @@ public class UIRegion {
     }
 
     /**
+     * Creates a rectangular region of slots in the player's inventory.
+     *
+     * @param gui GUI this region is for.
+     * @param startColumnInclusive Starting column for the rectangle, inclusive.
+     * @param startRowInclusive Starting row for the rectangle, inclusive.
+     * @param endColumnExclusive Ending column for the rectangle, exclusive.
+     * @param endRowExclusive Ending row for the rectangle, exclusive.
+     * @return A region covering the given rectangle of slots in a player's inventory.
+     */
+    public static UIRegion playerRectangle(SimpleGuiExt gui, int startColumnInclusive, int startRowInclusive, int endColumnExclusive, int endRowExclusive) {
+        Arguments.inRange(startColumnInclusive, 0, 9, "startColumn out of range: %d");
+        Arguments.inRange(startRowInclusive, 0, 4, "startRow out of range: %d");
+        Arguments.inRange(endColumnExclusive, 0, 9, "endColumn out of range: %d");
+        Arguments.inRange(endRowExclusive, 0, 4, "startColumn out of range: %d");
+        Arguments.isLessOrEq(startColumnInclusive, endColumnExclusive, "startColumn > endColumn: %d > %d");
+        Arguments.isLessOrEq(startRowInclusive, endRowExclusive, "startRow > endRow: %d > %d");
+
+        List<Integer> slots = new ArrayList<>();
+
+        for (int row = startRowInclusive; row < endRowExclusive; row++) {
+            for (int col = startColumnInclusive; col < endColumnExclusive; col++) {
+                slots.add(gui.getVirtualSize() + row * 9 + col);
+            }
+        }
+
+        return new UIRegion(gui, List.copyOf(slots));
+    }
+
+    /**
      * Creates a region covering a row of slots, between two columns.
      * @param gui GUI this region is for.
      * @param row Row being covered.
@@ -100,6 +131,18 @@ public class UIRegion {
     }
 
     /**
+     * Creates a region covering a row of slots in the player's inventory, between two columns.
+     * @param gui GUI this region is for.
+     * @param row Row being covered.
+     * @param startColumnInclusive Starting column for the row, inclusive.
+     * @param endColumnExclusive Ending column for the row, exclusive.
+     * @return A region covering the given row of slots in the player's inventory, between two columns.
+     */
+    public static UIRegion playerRow(SimpleGuiExt gui, int row, int startColumnInclusive, int endColumnExclusive) {
+        return playerRectangle(gui, startColumnInclusive, row, endColumnExclusive, row + 1);
+    }
+
+    /**
      * Creates a region covering a whole row of slots.
      * @param gui GUI this region is for.
      * @param row Row being covered.
@@ -107,6 +150,16 @@ public class UIRegion {
      */
     public static UIRegion row(SimpleGuiExt gui, int row) {
         return row(gui, row, 0, gui.getWidth());
+    }
+
+    /**
+     * Creates a region covering a whole row of slots in the player's inventory.
+     * @param gui GUI this region is for.
+     * @param row Row being covered.
+     * @return A region covering the given row of slots in the player's inventory.
+     */
+    public static UIRegion playerRow(SimpleGuiExt gui, int row) {
+        return playerRow(gui, row, 0, 9);
     }
 
     /**
@@ -122,6 +175,18 @@ public class UIRegion {
     }
 
     /**
+     * Creates a region covering a column of slots in the player's inventory, between two rows.
+     * @param gui GUI this region is for.
+     * @param column Column being covered.
+     * @param startRowInclusive Starting row for the column, inclusive.
+     * @param endRowExclusive Ending row for the column, exclusive.
+     * @return A region covering the given column of slots in the player's inventory, between two rows.
+     */
+    public static UIRegion playerColumn(SimpleGuiExt gui, int column, int startRowInclusive, int endRowExclusive) {
+        return playerRectangle(gui, column, startRowInclusive, column + 1, endRowExclusive);
+    }
+
+    /**
      * Creates a region covering a whole column of slots.
      * @param gui GUI this region is for.
      * @param column Column being covered.
@@ -129,6 +194,16 @@ public class UIRegion {
      */
     public static UIRegion column(SimpleGuiExt gui, int column) {
         return column(gui, column, 0, gui.getHeight());
+    }
+
+    /**
+     * Creates a region covering a whole column of slots in the player's inventory.
+     * @param gui GUI this region is for.
+     * @param column Column being covered.
+     * @return A region covering the given column of slots in the player's inventory.
+     */
+    public static UIRegion playerColumn(SimpleGuiExt gui, int column) {
+        return playerColumn(gui, column, 0, 4);
     }
 
     /**
@@ -218,5 +293,18 @@ public class UIRegion {
      */
     public Stream<Integer> stream() {
         return this.slots.stream();
+    }
+
+    /**
+     * Gets the number of slots for this region.
+     * @return The number of slots covered by this region.
+     */
+    public int size() {
+        return this.slots.size();
+    }
+
+    @Override
+    public @NotNull Iterator<Integer> iterator() {
+        return this.slots.iterator();
     }
 }
