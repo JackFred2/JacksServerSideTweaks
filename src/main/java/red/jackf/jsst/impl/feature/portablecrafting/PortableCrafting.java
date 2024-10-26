@@ -19,6 +19,7 @@ import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.mixinutils.JSSTItemValidatedMenu;
+import red.jackf.jsst.impl.utils.RegistryUtils;
 import red.jackf.jsst.impl.utils.TextUtils;
 
 public class PortableCrafting {
@@ -55,22 +56,17 @@ public class PortableCrafting {
         ));
     }
 
-    public static boolean isValidCraftingTable(RegistryAccess registryAccess, ItemStack stack) {
+    public static boolean isValidCraftingTable(RegistryAccess access, ItemStack stack) {
         String config = JSSTConfig.INSTANCE.instance().portableCrafting.itemIdOrTag;
         if (!TextUtils.isValidReslocOrTag(config)) return false;
 
         if (config.startsWith("#")) {
             return stack.is(TagKey.create(Registries.ITEM, ResourceLocation.parse(config.substring(1))));
         } else {
-            //? if <=1.21.1 {
-            /*return registryAccess.registryOrThrow(Registries.ITEM)
-                  .getHolder(ResourceKey.create(Registries.ITEM, ResourceLocation.parse(config)))
-            *///?} else {
-            return registryAccess.lookupOrThrow(Registries.ITEM)
-                    .get(ResourceKey.create(Registries.ITEM, ResourceLocation.parse(config)))
-            //?}
-                    .map(stack::is)
-                    .orElse(false);
+            return RegistryUtils.getHolder(
+                    RegistryUtils.lookup(access, Registries.ITEM),
+                    ResourceKey.create(Registries.ITEM, ResourceLocation.parse(config))
+            ).map(stack::is).orElse(false);
         }
     }
 }

@@ -1,16 +1,21 @@
 package red.jackf.jsst.impl.feature.itemeditor.gui.editors;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
+//? if <=1.21.1 {
+/*import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraft.world.item.armortrim.TrimMaterial;
+import net.minecraft.world.item.armortrim.TrimPattern;
+*///?} else {
 import net.minecraft.world.item.equipment.trim.ArmorTrim;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.minecraft.world.item.equipment.trim.TrimPattern;
+//?}
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
@@ -38,7 +43,7 @@ public class ArmourTrimEditor extends GuiEditor {
     private final GridPaginator<TrimPattern> patternPages = GridPaginator.<TrimPattern>builder(this)
             .slots(UIRegion.playerRectangle(this, 0, 0, 3, 3))
             .fullButtons(this.getPlayerSlotFor(0, 3), this.getPlayerSlotFor(1, 3), this.getPlayerSlotFor(2, 3))
-            .elements(this.session.getPlayer().registryAccess().lookupOrThrow(Registries.TRIM_PATTERN).stream().toList())
+            .elements(this.lookupRegistry(Registries.TRIM_PATTERN).stream().toList())
             .drawFunction(pattern -> JSSTElementBuilder.from(pattern.templateItem().value())
                     .setName(pattern.description())
                     .hideDefaultTooltip()
@@ -52,7 +57,7 @@ public class ArmourTrimEditor extends GuiEditor {
     private final GridPaginator<TrimMaterial> materialPages = GridPaginator.<TrimMaterial>builder(this)
             .slots(UIRegion.playerRectangle(this, 4, 0, 7, 3))
             .fullButtons(this.getPlayerSlotFor(4, 3), this.getPlayerSlotFor(5, 3), this.getPlayerSlotFor(6, 3))
-            .elements(this.session.getPlayer().registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL).stream().toList())
+            .elements(this.lookupRegistry(Registries.TRIM_MATERIAL).stream().toList())
             .drawFunction(material -> JSSTElementBuilder.from(material.ingredient().value())
                     .setName(material.description())
                     .leftClick(Translations.select(), () -> {
@@ -112,10 +117,9 @@ public class ArmourTrimEditor extends GuiEditor {
             this.setPlayerSlot(8, 0, JSSTElementBuilder.from(Items.NETHER_STAR).ui()
                     .leftClick(Component.translatable("jsst.itemEditor.editor.armourTrim.addRandomTrim"), () -> {
                         Sounds.UI.click(player);
-                        RegistryAccess registries = this.player.serverLevel().registryAccess();
 
-                        Optional<Holder.Reference<TrimMaterial>> material = registries.lookupOrThrow(Registries.TRIM_MATERIAL).getRandom(this.player.getRandom());
-                        Optional<Holder.Reference<TrimPattern>> pattern = registries.lookupOrThrow(Registries.TRIM_PATTERN).getRandom(this.player.getRandom());
+                        Optional<Holder.Reference<TrimMaterial>> material = this.lookupRegistry(Registries.TRIM_MATERIAL).getRandom(this.player.getRandom());
+                        Optional<Holder.Reference<TrimPattern>> pattern = this.lookupRegistry(Registries.TRIM_PATTERN).getRandom(this.player.getRandom());
 
                         if (material.isPresent() && pattern.isPresent()) {
                             this.stack.set(DataComponents.TRIM, new ArmorTrim(material.get(), pattern.get()));
@@ -131,7 +135,7 @@ public class ArmourTrimEditor extends GuiEditor {
         if (old == null) return;
 
         this.stack.set(DataComponents.TRIM, new ArmorTrim(
-                this.player.serverLevel().registryAccess().lookupOrThrow(Registries.TRIM_MATERIAL).wrapAsHolder(material),
+                this.lookupRegistry(Registries.TRIM_MATERIAL).wrapAsHolder(material),
                 old.pattern()
         ));
     }
@@ -142,7 +146,7 @@ public class ArmourTrimEditor extends GuiEditor {
 
         this.stack.set(DataComponents.TRIM, new ArmorTrim(
                 old.material(),
-                this.player.serverLevel().registryAccess().lookupOrThrow(Registries.TRIM_PATTERN).wrapAsHolder(pattern)
+                this.lookupRegistry(Registries.TRIM_PATTERN).wrapAsHolder(pattern)
         ));
     }
 }
