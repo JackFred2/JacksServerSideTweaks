@@ -266,6 +266,20 @@ public class UIRegion implements Iterable<Integer> {
     }
 
     /**
+     * <p>Clear the region, and fill slots with SGUI {@link GuiElementInterface}s from the given list.</p>
+     *
+     * <p>If there are less slots than list elements then the list will be truncated; if there are less list elements
+     * than slots then empty slots will be set.</p>
+     *
+     * @see List#subList(int, int)
+     * @param elementStream GuiElementInterfaces to place in this region's slots.
+     */
+    public void loadElements(Stream<? extends GuiElementInterface> elementStream) {
+        clearSlots();
+        Streams.forEachPair(stream(), elementStream, this.gui::setSlot);
+    }
+
+    /**
      * <p>Clear the region, and fill slots with SGUI {@link GuiElementBuilderInterface}s from the given list.</p>
      *
      * <p>If there are less slots than list elements then the list will be truncated; if there are less list elements

@@ -45,7 +45,7 @@ public class MainGui extends SimpleGuiExt {
         List<WrappedElement<GuiElementInterface>> buttons = ItemEditor.EDITORS.stream()
                 .filter(type -> type.appliesTo(this.session))
                 .map(type -> WrappedElement.builder(type.getIcon(this.session))
-                        .leftClick(Hints.leftClick(Translations.open()), () -> {
+                        .leftClick(Translations.open(), () -> {
                             Editor editor = type.create(this.session, this::onResult);
                             editor.start();
                         }).build())

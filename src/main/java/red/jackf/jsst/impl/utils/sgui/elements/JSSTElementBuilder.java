@@ -3,6 +3,7 @@ package red.jackf.jsst.impl.utils.sgui.elements;
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
+import net.minecraft.Util;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -53,6 +54,11 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         return this;
     }
 
+    public <T> JSSTElementBuilder setComponent(DataComponentType<T> type, T value) {
+        this.stack.set(type, value);
+        return this;
+    }
+
     public JSSTElementBuilder setCount(int count) {
         this.stack.setCount(Mth.clamp(count, 1, 99));
         return this;
@@ -65,6 +71,11 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
 
     public JSSTElementBuilder glow() {
         this.stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+        return this;
+    }
+
+    public JSSTElementBuilder addLoreLineAtStart(Component line) {
+        this.stack.update(DataComponents.LORE, ItemLore.EMPTY, this.cleanText ? Component.empty().withStyle(Styles.CLEAN).append(line) : line, (lore, newLine) -> new ItemLore(Util.copyAndAdd(newLine, lore.lines())));
         return this;
     }
 

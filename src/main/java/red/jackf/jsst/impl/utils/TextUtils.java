@@ -26,4 +26,14 @@ public interface TextUtils {
         if (input.charAt(0) == '#') input = input.substring(1);
         return ResourceLocation.read(input).isSuccess();
     }
+
+    static Component copyNoStyle(Component component) {
+        MutableComponent root = component.plainCopy();
+
+        for (Component sibling : component.getSiblings()) {
+            root.append(copyNoStyle(sibling));
+        }
+
+        return root;
+    }
 }

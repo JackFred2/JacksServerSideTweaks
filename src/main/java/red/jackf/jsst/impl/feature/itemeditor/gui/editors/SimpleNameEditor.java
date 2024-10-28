@@ -7,6 +7,7 @@ import net.minecraft.world.item.Items;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
+import red.jackf.jsst.impl.feature.itemeditor.gui.menus.style.StyleInputMenu;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.CommonLabels;
 import red.jackf.jsst.impl.utils.sgui.Translations;
@@ -74,9 +75,10 @@ public class SimpleNameEditor extends GuiEditor {
 
     private void changeStyle() {
         Sounds.UI.click(player);
-        InputMenus.style(player, this.stack.getHoverName(), comp -> {
+
+        new StyleInputMenu(player, this.stack.getHoverName(), comp -> {
             comp.ifPresent(component -> this.stack.set(DataComponents.CUSTOM_NAME, component));
             this.open();
-        });
+        }).open();
     }
 }
