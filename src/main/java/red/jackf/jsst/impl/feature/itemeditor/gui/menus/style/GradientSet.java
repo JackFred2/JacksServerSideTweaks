@@ -10,7 +10,9 @@ import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.ItemLike;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
+import red.jackf.jackfredlib.api.colour.Gradients;
 import red.jackf.jsst.impl.utils.ColourUtils;
+import red.jackf.jsst.impl.utils.TextUtils;
 import red.jackf.jsst.impl.utils.sgui.Styles;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.UIRegion;
@@ -23,10 +25,11 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 enum GradientSet {
-    DYES(() -> JSSTElementBuilder.from(Items.RED_DYE).ui().setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.dyes")).build(), makeDyes()),
-    CHAT_FORMATTING(() -> JSSTElementBuilder.from(Items.DARK_OAK_SIGN).ui().setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.chatFormatting")).build(), makeChatFormatting()),
-    MISC(() -> JSSTElementBuilder.from(Items.APPLE).ui().setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.misc")).build(), makeMiscellaneous()),
-    PLAYER_HISTORY(() -> JSSTElementBuilder.from(Items.RED_DYE).ui().setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.playerColourHistory")).build(), GradientSet::drawPlayerColours);
+    DYES(() -> JSSTElementBuilder.from(Items.RED_DYE).ui().setName(Component.translatable("jsst.itemEditor.changeStyle.page.dyeColours")).build(), makeDyes()),
+    CHAT_FORMATTING(() -> JSSTElementBuilder.from(Items.DARK_OAK_SIGN).ui().setName(Component.translatable("jsst.itemEditor.changeStyle.page.chatFormatting")).build(), makeChatFormatting()),
+    MISC(() -> JSSTElementBuilder.from(Items.APPLE).ui().setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc")).build(), makeMiscellaneous()),
+    GRADIENTS(() -> JSSTElementBuilder.from(Items.GOLDEN_APPLE).ui().setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients")).build(), makeGradients()),
+    PLAYER_HISTORY(() -> JSSTElementBuilder.from(Items.RED_DYE).ui().setName(Component.translatable("jsst.itemEditor.changeStyle.page.playerColours")).build(), GradientSet::drawPlayerColours);
 
     private final Supplier<GuiElementInterface> icon;
     private final DrawFunction drawFunction;
@@ -92,7 +95,7 @@ enum GradientSet {
         // begging for local functions
         BiConsumer<Rarity, ItemLike> rarityGen = (rarity, item) -> colours.put(Colour.fromInt(rarity.color().getColor()), JSSTElementBuilder.from(item).ui()
                 .hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.%sRarity".formatted(rarity.getSerializedName())).withStyle(rarity.color()))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.%sRarity".formatted(rarity.getSerializedName())).withStyle(rarity.color()))
                 .asStack());
 
         rarityGen.accept(Rarity.COMMON, Items.APPLE);
@@ -101,30 +104,90 @@ enum GradientSet {
         rarityGen.accept(Rarity.EPIC, Items.HEAVY_CORE);
 
         colours.put(Colour.fromInt(ChatFormatting.GRAY.getColor()), JSSTElementBuilder.from(Items.IRON_CHESTPLATE).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.infoTooltips"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.infoTooltips"))
                 .asStack());
 
         colours.put(Colour.fromInt(ChatFormatting.DARK_PURPLE.getColor()), JSSTElementBuilder.from(Items.SPLASH_POTION).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.potionTooltips"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.potionTooltips"))
                 .asStack());
 
         colours.put(Colour.fromInt(ChatFormatting.DARK_GRAY.getColor()), JSSTElementBuilder.from(Items.COMMAND_BLOCK).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.debugTooltips"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.debugTooltips"))
                 .asStack());
 
         colours.put(Colour.fromInt(ChatFormatting.DARK_GREEN.getColor()), JSSTElementBuilder.from(Items.DIAMOND_AXE).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.weaponAttributes"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.weaponAttributes"))
                 .asStack());
 
         colours.put(Colour.fromInt(ChatFormatting.BLUE.getColor()), JSSTElementBuilder.from(Items.GLISTERING_MELON_SLICE).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.positiveAttributes"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.positiveAttributes"))
                 .asStack());
 
         colours.put(Colour.fromInt(ChatFormatting.RED.getColor()), JSSTElementBuilder.from(Items.SPIDER_EYE).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.gradient.negativeAttributes"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.negativeAttributes"))
+                .asStack());
+
+        colours.put(Colour.fromInt(ChatFormatting.DARK_PURPLE.getColor()), JSSTElementBuilder.from(Items.WRITTEN_BOOK).hideDefaultTooltip()
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.defaultLore"))
                 .asStack());
 
         return colours;
+    }
+
+    private static Map<Gradient, ItemStack> makeGradients() {
+        Map<Gradient, ItemStack> formats = new LinkedHashMap<>();
+
+        formats.put(Gradients.RAINBOW, JSSTElementBuilder.from(Items.RED_WOOL)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.rainbow"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.RAINBOW))
+                .asStack());
+
+        formats.put(Gradients.GAY, JSSTElementBuilder.from(Items.PRISMARINE_SHARD)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.gay"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.GAY))
+                .asStack());
+
+        formats.put(Gradients.LESBIAN, JSSTElementBuilder.from(Items.OCELOT_SPAWN_EGG)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.lesbian"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.LESBIAN))
+                .asStack());
+
+        formats.put(Gradients.BISEXUAL, JSSTElementBuilder.from(Items.BRICKS)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.bisexual"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.BISEXUAL))
+                .asStack());
+
+        formats.put(Gradients.TRANS, JSSTElementBuilder.from(Items.EGG)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.trans"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.TRANS))
+                .asStack());
+
+        formats.put(Gradients.PANSEXUAL, JSSTElementBuilder.from(Items.ENDER_EYE)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.pansexual"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.PANSEXUAL))
+                .asStack());
+
+        formats.put(Gradients.INTERSEX_SMOOTH, JSSTElementBuilder.from(Items.PURPLE_CANDLE)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.intersex"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.INTERSEX_SMOOTH))
+                .asStack());
+
+        formats.put(Gradients.NONBINARY, JSSTElementBuilder.from(Items.WIND_CHARGE)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.nonbinary"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.NONBINARY))
+                .asStack());
+
+        formats.put(Gradients.ARO, JSSTElementBuilder.from(Items.BREAD)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.aro"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.ARO))
+                .asStack());
+
+        formats.put(Gradients.ACE, JSSTElementBuilder.from(Items.ENDER_PEARL)
+                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.ace"))
+                .addLoreLine(TextUtils.previewGradient(Gradients.ACE))
+                .asStack());
+
+        return formats;
     }
 
     private static void drawPlayerColours(ServerPlayer player, UIRegion slots, Consumer<Gradient> callback) {

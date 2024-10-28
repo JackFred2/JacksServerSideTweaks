@@ -3,7 +3,10 @@ package red.jackf.jsst.impl.utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import red.jackf.jackfredlib.api.colour.Gradient;
+import red.jackf.jackfredlib.api.colour.GradientBuilder;
 
 import static net.minecraft.network.chat.Component.literal;
 
@@ -35,5 +38,21 @@ public interface TextUtils {
         }
 
         return root;
+    }
+
+    static Component applyGradient(String string, Style style, Gradient colour) {
+        MutableComponent base = Component.empty().withStyle(style);
+
+        for (int i = 0; i < string.length(); i++) {
+            float progress = Math.min(((float) i) / Math.max(1, string.length() - 1), GradientBuilder.END);
+
+            base.append(literal(String.valueOf(string.charAt(i))).withColor(colour.sample(progress).toARGB()));
+        }
+
+        return base;
+    }
+
+    static Component previewGradient(Gradient gradient) {
+        return applyGradient("|".repeat(40), Style.EMPTY, gradient);
     }
 }

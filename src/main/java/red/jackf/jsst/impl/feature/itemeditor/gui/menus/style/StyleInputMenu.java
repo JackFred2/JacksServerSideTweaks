@@ -18,6 +18,7 @@ import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.utils.Callbacks;
 import red.jackf.jsst.impl.utils.RegistryUtils;
 import red.jackf.jsst.impl.utils.Sounds;
+import red.jackf.jsst.impl.utils.TextUtils;
 import red.jackf.jsst.impl.utils.sgui.*;
 import red.jackf.jsst.impl.utils.sgui.elements.CycleButton;
 import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
@@ -64,10 +65,11 @@ public class StyleInputMenu extends SimpleGuiExt {
 
     @Override
     protected void drawStatic() {
-        this.setSlot(4, 0, CycleButton.<GradientSet>builder(Component.translatable("jsst.itemEditor.changeStyle.gradient.page"))
+        this.setSlot(4, 0, CycleButton.<GradientSet>builder(Component.translatable("jsst.itemEditor.changeStyle.page"))
                 .option(GradientSet.DYES, GradientSet.DYES.getIcon())
                 .option(GradientSet.CHAT_FORMATTING, GradientSet.CHAT_FORMATTING.getIcon())
                 .option(GradientSet.MISC, GradientSet.MISC.getIcon())
+                .option(GradientSet.GRADIENTS, GradientSet.GRADIENTS.getIcon())
                 .build(page -> {
                     Sounds.UI.click(player);
                     this.currentPage = page;
@@ -146,18 +148,23 @@ public class StyleInputMenu extends SimpleGuiExt {
         this.font = style.getFont();
     }
 
-    private Style buildStyle() {
-        Style style = Style.EMPTY.withBold(bold).withItalic(italics).withUnderlined(underline)
-                .withStrikethrough(strikethrough).withObfuscated(obfuscated).withFont(font);
-
-        // TODO gradient
-        if (colour != null) style = style.withColor(colour.sample(0f).toARGB());
-
-        return style;
-    }
-
     private Component buildOutput() {
-        return this.initial.copy().setStyle(buildStyle());
+        Style style = Style.EMPTY.withBold(bold)
+                .withItalic(italics)
+                .withUnderlined(underline)
+                .withStrikethrough(strikethrough)
+                .withObfuscated(obfuscated)
+                .withFont(font);
+
+        String initial = this.initial.getString();
+
+        if (this.colour == null || this.initial.getString().isBlank()) {
+            return Component.literal(initial).withStyle(style);
+        } else if (this.colour instanceof Colour col) {
+            return Component.literal(initial).withStyle(style).withColor(col.toARGB());
+        } else {
+            return TextUtils.applyGradient(initial, style, this.colour);
+        }
     }
 
     @Override
@@ -248,15 +255,5 @@ public class StyleInputMenu extends SimpleGuiExt {
                 this.open();
             }
         });
-    }
-
-    private enum Page {
-        ;
-
-        private final Consumer<StyleInputMenu> pageDraw;
-
-        Page(Consumer<StyleInputMenu> pageDraw) {
-            this.pageDraw = pageDraw;
-        }
     }
 }
