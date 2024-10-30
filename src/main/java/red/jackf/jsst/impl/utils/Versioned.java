@@ -6,6 +6,9 @@ import net.minecraft.world.item.ItemStack;
 *///?} else
 import net.minecraft.world.InteractionResult;
 
+/**
+ * Various versioned methods
+ */
 public interface Versioned {
     //? if <=1.21.1 {
     /*static InteractionResultHolder<ItemStack> itemInteractPass() {

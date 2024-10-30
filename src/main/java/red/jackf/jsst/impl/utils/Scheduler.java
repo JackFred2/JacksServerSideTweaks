@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.function.Consumer;
 
+/**
+ * Schedules runnables to happen at specified ticks
+ */
 public class Scheduler {
     private static final Map<ServerLevel, Multimap<Long, Consumer<ServerLevel>>> SCHEDULED = new HashMap<>();
 

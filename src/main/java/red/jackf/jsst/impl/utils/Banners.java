@@ -18,6 +18,9 @@ import net.minecraft.world.level.block.entity.BannerPatterns;
 
 import java.util.*;
 
+/**
+ * Working with banners, mainly parsing and loading PlanetMinecraft banner codes
+ */
 public interface Banners {
     interface ByColour {
         Map<DyeColor, BannerBlock> FLOOR = new HashMap<>();

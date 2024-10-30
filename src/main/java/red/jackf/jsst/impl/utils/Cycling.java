@@ -2,6 +2,9 @@ package red.jackf.jsst.impl.utils;
 
 import java.util.List;
 
+/**
+ * Methods for cycling through lists and enums
+ */
 public interface Cycling {
     static <T> T next(List<T> options, T current) {
         int currentIndex = options.indexOf(current);

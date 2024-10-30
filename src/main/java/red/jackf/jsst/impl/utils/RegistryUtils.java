@@ -10,6 +10,9 @@ import net.minecraft.tags.TagKey;
 
 import java.util.Optional;
 
+/**
+ * Version-aware registry methods
+ */
 public interface RegistryUtils {
     static <T> Registry<T> lookup(RegistryAccess access, ResourceKey<Registry<T>> key) {
         //? if <=1.21.1 {

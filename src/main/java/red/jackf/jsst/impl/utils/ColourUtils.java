@@ -5,6 +5,9 @@ import net.minecraft.world.item.DyeColor;
 import java.util.List;
 
 public interface ColourUtils {
+    /**
+     * Order of dyed items in creative menus
+     */
     List<DyeColor> CANON_DYE_ORDER = List.of(
             DyeColor.WHITE,
             DyeColor.LIGHT_GRAY,

@@ -9,6 +9,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 
+/**
+ * Plays sounds only to specific players
+ */
 public interface Sounds {
     float VOLUME = 0.5f;
 
