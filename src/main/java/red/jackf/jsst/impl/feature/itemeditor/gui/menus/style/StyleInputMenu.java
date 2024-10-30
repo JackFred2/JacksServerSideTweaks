@@ -87,6 +87,12 @@ public class StyleInputMenu extends SimpleGuiExt {
                             });
                 }));
 
+        this.setSlot(4, 3, JSSTElementBuilder.from(Items.GRINDSTONE).ui().leftClick(Translations.clear(), () -> {
+            Sounds.UI.grind(player);
+            this.loadFromStyle(Style.EMPTY);
+            this.refresh();
+        }));
+
         this.setSlot(6, 0, ToggleButton.builder(Component.translatable("jsst.itemEditor.changeStyle.bold")
                         .withStyle(ChatFormatting.BOLD)).initial(this.bold)
                 .disabled(JSSTElementBuilder.from(Items.GLASS).build())
@@ -139,12 +145,6 @@ public class StyleInputMenu extends SimpleGuiExt {
                     Sounds.UI.click(player);
                     this.openFontMenu();
                 }));
-
-        this.setSlot(8, 2, JSSTElementBuilder.from(Items.GRINDSTONE).ui().leftClick(Translations.clear(), () -> {
-            Sounds.UI.grind(player);
-            this.loadFromStyle(Style.EMPTY);
-            this.refresh();
-        }));
 
         this.setSlot(8, 3, CommonLabels.cancel(this::cancel));
     }

@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.ItemLike;
+import org.apache.commons.lang3.function.TriConsumer;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.Gradients;
@@ -103,33 +104,18 @@ enum GradientSet {
         rarityGen.accept(Rarity.RARE, Items.TRIDENT);
         rarityGen.accept(Rarity.EPIC, Items.HEAVY_CORE);
 
-        colours.put(Colour.fromInt(ChatFormatting.GRAY.getColor()), JSSTElementBuilder.from(Items.IRON_CHESTPLATE).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.infoTooltips"))
+        TriConsumer<ChatFormatting, ItemLike, String> miscGen = (format, item, key) -> colours.put(Colour.fromInt(format.getColor()), JSSTElementBuilder.from(item).ui()
+                .hideDefaultTooltip()
+                .setName(Component.translatable(key).withColor(format.getColor()))
                 .asStack());
 
-        colours.put(Colour.fromInt(ChatFormatting.DARK_PURPLE.getColor()), JSSTElementBuilder.from(Items.SPLASH_POTION).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.potionTooltips"))
-                .asStack());
-
-        colours.put(Colour.fromInt(ChatFormatting.DARK_GRAY.getColor()), JSSTElementBuilder.from(Items.COMMAND_BLOCK).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.debugTooltips"))
-                .asStack());
-
-        colours.put(Colour.fromInt(ChatFormatting.DARK_GREEN.getColor()), JSSTElementBuilder.from(Items.DIAMOND_AXE).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.weaponAttributes"))
-                .asStack());
-
-        colours.put(Colour.fromInt(ChatFormatting.BLUE.getColor()), JSSTElementBuilder.from(Items.GLISTERING_MELON_SLICE).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.positiveAttributes"))
-                .asStack());
-
-        colours.put(Colour.fromInt(ChatFormatting.RED.getColor()), JSSTElementBuilder.from(Items.SPIDER_EYE).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.negativeAttributes"))
-                .asStack());
-
-        colours.put(Colour.fromInt(ChatFormatting.DARK_PURPLE.getColor()), JSSTElementBuilder.from(Items.WRITTEN_BOOK).hideDefaultTooltip()
-                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.misc.defaultLore"))
-                .asStack());
+        miscGen.accept(ChatFormatting.GRAY, Items.IRON_CHESTPLATE, "jsst.itemEditor.changeStyle.page.misc.infoTooltips");
+        miscGen.accept(ChatFormatting.DARK_PURPLE, Items.SPLASH_POTION, "jsst.itemEditor.changeStyle.page.misc.potionTooltips");
+        miscGen.accept(ChatFormatting.DARK_GRAY, Items.COMMAND_BLOCK, "jsst.itemEditor.changeStyle.page.misc.debugTooltips");
+        miscGen.accept(ChatFormatting.DARK_GREEN, Items.DIAMOND_AXE, "jsst.itemEditor.changeStyle.page.misc.weaponAttributes");
+        miscGen.accept(ChatFormatting.BLUE, Items.GLISTERING_MELON_SLICE, "jsst.itemEditor.changeStyle.page.misc.positiveAttributes");
+        miscGen.accept(ChatFormatting.RED, Items.SPIDER_EYE, "jsst.itemEditor.changeStyle.page.misc.negativeAttributes");
+        miscGen.accept(ChatFormatting.DARK_PURPLE, Items.WRITTEN_BOOK, "jsst.itemEditor.changeStyle.page.misc.defaultLore");
 
         return colours;
     }

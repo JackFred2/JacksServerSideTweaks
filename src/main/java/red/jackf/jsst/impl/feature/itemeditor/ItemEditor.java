@@ -16,6 +16,7 @@ import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.feature.itemeditor.gui.MainGui;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.ArmourTrimEditor;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
+import red.jackf.jsst.impl.feature.itemeditor.gui.editors.MapColourEditor;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.SimpleNameEditor;
 
 import java.util.HashMap;
@@ -30,7 +31,8 @@ public class ItemEditor {
 
     public static final List<Editor.Type<?>> EDITORS = List.of(
             SimpleNameEditor.TYPE,
-            ArmourTrimEditor.TYPE
+            ArmourTrimEditor.TYPE,
+            MapColourEditor.TYPE
     );
 
     private static final Map<ServerPlayer, EditSession> CURRENT_SESSIONS = new HashMap<>();
