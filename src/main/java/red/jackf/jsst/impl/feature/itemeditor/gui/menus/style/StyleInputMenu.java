@@ -1,6 +1,5 @@
 package red.jackf.jsst.impl.feature.itemeditor.gui.menus.style;
 
-import com.mojang.serialization.DataResult;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
@@ -74,6 +73,18 @@ public class StyleInputMenu extends SimpleGuiExt {
                     Sounds.UI.click(player);
                     this.currentPage = page;
                     this.refresh();
+                }));
+
+        this.setSlot(4, 2, JSSTElementBuilder.from(Items.GLOWSTONE_DUST).ui()
+                .setName(Component.translatable("jsst.itemEditor.customColour"))
+                .leftClick(Translations.select(), () -> {
+                    Sounds.UI.click(player);
+                    InputMenus.colour(player)
+                            .title(Component.translatable("jsst.itemEditor.customColour"))
+                            .start(opt -> {
+                                opt.ifPresent(value -> this.colour = value);
+                                this.open();
+                            });
                 }));
 
         this.setSlot(6, 0, ToggleButton.builder(Component.translatable("jsst.itemEditor.changeStyle.bold")
@@ -240,11 +251,10 @@ public class StyleInputMenu extends SimpleGuiExt {
                 .start(fontId -> {
             if (fontId.isPresent()) {
                 if (CUSTOM_FONT.equals(fontId.get())) {
-                    InputMenus.string(player).title(Component.translatable("jsst.itemEditor.changeStyle.font.custom"))
+                    InputMenus.resLoc(player).title(Component.translatable("jsst.itemEditor.changeStyle.font.custom"))
                             .initial(this.font == null ? Style.DEFAULT_FONT.toString() : this.font.toString())
-                            .validator(s -> ResourceLocation.read(s).isSuccess()).start(opt -> {
-                                opt.map(ResourceLocation::read).filter(DataResult::isSuccess)
-                                        .ifPresent(resloc -> this.font = resloc.getOrThrow());
+                            .start(opt -> {
+                                opt.ifPresent(resloc -> this.font = resloc);
                                 this.open();
                             });
                 } else {

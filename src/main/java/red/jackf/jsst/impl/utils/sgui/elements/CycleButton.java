@@ -31,8 +31,6 @@ public class CycleButton<T> implements GuiElementInterface {
         this.labels = labels;
         this.current = initial;
         this.changeCallback = changeCallback;
-
-        this.changeCallback.accept(current);
     }
 
     private ItemStack prepStackLabel(ItemStack stack) {

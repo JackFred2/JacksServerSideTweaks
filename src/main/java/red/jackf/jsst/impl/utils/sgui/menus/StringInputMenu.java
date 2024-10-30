@@ -1,5 +1,6 @@
 package red.jackf.jsst.impl.utils.sgui.menus;
 
+import com.mojang.serialization.DataResult;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.ScreenProperty;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
@@ -8,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.impl.utils.Callbacks;
 import red.jackf.jsst.impl.utils.Sounds;
@@ -19,31 +21,39 @@ import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 
-public class StringInputMenu extends SimpleGuiExt {
+public class StringInputMenu<T> extends SimpleGuiExt {
     private final String initial;
-    private final Function<String, @Nullable GuiElementInterface> hintFactory;
-    private final Predicate<String> validator;
-    private final Consumer<Optional<String>> callback;
+    private final Function<T, @Nullable GuiElementInterface> hintFactory;
+    private final Function<String, DataResult<T>> parser;
+    private final Predicate<T> validator;
+    private final OutputFactory<T> outputFunction;
+    private final Consumer<Optional<T>> callback;
 
     private String currentText;
 
-    public StringInputMenu(ServerPlayer player, Component title, String initial, Function<String, @Nullable GuiElementInterface> hintFactory, Predicate<String> validator, Consumer<Optional<String>> callback) {
+    public StringInputMenu(ServerPlayer player,
+                           Component title,
+                           String initial,
+                           Function<T, @Nullable GuiElementInterface> hintFactory,
+                           Function<String, DataResult<T>> parser,
+                           Predicate<T> validator,
+                           OutputFactory<T> outputFunction,
+                           Consumer<Optional<T>> callback) {
         super(MenuType.ANVIL, player, false);
         this.initial = initial;
         this.hintFactory = hintFactory;
+        this.parser = parser;
         this.validator = validator;
+        this.outputFunction = outputFunction;
         this.callback = Callbacks.singleUse(callback);
+        this.setTitle(title);
 
         this.currentText = this.initial;
 
-        this.setTitle(title);
-
         this.drawStatic();
-        this.updateOutput();
+        this.recieveText(this.initial);
     }
 
     @Override
@@ -60,12 +70,20 @@ public class StringInputMenu extends SimpleGuiExt {
 
     public void recieveText(String currentText) {
         this.currentText = currentText;
-        GuiElementInterface hint = this.hintFactory.apply(currentText);
-        if (hint != null) {
-            this.setSlot(1, hint);
-        } else {
-            this.clearSlot(1);
-        }
+
+        DataResult<T> parsed = this.parser.apply(currentText);
+
+        parsed.ifSuccess(t -> {
+            //this.setTitle(this.titleFactory.apply(t));
+
+            GuiElementInterface hint = this.hintFactory.apply(t);
+            if (hint != null) {
+                this.setSlot(1, hint);
+            } else {
+                this.clearSlot(1);
+            }
+        });
+
         this.updateOutput();
     }
 
@@ -80,17 +98,22 @@ public class StringInputMenu extends SimpleGuiExt {
             this.setSlot(2, JSSTElementBuilder.from(Items.RED_CONCRETE).ui()
                     .setName(Component.literal(this.currentText))
                     .addLoreLine(Component.translatable("jsst.itemEditor.stringInput.noChanges").setStyle(Styles.NEGATIVE)));
-        } else if (!this.validator.test(this.currentText)) {
-            this.setSlot(2, JSSTElementBuilder.from(Items.RED_CONCRETE).ui()
-                    .setName(Component.literal(this.currentText))
-                    .addLoreLine(Component.translatable("jsst.itemEditor.stringInput.invalid").setStyle(Styles.NEGATIVE)));
         } else {
-            this.setSlot(2, JSSTElementBuilder.from(Items.LIME_CONCRETE).ui()
-                    .setName(Component.literal(this.currentText))
-                    .leftClick(Translations.confirm(), () -> {
-                        Sounds.UI.click(player);
-                        this.complete();
-                    }));
+            DataResult<T> parsed = this.parser.apply(this.currentText);
+
+            if (parsed.isError() || !this.validator.test(parsed.getOrThrow())) {
+                this.setSlot(2, JSSTElementBuilder.from(Items.RED_CONCRETE).ui()
+                        .setName(Component.literal(this.currentText))
+                        .addLoreLine(Component.translatable("jsst.itemEditor.stringInput.invalid")
+                                .setStyle(Styles.NEGATIVE)));
+            } else {
+                JSSTElementBuilder builder = this.outputFunction.create(this.currentText, parsed.getOrThrow());
+
+                this.setSlot(2, builder.leftClick(Translations.confirm(), () -> {
+                    Sounds.UI.click(player);
+                    this.complete();
+                }));
+            }
         }
 
         this.sendProperty(ScreenProperty.LEVEL_COST, 0);
@@ -104,58 +127,109 @@ public class StringInputMenu extends SimpleGuiExt {
     }
 
     private void complete() {
-        this.callback.accept(Optional.of(this.currentText));
+        this.parser.apply(this.currentText).ifSuccess(t -> {
+            if (this.validator.test(t)) {
+                this.callback.accept(Optional.of(t));
+            }
+        });
+
+        // if it hasn't ran we cancel due to random invalid values
+        this.cancel();
     }
 
     private void cancel() {
         this.callback.accept(Optional.empty());
     }
 
-    public static class Builder {
+    @Override
+    public void onClose() {
+        this.cancel();
+    }
+
+    public static class Builder<T> {
         private final ServerPlayer player;
+        private final Function<String, DataResult<T>> parser;
         private Component title;
         private String initial = "";
-        private Predicate<String> validator = s -> true;
-        private Function<String, @Nullable GuiElementInterface> hintFactory = s -> null;
+        private Predicate<T> validator = t -> true;
+        private Function<T, @Nullable GuiElementInterface> hintFactory = s -> null;
+        private OutputFactory<T> outputFactory = Builder::defaultOutputFactory;
 
-        protected Builder(ServerPlayer player) {
+        protected Builder(ServerPlayer player, Function<String, DataResult<T>> parser) {
             this.player = player;
+            this.parser = parser;
         }
 
-        public Builder title(Component title) {
+        public Builder<T> title(Component title) {
             this.title = title;
             return this;
         }
 
-        public Builder initial(String initial) {
+        public Builder<T> initial(String initial) {
             this.initial = initial;
             return this;
         }
 
-        public Builder validator(Predicate<String> validator) {
+        public Builder<T> validator(Predicate<T> validator) {
             this.validator = validator;
             return this;
         }
 
-        public Builder hint(Component... hintLines) {
-            return hint(Arrays.asList(hintLines));
+        public Builder<T> hint(Component... hintLines) {
+            return hints(Arrays.asList(hintLines));
         }
 
-        public Builder hint(List<Component> hintLines) {
+        public Builder<T> hints(List<Component> hintLines) {
             if (hintLines.isEmpty()) {
-                this.hintFactory = s -> null;
+                return hintElement(null);
             } else {
-                this.hintFactory = s -> {
+                return hintFactory(s -> {
                     var builder = JSSTElementBuilder.from(Items.PAPER).ui().hideDefaultTooltip();
                     hintLines.forEach(builder::addLoreLine);
                     return builder.build();
-                };
+                });
             }
+        }
+
+        public Builder<T> hintElement(@Nullable GuiElementInterface guiElement) {
+            return hintFactory(s -> guiElement);
+        }
+
+        public Builder<T> hintFactory(Function<T, @Nullable GuiElementInterface> hintFactory) {
+            this.hintFactory = hintFactory;
             return this;
         }
 
-        public void start(Consumer<Optional<String>> callback) {
-            new StringInputMenu(player, title, initial, hintFactory, validator, callback).open();
+        public Builder<T> appendOutput(OutputAppender<T> appender) {
+            OutputFactory<T> oldFactory = this.outputFactory;
+            this.outputFactory = (str, t) -> {
+                JSSTElementBuilder builder = oldFactory.create(str, t);
+                appender.append(str, t, builder);
+                return builder;
+            };
+            return this;
         }
+
+        public Builder<T> outputFactory(OutputFactory<T> factory) {
+            this.outputFactory = factory;
+            return this;
+        }
+
+        public void start(Consumer<Optional<T>> callback) {
+            new StringInputMenu<>(player, title, initial, hintFactory, parser, validator, outputFactory, callback).open();
+        }
+
+        private static @NotNull <T> JSSTElementBuilder defaultOutputFactory(String text, T parsed) {
+            return JSSTElementBuilder.from(Items.LIME_CONCRETE).ui()
+                    .setName(Component.literal(text));
+        }
+    }
+
+    public interface OutputFactory<T> {
+        @NotNull JSSTElementBuilder create(String rawText, T value);
+    }
+
+    public interface OutputAppender<T> {
+        void append(String rawText, T value, JSSTElementBuilder builder);
     }
 }
