@@ -51,6 +51,15 @@ public class JSSTConfig {
     }
 
     @SerialEntry
+    public MapEditor mapEditor = new MapEditor();
+
+    public static class MapEditor {
+        public boolean enabled = true;
+
+        public String tool = "minecraft:feather";
+    }
+
+    @SerialEntry
     public PortableCrafting portableCrafting = new PortableCrafting();
 
     public static class PortableCrafting {

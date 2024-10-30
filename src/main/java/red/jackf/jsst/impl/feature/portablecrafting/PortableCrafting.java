@@ -3,15 +3,8 @@ package red.jackf.jsst.impl.feature.portablecrafting;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
-//? if <=1.21.1 {
-/*import net.minecraft.world.InteractionResultHolder;
-*///?} else
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
@@ -20,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.mixinutils.JSSTItemValidatedMenu;
 import red.jackf.jsst.impl.utils.RegistryUtils;
-import red.jackf.jsst.impl.utils.TextUtils;
+import red.jackf.jsst.impl.utils.Versioned;
 
 public class PortableCrafting {
     public static void setup() {
@@ -32,16 +25,9 @@ public class PortableCrafting {
                     && (player.isShiftKeyDown() || !config.requiresSneak)
                     && isValidCraftingTable(level.registryAccess(), player.getItemInHand(hand))) {
                 openMenuForPlayer(player, (ServerLevel) level, hand);
-                //? if <=1.21.1 {
-                /*return InteractionResultHolder.success(ItemStack.EMPTY);
-                *///?} else
-                return InteractionResult.PASS;
             }
 
-            //? if <=1.21.1 {
-            /*return InteractionResultHolder.success(ItemStack.EMPTY);
-            *///?} else
-            return InteractionResult.PASS;
+            return Versioned.itemInteractPass();
         });
     }
 
@@ -58,15 +44,7 @@ public class PortableCrafting {
 
     public static boolean isValidCraftingTable(RegistryAccess access, ItemStack stack) {
         String config = JSSTConfig.INSTANCE.instance().portableCrafting.itemIdOrTag;
-        if (!TextUtils.isValidReslocOrTag(config)) return false;
 
-        if (config.startsWith("#")) {
-            return stack.is(TagKey.create(Registries.ITEM, ResourceLocation.parse(config.substring(1))));
-        } else {
-            return RegistryUtils.getHolder(
-                    RegistryUtils.lookup(access, Registries.ITEM),
-                    ResourceKey.create(Registries.ITEM, ResourceLocation.parse(config))
-            ).map(stack::is).orElse(false);
-        }
+        return stack.is(RegistryUtils.getValuesFromIDOrTag(access, Registries.ITEM, config));
     }
 }

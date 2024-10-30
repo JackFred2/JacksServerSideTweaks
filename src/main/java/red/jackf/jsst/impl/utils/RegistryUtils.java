@@ -1,9 +1,12 @@
 package red.jackf.jsst.impl.utils;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 
 import java.util.Optional;
 
@@ -20,5 +23,27 @@ public interface RegistryUtils {
         /*return registry.getHolder(key);
         *///?} else
         return registry.get(key);
+    }
+
+    static <T> HolderSet<T> getValuesFromIDOrTag(RegistryAccess registries, ResourceKey<Registry<T>> registryKey, String idOrTag) {
+        if (!TextUtils.isValidReslocOrTag(idOrTag)) return HolderSet.empty();
+
+        Registry<T> registry = lookup(registries, registryKey);
+
+        if (idOrTag.startsWith("#")) {
+            //? if <=1.21.1 {
+            /*Optional<HolderSet.Named<T>> set = registry.getTag(TagKey.create(registryKey, ResourceLocation.parse(idOrTag.substring(1))));
+            *///?} else
+            Optional<HolderSet.Named<T>> set = registry.get(TagKey.create(registryKey, ResourceLocation.parse(idOrTag.substring(1))));
+            if (set.isPresent()) return set.get();
+            else return HolderSet.empty();
+        } else {
+            //? if <=1.21.1 {
+            /*Optional<Holder.Reference<T>> item = registry.getHolder(ResourceKey.create(registryKey, ResourceLocation.parse(idOrTag)));
+            *///?} else
+            Optional<Holder.Reference<T>> item = registry.get(ResourceKey.create(registryKey, ResourceLocation.parse(idOrTag)));
+            if (item.isPresent()) return HolderSet.direct(item.get());
+            else return HolderSet.empty();
+        }
     }
 }

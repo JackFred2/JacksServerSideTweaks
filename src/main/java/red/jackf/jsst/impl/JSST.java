@@ -9,6 +9,7 @@ import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.feature.bannerwriter.BannerWriter;
 import red.jackf.jsst.impl.feature.campfiretimers.CampfireTimers;
 import red.jackf.jsst.impl.feature.itemeditor.ItemEditor;
+import red.jackf.jsst.impl.feature.mapeditor.MapEditor;
 import red.jackf.jsst.impl.feature.portablecrafting.PortableCrafting;
 import red.jackf.jsst.impl.utils.Scheduler;
 
@@ -35,6 +36,7 @@ public class JSST implements ModInitializer {
 		BannerWriter.setup();
 		CampfireTimers.setup();
 		ItemEditor.setup();
+		MapEditor.setup();
 		PortableCrafting.setup();
 	}
 }
