@@ -59,6 +59,11 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         return this;
     }
 
+    public JSSTElementBuilder removeComponent(DataComponentType<?> componentType) {
+        this.stack.remove(componentType);
+        return this;
+    }
+
     public JSSTElementBuilder setCount(int count) {
         this.stack.setCount(Mth.clamp(count, 1, 99));
         return this;

@@ -5,6 +5,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Unit;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
 //? if <=1.21.1 {
@@ -76,7 +77,12 @@ public class ArmourTrimEditor extends GuiEditor {
         UIRegion.playerColumn(this, 3).fillStack(CommonLabels::divider);
         UIRegion.playerColumn(this, 7).fillStack(CommonLabels::divider);
 
-        this.setSlot(1, CommonLabels.cancel(this::cancel));
+        this.setSlot(1, JSSTElementBuilder.from(this.session.getStack()).ui()
+                .hideDefaultTooltip()
+                .removeComponent(DataComponents.TRIM)
+                .setComponent(DataComponents.HIDE_TOOLTIP, Unit.INSTANCE));
+
+        this.setPlayerSlot(8, 3, CommonLabels.cancel(this::cancel));
     }
 
     @Override

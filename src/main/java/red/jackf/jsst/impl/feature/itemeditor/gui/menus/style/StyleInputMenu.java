@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
@@ -235,7 +236,12 @@ public class StyleInputMenu extends SimpleGuiExt {
                 .setName(Component.translatable("jsst.itemEditor.changeStyle.font.uniform"))
                 .addLoreLine(createPreview(UNIFORM_FONT)).build());
 
-        fonts.put(ILLAGER_FONT, JSSTElementBuilder.from(Raid.getOminousBannerInstance(RegistryUtils.lookup(this.player.serverLevel().registryAccess(), Registries.BANNER_PATTERN))).ui()
+        //? if >=1.21.2 {
+        ItemStack raidBanner = Raid.getOminousBannerInstance(RegistryUtils.lookup(this.player.serverLevel().registryAccess(), Registries.BANNER_PATTERN));
+        //?} else
+        /*ItemStack raidBanner = Raid.getLeaderBannerInstance(RegistryUtils.lookup(this.player.serverLevel().registryAccess(), Registries.BANNER_PATTERN).asLookup());*/
+
+        fonts.put(ILLAGER_FONT, JSSTElementBuilder.from(raidBanner).ui()
                 .setName(Component.translatable("jsst.itemEditor.changeStyle.font.illageralt"))
                 .addLoreLine(createPreview(ILLAGER_FONT)).build());
 
