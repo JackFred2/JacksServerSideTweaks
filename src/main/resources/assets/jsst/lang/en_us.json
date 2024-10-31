@@ -58,6 +58,7 @@
   "jsst.itemEditor.editor.armourTrim": "Armour Trim Editor",
   "jsst.itemEditor.editor.armourTrim.addRandomTrim": "Add Random Trim",
   "jsst.itemEditor.editor.mapColour": "Map Colour Editor",
+  "jsst.mapEditor.frameAlreadyBeingEdited": "This map is already being edited by someone else.",
   "jsst.ui.cancel": "Cancel",
   "jsst.ui.clear": "Clear",
   "jsst.ui.close": "Close",
