@@ -19,7 +19,7 @@ public abstract class ServerGamePacketListenerImplMixin {
     private void itemEditor$handleRenameForStringInput(ServerboundRenameItemPacket packet, CallbackInfo ci) {
         if (this.player.containerMenu instanceof VirtualScreenHandler vsh) {
             try {
-                if (vsh.getGui() instanceof StringInputMenu menu) {
+                if (vsh.getGui() instanceof StringInputMenu<?> menu) {
                     menu.recieveText(packet.getName());
                 }
             } catch (Throwable throwable) {
