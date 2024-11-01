@@ -22,7 +22,7 @@ public class JSSTConfig {
     public static class BannerWriter {
         public boolean enabled = true;
 
-        public int permissionlevel = 0;
+        public boolean requiresOp = false;
     }
 
     @SerialEntry
@@ -38,6 +38,10 @@ public class JSSTConfig {
     public static class ItemEditor {
         public boolean enabled = true;
 
+        // TODO implement
+        public boolean requiresOp = false;
+
+        // TODO implement
         public boolean nonOpsCanUseCosmeticMode = false;
     }
 
@@ -54,7 +58,11 @@ public class JSSTConfig {
     public MapEditor mapEditor = new MapEditor();
 
     public static class MapEditor {
+        // TODO implement
         public boolean enabled = true;
+
+        // TODO implement
+        public boolean requiresOp = false;
 
         public String tool = "minecraft:feather";
     }

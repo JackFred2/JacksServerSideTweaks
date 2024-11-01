@@ -64,7 +64,7 @@ public class BannerWriter {
             var root = Commands.literal("bannerWriter");
             root.requires(stack -> stack.isPlayer()
                     && JSSTConfig.INSTANCE.instance().bannerWriter.enabled
-                    && stack.hasPermission(JSSTConfig.INSTANCE.instance().bannerWriter.permissionlevel));
+                    && stack.hasPermission(JSSTConfig.INSTANCE.instance().bannerWriter.requiresOp ? 4 : 0));
 
             var argument = Commands.argument("text", StringArgumentType.greedyString());
             argument.executes(context -> {

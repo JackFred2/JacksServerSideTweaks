@@ -5,7 +5,6 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
-import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,7 +24,9 @@ public interface JSSTConfigScreen {
         Collection<ConfigCategory> categories = List.of(
                 createBannerWriter(JSSTConfig.INSTANCE),
                 createCampfireTimers(JSSTConfig.INSTANCE),
+                createItemEditor(JSSTConfig.INSTANCE),
                 createItemNudging(JSSTConfig.INSTANCE),
+                createMapEditor(JSSTConfig.INSTANCE),
                 createPortableCrafting(JSSTConfig.INSTANCE)
         );
 
@@ -62,14 +63,15 @@ public interface JSSTConfigScreen {
                                 .coloured(true)
                                 .yesNoFormatter())
                         .build())
-                .option(Option.<Integer>createBuilder()
-                        .name(translatable("jsst.config.bannerWriter.permissionLevel"))
-                        .description(OptionDescription.of(translatable("jsst.config.bannerWriter.permissionLevel.description")))
-                        .binding(handler.defaults().bannerWriter.permissionlevel,
-                                () -> handler.instance().bannerWriter.permissionlevel,
-                                i -> handler.instance().bannerWriter.permissionlevel = i)
-                        .controller(opt -> IntegerFieldControllerBuilder.create(opt)
-                                .min(0))
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.requiresOp"))
+                        .description(OptionDescription.of(translatable("jsst.config.requiresOp.description")))
+                        .binding(handler.defaults().bannerWriter.requiresOp,
+                                () -> handler.instance().bannerWriter.requiresOp,
+                                i -> handler.instance().bannerWriter.requiresOp = i)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
                         .build())
                 .build();
     }
@@ -86,6 +88,45 @@ public interface JSSTConfigScreen {
                         .binding(handler.defaults().campfireTimers.enabled,
                                 () -> handler.instance().campfireTimers.enabled,
                                 b -> handler.instance().campfireTimers.enabled = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .build();
+    }
+
+    static ConfigCategory createItemEditor(ConfigClassHandler<JSSTConfig> handler) {
+        return ConfigCategory.createBuilder()
+                .name(translatable("jsst.config.itemEditor"))
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.enabled"))
+                        .description(OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.itemEditor.description"))
+                                .image(JSST.id("textures/config/item_editor.png"),320, 240)
+                                .build())
+                        .binding(handler.defaults().itemEditor.enabled,
+                                () -> handler.instance().itemEditor.enabled,
+                                b -> handler.instance().itemEditor.enabled = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.requiresOp"))
+                        .description(OptionDescription.of(translatable("jsst.config.requiresOp.description")))
+                        .binding(handler.defaults().itemEditor.requiresOp,
+                                () -> handler.instance().itemEditor.requiresOp,
+                                i -> handler.instance().itemEditor.requiresOp = i)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.itemEditor.nonOpsCanUseCosmeticMode"))
+                        .description(OptionDescription.of(translatable("jsst.config.itemEditor.nonOpsCanUseCosmeticMode.description")))
+                        .binding(handler.defaults().itemEditor.nonOpsCanUseCosmeticMode,
+                                () -> handler.instance().itemEditor.nonOpsCanUseCosmeticMode,
+                                i -> handler.instance().itemEditor.nonOpsCanUseCosmeticMode = i)
                         .controller(opt -> BooleanControllerBuilder.create(opt)
                                 .coloured(true)
                                 .yesNoFormatter())
@@ -119,6 +160,46 @@ public interface JSSTConfigScreen {
                 .build();
     }
 
+    private static ConfigCategory createMapEditor(ConfigClassHandler<JSSTConfig> handler) {
+        return ConfigCategory.createBuilder()
+                .name(translatable("jsst.config.mapEditor"))
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.enabled"))
+                        .description(OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.mapEditor.description"))
+                                .image(JSST.id("textures/config/map_editor.png"),320, 240)
+                                .build())
+                        .binding(handler.defaults().mapEditor.enabled,
+                                () -> handler.instance().mapEditor.enabled,
+                                b -> handler.instance().mapEditor.enabled = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.requiresOp"))
+                        .description(OptionDescription.of(translatable("jsst.config.requiresOp.description")))
+                        .binding(handler.defaults().mapEditor.requiresOp,
+                                () -> handler.instance().mapEditor.requiresOp,
+                                i -> handler.instance().mapEditor.requiresOp = i)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .option(Option.<String>createBuilder()
+                        .name(translatable("jsst.config.mapEditor.tool"))
+                        .description(OptionDescription.of(translatable("jsst.config.mapEditor.tool.description"),
+                                Component.empty(),
+                                translatable("jsst.config.idOrTagDescription")))
+                        .binding(handler.defaults().mapEditor.tool,
+                                () -> handler.instance().mapEditor.tool,
+                                s -> handler.instance().mapEditor.tool = s)
+                        .controller(opt -> FormattableStringController.create(opt)
+                                .formatter(TextUtils::formatReslocOrTag))
+                        .build())
+                .build();
+    }
+
     private static ConfigCategory createPortableCrafting(ConfigClassHandler<JSSTConfig> handler) {
         return ConfigCategory.createBuilder()
                 .name(translatable("jsst.config.portableCrafting"))
@@ -137,7 +218,9 @@ public interface JSSTConfigScreen {
                         .build())
                 .option(Option.<String>createBuilder()
                         .name(translatable("jsst.config.portableCrafting.itemIdOrTag"))
-                        .description(OptionDescription.of(translatable("jsst.config.portableCrafting.itemIdOrTag.description")))
+                        .description(OptionDescription.of(translatable("jsst.config.portableCrafting.itemIdOrTag.description"),
+                                Component.empty(),
+                                translatable("jsst.config.idOrTagDescription")))
                         .binding(handler.defaults().portableCrafting.itemIdOrTag,
                                 () -> handler.instance().portableCrafting.itemIdOrTag,
                                 s -> handler.instance().portableCrafting.itemIdOrTag = s)
