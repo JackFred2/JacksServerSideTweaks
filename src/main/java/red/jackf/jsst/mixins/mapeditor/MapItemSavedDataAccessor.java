@@ -15,9 +15,20 @@ import java.util.Map;
 
 @Mixin(MapItemSavedData.class)
 public interface MapItemSavedDataAccessor {
+    @Accessor
+    int getTrackedDecorationCount();
+
+    @Accessor
+    void setTrackedDecorationCount(int newVal);
 
     @Accessor
     Map<String, MapDecoration> getDecorations();
+
+    @Invoker
+    void invokeSetDecorationsDirty();
+
+    @Invoker
+    void invokeRemoveDecoration(String id);
 
     @Invoker
     void invokeAddDecoration(Holder<MapDecorationType> decorationType, @Nullable LevelAccessor level, String id, double x, double z, double yRot, @Nullable Component displayName);

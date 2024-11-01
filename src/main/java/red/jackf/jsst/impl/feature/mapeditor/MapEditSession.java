@@ -30,11 +30,15 @@ import red.jackf.jackfredlib.api.lying.entity.EntityLie;
 import red.jackf.jackfredlib.api.lying.entity.builders.EntityBuilders;
 import red.jackf.jackfredlib.api.lying.entity.builders.display.ItemDisplayBuilder;
 import red.jackf.jackfredlib.api.lying.glowing.EntityGlowLie;
+import red.jackf.jsst.impl.utils.Cycling;
 import red.jackf.jsst.impl.utils.Sounds;
+import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 import red.jackf.jsst.mixins.mapeditor.MapItemSavedDataAccessor;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 public final class MapEditSession {
     public static final String KEY = "jsstCustom";
@@ -105,6 +109,8 @@ public final class MapEditSession {
     }
 
     public void end() {
+        if (this.ended) return;
+
         if (this.glowLie != null) this.glowLie.fade();
         if (this.mainPlane != null) this.mainPlane.fade();
         if (this.decoHighlight != null) this.decoHighlight.fade();
@@ -215,9 +221,33 @@ public final class MapEditSession {
     }
 
     private void deselect() {
+        MapSounds.erase(player);
+
         this.currentlyInteractedId = null;
 
         if (this.glowLie != null) this.glowLie.setGlowColour(ChatFormatting.GREEN);
+    }
+
+    private void updateDecoration(UnaryOperator<MapDecoration> op) {
+        MapDecoration old = getDecorationById(this.currentlyInteractedId);
+        if (old == null) return;
+
+        MapDecoration newDeco = op.apply(old);
+        if (newDeco.equals(old)) return;
+
+        var cast = (MapItemSavedDataAccessor) this.getMapData();
+
+        cast.getDecorations().put(this.currentlyInteractedId, newDeco);
+
+        if (old.type().value().trackCount() != newDeco.type().value().trackCount()) {
+            if (old.type().value().trackCount()) { // new doesn't
+                cast.setTrackedDecorationCount(cast.getTrackedDecorationCount() - 1);
+            }  else {// new does
+                cast.setTrackedDecorationCount(cast.getTrackedDecorationCount() + 1);
+            }
+        }
+
+        cast.invokeSetDecorationsDirty();
     }
 
     private void selectForEdit(String id) {
@@ -234,8 +264,9 @@ public final class MapEditSession {
 
         Vec2 origin = new Vec2(deco.x() / 256f, deco.y() / 256f);
 
-        this.decoHighlight = EntityLie.builder(createUIIcon(getUILocation(origin, Vec2.ZERO), Items.LIGHT_BLUE_STAINED_GLASS_PANE.getDefaultInstance(), Colours.LIGHT_BLUE)
-                        .scale(new Vector3f(0.07f))
+        // highlight
+        this.decoHighlight = EntityLie.builder(createUIIcon(getUILocation(origin, Vec2.ZERO), Items.ENDER_PEARL.getDefaultInstance(), Colours.LIGHT_BLUE)
+                        .scale(new Vector3f(0.15f, 0.15f, 0.01f))
                         .setTranslation(new Vector3f(0, 0, -0.01f))
                         .build())
                 .onTick(getValid(id))
@@ -243,22 +274,57 @@ public final class MapEditSession {
 
         // next
         createUIButton(createUIIcon(getUILocation(origin, new Vec2(BUTTON_SPACING, 0)), Heads.RIGHT_ARROW, Colours.GREEN), () -> {
+            MapSounds.page(player);
 
+            updateDecoration(deco2 -> {
+                var nextType = Cycling.next(AVAILABLE, deco2.type());
+
+                return new MapDecoration(nextType, deco2.x(), deco2.y(), deco2.rot(), deco2.name());
+            });
         });
 
         // prev
         createUIButton(createUIIcon(getUILocation(origin, new Vec2(-BUTTON_SPACING, 0)), Heads.LEFT_ARROW, Colours.GREEN), () -> {
+            MapSounds.page(player);
 
+            updateDecoration(deco2 -> {
+                var nextType = Cycling.previous(AVAILABLE, deco2.type());
+
+                return new MapDecoration(nextType, deco2.x(), deco2.y(), deco2.rot(), deco2.name());
+            });
         });
 
         // rename
         createUIButton(createUIIcon(getUILocation(origin, new Vec2(0, -BUTTON_SPACING)), Items.NAME_TAG.getDefaultInstance(), Colours.YELLOW), () -> {
+            MapSounds.scribble(player);
 
+            String initial = "";
+            MapDecoration current = getDecorationById(this.currentlyInteractedId);
+
+            if (current != null) {
+                initial = current.name().map(Component::getString).orElse("");
+            }
+
+            InputMenus.string(player)
+                    .title(Component.translatable("jsst.mapEditor.setDecorationName"))
+                    .initial(initial)
+                    .start(opt -> {
+                        if (opt.isPresent()) {
+                            Optional<Component> newName = opt.flatMap(s -> s.isBlank() ? Optional.empty() : Optional.of(Component.literal(s.strip())));
+
+                            updateDecoration(deco2 -> new MapDecoration(deco2.type(), deco2.x(), deco2.y(), deco2.rot(), newName));
+                        }
+
+                        player.closeContainer();
+                    });
         });
 
         // delete
         createUIButton(createUIIcon(getUILocation(origin, new Vec2(0, BUTTON_SPACING)), Items.BARRIER.getDefaultInstance(), Colours.RED), () -> {
 
+            ((MapItemSavedDataAccessor) this.getMapData()).invokeRemoveDecoration(this.currentlyInteractedId);
+
+            deselect();
         });
 
         for (int i = 0; i < 16; i ++) {
@@ -268,9 +334,12 @@ public final class MapEditSession {
 
             Colour col = Colour.fromHSV(((rotation + 180) % 360) / 360f, 0.7f, 1f);
 
+            int finalI = i;
             createUIButton(createUIIcon(getUILocation(origin, new Vec2(-Mth.sin(rotationRad), Mth.cos(rotationRad)).scale(2 * BUTTON_SPACING)), Items.IRON_SWORD.getDefaultInstance(), col)
                     .leftRotation(new Quaternionf(new AxisAngle4f(visualRotation, new Vector3f(0, 0, -1)))), () -> {
-                player.sendSystemMessage(Component.literal("%.1f".formatted(rotation)));
+                MapSounds.page(player);
+
+                updateDecoration(deco2 -> new MapDecoration(deco2.type(), deco2.x(), deco2.y(), (byte) finalI, deco2.name()));
             });
         }
     }
@@ -282,8 +351,12 @@ public final class MapEditSession {
         var hovered = getHoveredDecoration(local);
 
         if (hovered != null) {
+            MapSounds.page(player);
+
             selectForEdit(hovered.getFirst());
         } else {
+            MapSounds.scribble(player);
+
             Vector2i blockCoords = getWorldPosition(local);
             String id = KEY + "/%d %d".formatted(blockCoords.x, blockCoords.y);
 
