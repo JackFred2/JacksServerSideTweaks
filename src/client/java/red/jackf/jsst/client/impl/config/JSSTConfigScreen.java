@@ -112,16 +112,6 @@ public interface JSSTConfigScreen {
                                 .yesNoFormatter())
                         .build())
                 .option(Option.<Boolean>createBuilder()
-                        .name(translatable("jsst.config.requiresOp"))
-                        .description(OptionDescription.of(translatable("jsst.config.requiresOp.description")))
-                        .binding(handler.defaults().itemEditor.requiresOp,
-                                () -> handler.instance().itemEditor.requiresOp,
-                                i -> handler.instance().itemEditor.requiresOp = i)
-                        .controller(opt -> BooleanControllerBuilder.create(opt)
-                                .coloured(true)
-                                .yesNoFormatter())
-                        .build())
-                .option(Option.<Boolean>createBuilder()
                         .name(translatable("jsst.config.itemEditor.nonOpsCanUseCosmeticMode"))
                         .description(OptionDescription.of(translatable("jsst.config.itemEditor.nonOpsCanUseCosmeticMode.description")))
                         .binding(handler.defaults().itemEditor.nonOpsCanUseCosmeticMode,
@@ -196,6 +186,16 @@ public interface JSSTConfigScreen {
                                 s -> handler.instance().mapEditor.tool = s)
                         .controller(opt -> FormattableStringController.create(opt)
                                 .formatter(TextUtils::formatReslocOrTag))
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.mapEditor.disableSerialization"))
+                        .description(OptionDescription.of(translatable("jsst.config.mapEditor.disableSerialization.description")))
+                        .binding(handler.defaults().mapEditor.disableSerialization,
+                                () -> handler.instance().mapEditor.disableSerialization,
+                                s -> handler.instance().mapEditor.disableSerialization = s)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
                         .build())
                 .build();
     }

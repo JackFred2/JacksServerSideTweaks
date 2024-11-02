@@ -37,15 +37,10 @@ import red.jackf.jsst.mixins.mapeditor.MapItemSavedDataAccessor;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.UnaryOperator;
 
 public final class MapEditSession {
     public static final String KEY = "jsstCustom";
-    private static final Set<Holder<MapDecorationType>> MANAGED = Set.of(
-            MapDecorationTypes.PLAYER,
-            MapDecorationTypes.FRAME
-    );
     private static final List<Holder<MapDecorationType>> AVAILABLE = List.of(
             MapDecorationTypes.TARGET_X,
             MapDecorationTypes.RED_X,
@@ -61,9 +56,12 @@ public final class MapEditSession {
             MapDecorationTypes.JUNGLE_TEMPLE,
             MapDecorationTypes.SWAMP_HUT
     );
+    private static final float SELECTION_RADIUS = 1 / 400f;
     private static final float BUTTON_SIZE = 0.06f;
     private static final float BUTTON_SPACING = 0.1f;
     private static final float HEAD_SCALE_FACTOR = 1.5f;
+    private static final float HIGHLIGHT_SCALE = 0.1f;
+    private static final float MAX_DISTANCE = 5;
 
     private final ServerPlayer player;
     private final ItemFrame frame;
@@ -105,7 +103,7 @@ public final class MapEditSession {
                 && !frame.isRemoved()
                 && !this.ended
                 && MapEditor.isValidTool(player.serverLevel().registryAccess(), player.getItemInHand(InteractionHand.MAIN_HAND))
-                && player.getEyePosition().distanceTo(frame.position()) < 8;
+                && player.getEyePosition().distanceTo(frame.position()) < MAX_DISTANCE;
     }
 
     public void end() {
@@ -131,8 +129,8 @@ public final class MapEditSession {
                         .height(1f)
                         .position(getFrontFaceCenter().relative(this.frame.getDirection().getOpposite(), 0.5f).subtract(0, 0.5, 0))
                         .build())
-                .onLeftClick((player1, lie, wasSneaking, relativeToEntity) -> onLeftClickFrame(wasSneaking, relativeToEntity))
-                .onRightClick((player1, lie, wasSneaking, hand, relativeToEntity) -> onRightClickFrame(wasSneaking, hand, relativeToEntity))
+                .onLeftClick((player1, lie, wasSneaking, relativeToEntity) -> onLeftClickFrame())
+                .onRightClick((player1, lie, wasSneaking, hand, relativeToEntity) -> onRightClickFrame(relativeToEntity))
                 .createAndShow(player);
 
         Sounds.Ding.ding(player);
@@ -242,7 +240,7 @@ public final class MapEditSession {
         if (old.type().value().trackCount() != newDeco.type().value().trackCount()) {
             if (old.type().value().trackCount()) { // new doesn't
                 cast.setTrackedDecorationCount(cast.getTrackedDecorationCount() - 1);
-            }  else {// new does
+            }  else { // new does
                 cast.setTrackedDecorationCount(cast.getTrackedDecorationCount() + 1);
             }
         }
@@ -265,9 +263,9 @@ public final class MapEditSession {
         Vec2 origin = new Vec2(deco.x() / 256f, deco.y() / 256f);
 
         // highlight
-        this.decoHighlight = EntityLie.builder(createUIIcon(getUILocation(origin, Vec2.ZERO), Items.ENDER_PEARL.getDefaultInstance(), Colours.LIGHT_BLUE)
-                        .scale(new Vector3f(0.15f, 0.15f, 0.01f))
-                        .setTranslation(new Vector3f(0, 0, -0.01f))
+        this.decoHighlight = EntityLie.builder(createUIIcon(getUILocation(origin, Vec2.ZERO), Items.LIGHT_BLUE_STAINED_GLASS_PANE.getDefaultInstance(), Colours.LIGHT_BLUE)
+                        .scale(new Vector3f(HIGHLIGHT_SCALE, HIGHLIGHT_SCALE, 0.01f))
+                        .setTranslation(new Vector3f(0, 0, -0.01f)) //inset into map so it doesn't appear as an item
                         .build())
                 .onTick(getValid(id))
                 .createAndShow(player);
@@ -344,7 +342,7 @@ public final class MapEditSession {
         }
     }
 
-    private void onRightClickFrame(boolean sneaking, InteractionHand hand, Vec3 hit) {
+    private void onRightClickFrame(Vec3 hit) {
         MapItemSavedData data = this.getMapData();
         Vec2 local = this.toLocal(hit.add(this.entity().position().subtract(0, 0.5, 0)));
 
@@ -372,7 +370,7 @@ public final class MapEditSession {
         }
     }
 
-    private void onLeftClickFrame(boolean sneaking, Vec3 hit) {
+    private void onLeftClickFrame() {
         if (this.currentlyInteractedId != null) {
             this.deselect();
         } else {
@@ -435,9 +433,9 @@ public final class MapEditSession {
         for (Map.Entry<String, MapDecoration> decoration : ((MapItemSavedDataAccessor) this.getMapData()).getDecorations().entrySet()) {
             Vec2 decoLocal = new Vec2(decoration.getValue().x() / 256f, decoration.getValue().y() / 256f);
 
-            if (decoLocal.distanceToSqr(local) < 1f / 384) {
+            if (decoLocal.distanceToSqr(local) < SELECTION_RADIUS) {
                 // dont interact with player markers or item frame icons
-                if (MANAGED.contains(decoration.getValue().type())) continue;
+                if (!AVAILABLE.contains(decoration.getValue().type())) continue;
 
                 // dont interact with banner markers
                 if (this.getMapData().getBanners().stream().anyMatch(banner -> banner.getId().equals(decoration.getKey()))) continue;
@@ -449,6 +447,5 @@ public final class MapEditSession {
         return null;
     }
 
-    private record UILocation(Vec3 worldPos, float yRot, float xRot) {
-    }
+    private record UILocation(Vec3 worldPos, float yRot, float xRot) {}
 }

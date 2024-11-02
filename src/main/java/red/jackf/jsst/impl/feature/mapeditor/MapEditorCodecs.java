@@ -8,7 +8,7 @@ import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
 import java.util.Map;
 
-public interface MapDecoSerialization {
+public interface MapEditorCodecs {
     Codec<MapDecoration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             BuiltInRegistries.MAP_DECORATION_TYPE.holderByNameCodec().fieldOf("type").forGetter(MapDecoration::type),
             Codec.BYTE.fieldOf("x").forGetter(MapDecoration::x),

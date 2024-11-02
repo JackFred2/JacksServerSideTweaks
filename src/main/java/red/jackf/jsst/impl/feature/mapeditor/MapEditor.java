@@ -15,7 +15,6 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.maps.MapId;
-import net.minecraft.world.phys.EntityHitResult;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.utils.RegistryUtils;
 
@@ -28,17 +27,20 @@ public class MapEditor {
         UseEntityCallback.EVENT.register((player, level, hand, entity, hitResult) -> {
             if (level instanceof ServerLevel serverLevel
                     && player instanceof ServerPlayer serverPlayer
+                    && JSSTConfig.INSTANCE.instance().mapEditor.enabled
+                    && (!JSSTConfig.INSTANCE.instance().mapEditor.requiresOp || player.hasPermissions(4))
                     && hand == InteractionHand.MAIN_HAND // using main hand
                     && hitResult != null // using the position-based callback not the positionless
                     && entity instanceof ItemFrame itemFrame
                     && itemFrame.getItem().has(DataComponents.MAP_ID) // item frame with map
                     && MapEditor.isValidTool(serverLevel.registryAccess(), player.getItemInHand(hand))) { // using feather
-                MapEditor.onInteract(serverPlayer, itemFrame, hitResult);
+                MapEditor.onInteract(serverPlayer, itemFrame);
 
                 return InteractionResult.SUCCESS;
             }
 
-            if (level instanceof ServerLevel && entity instanceof ItemFrame frame && getSessionWith(frame).isPresent()) {
+            // stop other people rotating the frame while in use
+            if (level instanceof ServerLevel && entity instanceof ItemFrame frame && existsSessionUsingFrame(frame)) {
                 return InteractionResult.FAIL;
             }
 
@@ -57,25 +59,21 @@ public class MapEditor {
         });
     }
 
-    private static Optional<MapEditSession> getSessionWith(ItemFrame frame) {
-        return SESSIONS.values().stream()
-                .filter(session -> session.entity() == frame)
-                .findFirst();
+    private static boolean existsSessionUsingFrame(ItemFrame frame) {
+        return SESSIONS.values().stream().anyMatch(session -> session.entity() == frame);
     }
 
-    private static Optional<MapEditSession> getSessionWith(MapId id) {
-        return SESSIONS.values().stream()
-                .filter(session -> session.getMapId() == id)
-                .findFirst();
+    private static boolean existsSessionWithMapId(MapId id) {
+        return SESSIONS.values().stream().anyMatch(session -> session.getMapId() == id);
     }
 
-    private static void onInteract(ServerPlayer player, ItemFrame frame, EntityHitResult hit) {
+    private static void onInteract(ServerPlayer player, ItemFrame frame) {
         MapEditSession existingSession = SESSIONS.get(player);
 
         if (existingSession != null && existingSession.entity() != frame) return;
 
         if (existingSession == null) {
-            if (getSessionWith(frame).isPresent() || getSessionWith(frame.getItem().get(DataComponents.MAP_ID)).isPresent()) {
+            if (existsSessionUsingFrame(frame) || existsSessionWithMapId(frame.getItem().get(DataComponents.MAP_ID))) {
                 player.sendSystemMessage(Component.translatable("jsst.mapEditor.alreadyBeingEdited"));
                 return;
             }

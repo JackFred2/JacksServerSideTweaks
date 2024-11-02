@@ -39,9 +39,6 @@ public class JSSTConfig {
         public boolean enabled = true;
 
         // TODO implement
-        public boolean requiresOp = false;
-
-        // TODO implement
         public boolean nonOpsCanUseCosmeticMode = false;
     }
 
@@ -58,13 +55,13 @@ public class JSSTConfig {
     public MapEditor mapEditor = new MapEditor();
 
     public static class MapEditor {
-        // TODO implement
         public boolean enabled = true;
 
-        // TODO implement
         public boolean requiresOp = false;
 
         public String tool = "minecraft:feather";
+
+        public boolean disableSerialization = false;
     }
 
     @SerialEntry
