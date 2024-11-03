@@ -349,13 +349,20 @@ public final class MapEditSession {
         var hovered = getHoveredDecoration(local);
 
         if (hovered != null) {
-            MapSounds.page(player);
+            if (!hovered.getFirst().equals(this.currentlyInteractedId)) {
+                MapSounds.page(player);
 
-            selectForEdit(hovered.getFirst());
-        } else {
+                selectForEdit(hovered.getFirst());
+            } else {
+                this.deselect();
+            }
+        } else { // create new
+            if (!((MapItemSavedDataAccessor) data).invokeIsInsideMap(local.x * 128, local.y * 128)) return;
+
             MapSounds.scribble(player);
 
             Vector2i blockCoords = getWorldPosition(local);
+
             String id = KEY + "/%d %d".formatted(blockCoords.x, blockCoords.y);
 
             ((MapItemSavedDataAccessor) data).invokeAddDecoration(AVAILABLE.getFirst(),
