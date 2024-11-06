@@ -1,4 +1,4 @@
-package red.jackf.jsst.impl.utils.sgui.elements;
+package red.jackf.jsst.impl.utils.sgui.elements.builder;
 
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;

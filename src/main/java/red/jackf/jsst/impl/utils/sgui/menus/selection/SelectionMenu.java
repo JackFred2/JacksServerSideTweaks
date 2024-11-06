@@ -7,7 +7,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.impl.utils.Callbacks;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 import java.util.Collection;
 import java.util.List;

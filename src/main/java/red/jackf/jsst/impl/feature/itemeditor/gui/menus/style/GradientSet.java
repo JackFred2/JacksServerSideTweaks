@@ -17,7 +17,7 @@ import red.jackf.jsst.impl.utils.TextUtils;
 import red.jackf.jsst.impl.utils.sgui.Styles;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -21,10 +21,10 @@ import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.utils.Sounds;
-import red.jackf.jsst.impl.utils.sgui.CommonLabels;
+import red.jackf.jsst.impl.utils.sgui.CommonElements;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.pagination.GridPaginator;
 
 import java.util.Optional;
@@ -45,7 +45,7 @@ public class ArmourTrimEditor extends GuiEditor {
             .slots(UIRegion.playerRectangle(this, 0, 0, 3, 3))
             .fullButtons(this.getPlayerSlotFor(0, 3), this.getPlayerSlotFor(1, 3), this.getPlayerSlotFor(2, 3))
             .elements(this.lookupRegistry(Registries.TRIM_PATTERN).stream().toList())
-            .drawFunction(pattern -> JSSTElementBuilder.from(pattern.templateItem().value())
+            .drawFunction((i, pattern) -> JSSTElementBuilder.from(pattern.templateItem().value())
                     .setName(pattern.description())
                     .hideDefaultTooltip()
                     .leftClick(Translations.select(), () -> {
@@ -59,7 +59,7 @@ public class ArmourTrimEditor extends GuiEditor {
             .slots(UIRegion.playerRectangle(this, 4, 0, 7, 3))
             .fullButtons(this.getPlayerSlotFor(4, 3), this.getPlayerSlotFor(5, 3), this.getPlayerSlotFor(6, 3))
             .elements(this.lookupRegistry(Registries.TRIM_MATERIAL).stream().toList())
-            .drawFunction(material -> JSSTElementBuilder.from(material.ingredient().value())
+            .drawFunction((i, material) -> JSSTElementBuilder.from(material.ingredient().value())
                     .setName(material.description())
                     .leftClick(Translations.select(), () -> {
                         Sounds.UI.click(player);
@@ -74,15 +74,15 @@ public class ArmourTrimEditor extends GuiEditor {
 
     @Override
     protected void drawStatic() {
-        UIRegion.playerColumn(this, 3).fillStack(CommonLabels::divider);
-        UIRegion.playerColumn(this, 7).fillStack(CommonLabels::divider);
+        UIRegion.playerColumn(this, 3).fillStack(CommonElements::divider);
+        UIRegion.playerColumn(this, 7).fillStack(CommonElements::divider);
 
         this.setSlot(1, JSSTElementBuilder.from(this.session.getStack()).ui()
                 .hideDefaultTooltip()
                 .removeComponent(DataComponents.TRIM)
                 .setComponent(DataComponents.HIDE_TOOLTIP, Unit.INSTANCE));
 
-        this.setPlayerSlot(8, 3, CommonLabels.cancel(this::cancel));
+        this.setPlayerSlot(8, 3, CommonElements.cancel(this::cancel));
     }
 
     @Override

@@ -17,13 +17,13 @@ import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.utils.RegistryUtils;
 import red.jackf.jsst.impl.utils.Sounds;
-import red.jackf.jsst.impl.utils.sgui.CommonLabels;
+import red.jackf.jsst.impl.utils.sgui.CommonElements;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.elements.pagination.ListPaginator;
 import red.jackf.jsst.impl.utils.sgui.labels.Labels;
 import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -160,9 +160,9 @@ public class EnchantmentEditor extends GuiEditor {
 
     @Override
     protected void drawStatic() {
-        UIRegion.column(this, 3).fillStack(CommonLabels::divider);
+        UIRegion.column(this, 3).fillStack(CommonElements::divider);
 
-        this.setSlot(0, 5, CommonLabels.cancel(this::cancel));
+        this.setSlot(0, 5, CommonElements.cancel(this::cancel));
     }
 
     @Override

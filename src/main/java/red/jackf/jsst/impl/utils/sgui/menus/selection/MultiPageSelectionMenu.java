@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import org.apache.commons.lang3.NotImplementedException;
 import red.jackf.jsst.impl.utils.Sounds;
-import red.jackf.jsst.impl.utils.sgui.CommonLabels;
+import red.jackf.jsst.impl.utils.sgui.CommonElements;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.elements.WrappedElement;
 
@@ -24,7 +24,7 @@ public class MultiPageSelectionMenu<T> extends SelectionMenu<T> {
 
     @Override
     protected void drawStatic() {
-        this.setSlot(this.getSize() - 1, CommonLabels.cancel(() -> {
+        this.setSlot(this.getSize() - 1, CommonElements.cancel(() -> {
             Sounds.UI.close(player);
             this.cancel();
         }));

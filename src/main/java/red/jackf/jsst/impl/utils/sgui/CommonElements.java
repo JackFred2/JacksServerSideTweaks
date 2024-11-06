@@ -4,9 +4,9 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
-public interface CommonLabels {
+public interface CommonElements {
     static ItemStack divider() {
         return GuiElementBuilder.from(Items.ORANGE_STAINED_GLASS_PANE.getDefaultInstance())
                 .hideTooltip()

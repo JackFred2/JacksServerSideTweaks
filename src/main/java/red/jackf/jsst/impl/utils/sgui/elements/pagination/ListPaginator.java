@@ -7,10 +7,10 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.utils.Sounds;
-import red.jackf.jsst.impl.utils.sgui.CommonLabels;
+import red.jackf.jsst.impl.utils.sgui.CommonElements;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 import red.jackf.jsst.impl.utils.sgui.Translations;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.region.UIRectangle;
 import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
 
@@ -26,7 +26,7 @@ public class ListPaginator<T> {
     private final SimpleGuiExt gui;
     private final List<T> elements;
     private final Builder.Modifiable<T> modifiableSettings;
-    private final RowDraw<T> drawFunction;
+    private final DrawFunction<T> drawFunction;
     private final UIRectangle slots;
     private final UIRectangle elementSlots;
     private final PageButtons pageButtons;
@@ -35,7 +35,7 @@ public class ListPaginator<T> {
     private int maxPage = 0;
     private int page = 0;
 
-    private ListPaginator(SimpleGuiExt gui, List<T> elements, @Nullable ListPaginator.Builder.Modifiable<T> modifiableSettings, RowDraw<T> drawFunction, UIRectangle slots, PageButtons pageButtons) {
+    private ListPaginator(SimpleGuiExt gui, List<T> elements, @Nullable ListPaginator.Builder.Modifiable<T> modifiableSettings, DrawFunction<T> drawFunction, UIRectangle slots, PageButtons pageButtons) {
         this.gui = gui;
         this.elements = elements;
         this.modifiableSettings = modifiableSettings;
@@ -63,8 +63,7 @@ public class ListPaginator<T> {
 
         List<T> shown = this.elements.subList(startIndex, endIndex);
 
-        // TODO implement new element
-        int row = 0;
+        int row;
         for (row = 0; row < shown.size(); row++) {
             UIRegion rowSlots = this.elementSlots.rows().get(row);
             T element = shown.get(row);
@@ -87,7 +86,7 @@ public class ListPaginator<T> {
             rowSlots.loadElements(rowElements);
 
             if (this.modifiableSettings != null) {
-                this.gui.setSlot(rowSlots.getSlot(-1), CommonLabels.delete(() -> {
+                this.gui.setSlot(rowSlots.getSlot(-1), CommonElements.delete(() -> {
                     Sounds.UI.close(this.gui.getPlayer());
                     this.elements.remove(elementIndex);
                     this.modifiableSettings.changeCallback.run();
@@ -134,11 +133,11 @@ public class ListPaginator<T> {
     }
 
     public void fillDisabled() {
-        this.elementSlots.fillStack(CommonLabels::disabled);
-        this.pageButtons.forEach(slot -> this.gui.setSlot(slot, CommonLabels.disabled()));
+        this.elementSlots.fillStack(CommonElements::disabled);
+        this.pageButtons.forEach(slot -> this.gui.setSlot(slot, CommonElements.disabled()));
     }
 
-    public interface RowDraw<T> {
+    public interface DrawFunction<T> {
         List<GuiElementInterface> draw(int elementIndex, T element);
     }
 
@@ -151,7 +150,7 @@ public class ListPaginator<T> {
         private UIRectangle slots = null;
         private List<T> elements = null;
         private @Nullable Modifiable<T> modifiable = null;
-        private RowDraw<T> drawFunction = null;
+        private DrawFunction<T> drawFunction = null;
 
         private Builder(SimpleGuiExt gui) {
             this.gui = gui;
@@ -172,7 +171,7 @@ public class ListPaginator<T> {
             return this;
         }
 
-        public Builder<T> drawFunction(RowDraw<T> drawFunction) {
+        public Builder<T> drawFunction(DrawFunction<T> drawFunction) {
             this.drawFunction = drawFunction;
             return this;
         }

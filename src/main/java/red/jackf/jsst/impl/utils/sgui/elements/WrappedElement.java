@@ -8,10 +8,15 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.impl.utils.sgui.Hints;
 import red.jackf.jsst.impl.utils.sgui.Inputs;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Wraps another SGUI element, allowing for custom names / lore lines and callbacks.
+ * @param <E>
+ */
 public class WrappedElement<E extends GuiElementInterface> implements GuiElementInterface {
     private final E wrapped;
     private final Component nameOverride;

@@ -21,7 +21,7 @@ import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.TextUtils;
 import red.jackf.jsst.impl.utils.sgui.*;
 import red.jackf.jsst.impl.utils.sgui.elements.CycleButton;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.ToggleButton;
 import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
@@ -148,7 +148,7 @@ public class StyleInputMenu extends SimpleGuiExt {
                     this.openFontMenu();
                 }));
 
-        this.setSlot(8, 3, CommonLabels.cancel(this::cancel));
+        this.setSlot(8, 3, CommonElements.cancel(this::cancel));
     }
 
     private void loadFromStyle(Style style) {

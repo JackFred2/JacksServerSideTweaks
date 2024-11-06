@@ -9,6 +9,7 @@ import red.jackf.jsst.impl.utils.sgui.Hints;
 import red.jackf.jsst.impl.utils.sgui.Inputs;
 import red.jackf.jsst.impl.utils.sgui.Styles;
 import red.jackf.jsst.impl.utils.sgui.Translations;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 import java.util.function.Consumer;
 

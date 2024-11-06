@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 import red.jackf.jsst.impl.utils.sgui.Translations;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 import java.util.Iterator;
 import java.util.List;

@@ -9,9 +9,9 @@ import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.feature.itemeditor.gui.menus.style.StyleInputMenu;
 import red.jackf.jsst.impl.utils.Sounds;
-import red.jackf.jsst.impl.utils.sgui.CommonLabels;
+import red.jackf.jsst.impl.utils.sgui.CommonElements;
 import red.jackf.jsst.impl.utils.sgui.Translations;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 
 import java.util.function.Consumer;
@@ -33,9 +33,9 @@ public class SimpleNameEditor extends GuiEditor {
 
     @Override
     protected void drawStatic() {
-        this.setSlot(8, CommonLabels.cancel(this::cancel));
+        this.setSlot(8, CommonElements.cancel(this::cancel));
 
-        this.setSlot(1, CommonLabels.divider());
+        this.setSlot(1, CommonElements.divider());
 
         this.setSlot(2, JSSTElementBuilder.from(Items.PAPER).ui()
                 .leftClick(Component.translatable("jsst.itemEditor.changeText"), this::changeText));

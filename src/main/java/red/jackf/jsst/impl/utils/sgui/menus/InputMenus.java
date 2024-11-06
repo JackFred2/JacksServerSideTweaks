@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.menus.selection.SelectionMenu;
 
 import java.util.regex.Matcher;

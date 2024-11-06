@@ -12,8 +12,8 @@ import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.utils.Sounds;
-import red.jackf.jsst.impl.utils.sgui.AnimatedGuiElementBuilderExt;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.AnimatedGuiElementBuilderExt;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 
 import java.util.function.Consumer;

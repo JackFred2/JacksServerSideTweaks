@@ -1,4 +1,4 @@
-package red.jackf.jsst.impl.utils.sgui;
+package red.jackf.jsst.impl.utils.sgui.elements.builder;
 
 import eu.pb4.sgui.api.elements.AnimatedGuiElementBuilder;
 import net.minecraft.world.item.ItemStack;

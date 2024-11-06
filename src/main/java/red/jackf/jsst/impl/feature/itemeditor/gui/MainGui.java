@@ -9,7 +9,7 @@ import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.*;
-import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
+import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.WrappedElement;
 import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
 
@@ -31,9 +31,9 @@ public class MainGui extends SimpleGuiExt {
 
     @Override
     protected void drawStatic() {
-        UIRegion.column(this, 3).fillStack(CommonLabels::divider);
+        UIRegion.column(this, 3).fillStack(CommonElements::divider);
 
-        this.setSlot(0, 5, CommonLabels.close(() -> {
+        this.setSlot(0, 5, CommonElements.close(() -> {
             Sounds.UI.close(player);
             this.session.end();
         }));
