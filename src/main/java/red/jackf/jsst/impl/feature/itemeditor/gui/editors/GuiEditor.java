@@ -45,9 +45,13 @@ public abstract class GuiEditor extends SimpleGuiExt implements Editor {
         this.cancel();
     }
 
+    protected ItemStack buildOutput() {
+        return this.stack.copy();
+    }
+
     protected void complete() {
         Sounds.UI.click(this.session.getPlayer());
-        this.resultConsumer.accept(Result.of(this.stack));
+        this.resultConsumer.accept(Result.of(buildOutput()));
     }
 
     protected void cancel() {
@@ -63,7 +67,7 @@ public abstract class GuiEditor extends SimpleGuiExt implements Editor {
     }
 
     protected <T> Registry<T> lookupRegistry(ResourceKey<Registry<T>> key) {
-        return RegistryUtils.lookup(this.session.getPlayer().serverLevel().registryAccess(), key);
+        return RegistryUtils.lookup(this.session.registries(), key);
     }
 
     // previews
@@ -79,7 +83,7 @@ public abstract class GuiEditor extends SimpleGuiExt implements Editor {
      * Draws the current stack at a given slot
      */
     protected void drawPreview(int slot) {
-        this.setSlot(slot, JSSTElementBuilder.from(this.stack.copy())
+        this.setSlot(slot, JSSTElementBuilder.from(this.buildOutput())
                 .leftClick(Translations.save(), this::complete)
                 .rightClick(Translations.reset(), this::reset));
     }

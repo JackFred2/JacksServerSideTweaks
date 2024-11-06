@@ -1,13 +1,22 @@
 package red.jackf.jsst.impl.utils.sgui;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.DyeColor;
 
 import static net.minecraft.network.chat.Component.translatable;
 
 public interface Translations {
+    static Component add() {
+        return translatable("jsst.ui.add");
+    }
+
     static MutableComponent cancel() {
         return translatable("jsst.ui.cancel");
+    }
+
+    static MutableComponent change() {
+        return translatable("jsst.ui.change");
     }
 
     static MutableComponent clear() {
@@ -24,6 +33,18 @@ public interface Translations {
 
     static MutableComponent confirm() {
         return translatable("jsst.ui.confirm");
+    }
+
+    static MutableComponent delete() {
+        return translatable("jsst.ui.delete");
+    }
+
+    static MutableComponent moveUp() {
+        return translatable("jsst.ui.moveUp");
+    }
+
+    static MutableComponent moveDown() {
+        return translatable("jsst.ui.moveDown");
     }
 
     static MutableComponent next() {
@@ -57,5 +78,4 @@ public interface Translations {
     static MutableComponent colour(DyeColor color) {
         return translatable("color.minecraft." + color.getName());
     }
-
 }

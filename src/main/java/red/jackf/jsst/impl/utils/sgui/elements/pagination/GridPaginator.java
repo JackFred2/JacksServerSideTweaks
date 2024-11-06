@@ -5,14 +5,14 @@ import net.minecraft.util.Mth;
 import red.jackf.jsst.impl.utils.Arguments;
 import red.jackf.jsst.impl.utils.sgui.CommonLabels;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
-import red.jackf.jsst.impl.utils.sgui.UIRegion;
+import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Handles pagination of UI elements, including page buttons.
+ * Handles pagination of UI elements in a grid format, with each element taking up 1 slot, including page buttons.
  */
 public class GridPaginator<T> {
     private final SimpleGuiExt gui;
@@ -21,8 +21,8 @@ public class GridPaginator<T> {
     private final UIRegion valueSlots;
     private final PageButtons pageButtons;
 
+    private final int pageSize;
     private int maxPage = 0;
-    private int pageSize = 0;
     private int page = 0;
 
     private GridPaginator(SimpleGuiExt gui, List<T> elements, Function<T, GuiElementInterface> drawFunction, UIRegion valueSlots, PageButtons pageButtons) {
@@ -34,11 +34,11 @@ public class GridPaginator<T> {
         this.valueSlots = valueSlots;
         this.pageButtons = pageButtons;
 
+        this.pageSize = this.valueSlots.size();
         this.refreshPageCounts();
     }
 
     private void refreshPageCounts() {
-        this.pageSize = this.valueSlots.size();
         this.maxPage = Math.max(0, Mth.positiveCeilDiv(this.elements.size(), this.pageSize) - 1);
         this.page = Mth.clamp(this.page, 0, this.maxPage);
     }
@@ -56,13 +56,13 @@ public class GridPaginator<T> {
         });
     }
 
-    public static <T> Builder<T> builder(SimpleGuiExt gui) {
-        return new Builder<>(gui);
-    }
-
     public void fillDisabled() {
         this.valueSlots.fillStack(CommonLabels::disabled);
         this.pageButtons.forEach(slot -> this.gui.setSlot(slot, CommonLabels.disabled()));
+    }
+
+    public static <T> Builder<T> builder(SimpleGuiExt gui) {
+        return new Builder<>(gui);
     }
 
     public static class Builder<T> {

@@ -1,6 +1,7 @@
 package red.jackf.jsst.impl.feature.itemeditor;
 
 import eu.pb4.sgui.virtual.VirtualScreenHandlerInterface;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -40,6 +41,10 @@ public class EditSession {
 
     public ServerPlayer getPlayer() {
         return this.player;
+    }
+
+    public RegistryAccess registries() {
+        return this.player.serverLevel().registryAccess();
     }
 
     public boolean stillValid() {

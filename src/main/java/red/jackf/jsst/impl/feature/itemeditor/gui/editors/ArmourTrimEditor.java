@@ -23,7 +23,7 @@ import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.CommonLabels;
 import red.jackf.jsst.impl.utils.sgui.Translations;
-import red.jackf.jsst.impl.utils.sgui.UIRegion;
+import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
 import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.pagination.GridPaginator;
 

@@ -4,6 +4,7 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
+import org.apache.commons.lang3.NotImplementedException;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.CommonLabels;
 import red.jackf.jsst.impl.utils.sgui.Translations;
@@ -17,6 +18,8 @@ import java.util.function.Function;
 public class MultiPageSelectionMenu<T> extends SelectionMenu<T> {
     MultiPageSelectionMenu(ServerPlayer player, Component title, List<T> options, Function<T, GuiElementInterface> labelFactory, Consumer<Optional<T>> callback) {
         super(MenuType.GENERIC_9x6, title, player, options, labelFactory, callback);
+
+        throw new NotImplementedException("No pages yet, only shows first page with no buttons");
     }
 
     @Override

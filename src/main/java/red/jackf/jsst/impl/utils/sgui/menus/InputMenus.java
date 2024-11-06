@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.menus.selection.SelectionMenu;
@@ -38,6 +39,20 @@ public interface InputMenus {
                 .initial("0");
     }
 
+    static StringInputMenu.Builder<Integer> integer(ServerPlayer player, @Nullable Integer minimum, @Nullable Integer maximum) {
+        var builder = new StringInputMenu.Builder<>(player, s -> tryParseInteger(s, minimum, maximum));
+
+        if (minimum != null && maximum != null) {
+            builder.hint(Component.translatable("jsst.ui.input.minMax", minimum, maximum));
+        } else if (minimum != null) {
+            builder.hint(Component.translatable("jsst.ui.input.min", minimum));
+        } else if (maximum != null) {
+            builder.hint(Component.translatable("jsst.ui.input.max", maximum));
+        }
+
+        return builder;
+    }
+
     /**
      * Allows a user to select an option out of an arbitrary list.
      */
@@ -46,6 +61,23 @@ public interface InputMenus {
     }
 
     // internals
+
+    private static DataResult<Integer> tryParseInteger(String intStr, @Nullable Integer minimum, @Nullable Integer maximum) {
+        try {
+            int parsed = Integer.parseInt(intStr);
+
+            if (minimum != null && parsed < minimum) {
+                return DataResult.error(() -> "Smaller than minimum");
+            } else if (maximum != null && parsed > maximum) {
+                return DataResult.error(() -> "Larger than maximum");
+            } else {
+                return DataResult.success(parsed);
+            }
+
+        } catch (NumberFormatException ex) {
+            return DataResult.error(ex::getMessage);
+        }
+    }
 
     private static DataResult<Colour> tryParseHex(String hexStr) {
         return DataResult.success(Colour.fromInt(0xFF_000000 | Integer.parseUnsignedInt(hexStr, 16)));

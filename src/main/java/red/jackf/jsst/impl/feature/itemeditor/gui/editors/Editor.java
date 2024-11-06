@@ -19,14 +19,14 @@ public interface Editor {
     class Type<E extends Editor> {
         private final ResourceLocation id;
         private final GuiEditor.Factory<E> factory;
-        private final Function<EditSession, GuiElementInterface> iconFactory;
         private final Predicate<EditSession> appliesTo;
+        private final Function<EditSession, GuiElementInterface> iconFactory;
 
         public Type(ResourceLocation id, GuiEditor.Factory<E> factory, Predicate<EditSession> appliesTo, Function<EditSession, GuiElementInterface> iconFactory) {
             this.id = id;
             this.factory = factory;
-            this.iconFactory = iconFactory;
             this.appliesTo = appliesTo;
+            this.iconFactory = iconFactory;
         }
 
         public ResourceLocation getId() {
@@ -37,12 +37,12 @@ public interface Editor {
             return this.factory.create(session, resultConsumer);
         }
 
-        public GuiElementInterface getIcon(EditSession session) {
-            return this.iconFactory.apply(session);
-        }
-
         public boolean appliesTo(EditSession session) {
             return this.appliesTo.test(session);
+        }
+
+        public GuiElementInterface getIcon(EditSession session) {
+            return this.iconFactory.apply(session);
         }
     }
 }

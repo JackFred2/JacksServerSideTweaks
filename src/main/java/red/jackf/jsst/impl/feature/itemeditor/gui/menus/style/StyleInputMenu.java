@@ -24,6 +24,7 @@ import red.jackf.jsst.impl.utils.sgui.elements.CycleButton;
 import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.ToggleButton;
 import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
+import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -253,7 +254,7 @@ public class StyleInputMenu extends SimpleGuiExt {
         InputMenus.<ResourceLocation>selection(player)
                 .title(Component.translatable("jsst.itemEditor.changeStyle.font.custom"))
                 .options(fonts.keySet())
-                .labels(fonts::get)
+                .labelElements(fonts::get)
                 .start(fontId -> {
             if (fontId.isPresent()) {
                 if (CUSTOM_FONT.equals(fontId.get())) {

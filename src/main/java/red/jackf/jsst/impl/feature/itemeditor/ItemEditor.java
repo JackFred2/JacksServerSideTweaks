@@ -14,10 +14,7 @@ import org.slf4j.Logger;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.feature.itemeditor.gui.MainGui;
-import red.jackf.jsst.impl.feature.itemeditor.gui.editors.ArmourTrimEditor;
-import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
-import red.jackf.jsst.impl.feature.itemeditor.gui.editors.MapColourEditor;
-import red.jackf.jsst.impl.feature.itemeditor.gui.editors.SimpleNameEditor;
+import red.jackf.jsst.impl.feature.itemeditor.gui.editors.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +28,7 @@ public class ItemEditor {
 
     public static final List<Editor.Type<?>> EDITORS = List.of(
             SimpleNameEditor.TYPE,
+            EnchantmentEditor.TYPE,
             ArmourTrimEditor.TYPE,
             MapColourEditor.TYPE
     );

@@ -11,6 +11,8 @@ import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.*;
 import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.WrappedElement;
+import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
+
 import java.util.List;
 import java.util.function.Consumer;
 

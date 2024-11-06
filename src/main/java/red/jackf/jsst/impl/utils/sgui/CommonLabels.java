@@ -29,6 +29,14 @@ public interface CommonLabels {
                 .build();
     }
 
+    static GuiElementInterface delete(Runnable onClick) {
+        return JSSTElementBuilder.from(Items.BARRIER.getDefaultInstance())
+                .ui()
+                .leftClick(Translations.delete(), onClick)
+                .hideDefaultTooltip()
+                .build();
+    }
+
     static ItemStack disabled() {
         return GuiElementBuilder.from(Items.GRAY_STAINED_GLASS_PANE.getDefaultInstance())
                 .hideTooltip()

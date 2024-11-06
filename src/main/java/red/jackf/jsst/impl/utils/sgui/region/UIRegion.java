@@ -1,13 +1,12 @@
-package red.jackf.jsst.impl.utils.sgui;
+package red.jackf.jsst.impl.utils.sgui.region;
 
 import com.google.common.collect.Streams;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import red.jackf.jsst.impl.utils.Arguments;
+import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
@@ -21,9 +20,9 @@ public class UIRegion implements Iterable<Integer> {
     private final SimpleGuiExt gui;
     private final List<Integer> slots;
 
-    private UIRegion(SimpleGuiExt gui, List<Integer> slots) {
+    protected UIRegion(SimpleGuiExt gui, List<Integer> slots) {
         this.gui = gui;
-        this.slots = slots;
+        this.slots = List.copyOf(slots);
     }
 
     /**
@@ -61,6 +60,17 @@ public class UIRegion implements Iterable<Integer> {
     }
 
     /**
+     * Creates a region designating an ordered list of slots.
+     *
+     * @param gui GUI this region is for.
+     * @param slots List of slot numbers this region is for. Does not have to be rectangular.
+     * @return A region covering the singular slot.
+     */
+    public static UIRegion list(SimpleGuiExt gui, List<Integer> slots) {
+        return new UIRegion(gui, List.copyOf(slots));
+    }
+
+    /**
      * Creates a rectangular region of slots.
      *
      * @param gui GUI this region is for.
@@ -70,23 +80,8 @@ public class UIRegion implements Iterable<Integer> {
      * @param endRowExclusive Ending row for the rectangle, exclusive.
      * @return A region covering the given rectangle of slots.
      */
-    public static UIRegion rectangle(SimpleGuiExt gui, int startColumnInclusive, int startRowInclusive, int endColumnExclusive, int endRowExclusive) {
-        Arguments.inRange(startColumnInclusive, 0, gui.getWidth(), "startColumn out of range: %d");
-        Arguments.inRange(startRowInclusive, 0, gui.getHeight(), "startRow out of range: %d");
-        Arguments.inRange(endColumnExclusive, 0, gui.getWidth(), "endColumn out of range: %d");
-        Arguments.inRange(endRowExclusive, 0, gui.getHeight(), "startColumn out of range: %d");
-        Arguments.isLessOrEq(startColumnInclusive, endColumnExclusive, "startColumn > endColumn: %d > %d");
-        Arguments.isLessOrEq(startRowInclusive, endRowExclusive, "startRow > endRow: %d > %d");
-
-        List<Integer> slots = new ArrayList<>();
-
-        for (int row = startRowInclusive; row < endRowExclusive; row++) {
-            for (int col = startColumnInclusive; col < endColumnExclusive; col++) {
-                slots.add(gui.getSlotFor(col, row));
-            }
-        }
-
-        return new UIRegion(gui, List.copyOf(slots));
+    public static UIRectangle rectangle(SimpleGuiExt gui, int startColumnInclusive, int startRowInclusive, int endColumnExclusive, int endRowExclusive) {
+        return UIRectangle.create(gui, startColumnInclusive, startRowInclusive, endColumnExclusive, endRowExclusive);
     }
 
     /**
@@ -99,23 +94,8 @@ public class UIRegion implements Iterable<Integer> {
      * @param endRowExclusive Ending row for the rectangle, exclusive.
      * @return A region covering the given rectangle of slots in a player's inventory.
      */
-    public static UIRegion playerRectangle(SimpleGuiExt gui, int startColumnInclusive, int startRowInclusive, int endColumnExclusive, int endRowExclusive) {
-        Arguments.inRange(startColumnInclusive, 0, 9, "startColumn out of range: %d");
-        Arguments.inRange(startRowInclusive, 0, 4, "startRow out of range: %d");
-        Arguments.inRange(endColumnExclusive, 0, 9, "endColumn out of range: %d");
-        Arguments.inRange(endRowExclusive, 0, 4, "startColumn out of range: %d");
-        Arguments.isLessOrEq(startColumnInclusive, endColumnExclusive, "startColumn > endColumn: %d > %d");
-        Arguments.isLessOrEq(startRowInclusive, endRowExclusive, "startRow > endRow: %d > %d");
-
-        List<Integer> slots = new ArrayList<>();
-
-        for (int row = startRowInclusive; row < endRowExclusive; row++) {
-            for (int col = startColumnInclusive; col < endColumnExclusive; col++) {
-                slots.add(gui.getVirtualSize() + row * 9 + col);
-            }
-        }
-
-        return new UIRegion(gui, List.copyOf(slots));
+    public static UIRectangle playerRectangle(SimpleGuiExt gui, int startColumnInclusive, int startRowInclusive, int endColumnExclusive, int endRowExclusive) {
+        return UIRectangle.createPlayer(gui, startColumnInclusive, startRowInclusive, endColumnExclusive, endRowExclusive);
     }
 
     /**
@@ -126,7 +106,7 @@ public class UIRegion implements Iterable<Integer> {
      * @param endColumnExclusive Ending column for the row, exclusive.
      * @return A region covering the given row, between two columns.
      */
-    public static UIRegion row(SimpleGuiExt gui, int row, int startColumnInclusive, int endColumnExclusive) {
+    public static UIRectangle row(SimpleGuiExt gui, int row, int startColumnInclusive, int endColumnExclusive) {
         return rectangle(gui, startColumnInclusive, row, endColumnExclusive, row + 1);
     }
 
@@ -138,7 +118,7 @@ public class UIRegion implements Iterable<Integer> {
      * @param endColumnExclusive Ending column for the row, exclusive.
      * @return A region covering the given row of slots in the player's inventory, between two columns.
      */
-    public static UIRegion playerRow(SimpleGuiExt gui, int row, int startColumnInclusive, int endColumnExclusive) {
+    public static UIRectangle playerRow(SimpleGuiExt gui, int row, int startColumnInclusive, int endColumnExclusive) {
         return playerRectangle(gui, startColumnInclusive, row, endColumnExclusive, row + 1);
     }
 
@@ -148,7 +128,7 @@ public class UIRegion implements Iterable<Integer> {
      * @param row Row being covered.
      * @return A region covering the given row.
      */
-    public static UIRegion row(SimpleGuiExt gui, int row) {
+    public static UIRectangle row(SimpleGuiExt gui, int row) {
         return row(gui, row, 0, gui.getWidth());
     }
 
@@ -158,7 +138,7 @@ public class UIRegion implements Iterable<Integer> {
      * @param row Row being covered.
      * @return A region covering the given row of slots in the player's inventory.
      */
-    public static UIRegion playerRow(SimpleGuiExt gui, int row) {
+    public static UIRectangle playerRow(SimpleGuiExt gui, int row) {
         return playerRow(gui, row, 0, 9);
     }
 
@@ -170,7 +150,7 @@ public class UIRegion implements Iterable<Integer> {
      * @param endRowExclusive Ending row for the column, exclusive.
      * @return A region covering the given column, between two rows.
      */
-    public static UIRegion column(SimpleGuiExt gui, int column, int startRowInclusive, int endRowExclusive) {
+    public static UIRectangle column(SimpleGuiExt gui, int column, int startRowInclusive, int endRowExclusive) {
         return rectangle(gui, column, startRowInclusive, column + 1, endRowExclusive);
     }
 
@@ -182,7 +162,7 @@ public class UIRegion implements Iterable<Integer> {
      * @param endRowExclusive Ending row for the column, exclusive.
      * @return A region covering the given column of slots in the player's inventory, between two rows.
      */
-    public static UIRegion playerColumn(SimpleGuiExt gui, int column, int startRowInclusive, int endRowExclusive) {
+    public static UIRectangle playerColumn(SimpleGuiExt gui, int column, int startRowInclusive, int endRowExclusive) {
         return playerRectangle(gui, column, startRowInclusive, column + 1, endRowExclusive);
     }
 
@@ -192,7 +172,7 @@ public class UIRegion implements Iterable<Integer> {
      * @param column Column being covered.
      * @return A region covering the given column.
      */
-    public static UIRegion column(SimpleGuiExt gui, int column) {
+    public static UIRectangle column(SimpleGuiExt gui, int column) {
         return column(gui, column, 0, gui.getHeight());
     }
 
@@ -202,7 +182,7 @@ public class UIRegion implements Iterable<Integer> {
      * @param column Column being covered.
      * @return A region covering the given column of slots in the player's inventory.
      */
-    public static UIRegion playerColumn(SimpleGuiExt gui, int column) {
+    public static UIRectangle playerColumn(SimpleGuiExt gui, int column) {
         return playerColumn(gui, column, 0, 4);
     }
 
@@ -307,6 +287,20 @@ public class UIRegion implements Iterable<Integer> {
      */
     public Stream<Integer> stream() {
         return this.slots.stream();
+    }
+
+    /**
+     * Get all slots for this region.
+     *
+     * @return An unmodifiable list of all slots covered by this region.
+     */
+    public List<Integer> slots() {
+        return this.slots;
+    }
+
+    public int getSlot(int index) {
+        if (index < 0) index += this.size();
+        return this.slots.get(index);
     }
 
     /**

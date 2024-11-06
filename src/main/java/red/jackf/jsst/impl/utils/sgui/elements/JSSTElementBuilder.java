@@ -66,6 +66,11 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
 
     public JSSTElementBuilder setCount(int count) {
         this.stack.setCount(Mth.clamp(count, 1, 99));
+        if (this.stack.getCount() > this.stack.getItem().getDefaultMaxStackSize()) {
+            this.stack.set(DataComponents.MAX_STACK_SIZE, count);
+        } else {
+            this.stack.set(DataComponents.MAX_STACK_SIZE, this.stack.getItem().getDefaultMaxStackSize());
+        }
         return this;
     }
 

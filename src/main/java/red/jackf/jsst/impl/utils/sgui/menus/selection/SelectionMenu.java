@@ -4,8 +4,10 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import red.jackf.jsst.impl.utils.Callbacks;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
+import red.jackf.jsst.impl.utils.sgui.elements.JSSTElementBuilder;
 
 import java.util.Collection;
 import java.util.List;
@@ -72,7 +74,12 @@ public abstract class SelectionMenu<T> extends SimpleGuiExt {
             return this;
         }
 
-        public Builder<T> labels(Function<T, GuiElementInterface> labelFactory) {
+        public Builder<T> labelStacks(Function<T, ItemStack> stackLabelFactory) {
+            this.labelFactory = t -> JSSTElementBuilder.from(stackLabelFactory.apply(t)).build();
+            return this;
+        }
+
+        public Builder<T> labelElements(Function<T, GuiElementInterface> labelFactory) {
             this.labelFactory = labelFactory;
             return this;
         }
