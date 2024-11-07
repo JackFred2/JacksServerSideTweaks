@@ -30,6 +30,7 @@ public class ItemEditor {
             SimpleNameEditor.TYPE,
             EnchantmentEditor.TYPE,
             ArmourTrimEditor.TYPE,
+            StackSizeEditor.TYPE,
             MapColourEditor.TYPE
     );
 

@@ -78,4 +78,8 @@ public interface Translations {
     static MutableComponent colour(DyeColor color) {
         return translatable("color.minecraft." + color.getName());
     }
+
+    static MutableComponent split(Component first, Component second) {
+        return translatable("jsst.ui.split", first, second);
+    }
 }
