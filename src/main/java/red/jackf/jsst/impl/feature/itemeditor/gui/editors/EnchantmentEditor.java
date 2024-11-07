@@ -20,7 +20,7 @@ import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.CommonElements;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.elements.pagination.ListPaginator;
-import red.jackf.jsst.impl.utils.sgui.labels.Labels;
+import red.jackf.jsst.impl.utils.sgui.labels.LabelMaps;
 import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
@@ -78,7 +78,7 @@ public class EnchantmentEditor extends GuiEditor {
 
     private List<GuiElementInterface> drawRow(int index, EnchantmentInstance instance) {
         return List.of(
-                JSSTElementBuilder.from(Labels.enchantment(instance.enchantment)).ui()
+                JSSTElementBuilder.from(LabelMaps.ENCHANTMENT.apply(instance.enchantment)).ui()
                         .setName(Enchantment.getFullname(instance.enchantment, instance.level))
                         .leftClick(Translations.change(), () -> {
                             Sounds.UI.click(player);
@@ -87,7 +87,7 @@ public class EnchantmentEditor extends GuiEditor {
 
                             InputMenus.<Holder<Enchantment>>selection(player)
                                     .title(Component.translatable("jsst.itemEditor.editor.enchantment.selectEnchantment"))
-                                    .labelStacks(Labels::enchantment)
+                                    .labelStacks(LabelMaps.ENCHANTMENT)
                                     .options(reg.listElements().filter(ref -> !hasEnchantment(ref) || ref.value().equals(instance.enchantment.value())).map(e -> e))
                                     .start(opt -> {
                                         opt.ifPresent(enchantmentHolder -> this.enchantments.set(index, new EnchantmentInstance(enchantmentHolder, enchantmentHolder.value().getMaxLevel())));

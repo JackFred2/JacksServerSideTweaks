@@ -1,0 +1,14 @@
+{
+  "labels": {
+    "minecraft:bane_of_arthropods": "minecraft:spider_eye",
+    "minecraft:binding_curse": "minecraft:chain",
+    "minecraft:breach": "minecraft:mace",
+    "minecraft:density": "minecraft:heavy_core",
+    "minecraft:fire_aspect": "minecraft:blaze_rod",
+    "minecraft:flame": "minecraft:blaze_powder",
+    "minecraft:infinity": {"id": "minecraft:spectral_arrow", "count": 64},
+    "minecraft:multishot": {"id": "minecraft:arrow", "count": 5},
+    "minecraft:sharpness": "minecraft:diamond_sword",
+    "minecraft:smite": "minecraft:rotten_flesh"
+  }
+}

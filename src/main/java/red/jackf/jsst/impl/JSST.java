@@ -12,6 +12,7 @@ import red.jackf.jsst.impl.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.impl.feature.mapeditor.MapEditor;
 import red.jackf.jsst.impl.feature.portablecrafting.PortableCrafting;
 import red.jackf.jsst.impl.utils.Scheduler;
+import red.jackf.jsst.impl.utils.sgui.labels.LabelMaps;
 
 public class JSST implements ModInitializer {
 	public static final String MOD_ID = "jsst";
@@ -30,6 +31,8 @@ public class JSST implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		JSSTConfig.INSTANCE.load();
+
+		LabelMaps.touch();
 
 		Scheduler.setup();
 
