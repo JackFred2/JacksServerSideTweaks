@@ -357,7 +357,7 @@ public final class MapEditSession {
                 this.deselect();
             }
         } else { // create new
-            if (!((MapItemSavedDataAccessor) data).invokeIsInsideMap(local.x * 128, local.y * 128)) return;
+            if (!MapItemSavedDataAccessor.invokeIsInsideMap(local.x * 128, local.y * 128)) return;
 
             MapSounds.scribble(player);
 

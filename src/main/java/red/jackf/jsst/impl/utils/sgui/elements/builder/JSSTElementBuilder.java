@@ -80,7 +80,11 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
     }
 
     public JSSTElementBuilder glow() {
-        this.stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+        return glow(true);
+    }
+
+    public JSSTElementBuilder glow(@Nullable Boolean shouldGlow) {
+        this.stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, shouldGlow);
         return this;
     }
 

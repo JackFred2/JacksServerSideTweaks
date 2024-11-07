@@ -34,5 +34,7 @@ public interface MapItemSavedDataAccessor {
     void invokeAddDecoration(Holder<MapDecorationType> decorationType, @Nullable LevelAccessor level, String id, double x, double z, double yRot, @Nullable Component displayName);
 
     @Invoker
-    boolean invokeIsInsideMap(float x, float y);
+    static boolean invokeIsInsideMap(float x, float y) {
+        throw new AssertionError("mixin impl");
+    }
 }

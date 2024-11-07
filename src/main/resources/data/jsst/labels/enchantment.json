@@ -1,14 +1,34 @@
 {
   "labels": {
+    "minecraft:aqua_affinity": "minecraft:turtle_helmet",
     "minecraft:bane_of_arthropods": "minecraft:spider_eye",
     "minecraft:binding_curse": "minecraft:chain",
     "minecraft:breach": "minecraft:mace",
+    "minecraft:channeling": "minecraft:lightning_rod",
     "minecraft:density": "minecraft:heavy_core",
+    "minecraft:depth_strider": "minecraft:diamond_boots",
+    "minecraft:efficiency": "minecraft:sugar",
+    "minecraft:feather_falling": "minecraft:feather",
     "minecraft:fire_aspect": "minecraft:blaze_rod",
     "minecraft:flame": "minecraft:blaze_powder",
-    "minecraft:infinity": {"id": "minecraft:spectral_arrow", "count": 64},
+    "minecraft:fortune": "minecraft:lapis_lazuli",
+    "minecraft:frost_walker": "minecraft:packed_ice",
+    "minecraft:infinity": {"id":"minecraft:spectral_arrow","count":99,"components":{"minecraft:max_stack_size":99}},
+    "minecraft:knockback": "minecraft:piston",
+    "minecraft:lure": "minecraft:fishing_rod",
+    "minecraft:mending": "minecraft:gold_block",
     "minecraft:multishot": {"id": "minecraft:arrow", "count": 5},
+    "minecraft:power": "minecraft:piston",
+    "minecraft:punch": "minecraft:piston",
+    "minecraft:respiration": "minecraft:glass_bottle",
     "minecraft:sharpness": "minecraft:diamond_sword",
-    "minecraft:smite": "minecraft:rotten_flesh"
+    "minecraft:silk_touch": "minecraft:gold_ore",
+    "minecraft:smite": "minecraft:rotten_flesh",
+    "minecraft:soul_speed": "minecraft:soul_soil",
+    "minecraft:swift_sneak": "minecraft:sculk_sensor",
+    "minecraft:thorns": "minecraft:cactus",
+    "minecraft:unbreaking": "minecraft:anvil",
+    "minecraft:vanishing_curse": "minecraft:structure_void",
+    "minecraft:wind_burst": "minecraft:wind_charge"
   }
 }

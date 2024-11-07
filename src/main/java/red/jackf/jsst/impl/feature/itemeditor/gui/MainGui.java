@@ -65,6 +65,11 @@ public class MainGui extends SimpleGuiExt {
 
     private void onResult(Result result) {
         if (result.hasResult()) this.session.setStack(result.result());
-        this.open();
+
+        if (this.isOpen()) {
+            this.refresh();
+        } else {
+            this.open();
+        }
     }
 }

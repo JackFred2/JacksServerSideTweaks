@@ -31,7 +31,9 @@ public class ItemEditor {
             EnchantmentEditor.TYPE,
             ArmourTrimEditor.TYPE,
             StackSizeEditor.TYPE,
-            MapColourEditor.TYPE
+            MapColourEditor.TYPE,
+            GlintEditor.TYPE,
+            LabelMapExport.TYPE
     );
 
     private static final Map<ServerPlayer, EditSession> CURRENT_SESSIONS = new HashMap<>();
