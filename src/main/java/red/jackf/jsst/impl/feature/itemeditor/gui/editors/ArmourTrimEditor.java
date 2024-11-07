@@ -1,5 +1,6 @@
 package red.jackf.jsst.impl.feature.itemeditor.gui.editors;
 
+import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -31,15 +32,19 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ArmourTrimEditor extends GuiEditor {
-    public static final Type<ArmourTrimEditor> TYPE = new Type<>(
-            JSST.id("armour_trim"),
-            ArmourTrimEditor::new,
-            session -> session.getStack().is(ItemTags.TRIMMABLE_ARMOR),
-            session -> JSSTElementBuilder.from(Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance())
-                    .setName(Component.translatable("jsst.itemEditor.editor.armourTrim"))
-                    .hideDefaultTooltip()
-                    .build()
-    );
+    public static final Type<ArmourTrimEditor> TYPE = Editor.<ArmourTrimEditor>typeBuilder(JSST.id("armour_trim"))
+            .factory(ArmourTrimEditor::new)
+            .labelFactory(ArmourTrimEditor::getLabel)
+            .supportsCosmetic()
+            .appliesTo(session -> session.getStack().is(ItemTags.TRIMMABLE_ARMOR))
+            .build();
+
+    private static GuiElementInterface getLabel(EditSession session) {
+        return JSSTElementBuilder.from(Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance())
+                .setName(Component.translatable("jsst.itemEditor.editor.armourTrim"))
+                .hideDefaultTooltip()
+                .build();
+    }
 
     private final GridPaginator<TrimPattern> patternPages = GridPaginator.<TrimPattern>builder(this)
             .slots(UIRegion.playerRectangle(this, 0, 0, 3, 3))

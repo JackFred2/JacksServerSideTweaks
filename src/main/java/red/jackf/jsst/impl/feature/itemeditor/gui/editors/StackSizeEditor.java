@@ -19,12 +19,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class StackSizeEditor extends GuiEditor {
-    public static Type<StackSizeEditor> TYPE = new Type<>(
-            JSST.id("stack_size"),
-            StackSizeEditor::new,
-            session -> true,
-            StackSizeEditor::getIcon
-    );
+    public static Type<StackSizeEditor> TYPE = Editor.<StackSizeEditor>typeBuilder(JSST.id("stack_size"))
+            .factory(StackSizeEditor::new)
+            .labelFactory(StackSizeEditor::getIcon)
+            .build();
 
     private static GuiElementInterface getIcon(EditSession session) {
         AnimatedGuiElementBuilderExt builder = new AnimatedGuiElementBuilderExt();
@@ -134,7 +132,7 @@ public class StackSizeEditor extends GuiEditor {
     }
 
     private void setCount(int count) {
-        if (count > this.stack.getItem().getDefaultMaxStackSize()) {
+        if (count > this.stack.getMaxStackSize()) {
             this.setMaxCount(count);
         }
 

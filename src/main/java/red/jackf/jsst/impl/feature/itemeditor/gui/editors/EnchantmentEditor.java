@@ -31,15 +31,16 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class EnchantmentEditor extends GuiEditor {
-    public static final Type<EnchantmentEditor> TYPE = new Type<>(
-            JSST.id("enchantment"),
-            EnchantmentEditor::new,
-            session -> true,
-            session -> JSSTElementBuilder.from(Items.ENCHANTED_BOOK).ui()
-                    .glow()
-                    .setName(Component.translatable("jsst.itemEditor.editor.enchantment"))
-                    .build()
-    );
+    public static final Type<EnchantmentEditor> TYPE = Editor.<EnchantmentEditor>typeBuilder(JSST.id("enchantment"))
+            .factory(EnchantmentEditor::new)
+            .labelFactory(EnchantmentEditor::getLabel)
+            .build();
+
+    private static GuiElementInterface getLabel(EditSession session) {
+        return JSSTElementBuilder.from(Items.ENCHANTED_BOOK).ui()
+                .setName(Component.translatable("jsst.itemEditor.editor.enchantment"))
+                .build();
+    }
 
     private final List<EnchantmentInstance> enchantments = new ArrayList<>();
 

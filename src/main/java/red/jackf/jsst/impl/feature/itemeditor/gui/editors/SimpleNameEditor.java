@@ -1,5 +1,6 @@
 package red.jackf.jsst.impl.feature.itemeditor.gui.editors;
 
+import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
@@ -17,18 +18,21 @@ import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 import java.util.function.Consumer;
 
 public class SimpleNameEditor extends GuiEditor {
-    public static final Type<SimpleNameEditor> TYPE = new Type<>(
-            JSST.id("simple_name"),
-            SimpleNameEditor::new,
-            session -> true,
-            session -> JSSTElementBuilder.from(Items.NAME_TAG.getDefaultInstance())
-                    .setName(Component.translatable("jsst.itemEditor.editor.simpleName"))
-                    .hideDefaultTooltip()
-                    .build()
-    );
+    public static final Type<SimpleNameEditor> TYPE = Editor.<SimpleNameEditor>typeBuilder(JSST.id("simple_name"))
+            .supportsCosmetic()
+            .factory(SimpleNameEditor::new)
+            .labelFactory(SimpleNameEditor::getLabel)
+            .build();
 
     public SimpleNameEditor(EditSession session, Consumer<Result> resultConsumer) {
         super(session, resultConsumer, Component.translatable("jsst.itemEditor.editor.simpleName"), MenuType.GENERIC_9x1, false);
+    }
+
+    private static GuiElementInterface getLabel(EditSession session) {
+        return JSSTElementBuilder.from(Items.NAME_TAG.getDefaultInstance())
+                .setName(Component.translatable("jsst.itemEditor.editor.simpleName"))
+                .hideDefaultTooltip()
+                .build();
     }
 
     @Override

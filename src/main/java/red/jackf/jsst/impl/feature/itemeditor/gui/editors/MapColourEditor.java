@@ -19,12 +19,13 @@ import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 import java.util.function.Consumer;
 
 public class MapColourEditor implements Editor {
-    public static Type<MapColourEditor> TYPE = new Type<>(
-            JSST.id("map_colour"),
-            MapColourEditor::new,
-            session -> session.getStack().is(Items.FILLED_MAP),
-            MapColourEditor::getIcon
-    );
+    public static Type<MapColourEditor> TYPE = Editor.<MapColourEditor>typeBuilder(JSST.id("map_colour"))
+            .factory(MapColourEditor::new)
+            .labelFactory(MapColourEditor::getIcon)
+            .appliesTo(session -> session.getStack().is(Items.FILLED_MAP))
+            .supportsCosmetic()
+            .build();
+
     private final EditSession session;
     private final Consumer<Result> resultConsumer;
 

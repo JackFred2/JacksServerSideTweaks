@@ -19,12 +19,12 @@ import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import java.util.function.Consumer;
 
 public class LabelMapExport implements Editor {
-    public static final Type<LabelMapExport> TYPE = new Type<>(
-            JSST.id("label_map_export"),
-            LabelMapExport::new,
-            session -> true,
-            LabelMapExport::getLabel
-    );
+    public static final Type<LabelMapExport> TYPE = Editor.<LabelMapExport>typeBuilder(JSST.id("label_map_export"))
+            .factory(LabelMapExport::new)
+            .labelFactory(LabelMapExport::getLabel)
+            .developer()
+            .supportsCosmetic()
+            .build();
 
     private static GuiElementInterface getLabel(EditSession session) {
         return JSSTElementBuilder.from(Items.SPRUCE_SIGN).ui()

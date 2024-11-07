@@ -10,18 +10,19 @@ import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.Styles;
+import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
 public class GlintEditor implements Editor {
-    public static final Type<GlintEditor> TYPE = new Type<>(
-            JSST.id("glowing_toggle"),
-            GlintEditor::new,
-            session -> true,
-            GlintEditor::getLabel
-    );
+    public static final Type<GlintEditor> TYPE = Editor.<GlintEditor>typeBuilder(JSST.id("glint"))
+            .factory(GlintEditor::new)
+            .labelFactory(GlintEditor::getLabel)
+            .inputHint(Translations::change)
+            .supportsCosmetic()
+            .build();
 
     private static @Nullable Boolean cycle(@Nullable Boolean value) {
         if (value == null) return true;
