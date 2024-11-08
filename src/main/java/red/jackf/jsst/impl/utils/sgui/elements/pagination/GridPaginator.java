@@ -59,7 +59,7 @@ public class GridPaginator<T> {
     }
 
     public void fillDisabled() {
-        this.valueSlots.fillStack(CommonElements::disabled);
+        this.valueSlots.fillElement(CommonElements::disabled);
         this.pageButtons.forEach(slot -> this.gui.setSlot(slot, CommonElements.disabled()));
     }
 

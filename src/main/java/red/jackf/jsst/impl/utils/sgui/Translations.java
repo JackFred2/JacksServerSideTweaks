@@ -59,6 +59,10 @@ public interface Translations {
         return translatable("jsst.ui.previous");
     }
 
+    static MutableComponent randomize() {
+        return translatable("jsst.ui.randomize");
+    }
+
     static MutableComponent reset() {
         return translatable("jsst.ui.reset");
     }

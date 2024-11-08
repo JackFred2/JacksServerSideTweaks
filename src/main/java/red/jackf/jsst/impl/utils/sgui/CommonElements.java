@@ -2,15 +2,26 @@ package red.jackf.jsst.impl.utils.sgui;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 public interface CommonElements {
-    static ItemStack divider() {
+    static GuiElementInterface divider() {
         return GuiElementBuilder.from(Items.ORANGE_STAINED_GLASS_PANE.getDefaultInstance())
                 .hideTooltip()
-                .asStack();
+                .build();
+    }
+
+    static GuiElementInterface disabled() {
+        return GuiElementBuilder.from(Items.GRAY_STAINED_GLASS_PANE.getDefaultInstance())
+                .hideTooltip()
+                .build();
+    }
+
+    static GuiElementInterface highlight() {
+        return GuiElementBuilder.from(Items.LIME_STAINED_GLASS_PANE.getDefaultInstance())
+                .hideTooltip()
+                .build();
     }
 
     static GuiElementInterface cancel(Runnable onClick) {
@@ -35,11 +46,5 @@ public interface CommonElements {
                 .leftClick(Translations.delete(), onClick)
                 .hideDefaultTooltip()
                 .build();
-    }
-
-    static ItemStack disabled() {
-        return GuiElementBuilder.from(Items.GRAY_STAINED_GLASS_PANE.getDefaultInstance())
-                .hideTooltip()
-                .asStack();
     }
 }

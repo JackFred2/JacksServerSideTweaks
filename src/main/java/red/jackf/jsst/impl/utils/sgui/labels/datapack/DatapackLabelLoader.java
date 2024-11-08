@@ -1,4 +1,4 @@
-package red.jackf.jsst.impl.utils.sgui.labels.registry;
+package red.jackf.jsst.impl.utils.sgui.labels.datapack;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -24,15 +24,15 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public class RegistryLabelLoader<T> implements SimpleResourceReloadListener<RegistryLabelLoader.LoadResult<T>> {
+public class DatapackLabelLoader<T> implements SimpleResourceReloadListener<DatapackLabelLoader.LoadResult<T>> {
     private static final Logger LOGGER = JSST.getLogger("Label Loader");
 
     private final ResourceLocation id;
     private final ResourceKey<Registry<T>> registryKey;
     private final HolderLookup.Provider provider;
-    private final RegistryLabelMap<T> map;
+    private final DatapackLabelMap<T> map;
 
-    public RegistryLabelLoader(ResourceLocation id, ResourceKey<Registry<T>> registryKey, HolderLookup.Provider provider, RegistryLabelMap<T> map) {
+    public DatapackLabelLoader(ResourceLocation id, ResourceKey<Registry<T>> registryKey, HolderLookup.Provider provider, DatapackLabelMap<T> map) {
         this.id = id;
         this.registryKey = registryKey;
         this.provider = provider;
@@ -61,7 +61,7 @@ public class RegistryLabelLoader<T> implements SimpleResourceReloadListener<Regi
                 for (Resource resource : entries.getValue()) {
                     try (Reader reader = resource.openAsReader()) {
                         JsonElement json = JsonParser.parseReader(reader);
-                        RegistryLabelMapFile file = RegistryLabelMapFile.CODEC.parse(this.provider.createSerializationContext(JsonOps.INSTANCE), json).getOrThrow();
+                        DatapackLabelMapFile file = DatapackLabelMapFile.CODEC.parse(this.provider.createSerializationContext(JsonOps.INSTANCE), json).getOrThrow();
 
                         for (Map.Entry<ResourceLocation, ItemStack> labelEntry : file.labels().entrySet()) {
                             ResourceKey<T> key = ResourceKey.create(this.registryKey, labelEntry.getKey());

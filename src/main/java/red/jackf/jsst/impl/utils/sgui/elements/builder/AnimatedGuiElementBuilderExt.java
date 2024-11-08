@@ -8,4 +8,16 @@ public class AnimatedGuiElementBuilderExt extends AnimatedGuiElementBuilder {
         this.itemStacks.add(stack);
         return this;
     }
+
+    @Override
+    public AnimatedGuiElementBuilderExt setInterval(int interval) {
+        super.setInterval(interval);
+        return this;
+    }
+
+    @Override
+    public AnimatedGuiElementBuilderExt setRandom(boolean value) {
+        super.setRandom(value);
+        return this;
+    }
 }

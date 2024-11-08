@@ -33,7 +33,7 @@ public class MainGui extends SimpleGuiExt {
 
     @Override
     protected void drawStatic() {
-        UIRegion.column(this, 3).fillStack(CommonElements::divider);
+        UIRegion.column(this, 3).fillElement(CommonElements::divider);
 
         this.setSlot(0, 5, CommonElements.close(() -> {
             Sounds.UI.close(player);

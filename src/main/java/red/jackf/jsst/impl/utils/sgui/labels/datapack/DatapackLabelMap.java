@@ -1,4 +1,4 @@
-package red.jackf.jsst.impl.utils.sgui.labels.registry;
+package red.jackf.jsst.impl.utils.sgui.labels.datapack;
 
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.Holder;
@@ -16,22 +16,22 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class RegistryLabelMap<T> implements LabelMap<Holder<T>> {
+public class DatapackLabelMap<T> implements LabelMap<Holder<T>> {
     private final Map<Holder<T>, ItemStack> map = new HashMap<>();
     private final Function<Holder<T>, ItemStack> defaultFunction;
     private final BiFunction<Holder<T>, ItemStack, ItemStack> postProcess;
 
-    protected RegistryLabelMap(Function<Holder<T>, ItemStack> defaultFunction, BiFunction<Holder<T>, ItemStack, ItemStack> postProcess) {
+    protected DatapackLabelMap(Function<Holder<T>, ItemStack> defaultFunction, BiFunction<Holder<T>, ItemStack, ItemStack> postProcess) {
         this.defaultFunction = defaultFunction;
         this.postProcess = postProcess;
     }
 
     public static <T> LabelMap<Holder<T>> create(ResourceKey<Registry<T>> registryKey, Function<Holder<T>, ItemStack> defaultFunction, BiFunction<Holder<T>, ItemStack, ItemStack> postProcess) {
-        RegistryLabelMap<T> map = new RegistryLabelMap<>(defaultFunction, postProcess);
+        DatapackLabelMap<T> map = new DatapackLabelMap<>(defaultFunction, postProcess);
 
-        ResourceLocation id = JSST.id("registry_label_map/" + registryKey.location().getPath());
+        ResourceLocation id = JSST.id("datapack_label_map/" + registryKey.location().getPath());
 
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(id, provider -> new RegistryLabelLoader<>(id, registryKey, provider, map));
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(id, provider -> new DatapackLabelLoader<>(id, registryKey, provider, map));
 
         return map;
     }
@@ -47,7 +47,7 @@ public class RegistryLabelMap<T> implements LabelMap<Holder<T>> {
         return JSSTElementBuilder.from(this.postProcess.apply(option, label)).ui().hideDefaultTooltip().asStack();
     }
 
-    public void reload(RegistryLabelLoader.LoadResult<T> reloadData) {
+    public void reload(DatapackLabelLoader.LoadResult<T> reloadData) {
         this.map.clear();
         this.map.putAll(reloadData.labelMap());
     }

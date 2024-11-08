@@ -23,7 +23,7 @@ public record PageButtons(int previousButton, int currentPage, int nextButton) i
             gui.setSlot(previousButton, JSSTElementBuilder.from(Items.RED_CONCRETE).ui()
                     .leftClick(Translations.previous(), () -> {
                         int newPage = page - 1;
-                        Sounds.UI.progress(gui.getPlayer(), newPage);
+                        Sounds.UI.progress(gui.getPlayer(), (float) newPage / maxPage);
                         pageChangeCallback.accept(newPage);
                     }));
         }
@@ -38,7 +38,7 @@ public record PageButtons(int previousButton, int currentPage, int nextButton) i
             gui.setSlot(nextButton, JSSTElementBuilder.from(Items.LIME_CONCRETE).ui()
                     .leftClick(Translations.next(), () -> {
                         int newPage = page + 1;
-                        Sounds.UI.progress(gui.getPlayer(), newPage);
+                        Sounds.UI.progress(gui.getPlayer(), (float) newPage / maxPage);
                         pageChangeCallback.accept(newPage);
                     }));
         }

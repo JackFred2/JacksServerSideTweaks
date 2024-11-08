@@ -79,8 +79,8 @@ public class ArmourTrimEditor extends GuiEditor {
 
     @Override
     protected void drawStatic() {
-        UIRegion.playerColumn(this, 3).fillStack(CommonElements::divider);
-        UIRegion.playerColumn(this, 7).fillStack(CommonElements::divider);
+        UIRegion.playerColumn(this, 3).fillElement(CommonElements::divider);
+        UIRegion.playerColumn(this, 7).fillElement(CommonElements::divider);
 
         this.setSlot(1, JSSTElementBuilder.from(this.session.getStack()).ui()
                 .hideDefaultTooltip()

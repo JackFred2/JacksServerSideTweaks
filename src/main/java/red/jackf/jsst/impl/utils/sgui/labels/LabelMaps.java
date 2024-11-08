@@ -9,7 +9,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 public interface LabelMaps {
-    LabelMap<Holder<Enchantment>> ENCHANTMENT = LabelMap.createForRegistry(Registries.ENCHANTMENT, ench -> {
+    LabelMap<Holder<Enchantment>> ENCHANTMENT = LabelMap.createDatapacked(Registries.ENCHANTMENT, ench -> {
         ItemEnchantments.Mutable component = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
         component.set(ench, ench.value().getMaxLevel());
 

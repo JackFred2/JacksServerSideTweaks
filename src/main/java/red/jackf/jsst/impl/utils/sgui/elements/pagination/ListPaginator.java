@@ -133,7 +133,7 @@ public class ListPaginator<T> {
     }
 
     public void fillDisabled() {
-        this.elementSlots.fillStack(CommonElements::disabled);
+        this.elementSlots.fillElement(CommonElements::disabled);
         this.pageButtons.forEach(slot -> this.gui.setSlot(slot, CommonElements.disabled()));
     }
 
