@@ -3,12 +3,14 @@ package red.jackf.jsst.impl.feature.itemeditor.gui;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Items;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.*;
+import red.jackf.jsst.impl.utils.sgui.elements.ToggleButton;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.WrappedElement;
 import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
@@ -37,6 +39,16 @@ public class MainGui extends SimpleGuiExt {
             Sounds.UI.close(player);
             this.session.end();
         }));
+
+        this.setSlot(0, 4, ToggleButton.builder(Component.translatable("jsst.itemEditor.showDeveloper"))
+                .initial(this.session.isShowingDeveloperTools())
+                .enabled(JSSTElementBuilder.from(Items.REPEATING_COMMAND_BLOCK).ui().build())
+                .disabled(JSSTElementBuilder.from(Items.BLUE_TERRACOTTA).ui().build())
+                .build(dev -> {
+                    Sounds.UI.click(player);
+                    this.session.setShowingDeveloperTools(dev);
+                    this.refresh();
+                }));
     }
 
     @Override
@@ -46,7 +58,10 @@ public class MainGui extends SimpleGuiExt {
 
         List<WrappedElement<GuiElementInterface>> buttons = ItemEditor.EDITORS.stream()
                 .filter(type -> type.appliesTo(this.session))
+                .filter(type -> !type.isDeveloper() || this.session.isShowingDeveloperTools())
                 .map(type -> WrappedElement.builder(type.getLabel(this.session))
+                        // add id if dev mode is on
+                        .addLore(this.session.isShowingDeveloperTools() ? List.of(Component.literal(type.getId().toString()).withStyle(Styles.MINOR_LABEL)) : List.of())
                         .leftClick(type.getInputHint(), () -> {
                             Editor editor = type.create(this.session, this::onResult);
                             editor.start();

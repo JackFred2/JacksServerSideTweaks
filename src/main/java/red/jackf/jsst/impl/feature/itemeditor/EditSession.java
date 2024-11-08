@@ -16,6 +16,8 @@ public class EditSession {
     private boolean hasEnded = false;
     private ItemStack stack;
 
+    private boolean showDeveloperTools = false;
+
     protected EditSession(ServerPlayer player,
                        ItemStack initial,
                        Supplier<Boolean> stillValid) {
@@ -24,6 +26,14 @@ public class EditSession {
         this.stillValid = stillValid;
 
         this.setStack(this.getInitial());
+    }
+
+    public boolean isShowingDeveloperTools() {
+        return this.showDeveloperTools;
+    }
+
+    public void setShowingDeveloperTools(boolean showDeveloperTools) {
+        this.showDeveloperTools = showDeveloperTools;
     }
 
     public ItemStack getInitial() {

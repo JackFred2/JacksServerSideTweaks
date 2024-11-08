@@ -69,6 +69,14 @@ public interface Editor {
             return this.inputHint.get();
         }
 
+        public boolean isDeveloper() {
+            return developer;
+        }
+
+        public boolean supportsCosmetic() {
+            return supportsCosmetic;
+        }
+
         public static class Builder<E extends Editor> {
             private final ResourceLocation id;
             private Factory<E> factory;

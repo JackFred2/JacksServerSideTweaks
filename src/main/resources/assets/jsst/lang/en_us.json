@@ -7,6 +7,7 @@
   "jsst.bannerWriter.invalidBanner": "No blank banners in main hand.",
   "jsst.bannerWriter.noText": "Can't use the banner writer with a blank string.",
   "jsst.itemEditor": "Item Editor",
+  "jsst.itemEditor.showDeveloper": "Show Developer Tools",
   "jsst.itemEditor.noItem": "No item in hand/selected.",
   "jsst.itemEditor.customColour": "Custom Colour",
   "jsst.itemEditor.customColour.hint": "Valid Formats:",
