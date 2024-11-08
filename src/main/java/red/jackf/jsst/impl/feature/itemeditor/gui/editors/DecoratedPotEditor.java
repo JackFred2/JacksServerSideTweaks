@@ -32,7 +32,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
 public class DecoratedPotEditor extends GuiEditor {
     public static final Type<DecoratedPotEditor> TYPE = Editor.<DecoratedPotEditor>typeBuilder(JSST.id("decorated_pot"))
@@ -48,8 +47,7 @@ public class DecoratedPotEditor extends GuiEditor {
 
         Registry<Item> reg = RegistryUtils.lookup(session.registries(), Registries.ITEM);
 
-        reg.get(ItemTags.DECORATED_POT_INGREDIENTS).map(set -> set.stream().map(Holder::value))
-                .orElseGet(() -> Stream.of(Items.DECORATED_POT))
+        RegistryUtils.streamTag(reg, ItemTags.DECORATED_POT_INGREDIENTS).map(Holder::value)
                 .forEach(item -> builder.addStack(JSSTElementBuilder.from(item).ui()
                         .setName(Component.translatable("jsst.itemEditor.editor.decoratedPot"))
                         .hideDefaultTooltip()
@@ -62,10 +60,10 @@ public class DecoratedPotEditor extends GuiEditor {
 
     private final GridPaginator<Item> paginator = GridPaginator.<Item>builder(this)
             .slots(UIRegion.rectangle(this, 6, 0, 9, 3))
-            .elements(this.lookupRegistry(Registries.ITEM).get(ItemTags.DECORATED_POT_INGREDIENTS).orElseThrow().stream().map(Holder::value).toList())
+            .elements(RegistryUtils.streamTag(this.lookupRegistry(Registries.ITEM), ItemTags.DECORATED_POT_INGREDIENTS).map(Holder::value).toList())
             .fullButtons(this.getSlotFor(6, 3), this.getSlotFor(7, 3), this.getSlotFor(8, 3))
             .drawFunction((elementIndex, sherd) -> JSSTElementBuilder.from(sherd).ui()
-                    .setName(sherd.getName())
+                    .setName(sherd.getDefaultInstance().getHoverName())
                     .leftClick(Translations.select(), () -> {
                         Sounds.UI.click(player);
                         this.setFace(this.currentFace, sherd);
@@ -205,7 +203,7 @@ public class DecoratedPotEditor extends GuiEditor {
             Item toDraw = this.ingredientGet.apply(editor.stack.getOrDefault(DataComponents.POT_DECORATIONS, PotDecorations.EMPTY)).orElse(BLANK);
 
             editor.setSlot(this.ingredientSlot, JSSTElementBuilder.from(toDraw).ui()
-                    .setName(toDraw.getName())
+                    .setName(toDraw.getDefaultInstance().getHoverName())
                     .addLoreLine(label.get().withStyle(Styles.MINOR_LABEL))
                     .leftClick(Translations.select(), () -> {
                         Sounds.UI.click(editor.player);

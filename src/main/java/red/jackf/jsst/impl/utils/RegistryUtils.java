@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Version-aware registry methods
@@ -19,6 +20,13 @@ public interface RegistryUtils {
         /*return access.registryOrThrow(key);
         *///?} else
         return access.lookupOrThrow(key);
+    }
+
+    static <T> Stream<Holder<T>> stream(Registry<T> registry) {
+        //? if <=1.21.1 {
+        /*return registry.holders().map(ref -> ref);
+        *///?} else
+        return registry.listElements().map(ref -> ref);
     }
 
     static <T> Optional<Holder.Reference<T>> getHolder(Registry<T> registry, ResourceKey<T> key) {
@@ -48,5 +56,14 @@ public interface RegistryUtils {
             if (item.isPresent()) return HolderSet.direct(item.get());
             else return HolderSet.empty();
         }
+    }
+
+    static <T> Stream<Holder<T>> streamTag(Registry<T> registry, TagKey<T> key) {
+        //? if <=1.21.1 {
+        /*var tag = registry.getTag(key);
+        *///?} else
+        var tag = registry.get(key);
+
+        return tag.map(HolderSet.ListBacked::stream).orElseGet(Stream::empty);
     }
 }

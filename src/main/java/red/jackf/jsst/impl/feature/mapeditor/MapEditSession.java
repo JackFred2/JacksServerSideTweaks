@@ -342,6 +342,11 @@ public final class MapEditSession {
         }
     }
 
+    private static boolean isInsideMap(float x, float y) {
+        final float max = 63f;
+        return x >= -max && y >= -max && x <= max && y <= max;
+    }
+
     private void onRightClickFrame(Vec3 hit) {
         MapItemSavedData data = this.getMapData();
         Vec2 local = this.toLocal(hit.add(this.entity().position().subtract(0, 0.5, 0)));
@@ -357,7 +362,7 @@ public final class MapEditSession {
                 this.deselect();
             }
         } else { // create new
-            if (!MapItemSavedDataAccessor.invokeIsInsideMap(local.x * 128, local.y * 128)) return;
+            if (!isInsideMap(local.x * 128, local.y * 128)) return;
 
             MapSounds.scribble(player);
 

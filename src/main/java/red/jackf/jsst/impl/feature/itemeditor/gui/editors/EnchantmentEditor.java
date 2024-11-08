@@ -89,7 +89,7 @@ public class EnchantmentEditor extends GuiEditor {
                             InputMenus.<Holder<Enchantment>>selection(player)
                                     .title(Component.translatable("jsst.itemEditor.editor.enchantment.selectEnchantment"))
                                     .labelStacks(LabelMaps.ENCHANTMENT)
-                                    .options(reg.listElements().filter(ref -> !hasEnchantment(ref) || ref.value().equals(instance.enchantment.value())).map(e -> e))
+                                    .options(RegistryUtils.stream(reg).filter(ref -> !hasEnchantment(ref) || ref.value().equals(instance.enchantment.value())))
                                     .start(opt -> {
                                         opt.ifPresent(enchantmentHolder -> this.enchantments.set(index, new EnchantmentInstance(enchantmentHolder, enchantmentHolder.value().getMaxLevel())));
 
