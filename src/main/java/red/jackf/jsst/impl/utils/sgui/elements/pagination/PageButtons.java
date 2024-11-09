@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-public record PageButtons(int previousButton, int currentPage, int nextButton) implements Iterable<Integer> {
+record PageButtons(int previousButton, int currentPage, int nextButton) implements Iterable<Integer> {
     void draw(SimpleGuiExt gui, int page, int maxPage, Consumer<Integer> pageChangeCallback) {
         boolean firstPage = page <= 0;
         boolean lastPage = page >= maxPage;

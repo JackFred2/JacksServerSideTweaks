@@ -71,6 +71,10 @@ public interface Translations {
         return translatable("jsst.ui.save");
     }
 
+    static MutableComponent search() {
+        return translatable("jsst.ui.search");
+    }
+
     static MutableComponent select() {
         return translatable("jsst.ui.select");
     }

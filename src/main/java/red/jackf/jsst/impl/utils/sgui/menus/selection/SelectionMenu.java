@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.impl.utils.Callbacks;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -54,6 +56,8 @@ public abstract class SelectionMenu<T> extends SimpleGuiExt {
         private List<T> options = null;
         private Function<T, GuiElementInterface> labelFactory = null;
         private Component title = Component.empty();
+        @Nullable
+        private BiPredicate<T, String> filter = null;
 
         public Builder(ServerPlayer player) {
             this.player = player;
@@ -84,14 +88,19 @@ public abstract class SelectionMenu<T> extends SimpleGuiExt {
             return this;
         }
 
+        public Builder<T> filterable(BiPredicate<T, String> filter) {
+            this.filter = filter;
+            return this;
+        }
+
         public void start(Consumer<Optional<T>> callback) {
             Objects.requireNonNull(options);
             Objects.requireNonNull(labelFactory);
 
-            if (options.size() <= 52) {
+            if (options.size() <= 52 && filter == null) {
                 new SinglePageSelectionMenu<>(player, title, options, labelFactory, callback).open();
             } else {
-                new MultiPageSelectionMenu<>(player, title, options, labelFactory, callback).open();
+                new MultiPageSelectionMenu<>(player, title, options, labelFactory, filter, callback).open();
             }
         }
     }

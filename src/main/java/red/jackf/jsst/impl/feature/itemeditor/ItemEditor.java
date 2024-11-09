@@ -6,15 +6,22 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.feature.itemeditor.gui.MainGui;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.*;
+import red.jackf.jsst.impl.utils.RegistryUtils;
+import red.jackf.jsst.impl.utils.sgui.menus.selection.SelectionMenu;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class ItemEditor {
     public static final Logger LOGGER = JSST.getLogger("Item Editor");
@@ -42,7 +50,7 @@ public class ItemEditor {
     public static void setup() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             var root = Commands.literal("itemEditor")
-                    .requires(stack -> stack.isPlayer() && stack.hasPermission(4))
+                    .requires(stack -> stack.isPlayer() && (JSSTConfig.INSTANCE.instance().itemEditor.nonOpsCanUseCosmeticMode || stack.hasPermission(4)))
                     .executes(ItemEditor::onCommand);
 
             dispatcher.register(root);
@@ -59,6 +67,12 @@ public class ItemEditor {
         });
     }
 
+    private static Stream<Item> getItemsStream(RegistryAccess access) {
+        return RegistryUtils.stream(RegistryUtils.lookup(access, Registries.ITEM))
+                .map(Holder::value)
+                .filter(item -> item != Items.AIR);
+    }
+
     private static int onCommand(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         JSSTConfig.ItemEditor config = JSSTConfig.INSTANCE.instance().itemEditor;
 
@@ -68,6 +82,7 @@ public class ItemEditor {
         }
 
         ServerPlayer player = ctx.getSource().getPlayerOrException();
+        boolean isOp = player.hasPermissions(4);
 
         ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (!mainHand.isEmpty()) {
@@ -81,9 +96,25 @@ public class ItemEditor {
             return 2;
         }
 
-        // TODO check non-cosmetic and offer item choice
-
-        ctx.getSource().sendSystemMessage(Component.translatable("jsst.itemEditor.noItem"));
+        if (isOp) {
+            SelectionMenu.<Item>builder(player)
+                    .title(Component.translatable("jsst.itemEditor.selectItem"))
+                    .labelStacks(Item::getDefaultInstance)
+                    .options(getItemsStream(player.registryAccess()))
+                    .filterable((item, text) -> RegistryUtils.lookup(player.registryAccess(), Registries.ITEM)
+                            .getResourceKey(item)
+                            .map(key -> key.location().toString().contains(text.toLowerCase()))
+                            .orElse(false))
+                    .start(item -> {
+                        if (item.isPresent()) {
+                            start(player, item.get().getDefaultInstance(), () -> true, stack -> player.getInventory().add(stack));
+                        } else {
+                            player.closeContainer();
+                        }
+                    });
+        } else {
+            ctx.getSource().sendSystemMessage(Component.translatable("jsst.itemEditor.noItem"));
+        }
         return 0;
     }
 

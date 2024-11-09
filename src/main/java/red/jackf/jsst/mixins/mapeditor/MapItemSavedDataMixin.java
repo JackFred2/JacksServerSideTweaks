@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.feature.mapeditor.MapEditorCodecs;
 import red.jackf.jsst.impl.feature.mapeditor.MapEditSession;
 
@@ -33,7 +34,7 @@ public class MapItemSavedDataMixin {
     @SuppressWarnings("DataFlowIssue")
     @ModifyReturnValue(method = "load", at = @At("TAIL"))
     private static MapItemSavedData loadCustomDecorations(MapItemSavedData data, CompoundTag tag, HolderLookup.Provider registries) {
-        if (tag.contains(MapEditSession.KEY, CompoundTag.TAG_COMPOUND)) {
+        if (!JSSTConfig.INSTANCE.instance().mapEditor.disableSerialization && tag.contains(MapEditSession.KEY, CompoundTag.TAG_COMPOUND)) {
             MapEditorCodecs.MAP_CODEC.decode(registries.createSerializationContext(NbtOps.INSTANCE), tag.getCompound(MapEditSession.KEY))
                     .ifSuccess(pair -> {
                         for (Map.Entry<String, MapDecoration> entry : pair.getFirst().entrySet()) {
@@ -52,6 +53,8 @@ public class MapItemSavedDataMixin {
 
     @Inject(method = "save", at = @At("TAIL"))
     private void saveCustomDecorations(CompoundTag tag, HolderLookup.Provider registries, CallbackInfoReturnable<CompoundTag> cir) {
+        if (JSSTConfig.INSTANCE.instance().mapEditor.disableSerialization) return;
+
         Map<String, MapDecoration> toSave = ((MapItemSavedDataAccessor) this).getDecorations().entrySet().stream()
                 .filter(e -> e.getKey().startsWith(MapEditSession.KEY))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
