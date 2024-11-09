@@ -135,5 +135,6 @@
   "jsst.config.portableCrafting.description": "Allows users to use a crafting table in their hand instead of needing to place it.",
   "jsst.config.portableCrafting.itemIdOrTag": "Crafting Table ID",
   "jsst.config.portableCrafting.itemIdOrTag.description": "Item or tag used to open a crafting table menu.",
-  "jsst.config.portableCrafting.requiresSneak": "Requires Sneaking"
+  "jsst.config.portableCrafting.requiresSneak": "Requires Sneaking",
+  "tag.item.jsst.portable_crafting": "Portable Crafting Tables"
 }
