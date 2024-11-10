@@ -4,6 +4,7 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -129,10 +130,14 @@ public class EnchantmentEditor extends GuiEditor {
         this.loadEnchantments();
     }
 
+    private DataComponentType<ItemEnchantments> getComponentKey() {
+        return this.stack.is(Items.ENCHANTED_BOOK) ? DataComponents.STORED_ENCHANTMENTS : DataComponents.ENCHANTMENTS;
+    }
+
     private void loadEnchantments() {
         this.enchantments.clear();
 
-        for (Object2IntMap.Entry<Holder<Enchantment>> entry : this.stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet()) {
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : this.stack.getOrDefault(getComponentKey(), ItemEnchantments.EMPTY).entrySet()) {
             this.enchantments.add(new EnchantmentInstance(entry.getKey(), entry.getIntValue()));
         }
     }
@@ -147,7 +152,7 @@ public class EnchantmentEditor extends GuiEditor {
             enchantments.set(i.enchantment, i.level);
         }
 
-        stack.set(DataComponents.ENCHANTMENTS, enchantments.toImmutable());
+        stack.set(getComponentKey(), enchantments.toImmutable());
 
         return stack;
     }
