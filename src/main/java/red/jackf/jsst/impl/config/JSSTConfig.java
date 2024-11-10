@@ -5,14 +5,20 @@ import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.resources.ResourceLocation;
 import red.jackf.jsst.impl.JSST;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class JSSTConfig {
     public static final ConfigClassHandler<JSSTConfig> INSTANCE = ConfigClassHandler.createBuilder(JSSTConfig.class)
             .id(JSST.id("config"))
             .serializer(handler -> GsonConfigSerializerBuilder.create(handler)
                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("jsst.json"))
-                    .appendGsonBuilder(gson -> gson.setFieldNamingStrategy(FieldNamingPolicy.IDENTITY))
+                    .appendGsonBuilder(gson -> gson.setFieldNamingStrategy(FieldNamingPolicy.IDENTITY)
+                            .registerTypeHierarchyAdapter(ResourceLocation.class, new ResourceLocationAdapter())
+                            .registerTypeAdapterFactory(new SetAsArrayAdapterFactory()))
                     .build())
             .build();
 
@@ -38,8 +44,9 @@ public class JSSTConfig {
     public static class ItemEditor {
         public boolean enabled = true;
 
-        // TODO implement
         public boolean nonOpsCanUseCosmeticMode = false;
+
+        public Set<ResourceLocation> disabledEditors = new HashSet<>();
     }
 
     @SerialEntry

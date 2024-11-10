@@ -1,9 +1,6 @@
 package red.jackf.jsst.client.impl.config;
 
-import dev.isxander.yacl3.api.ConfigCategory;
-import dev.isxander.yacl3.api.Option;
-import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import net.minecraft.client.Minecraft;
@@ -11,12 +8,14 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.config.JSSTConfig;
+import red.jackf.jsst.impl.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.impl.utils.ServerUtils;
 import red.jackf.jsst.impl.utils.TextUtils;
 
 import java.util.Collection;
 import java.util.List;
 
+import static net.minecraft.network.chat.Component.literal;
 import static net.minecraft.network.chat.Component.translatable;
 
 public interface JSSTConfigScreen {
@@ -33,7 +32,10 @@ public interface JSSTConfigScreen {
         return YetAnotherConfigLib.createBuilder()
                 .title(translatable("jsst.title"))
                 .categories(categories)
-                .save(JSSTConfigScreen::onSave)
+                .save(() -> {
+                    JSSTConfig.INSTANCE.save();
+                    onSave();
+                })
                 .build()
                 .generateScreen(screen);
     }
@@ -102,7 +104,7 @@ public interface JSSTConfigScreen {
                         .name(translatable("jsst.config.enabled"))
                         .description(OptionDescription.createBuilder()
                                 .text(translatable("jsst.config.itemEditor.description"))
-                                .image(JSST.id("textures/config/item_editor.png"),320, 240)
+                                //.image(JSST.id("textures/config/item_editor.png"),320, 240)
                                 .build())
                         .binding(handler.defaults().itemEditor.enabled,
                                 () -> handler.instance().itemEditor.enabled,
@@ -120,6 +122,27 @@ public interface JSSTConfigScreen {
                         .controller(opt -> BooleanControllerBuilder.create(opt)
                                 .coloured(true)
                                 .yesNoFormatter())
+                        .build())
+                .group(OptionGroup.createBuilder()
+                        .collapsed(true)
+                        .name(translatable("jsst.config.itemEditor.disabledEditors"))
+                        .options(ItemEditor.EDITORS.stream()
+                                .map(type -> Option.<Boolean>createBuilder()
+                                        .name(literal(type.getId().toString()))
+                                        .binding(true,
+                                                () -> !handler.instance().itemEditor.disabledEditors.contains(type.getId()),
+                                                b -> {
+                                                    if (b) {
+                                                        handler.instance().itemEditor.disabledEditors.remove(type.getId());
+                                                    } else {
+                                                        handler.instance().itemEditor.disabledEditors.add(type.getId());
+                                                    }
+                                                })
+                                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                                .coloured(true)
+                                                .onOffFormatter())
+                                        .build())
+                                .toList())
                         .build())
                 .build();
     }

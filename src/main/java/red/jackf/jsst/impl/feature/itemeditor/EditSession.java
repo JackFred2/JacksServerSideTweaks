@@ -2,12 +2,15 @@ package red.jackf.jsst.impl.feature.itemeditor;
 
 import eu.pb4.sgui.virtual.VirtualScreenHandlerInterface;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
+import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -34,7 +37,10 @@ public class EditSession {
     }
 
     public Stream<Editor.Type<?>> streamEditors() {
+        Set<ResourceLocation> disabled = JSSTConfig.INSTANCE.instance().itemEditor.disabledEditors;
+
         return ItemEditor.EDITORS.stream()
+                .filter(type -> !disabled.contains(type.getId()))
                 .filter(type -> type.supportsCosmetic() || !cosmeticOnly);
     }
 
