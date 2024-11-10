@@ -2,6 +2,7 @@
   "required": true,
   "package": "red.jackf.jsst.mixins",
   "compatibilityLevel": "JAVA_21",
+  "minMixinExtrasVersion": "0.5.0-beta.3",
   "mixins": [
     "bannerwriter.BannerItemMixin",
     "bannerwriter.BlockItemMixin",
@@ -9,10 +10,11 @@
     "itemnudge.BlockMixin",
     "mapeditor.MapItemSavedDataAccessor",
     "mapeditor.MapItemSavedDataMixin",
+    "mapeditor.ServerEntityMixin",
     "portablecrafting.CraftingMenuMixin",
     "sgui.ServerGamePacketListenerImplMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }

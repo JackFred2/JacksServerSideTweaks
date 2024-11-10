@@ -59,7 +59,7 @@ public class MapEditor {
         });
     }
 
-    private static boolean existsSessionUsingFrame(ItemFrame frame) {
+    public static boolean existsSessionUsingFrame(ItemFrame frame) {
         return SESSIONS.values().stream().anyMatch(session -> session.entity() == frame);
     }
 
