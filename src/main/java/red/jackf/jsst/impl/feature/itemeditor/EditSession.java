@@ -5,13 +5,16 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
+import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
 import red.jackf.jsst.impl.utils.sgui.SimpleGuiExt;
 
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class EditSession {
     private final ServerPlayer player;
     private final ItemStack initial;
+    private final boolean cosmeticOnly;
     private final Supplier<Boolean> stillValid;
     private boolean hasEnded = false;
     private ItemStack stack;
@@ -20,12 +23,19 @@ public class EditSession {
 
     protected EditSession(ServerPlayer player,
                        ItemStack initial,
+                       boolean cosmeticOnly,
                        Supplier<Boolean> stillValid) {
         this.player = player;
         this.initial = initial;
+        this.cosmeticOnly = cosmeticOnly;
         this.stillValid = stillValid;
 
         this.setStack(this.getInitial());
+    }
+
+    public Stream<Editor.Type<?>> streamEditors() {
+        return ItemEditor.EDITORS.stream()
+                .filter(type -> type.supportsCosmetic() || !cosmeticOnly);
     }
 
     public boolean isShowingDeveloperTools() {
@@ -34,6 +44,10 @@ public class EditSession {
 
     public void setShowingDeveloperTools(boolean showDeveloperTools) {
         this.showDeveloperTools = showDeveloperTools;
+    }
+
+    public boolean isCosmeticOnly() {
+        return this.cosmeticOnly;
     }
 
     public ItemStack getInitial() {

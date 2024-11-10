@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
-import red.jackf.jsst.impl.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
 import red.jackf.jsst.impl.utils.Sounds;
@@ -56,7 +55,7 @@ public class MainGui extends SimpleGuiExt {
         this.setSlot(1, 1, JSSTElementBuilder.from(this.session.getStack())
                 .leftClick(Translations.complete(), this::complete));
 
-        List<WrappedElement<GuiElementInterface>> buttons = ItemEditor.EDITORS.stream()
+        List<WrappedElement<GuiElementInterface>> buttons = this.session.streamEditors()
                 .filter(type -> type.appliesTo(this.session))
                 .filter(type -> !type.isDeveloper() || this.session.isShowingDeveloperTools())
                 .map(type -> WrappedElement.builder(type.getLabel(this.session))
