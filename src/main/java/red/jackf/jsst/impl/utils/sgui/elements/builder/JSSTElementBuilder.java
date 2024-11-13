@@ -39,6 +39,15 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         return new JSSTElementBuilder(item.asItem().getDefaultInstance());
     }
 
+    /**
+     * Creates a builder from the given stack, intended for use as a UI element with no extraneous info such as lore or tooltip details
+     */
+    public static JSSTElementBuilder flatCopy(ItemStack stack) {
+        return from(stack).ui()
+                .hideDefaultTooltip()
+                .removeComponent(DataComponents.LORE);
+    }
+
     public JSSTElementBuilder ui() {
         this.isUIElement = true;
         return this;
@@ -51,6 +60,16 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
 
     public JSSTElementBuilder setName(@Nullable Component name) {
         this.stack.set(DataComponents.CUSTOM_NAME, this.cleanText ? Component.empty().withStyle(Styles.CLEAN).append(name) : name);
+        return this;
+    }
+
+    public JSSTElementBuilder setDamage(int damage) {
+        this.stack.setDamageValue(damage);
+        return this;
+    }
+
+    public JSSTElementBuilder setMaxDamage(int maxDamage) {
+        this.stack.set(DataComponents.MAX_DAMAGE, maxDamage);
         return this;
     }
 

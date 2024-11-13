@@ -35,9 +35,7 @@ public class GlintEditor implements Editor {
 
         Boolean next = cycle(current);
 
-        var builder = JSSTElementBuilder.from(session.getStack()).ui()
-                .hideDefaultTooltip()
-                .removeComponent(DataComponents.LORE)
+        var builder = JSSTElementBuilder.flatCopy(session.getStack())
                 .setName(Component.translatable("jsst.itemEditor.editor.glint"))
                 .addLoreLine(Component.translatable("jsst.itemEditor.editor.glint." + Objects.toString(current, "default")).withStyle(Styles.LABEL))
                 .glow(next);

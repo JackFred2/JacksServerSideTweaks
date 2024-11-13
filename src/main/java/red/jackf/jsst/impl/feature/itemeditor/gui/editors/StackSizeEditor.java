@@ -30,9 +30,7 @@ public class StackSizeEditor extends GuiEditor {
         builder.setInterval(4);
 
         for (int i : List.of(1, 2, 4, 8, 16, 32, 64, 99)) {
-            builder.addStack(JSSTElementBuilder.from(session.getStack())
-                    .hideDefaultTooltip()
-                    .removeComponent(DataComponents.LORE)
+            builder.addStack(JSSTElementBuilder.flatCopy(session.getStack())
                     .setName(Component.translatable("jsst.itemEditor.editor.stackSize"))
                     .setCount(i)
                     .asStack());
@@ -48,7 +46,7 @@ public class StackSizeEditor extends GuiEditor {
     }
 
     private void refreshTitle() {
-        this.setTitle(Translations.split(Component.translatable("jsst.itemEditor.editor.stackSize"), Component.translatable("jsst.itemEditor.editor.stackSize.currentMax", this.stack.getMaxStackSize())));
+        this.setTitle(Translations.split(Component.translatable("jsst.itemEditor.editor.stackSize"), Component.translatable("jsst.itemEditor.editor.currentMax", this.stack.getMaxStackSize())));
     }
 
     @Override
