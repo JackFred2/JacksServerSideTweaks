@@ -81,4 +81,20 @@ public class JSSTConfig {
 
         public String itemIdOrTag = "#jsst:portable_crafting";
     }
+
+    public static void loadAndVerify() {
+        INSTANCE.load();
+
+        boolean modified = false;
+
+        var instance = INSTANCE.instance();
+
+        //noinspection ConstantValue
+        modified |= instance.itemEditor.disabledEditors.removeIf(id -> red.jackf.jsst.impl.feature.itemeditor.ItemEditor.EDITORS.stream()
+                .noneMatch(type -> type.getId().equals(id)));
+
+        if (modified) {
+            INSTANCE.save();
+        }
+    }
 }

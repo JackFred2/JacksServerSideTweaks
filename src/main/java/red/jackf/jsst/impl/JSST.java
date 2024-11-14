@@ -30,7 +30,7 @@ public class JSST implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		JSSTConfig.INSTANCE.load();
+		JSSTConfig.loadAndVerify();
 
 		LabelMaps.touch();
 

@@ -9,10 +9,12 @@ import net.minecraft.network.chat.Component;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.feature.itemeditor.ItemEditor;
+import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
 import red.jackf.jsst.impl.utils.ServerUtils;
 import red.jackf.jsst.impl.utils.TextUtils;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import static net.minecraft.network.chat.Component.literal;
@@ -127,6 +129,7 @@ public interface JSSTConfigScreen {
                         .collapsed(true)
                         .name(translatable("jsst.config.itemEditor.disabledEditors"))
                         .options(ItemEditor.EDITORS.stream()
+                                .sorted(Comparator.comparing(Editor.Type::getId))
                                 .map(type -> Option.<Boolean>createBuilder()
                                         .name(literal(type.getId().toString()))
                                         .binding(true,
