@@ -35,6 +35,13 @@ import red.jackf.jsst.mixins.beaconenhancement.BeaconBlockEntityAccessor;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+TODO
+- conduit range
+- cleanup
+
+ */
+
 public class AltBeaconMenu extends SimpleGuiExt {
     private final BeaconBlockEntityAccessor bbeAccessor;
     private final ContainerLevelAccess levelAccess;
@@ -76,10 +83,6 @@ public class AltBeaconMenu extends SimpleGuiExt {
         }
     };
 
-    private static GuiElementInterface divider() {
-        return CommonElements.divider(DyeColor.BLUE);
-    }
-
     public AltBeaconMenu(ServerPlayer player, BeaconBlockEntity bbe, ContainerLevelAccess levelAccess) {
         super(MenuType.GENERIC_9x6, player, false);
         this.bbeAccessor = (BeaconBlockEntityAccessor) bbe;
@@ -94,13 +97,6 @@ public class AltBeaconMenu extends SimpleGuiExt {
 
     @Override
     protected void drawStatic() {
-        UIRegion.row(this, 4, 0, 4).fillElement(AltBeaconMenu::divider);
-        UIRegion.row(this, 4, 5, 9).fillElement(AltBeaconMenu::divider);
-        UIRegion.column(this,3, 0, 4).fillElement(AltBeaconMenu::divider);
-        UIRegion.column(this,5, 0, 4).fillElement(AltBeaconMenu::divider);
-        this.setSlot(3, 5, divider());
-        this.setSlot(5, 5, divider());
-
         this.setSlot(8, 5, CommonElements.close(this::close));
 
         List<Item> paymentItems = RegistryUtils.streamTag(RegistryUtils.lookup(this.player.registryAccess(), Registries.ITEM), ItemTags.BEACON_PAYMENT_ITEMS)
@@ -155,8 +151,47 @@ public class AltBeaconMenu extends SimpleGuiExt {
         }
     }
 
+    private static GuiElementInterface staticDivider() {
+        return CommonElements.divider(DyeColor.BLUE);
+    }
+
+    private static GuiElementInterface animatedDivider(int offset) {
+        final int spacing = 4;
+
+        var builder = new AnimatedGuiElementBuilderExt().setInterval(6);
+
+        for (int i = 0; i < spacing; i++) {
+            builder.addStack((offset - i) % spacing == 0 ? CommonElements.divider(DyeColor.MAGENTA).getItemStack() : CommonElements.divider(DyeColor.PURPLE).getItemStack());
+        }
+
+        return builder.build();
+    }
+
+    private void redrawDividers() {
+        if (this.levels == 6) {
+            for (int i = 0; i < 4; i++) {
+                this.setSlot(i, 4, animatedDivider(i));
+                this.setSlot(8 - i, 4, animatedDivider(i));
+
+                this.setSlot(3, 3 - i, animatedDivider(i));
+                this.setSlot(5, 3 - i, animatedDivider(i));
+            }
+            this.setSlot(3, 5, CommonElements.divider(DyeColor.PURPLE));
+            this.setSlot(5, 5, CommonElements.divider(DyeColor.PURPLE));
+        } else {
+            UIRegion.row(this, 4, 0, 4).fillElement(AltBeaconMenu::staticDivider);
+            UIRegion.row(this, 4, 5, 9).fillElement(AltBeaconMenu::staticDivider);
+            UIRegion.column(this, 3, 0, 4).fillElement(AltBeaconMenu::staticDivider);
+            UIRegion.column(this, 5, 0, 4).fillElement(AltBeaconMenu::staticDivider);
+            this.setSlot(3, 5, staticDivider());
+            this.setSlot(5, 5, staticDivider());
+        }
+    }
+
     @Override
     protected void refresh() {
+        this.redrawDividers();
+
         JSSTConfig.BeaconEnhancement config = JSSTConfig.INSTANCE.instance().beaconEnhancement;
         Multimap<Integer, Holder<MobEffect>> primaryPowers = config.primaryPowers.parse(this.getPlayer().registryAccess());
         Multimap<Integer, Holder<MobEffect>> secondaryPowers = config.secondaryPowers.parse(this.getPlayer().registryAccess());
