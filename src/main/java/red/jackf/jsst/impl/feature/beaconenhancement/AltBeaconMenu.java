@@ -1,6 +1,7 @@
 package red.jackf.jsst.impl.feature.beaconenhancement;
 
 import com.google.common.collect.Multimap;
+import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -10,6 +11,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -74,6 +76,10 @@ public class AltBeaconMenu extends SimpleGuiExt {
         }
     };
 
+    private static GuiElementInterface divider() {
+        return CommonElements.divider(DyeColor.BLUE);
+    }
+
     public AltBeaconMenu(ServerPlayer player, BeaconBlockEntity bbe, ContainerLevelAccess levelAccess) {
         super(MenuType.GENERIC_9x6, player, false);
         this.bbeAccessor = (BeaconBlockEntityAccessor) bbe;
@@ -88,12 +94,12 @@ public class AltBeaconMenu extends SimpleGuiExt {
 
     @Override
     protected void drawStatic() {
-        UIRegion.row(this, 4, 0, 4).fillElement(CommonElements::divider);
-        UIRegion.row(this, 4, 5, 9).fillElement(CommonElements::divider);
-        UIRegion.column(this,3, 0, 4).fillElement(CommonElements::divider);
-        UIRegion.column(this,5, 0, 4).fillElement(CommonElements::divider);
-        this.setSlot(3, 5, CommonElements.divider());
-        this.setSlot(5, 5, CommonElements.divider());
+        UIRegion.row(this, 4, 0, 4).fillElement(AltBeaconMenu::divider);
+        UIRegion.row(this, 4, 5, 9).fillElement(AltBeaconMenu::divider);
+        UIRegion.column(this,3, 0, 4).fillElement(AltBeaconMenu::divider);
+        UIRegion.column(this,5, 0, 4).fillElement(AltBeaconMenu::divider);
+        this.setSlot(3, 5, divider());
+        this.setSlot(5, 5, divider());
 
         this.setSlot(8, 5, CommonElements.close(this::close));
 
@@ -129,12 +135,12 @@ public class AltBeaconMenu extends SimpleGuiExt {
     }
 
     private void redrawConfirm() {
-        if (!this.paymentSlot.hasItem()) {
-            this.setSlot(2, 5, JSSTElementBuilder.from(Items.GRAY_CONCRETE).ui()
-                    .setName(Component.translatable("jsst.beaconEnhancement.noPaymentItem").setStyle(Styles.NEGATIVE)));
-        } else if (this.levels == 0) {
+        if (this.levels == 0) {
             this.setSlot(2, 5, JSSTElementBuilder.from(Items.GRAY_CONCRETE).ui()
                     .setName(Component.translatable("jsst.beaconEnhancement.beaconInactive").setStyle(Styles.NEGATIVE)));
+        } else if (!this.paymentSlot.hasItem()) {
+            this.setSlot(2, 5, JSSTElementBuilder.from(Items.GRAY_CONCRETE).ui()
+                    .setName(Component.translatable("jsst.beaconEnhancement.noPaymentItem").setStyle(Styles.NEGATIVE)));
         } else {
             this.setSlot(2, 5, JSSTElementBuilder.from(Items.LIME_CONCRETE).ui()
                     .leftClick(Translations.confirm(), () -> {
@@ -152,7 +158,8 @@ public class AltBeaconMenu extends SimpleGuiExt {
     @Override
     protected void refresh() {
         JSSTConfig.BeaconEnhancement config = JSSTConfig.INSTANCE.instance().beaconEnhancement;
-        Multimap<Integer, Holder<MobEffect>> powers = config.powers.parse(this.getPlayer().registryAccess());
+        Multimap<Integer, Holder<MobEffect>> primaryPowers = config.primaryPowers.parse(this.getPlayer().registryAccess());
+        Multimap<Integer, Holder<MobEffect>> secondaryPowers = config.secondaryPowers.parse(this.getPlayer().registryAccess());
 
         if (this.levels >= 1) {
             this.primaryArea.clearSlots();
@@ -164,8 +171,8 @@ public class AltBeaconMenu extends SimpleGuiExt {
 
                         List<Holder<MobEffect>> effects = new ArrayList<>();
 
-                        for (int i = 1; i <= this.levels && i < config.secondPowerMinLevel; i++) {
-                            effects.addAll(powers.get(i));
+                        for (int i = 1; i <= this.levels; i++) {
+                            effects.addAll(primaryPowers.get(i));
                         }
 
                         SelectionMenu.<Holder<MobEffect>>builder(player)
@@ -178,10 +185,11 @@ public class AltBeaconMenu extends SimpleGuiExt {
                                 });
                     }));
         } else {
-            this.primaryArea.fillElement(CommonElements::disabled);
+            this.primaryArea.fillElement(() -> CommonElements.disabled(Component.translatable("jsst.beaconEnhancement.beaconInactive", config.secondPowerMinLevel)
+                    .withStyle(Styles.NEGATIVE)));
         }
 
-        if (config.secondPowerMinLevel != 0 && this.levels >= config.secondPowerMinLevel) {
+        if (config.enableSecondPower && this.levels >= config.secondPowerMinLevel) {
             this.secondaryArea.clearSlots();
 
             this.setSlot(7, 1, getEffectIcon(secondary)
@@ -191,8 +199,12 @@ public class AltBeaconMenu extends SimpleGuiExt {
 
                         List<Holder<MobEffect>> effects = new ArrayList<>();
 
-                        for (int i = config.secondPowerMinLevel; i <= this.levels; i++) {
-                            effects.addAll(powers.get(i));
+                        if (this.primary != null) {
+                            effects.add(this.primary);
+                        }
+
+                        for (int i = 1; i <= this.levels; i++) {
+                            effects.addAll(secondaryPowers.get(i));
                         }
 
                         SelectionMenu.<Holder<MobEffect>>builder(player)
@@ -205,17 +217,28 @@ public class AltBeaconMenu extends SimpleGuiExt {
                                 });
                     }));
         } else {
-            this.secondaryArea.fillElement(CommonElements::disabled);
+            if (this.levels == 0) {
+                this.secondaryArea.fillElement(() -> CommonElements.disabled(Component.translatable("jsst.beaconEnhancement.beaconInactive", config.secondPowerMinLevel)
+                        .withStyle(Styles.NEGATIVE)));
+            } else {
+                this.secondaryArea.fillElement(() -> CommonElements.disabled(Component.translatable("jsst.beaconEnhancement.minLevelForSecondary", config.secondPowerMinLevel)
+                        .withStyle(Styles.NEGATIVE)));
+            }
         }
 
         // power beam
         for (int i = 1; i <= 6; i++) {
-            boolean active = this.levels >= i;
+            int capped = Math.min(JSSTConfig.INSTANCE.instance().beaconEnhancement.maxLevel, i);
+            boolean active = this.levels >= capped;
 
             var builder = JSSTElementBuilder.from(active ? Items.LIME_STAINED_GLASS_PANE : Items.RED_STAINED_GLASS_PANE).ui()
-                    .setName(Component.translatable("jsst.beaconEnhancement.level", i).withStyle(active ? Styles.POSITIVE : Styles.NEGATIVE));
+                    .setName(Component.translatable("jsst.beaconEnhancement.level", capped).withStyle(active ? Styles.POSITIVE : Styles.NEGATIVE));
 
-            for (Holder<MobEffect> effect : powers.get(i)) {
+            for (Holder<MobEffect> effect : primaryPowers.get(capped)) {
+                builder.addLoreLine(Component.literal(" - ").withStyle(Styles.LABEL).append(effect.value().getDisplayName()));
+            }
+
+            for (Holder<MobEffect> effect : secondaryPowers.get(capped)) {
                 builder.addLoreLine(Component.literal(" - ").withStyle(Styles.LABEL).append(effect.value().getDisplayName()));
             }
 

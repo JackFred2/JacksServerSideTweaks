@@ -98,14 +98,25 @@ public interface JSSTConfigScreen {
     }
 
     private static ConfigCategory createBeaconEnhancement(ConfigClassHandler<JSSTConfig> handler) {
-        Function<Integer, ListOption<String>> levelFactory = level -> ListOption.<String>createBuilder()
+        Function<Integer, ListOption<String>> primaryLevelFactory = level -> ListOption.<String>createBuilder()
                 .name(translatable("jsst.beaconEnhancement.level", level))
-                .binding(handler.defaults().beaconEnhancement.powers.get(level),
-                        () -> handler.instance().beaconEnhancement.powers.get(level),
-                        l -> handler.instance().beaconEnhancement.powers = handler.instance().beaconEnhancement.powers.update(level, l))
+                .binding(handler.defaults().beaconEnhancement.primaryPowers.get(level),
+                        () -> handler.instance().beaconEnhancement.primaryPowers.get(level),
+                        l -> handler.instance().beaconEnhancement.primaryPowers = handler.instance().beaconEnhancement.primaryPowers.update(level, l))
                 .controller(opt -> FormattableStringController.create(opt)
                         .formatter(TextUtils::formatResloc))
                 .initial("minecraft:speed_boost")
+                .collapsed(true)
+                .build();
+
+        Function<Integer, ListOption<String>> secondaryLevelFactory = level -> ListOption.<String>createBuilder()
+                .name(translatable("jsst.beaconEnhancement.level", level))
+                .binding(handler.defaults().beaconEnhancement.secondaryPowers.get(level),
+                        () -> handler.instance().beaconEnhancement.secondaryPowers.get(level),
+                        l -> handler.instance().beaconEnhancement.secondaryPowers = handler.instance().beaconEnhancement.secondaryPowers.update(level, l))
+                .controller(opt -> FormattableStringController.create(opt)
+                        .formatter(TextUtils::formatResloc))
+                .initial("minecraft:regeneration")
                 .collapsed(true)
                 .build();
 
@@ -137,7 +148,19 @@ public interface JSSTConfigScreen {
                         .controller(opt -> FloatSliderControllerBuilder.create(opt)
                                 .range(0.5f, 8f)
                                 .step(0.01f)
-                                .formatValue(value -> Component.literal("%.0f%%".formatted(value * 100))))
+                                .formatValue(value -> literal("%.0f%%".formatted(value * 100))))
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.beaconEnhancement.enableSecondPower"))
+                        .description(OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.beaconEnhancement.enableSecondPower.description"))
+                                .build())
+                        .binding(handler.defaults().beaconEnhancement.enableSecondPower,
+                                () -> handler.instance().beaconEnhancement.enableSecondPower,
+                                b -> handler.instance().beaconEnhancement.enableSecondPower = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
                         .build())
                 .option(Option.<Integer>createBuilder()
                         .name(translatable("jsst.config.beaconEnhancement.maxLevel"))
@@ -156,16 +179,31 @@ public interface JSSTConfigScreen {
                                 () -> handler.instance().beaconEnhancement.secondPowerMinLevel,
                                 i -> handler.instance().beaconEnhancement.secondPowerMinLevel = i)
                         .controller(opt -> IntegerSliderControllerBuilder.create(opt)
-                                .range(0, 6)
+                                .range(1, 6)
                                 .step(1))
                         .build())
-                .option(LabelOption.create(translatable("jsst.config.beaconEnhancement.power")))
-                .group(levelFactory.apply(1))
-                .group(levelFactory.apply(2))
-                .group(levelFactory.apply(3))
-                .group(levelFactory.apply(4))
-                .group(levelFactory.apply(5))
-                .group(levelFactory.apply(6))
+                .group(OptionGroup.createBuilder()
+                        .name(translatable("jsst.config.beaconEnhancement.primaryPowers"))
+                        .collapsed(true)
+                        .option(LabelOption.create(translatable("jsst.config.beaconEnhancement.primaryPowers.description")))
+                        .build())
+                .group(primaryLevelFactory.apply(1))
+                .group(primaryLevelFactory.apply(2))
+                .group(primaryLevelFactory.apply(3))
+                .group(primaryLevelFactory.apply(4))
+                .group(primaryLevelFactory.apply(5))
+                .group(primaryLevelFactory.apply(6))
+                .group(OptionGroup.createBuilder()
+                        .name(translatable("jsst.config.beaconEnhancement.secondaryPowers"))
+                        .collapsed(true)
+                        .option(LabelOption.create(translatable("jsst.config.beaconEnhancement.secondaryPowers.description")))
+                        .build())
+                .group(secondaryLevelFactory.apply(1))
+                .group(secondaryLevelFactory.apply(2))
+                .group(secondaryLevelFactory.apply(3))
+                .group(secondaryLevelFactory.apply(4))
+                .group(secondaryLevelFactory.apply(5))
+                .group(secondaryLevelFactory.apply(6))
                 .build();
     }
 

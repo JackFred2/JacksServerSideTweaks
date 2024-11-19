@@ -19,11 +19,19 @@ public record BeaconPowers(List<String> level1,
                            List<String> level4,
                            List<String> level5,
                            List<String> level6) {
-    public static final BeaconPowers DEFAULT = new BeaconPowers(
+    public static final BeaconPowers DEFAULT_PRIMARY = new BeaconPowers(
             List.of(key(MobEffects.MOVEMENT_SPEED), key(MobEffects.DIG_SPEED)),
             List.of(key(MobEffects.DAMAGE_RESISTANCE), key(MobEffects.JUMP)),
             List.of(key(MobEffects.DAMAGE_BOOST)),
-            List.of(key(MobEffects.REGENERATION), key(MobEffects.GLOWING)),
+            List.of(key(MobEffects.GLOWING)),
+            List.of(),
+            List.of());
+
+    public static final BeaconPowers DEFAULT_SECONDARY = new BeaconPowers(
+            List.of(),
+            List.of(),
+            List.of(),
+            List.of(key(MobEffects.REGENERATION)),
             List.of(key(MobEffects.NIGHT_VISION)),
             List.of(key(MobEffects.FIRE_RESISTANCE))
     );

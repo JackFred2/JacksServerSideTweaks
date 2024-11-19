@@ -6,6 +6,7 @@ import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.feature.beaconenhancement.BeaconPowers;
 
@@ -42,9 +43,13 @@ public class JSSTConfig {
 
         public int maxLevel = 6;
 
+        public boolean enableSecondPower = true;
+
         public int secondPowerMinLevel = 4;
 
-        public BeaconPowers powers = BeaconPowers.DEFAULT;
+        public BeaconPowers primaryPowers = BeaconPowers.DEFAULT_PRIMARY;
+
+        public BeaconPowers secondaryPowers = BeaconPowers.DEFAULT_SECONDARY;
     }
 
     @SerialEntry
@@ -105,9 +110,26 @@ public class JSSTConfig {
 
         var instance = INSTANCE.instance();
 
-        //noinspection ConstantValue
         modified |= instance.itemEditor.disabledEditors.removeIf(id -> red.jackf.jsst.impl.feature.itemeditor.ItemEditor.EDITORS.stream()
                 .noneMatch(type -> type.getId().equals(id)));
+
+        int beaconMaxLevel = Mth.clamp(instance.beaconEnhancement.maxLevel, 1, 6);
+        if (instance.beaconEnhancement.maxLevel != beaconMaxLevel) {
+            modified = true;
+            instance.beaconEnhancement.maxLevel = beaconMaxLevel;
+        }
+
+        int beaconSecondPowerLevel = Mth.clamp(instance.beaconEnhancement.secondPowerMinLevel, 1, 6);
+        if (instance.beaconEnhancement.secondPowerMinLevel != beaconSecondPowerLevel) {
+            modified = true;
+            instance.beaconEnhancement.secondPowerMinLevel = beaconSecondPowerLevel;
+        }
+
+        float beaconRangeMod = Mth.clamp(instance.beaconEnhancement.rangeModifier, 0.5f, 8f);
+        if (instance.beaconEnhancement.rangeModifier != beaconRangeMod) {
+            modified = true;
+            instance.beaconEnhancement.rangeModifier = beaconRangeMod;
+        }
 
         if (modified) {
             INSTANCE.save();

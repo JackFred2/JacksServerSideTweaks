@@ -117,6 +117,11 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         return this;
     }
 
+    public JSSTElementBuilder hideTooltip() {
+        this.stack.set(DataComponents.HIDE_TOOLTIP, Unit.INSTANCE);
+        return this;
+    }
+
     private static <T> void ifNotNull(ItemStack stack, DataComponentType<T> type, UnaryOperator<T> op) {
         stack.update(type, null, comp -> comp != null ? op.apply(comp) : null);
     }
