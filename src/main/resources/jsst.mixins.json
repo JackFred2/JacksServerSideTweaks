@@ -6,6 +6,8 @@
   "mixins": [
     "bannerwriter.BannerItemMixin",
     "bannerwriter.BlockItemMixin",
+    "beaconenhancement.BeaconBlockEntityAccessor",
+    "beaconenhancement.BeaconBlockEntityMixin",
     "campfiretimers.CampfireBlockEntityMixin",
     "itemnudge.BlockMixin",
     "mapeditor.MapItemSavedDataAccessor",

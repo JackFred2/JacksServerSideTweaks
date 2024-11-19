@@ -55,4 +55,12 @@ public interface TextUtils {
     static Component previewGradient(Gradient gradient) {
         return applyGradient("|".repeat(40), Style.EMPTY, gradient);
     }
+
+    static Component formatResloc(String input) {
+        if (ResourceLocation.tryParse(input) != null) {
+            return literal(input).withStyle(ChatFormatting.YELLOW);
+        } else {
+            return literal(input).withStyle(ChatFormatting.RED);
+        }
+    }
 }

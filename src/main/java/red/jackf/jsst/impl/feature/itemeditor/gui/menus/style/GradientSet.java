@@ -124,52 +124,52 @@ enum GradientSet {
         Map<Gradient, ItemStack> formats = new LinkedHashMap<>();
 
         formats.put(Gradients.RAINBOW, JSSTElementBuilder.from(Items.RED_WOOL)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.rainbow"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.rainbow"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.RAINBOW))
                 .asStack());
 
         formats.put(Gradients.GAY, JSSTElementBuilder.from(Items.PRISMARINE_SHARD)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.gay"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.gay"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.GAY))
                 .asStack());
 
         formats.put(Gradients.LESBIAN, JSSTElementBuilder.from(Items.OCELOT_SPAWN_EGG)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.lesbian"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.lesbian"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.LESBIAN))
                 .asStack());
 
         formats.put(Gradients.BISEXUAL, JSSTElementBuilder.from(Items.BRICKS)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.bisexual"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.bisexual"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.BISEXUAL))
                 .asStack());
 
         formats.put(Gradients.TRANS, JSSTElementBuilder.from(Items.EGG)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.trans"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.trans"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.TRANS))
                 .asStack());
 
         formats.put(Gradients.PANSEXUAL, JSSTElementBuilder.from(Items.ENDER_EYE)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.pansexual"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.pansexual"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.PANSEXUAL))
                 .asStack());
 
         formats.put(Gradients.INTERSEX_SMOOTH, JSSTElementBuilder.from(Items.PURPLE_CANDLE)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.intersex"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.intersex"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.INTERSEX_SMOOTH))
                 .asStack());
 
         formats.put(Gradients.NONBINARY, JSSTElementBuilder.from(Items.WIND_CHARGE)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.nonbinary"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.nonbinary"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.NONBINARY))
                 .asStack());
 
         formats.put(Gradients.ARO, JSSTElementBuilder.from(Items.BREAD)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.aro"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.aro"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.ARO))
                 .asStack());
 
         formats.put(Gradients.ACE, JSSTElementBuilder.from(Items.ENDER_PEARL)
-                .setName(Component.translatable("jsst.itemeditor.changeStyle.page.gradients.ace"))
+                .setName(Component.translatable("jsst.itemEditor.changeStyle.page.gradients.ace"))
                 .addLoreLine(TextUtils.previewGradient(Gradients.ACE))
                 .asStack());
 

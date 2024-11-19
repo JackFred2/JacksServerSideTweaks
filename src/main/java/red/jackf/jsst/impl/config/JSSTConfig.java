@@ -7,6 +7,7 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import red.jackf.jsst.impl.JSST;
+import red.jackf.jsst.impl.feature.beaconenhancement.BeaconPowers;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +30,21 @@ public class JSSTConfig {
         public boolean enabled = true;
 
         public boolean requiresOp = false;
+    }
+
+    @SerialEntry
+    public BeaconEnhancement beaconEnhancement = new BeaconEnhancement();
+
+    public static class BeaconEnhancement {
+        public boolean enabled = true;
+
+        public float rangeModifier = 1.5f;
+
+        public int maxLevel = 6;
+
+        public int secondPowerMinLevel = 4;
+
+        public BeaconPowers powers = BeaconPowers.DEFAULT;
     }
 
     @SerialEntry
