@@ -41,6 +41,8 @@ public class JSSTConfig {
 
         public float rangeModifier = 1.5f;
 
+        public float conduitRangeModifier = 1.5f;
+
         public int maxLevel = 6;
 
         public boolean enableSecondPower = true;

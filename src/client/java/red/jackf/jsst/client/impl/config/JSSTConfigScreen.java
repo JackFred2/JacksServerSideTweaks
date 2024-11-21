@@ -1,5 +1,6 @@
 package red.jackf.jsst.client.impl.config;
 
+import com.mojang.datafixers.util.Pair;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
@@ -15,10 +16,7 @@ import red.jackf.jsst.impl.feature.itemeditor.gui.editors.Editor;
 import red.jackf.jsst.impl.utils.ServerUtils;
 import red.jackf.jsst.impl.utils.TextUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 import static net.minecraft.network.chat.Component.literal;
@@ -97,6 +95,23 @@ public interface JSSTConfigScreen {
         return list;
     }
 
+    private static Collection<Component> createConduitRangeTable(float rangeModifier) {
+        List<Component> list = new ArrayList<>();
+        List<Pair<Integer, Double>> ranges = List.of(
+                Pair.of(16, 32.0),
+                Pair.of(21, 48.0),
+                Pair.of(28, 64.0),
+                Pair.of(35, 80.0),
+                Pair.of(42, 96.0)
+        );
+
+        for (var range : ranges) {
+            list.add(translatable("jsst.config.beaconEnhancement.conduitRangeModifier.description.example", range.getFirst(), (int) (range.getSecond() * rangeModifier)));
+        }
+
+        return list;
+    }
+
     private static ConfigCategory createBeaconEnhancement(ConfigClassHandler<JSSTConfig> handler) {
         Function<Integer, ListOption<String>> primaryLevelFactory = level -> ListOption.<String>createBuilder()
                 .name(translatable("jsst.beaconEnhancement.level", level))
@@ -150,17 +165,20 @@ public interface JSSTConfigScreen {
                                 .step(0.01f)
                                 .formatValue(value -> literal("%.0f%%".formatted(value * 100))))
                         .build())
-                .option(Option.<Boolean>createBuilder()
-                        .name(translatable("jsst.config.beaconEnhancement.enableSecondPower"))
-                        .description(OptionDescription.createBuilder()
-                                .text(translatable("jsst.config.beaconEnhancement.enableSecondPower.description"))
+                .option(Option.<Float>createBuilder()
+                        .name(translatable("jsst.config.beaconEnhancement.conduitRangeModifier"))
+                        .description(modifier -> OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.beaconEnhancement.conduitRangeModifier.description"))
+                                .text(Component.empty())
+                                .text(createConduitRangeTable(modifier))
                                 .build())
-                        .binding(handler.defaults().beaconEnhancement.enableSecondPower,
-                                () -> handler.instance().beaconEnhancement.enableSecondPower,
-                                b -> handler.instance().beaconEnhancement.enableSecondPower = b)
-                        .controller(opt -> BooleanControllerBuilder.create(opt)
-                                .coloured(true)
-                                .yesNoFormatter())
+                        .binding(handler.defaults().beaconEnhancement.conduitRangeModifier,
+                                () -> handler.instance().beaconEnhancement.conduitRangeModifier,
+                                f -> handler.instance().beaconEnhancement.conduitRangeModifier = f)
+                        .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                                .range(0.5f, 8f)
+                                .step(0.01f)
+                                .formatValue(value -> literal("%.0f%%".formatted(value * 100))))
                         .build())
                 .option(Option.<Integer>createBuilder()
                         .name(translatable("jsst.config.beaconEnhancement.maxLevel"))
@@ -168,16 +186,6 @@ public interface JSSTConfigScreen {
                         .binding(handler.defaults().beaconEnhancement.maxLevel,
                                 () -> handler.instance().beaconEnhancement.maxLevel,
                                 i -> handler.instance().beaconEnhancement.maxLevel = i)
-                        .controller(opt -> IntegerSliderControllerBuilder.create(opt)
-                                .range(1, 6)
-                                .step(1))
-                        .build())
-                .option(Option.<Integer>createBuilder()
-                        .name(translatable("jsst.config.beaconEnhancement.secondPowerMinLevel"))
-                        .description(OptionDescription.of(translatable("jsst.config.beaconEnhancement.secondPowerMinLevel.description")))
-                        .binding(handler.defaults().beaconEnhancement.secondPowerMinLevel,
-                                () -> handler.instance().beaconEnhancement.secondPowerMinLevel,
-                                i -> handler.instance().beaconEnhancement.secondPowerMinLevel = i)
                         .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                                 .range(1, 6)
                                 .step(1))
@@ -195,8 +203,28 @@ public interface JSSTConfigScreen {
                 .group(primaryLevelFactory.apply(6))
                 .group(OptionGroup.createBuilder()
                         .name(translatable("jsst.config.beaconEnhancement.secondaryPowers"))
-                        .collapsed(true)
-                        .option(LabelOption.create(translatable("jsst.config.beaconEnhancement.secondaryPowers.description")))
+                        .option(Option.<Boolean>createBuilder()
+                                .name(translatable("jsst.config.beaconEnhancement.enableSecondPower"))
+                                .description(OptionDescription.createBuilder()
+                                        .text(translatable("jsst.config.beaconEnhancement.enableSecondPower.description"))
+                                        .build())
+                                .binding(handler.defaults().beaconEnhancement.enableSecondPower,
+                                        () -> handler.instance().beaconEnhancement.enableSecondPower,
+                                        b -> handler.instance().beaconEnhancement.enableSecondPower = b)
+                                .controller(opt -> BooleanControllerBuilder.create(opt)
+                                        .coloured(true)
+                                        .yesNoFormatter())
+                                .build())
+                        .option(Option.<Integer>createBuilder()
+                                .name(translatable("jsst.config.beaconEnhancement.secondPowerMinLevel"))
+                                .description(OptionDescription.of(translatable("jsst.config.beaconEnhancement.secondPowerMinLevel.description")))
+                                .binding(handler.defaults().beaconEnhancement.secondPowerMinLevel,
+                                        () -> handler.instance().beaconEnhancement.secondPowerMinLevel,
+                                        i -> handler.instance().beaconEnhancement.secondPowerMinLevel = i)
+                                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                        .range(1, 6)
+                                        .step(1))
+                                .build())
                         .build())
                 .group(secondaryLevelFactory.apply(1))
                 .group(secondaryLevelFactory.apply(2))

@@ -8,6 +8,7 @@
     "bannerwriter.BlockItemMixin",
     "beaconenhancement.BeaconBlockEntityAccessor",
     "beaconenhancement.BeaconBlockEntityMixin",
+    "beaconenhancement.ConduitBlockEntityMixin",
     "campfiretimers.CampfireBlockEntityMixin",
     "itemnudge.BlockMixin",
     "mapeditor.MapItemSavedDataAccessor",
