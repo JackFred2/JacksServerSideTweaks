@@ -29,9 +29,9 @@ public interface JSSTConfigScreen {
                 createBeaconEnhancement(JSSTConfig.INSTANCE),
                 createCampfireTimers(JSSTConfig.INSTANCE),
                 createItemEditor(JSSTConfig.INSTANCE),
-                createItemNudging(JSSTConfig.INSTANCE),
                 createMapEditor(JSSTConfig.INSTANCE),
-                createPortableCrafting(JSSTConfig.INSTANCE)
+                createPortableCrafting(JSSTConfig.INSTANCE),
+                createMiscellaneous(JSSTConfig.INSTANCE)
         );
 
         return YetAnotherConfigLib.createBuilder()
@@ -83,35 +83,6 @@ public interface JSSTConfigScreen {
                 .build();
     }
 
-    private static Collection<Component> createBeaconRangeTable(float rangeModifier) {
-        List<Component> list = new ArrayList<>();
-
-        for (int level = 1; level <= 6; level++) {
-            int range = 10 * (1 + level);
-
-            list.add(translatable("jsst.config.beaconEnhancement.rangeModifier.description.example", level, (int) (range * rangeModifier)));
-        }
-
-        return list;
-    }
-
-    private static Collection<Component> createConduitRangeTable(float rangeModifier) {
-        List<Component> list = new ArrayList<>();
-        List<Pair<Integer, Double>> ranges = List.of(
-                Pair.of(16, 32.0),
-                Pair.of(21, 48.0),
-                Pair.of(28, 64.0),
-                Pair.of(35, 80.0),
-                Pair.of(42, 96.0)
-        );
-
-        for (var range : ranges) {
-            list.add(translatable("jsst.config.beaconEnhancement.conduitRangeModifier.description.example", range.getFirst(), (int) (range.getSecond() * rangeModifier)));
-        }
-
-        return list;
-    }
-
     private static ConfigCategory createBeaconEnhancement(ConfigClassHandler<JSSTConfig> handler) {
         Function<Integer, ListOption<String>> primaryLevelFactory = level -> ListOption.<String>createBuilder()
                 .name(translatable("jsst.beaconEnhancement.level", level))
@@ -149,36 +120,6 @@ public interface JSSTConfigScreen {
                         .controller(opt -> BooleanControllerBuilder.create(opt)
                                 .coloured(true)
                                 .yesNoFormatter())
-                        .build())
-                .option(Option.<Float>createBuilder()
-                        .name(translatable("jsst.config.beaconEnhancement.rangeModifier"))
-                        .description(modifier -> OptionDescription.createBuilder()
-                                .text(translatable("jsst.config.beaconEnhancement.rangeModifier.description"))
-                                .text(Component.empty())
-                                .text(createBeaconRangeTable(modifier))
-                                .build())
-                        .binding(handler.defaults().beaconEnhancement.rangeModifier,
-                                () -> handler.instance().beaconEnhancement.rangeModifier,
-                                f -> handler.instance().beaconEnhancement.rangeModifier = f)
-                        .controller(opt -> FloatSliderControllerBuilder.create(opt)
-                                .range(0.5f, 8f)
-                                .step(0.01f)
-                                .formatValue(value -> literal("%.0f%%".formatted(value * 100))))
-                        .build())
-                .option(Option.<Float>createBuilder()
-                        .name(translatable("jsst.config.beaconEnhancement.conduitRangeModifier"))
-                        .description(modifier -> OptionDescription.createBuilder()
-                                .text(translatable("jsst.config.beaconEnhancement.conduitRangeModifier.description"))
-                                .text(Component.empty())
-                                .text(createConduitRangeTable(modifier))
-                                .build())
-                        .binding(handler.defaults().beaconEnhancement.conduitRangeModifier,
-                                () -> handler.instance().beaconEnhancement.conduitRangeModifier,
-                                f -> handler.instance().beaconEnhancement.conduitRangeModifier = f)
-                        .controller(opt -> FloatSliderControllerBuilder.create(opt)
-                                .range(0.5f, 8f)
-                                .step(0.01f)
-                                .formatValue(value -> literal("%.0f%%".formatted(value * 100))))
                         .build())
                 .option(Option.<Integer>createBuilder()
                         .name(translatable("jsst.config.beaconEnhancement.maxLevel"))
@@ -305,28 +246,93 @@ public interface JSSTConfigScreen {
                 .build();
     }
 
-    private static ConfigCategory createItemNudging(ConfigClassHandler<JSSTConfig> handler) {
+    private static Collection<Component> createBeaconRangeTable(float rangeModifier) {
+        List<Component> list = new ArrayList<>();
+
+        for (int level = 1; level <= 6; level++) {
+            int range = 10 * (1 + level);
+
+            list.add(translatable("jsst.config.miscellaneous.effectorRange.beacon.description.example", level, (int) (range * rangeModifier)));
+        }
+
+        return list;
+    }
+
+    private static Collection<Component> createConduitRangeTable(float rangeModifier) {
+        List<Component> list = new ArrayList<>();
+        List<Pair<Integer, Double>> ranges = List.of(
+                Pair.of(16, 32.0),
+                Pair.of(21, 48.0),
+                Pair.of(28, 64.0),
+                Pair.of(35, 80.0),
+                Pair.of(42, 96.0)
+        );
+
+        for (var range : ranges) {
+            list.add(translatable("jsst.config.miscellaneous.effectorRange.conduit.description.example", range.getFirst(), (int) (range.getSecond() * rangeModifier)));
+        }
+
+        return list;
+    }
+
+    private static ConfigCategory createMiscellaneous(ConfigClassHandler<JSSTConfig> handler) {
         return ConfigCategory.createBuilder()
-                .name(translatable("jsst.config.itemNudging"))
-                .option(Option.<Boolean>createBuilder()
-                        .name(translatable("jsst.config.itemNudging.shiftUp"))
-                        .description(OptionDescription.of(translatable("jsst.config.itemNudging.shiftUp.description")))
-                        .binding(handler.defaults().itemNudging.shiftUp,
-                                () -> handler.instance().itemNudging.shiftUp,
-                                b -> handler.instance().itemNudging.shiftUp = b)
-                        .controller(opt -> BooleanControllerBuilder.create(opt)
-                                .coloured(true)
-                                .yesNoFormatter())
+                .name(translatable("jsst.config.miscellaneous"))
+                .group(OptionGroup.createBuilder()
+                        .name(translatable("jsst.config.miscellaneous.itemNudging"))
+                        .option(Option.<Boolean>createBuilder()
+                                .name(translatable("jsst.config.miscellaneous.itemNudging.shiftUp"))
+                                .description(OptionDescription.of(translatable("jsst.config.miscellaneous.itemNudging.shiftItemsUp.description")))
+                                .binding(handler.defaults().miscellaneous.shiftItemsUp,
+                                        () -> handler.instance().miscellaneous.shiftItemsUp,
+                                        b -> handler.instance().miscellaneous.shiftItemsUp = b)
+                                .controller(opt -> BooleanControllerBuilder.create(opt)
+                                        .coloured(true)
+                                        .yesNoFormatter())
+                                .build())
+                        .option(Option.<Boolean>createBuilder()
+                                .name(translatable("jsst.config.miscellaneous.itemNudging.shiftItemsTowardsPlayer"))
+                                .description(OptionDescription.of(translatable("jsst.config.miscellaneous.itemNudging.shiftItemsTowardsPlayer.description")))
+                                .binding(handler.defaults().miscellaneous.shiftItemsTowardsPlayer,
+                                        () -> handler.instance().miscellaneous.shiftItemsTowardsPlayer,
+                                        b -> handler.instance().miscellaneous.shiftItemsTowardsPlayer = b)
+                                .controller(opt -> BooleanControllerBuilder.create(opt)
+                                        .coloured(true)
+                                        .yesNoFormatter())
+                                .build())
                         .build())
-                .option(Option.<Boolean>createBuilder()
-                        .name(translatable("jsst.config.itemNudging.shiftTowardsPlayer"))
-                        .description(OptionDescription.of(translatable("jsst.config.itemNudging.shiftTowardsPlayer.description")))
-                        .binding(handler.defaults().itemNudging.shiftTowardsPlayer,
-                                () -> handler.instance().itemNudging.shiftTowardsPlayer,
-                                b -> handler.instance().itemNudging.shiftTowardsPlayer = b)
-                        .controller(opt -> BooleanControllerBuilder.create(opt)
-                                .coloured(true)
-                                .yesNoFormatter())
+                .group(OptionGroup.createBuilder()
+                        .name(translatable("jsst.config.miscellaneous.effectorRange"))
+                        .option(Option.<Float>createBuilder()
+                                .name(translatable("jsst.config.miscellaneous.effectorRange.beacon"))
+                                .description(modifier -> OptionDescription.createBuilder()
+                                        .text(translatable("jsst.config.miscellaneous.effectorRange.beacon.description"))
+                                        .text(Component.empty())
+                                        .text(createBeaconRangeTable(modifier))
+                                        .build())
+                                .binding(handler.defaults().miscellaneous.beaconRangeModifier,
+                                        () -> handler.instance().miscellaneous.beaconRangeModifier,
+                                        f -> handler.instance().miscellaneous.beaconRangeModifier = f)
+                                .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                                        .range(0.5f, 5f)
+                                        .step(0.01f)
+                                        .formatValue(value -> literal("%.0f%%".formatted(value * 100))))
+                                .build())
+                        .option(Option.<Float>createBuilder()
+                                .name(translatable("jsst.config.miscellaneous.effectorRange.conduit"))
+                                .description(modifier -> OptionDescription.createBuilder()
+                                        .text(translatable("jsst.config.miscellaneous.effectorRange.conduit.description"))
+                                        .text(Component.empty())
+                                        .text(createConduitRangeTable(modifier))
+                                        .build())
+                                .binding(handler.defaults().miscellaneous.conduitRangeModifier,
+                                        () -> handler.instance().miscellaneous.conduitRangeModifier,
+                                        f -> handler.instance().miscellaneous.conduitRangeModifier = f)
+                                .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                                        .range(0.5f, 5f)
+                                        .step(0.01f)
+                                        .formatValue(value -> literal("%.0f%%".formatted(value * 100))))
+                                .build())
                         .build())
                 .build();
     }

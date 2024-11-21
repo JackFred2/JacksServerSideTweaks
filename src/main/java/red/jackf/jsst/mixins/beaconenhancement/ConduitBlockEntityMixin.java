@@ -14,15 +14,15 @@ public class ConduitBlockEntityMixin {
     @Expression("?.inflate(@((double) ?))")
     @ModifyExpressionValue(method = "applyEffects", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
     private static double increaseBeaconRangeWhenGrabbing(double original) {
-        var config = JSSTConfig.INSTANCE.instance().beaconEnhancement;
-        return config.enabled ? config.conduitRangeModifier * original : original;
+        var config = JSSTConfig.INSTANCE.instance().miscellaneous.conduitRangeModifier;
+        return config * original;
     }
 
     @Definition(id = "closerThan", method = "Lnet/minecraft/core/BlockPos;closerThan(Lnet/minecraft/core/Vec3i;D)Z")
     @Expression("?.closerThan(?, @((double) ?))")
     @ModifyExpressionValue(method = "applyEffects", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
     private static double increaseBeaconRangeWhenChecking(double original) {
-        var config = JSSTConfig.INSTANCE.instance().beaconEnhancement;
-        return config.enabled ? config.conduitRangeModifier * original : original;
+        var config = JSSTConfig.INSTANCE.instance().miscellaneous.conduitRangeModifier;
+        return config * original;
     }
 }

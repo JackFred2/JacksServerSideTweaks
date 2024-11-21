@@ -39,10 +39,6 @@ public class JSSTConfig {
     public static class BeaconEnhancement {
         public boolean enabled = true;
 
-        public float rangeModifier = 1.5f;
-
-        public float conduitRangeModifier = 1.5f;
-
         public int maxLevel = 6;
 
         public boolean enableSecondPower = true;
@@ -73,15 +69,6 @@ public class JSSTConfig {
     }
 
     @SerialEntry
-    public ItemNudging itemNudging = new ItemNudging();
-
-    public static class ItemNudging {
-        public boolean shiftUp = true;
-
-        public boolean shiftTowardsPlayer = true;
-    }
-
-    @SerialEntry
     public MapEditor mapEditor = new MapEditor();
 
     public static class MapEditor {
@@ -92,6 +79,19 @@ public class JSSTConfig {
         public String tool = "minecraft:feather";
 
         public boolean disableSerialization = false;
+    }
+
+    @SerialEntry
+    public Miscellaneous miscellaneous = new Miscellaneous();
+
+    public static class Miscellaneous {
+        public boolean shiftItemsUp = true;
+
+        public boolean shiftItemsTowardsPlayer = true;
+
+        public float beaconRangeModifier = 1.5f;
+
+        public float conduitRangeModifier = 1.5f;
     }
 
     @SerialEntry
@@ -127,10 +127,16 @@ public class JSSTConfig {
             instance.beaconEnhancement.secondPowerMinLevel = beaconSecondPowerLevel;
         }
 
-        float beaconRangeMod = Mth.clamp(instance.beaconEnhancement.rangeModifier, 0.5f, 8f);
-        if (instance.beaconEnhancement.rangeModifier != beaconRangeMod) {
+        float beaconRangeMod = Mth.clamp(instance.miscellaneous.beaconRangeModifier, 0.5f, 5f);
+        if (instance.miscellaneous.beaconRangeModifier != beaconRangeMod) {
             modified = true;
-            instance.beaconEnhancement.rangeModifier = beaconRangeMod;
+            instance.miscellaneous.beaconRangeModifier = beaconRangeMod;
+        }
+
+        float conduitRangeMod = Mth.clamp(instance.miscellaneous.conduitRangeModifier, 0.5f, 5f);
+        if (instance.miscellaneous.conduitRangeModifier != conduitRangeMod) {
+            modified = true;
+            instance.miscellaneous.conduitRangeModifier = conduitRangeMod;
         }
 
         if (modified) {
