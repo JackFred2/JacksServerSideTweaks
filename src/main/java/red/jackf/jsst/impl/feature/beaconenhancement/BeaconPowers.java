@@ -76,7 +76,7 @@ public record BeaconPowers(List<String> level1,
                 ResourceLocation parsed = ResourceLocation.tryParse(rawId);
                 if (parsed == null) continue;
                 int finalLevel = level;
-                registry.get(parsed).ifPresent(ref -> map.put(finalLevel, ref));
+                RegistryUtils.getHolder(registry, parsed).ifPresent(ref -> map.put(finalLevel, ref));
             }
         }
 

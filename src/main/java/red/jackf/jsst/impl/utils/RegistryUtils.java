@@ -36,6 +36,13 @@ public interface RegistryUtils {
         return registry.get(key);
     }
 
+    static <T> Optional<Holder.Reference<T>> getHolder(Registry<T> registry, ResourceLocation key) {
+        //? if <=1.21.1 {
+        /*return registry.getHolder(key);
+        *///?} else
+        return registry.get(key);
+    }
+
     static <T> HolderSet<T> getValuesFromIDOrTag(RegistryAccess registries, ResourceKey<Registry<T>> registryKey, String idOrTag) {
         if (!TextUtils.isValidReslocOrTag(idOrTag)) return HolderSet.empty();
 

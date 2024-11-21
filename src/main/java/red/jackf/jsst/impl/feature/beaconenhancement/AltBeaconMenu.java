@@ -110,7 +110,7 @@ public class AltBeaconMenu extends SimpleGuiExt {
                     .setName(Component.translatable("jsst.beaconEnhancement.paymentItems"));
 
             for (Item paymentItem2 : paymentItems) {
-                builder.addLoreLine(Component.literal(" - ").withStyle(Styles.LABEL).append(paymentItem2.getName()));
+                builder.addLoreLine(Component.literal(" - ").withStyle(Styles.LABEL).append(paymentItem2.getDefaultInstance().getHoverName()));
             }
 
             paymentLabel.addStack(builder.asStack());
