@@ -4,6 +4,7 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
@@ -35,7 +36,7 @@ public class GlintEditor implements Editor {
 
         Boolean next = cycle(current);
 
-        var builder = JSSTElementBuilder.flatCopy(session.getStack())
+        var builder = JSSTElementBuilder.from(Items.NETHER_STAR)
                 .setName(Component.translatable("jsst.itemEditor.editor.glint"))
                 .addLoreLine(Component.translatable("jsst.itemEditor.editor.glint." + Objects.toString(current, "default")).withStyle(Styles.LABEL))
                 .glow(next);

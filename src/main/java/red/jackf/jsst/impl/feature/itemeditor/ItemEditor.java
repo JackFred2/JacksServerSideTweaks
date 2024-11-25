@@ -43,6 +43,7 @@ public class ItemEditor {
             DurabiltyEditor.TYPE,
             StackSizeEditor.TYPE,
             GlintEditor.TYPE,
+            PlayerHeadNameEditor.TYPE,
             LabelMapExport.TYPE
     );
 

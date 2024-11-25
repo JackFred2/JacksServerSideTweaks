@@ -121,11 +121,11 @@ public interface InputMenus {
 
     private static GuiElementInterface getColourHint() {
         return JSSTElementBuilder.from(Items.GLOWSTONE_DUST).ui()
-                .setName(Component.translatable("jsst.itemEditor.customColour.hint"))
-                .addLoreLine(Component.literal("#§cRR§aGG§9BB"))
-                .addLoreLine(Component.literal("#§cR§aG§9B"))
-                .addLoreLine(Component.literal("§c127§r, §a191, §9255"))
-                .addLoreLine(Component.literal("16777215"))
+                .setName(Component.translatable("jsst.itemEditor.validFormats"))
+                .addLoreLine(Component.literal("- #§cRR§aGG§9BB"))
+                .addLoreLine(Component.literal("- #§cR§aG§9B"))
+                .addLoreLine(Component.literal("- §c127§r, §a191, §9255"))
+                .addLoreLine(Component.literal("- 16777215"))
                 .build();
     }
 }
