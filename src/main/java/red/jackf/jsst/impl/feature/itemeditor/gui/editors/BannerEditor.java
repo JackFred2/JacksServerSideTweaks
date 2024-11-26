@@ -71,6 +71,7 @@ public class BannerEditor extends GuiEditor {
                     Sounds.UI.click(player);
 
                     SelectionMenu.<Holder<BannerPattern>>builder(player)
+                            .title(Component.translatable("jsst.itemEditor.editor.banner.setPattern"))
                             .labelStacks(LabelMaps.BANNER_PATTERN.apply(layer.color()))
                             .options(this.lookupRegistry(Registries.BANNER_PATTERN).listElements().map(ref -> ref))
                             .start(opt -> {
@@ -85,6 +86,7 @@ public class BannerEditor extends GuiEditor {
                     Sounds.UI.click(player);
 
                     SelectionMenu.<DyeColor>builder(player)
+                            .title(Component.translatable("jsst.itemEditor.editor.banner.setColour"))
                             .labelStacks(LabelMaps.DYE_COLOR)
                             .options(ColourUtils.CANON_DYE_ORDER)
                             .start(opt -> {
