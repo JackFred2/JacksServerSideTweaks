@@ -3,6 +3,7 @@ package red.jackf.jsst.impl.utils;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 import java.util.Map;
@@ -48,4 +49,11 @@ public interface ColourUtils {
             Map.entry(DyeColor.MAGENTA, Items.MAGENTA_STAINED_GLASS_PANE),
             Map.entry(DyeColor.PINK, Items.PINK_STAINED_GLASS_PANE)
     );
+
+    @Contract("null -> null; !null -> !null")
+    static DyeColor getContrasting(DyeColor in) {
+        if (in == null) return null;
+
+        return in == DyeColor.WHITE ? DyeColor.BLACK : DyeColor.WHITE;
+    }
 }

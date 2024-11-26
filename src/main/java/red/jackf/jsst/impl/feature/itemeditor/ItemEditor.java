@@ -40,6 +40,7 @@ public class ItemEditor {
             ArmourTrimEditor.TYPE,
             MapColourEditor.TYPE,
             DecoratedPotEditor.TYPE,
+            BannerEditor.TYPE,
             DurabiltyEditor.TYPE,
             StackSizeEditor.TYPE,
             GlintEditor.TYPE,
