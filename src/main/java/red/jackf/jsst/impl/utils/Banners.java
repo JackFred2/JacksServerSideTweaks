@@ -14,6 +14,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.BannerBlock;
 import net.minecraft.world.level.block.WallBannerBlock;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 
 import java.util.*;
@@ -99,7 +100,7 @@ public interface Banners {
 
         BiMap<Character, ResourceKey<BannerPattern>> PATTERNS = makePatterns();
 
-        static DataResult<Pair<DyeColor, List<Pair<Holder<BannerPattern>, DyeColor>>>> parsePMCCode(RegistryAccess.Frozen registries, String code) {
+        static DataResult<Pair<DyeColor, List<BannerPatternLayers.Layer>>> parsePMCCode(RegistryAccess registries, String code) {
             if (code.length() % 2 == 0) return DataResult.error(() -> "Code incorrect length");
 
             char backgroundChar = code.charAt(0);
@@ -107,7 +108,7 @@ public interface Banners {
             DyeColor background = COLOURS.get(backgroundChar);
 
             Registry<BannerPattern> registry = RegistryUtils.lookup(registries, Registries.BANNER_PATTERN);
-            List<Pair<Holder<BannerPattern>, DyeColor>> layers = new ArrayList<>();
+            List<BannerPatternLayers.Layer> layers = new ArrayList<>();
 
             for (int i = 1; i < code.length(); i += 2) {
                 char layerColourChar = code.charAt(i);
@@ -119,7 +120,7 @@ public interface Banners {
                 ResourceKey<BannerPattern> layerPatternKey = PATTERNS.get(layerPatternChar);
                 Optional<Holder.Reference<BannerPattern>> layerPattern = RegistryUtils.getHolder(registry,  layerPatternKey);
                 if (layerPattern.isEmpty()) return DataResult.error(() -> "Invalid pattern key '%s'".formatted(layerPatternKey.location()));
-                layers.add(Pair.of(layerPattern.get(), layerColour));
+                layers.add(new BannerPatternLayers.Layer(layerPattern.get(), layerColour));
             }
 
             return DataResult.success(Pair.of(background, layers));

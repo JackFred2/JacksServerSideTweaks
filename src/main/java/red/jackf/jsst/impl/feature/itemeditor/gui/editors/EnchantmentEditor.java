@@ -158,9 +158,7 @@ public class EnchantmentEditor extends GuiEditor {
     }
 
     @Override
-    protected void reset() {
-        super.reset();
-
+    protected void onReset() {
         this.loadEnchantments();
     }
 

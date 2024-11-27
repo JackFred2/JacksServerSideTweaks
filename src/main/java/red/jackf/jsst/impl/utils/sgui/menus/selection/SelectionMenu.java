@@ -94,8 +94,8 @@ public abstract class SelectionMenu<T> extends SimpleGuiExt {
         }
 
         public void start(Consumer<Optional<T>> callback) {
-            Objects.requireNonNull(options);
-            Objects.requireNonNull(labelFactory);
+            Objects.requireNonNull(options, "No Options");
+            Objects.requireNonNull(labelFactory, "No Labeller");
 
             if (options.size() <= 52 && filter == null) {
                 new SinglePageSelectionMenu<>(player, title, options, labelFactory, callback).open();

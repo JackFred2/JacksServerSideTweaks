@@ -55,19 +55,19 @@ public class Alphabet {
     }
 
     private void tryLoad(RegistryAccess.Frozen registries, char character, String PMCcode) {
-        DataResult<Pair<DyeColor, List<Pair<Holder<BannerPattern>, DyeColor>>>> parsed = Banners.PMC.parsePMCCode(registries, PMCcode);
+        DataResult<Pair<DyeColor, List<BannerPatternLayers.Layer>>> parsed = Banners.PMC.parsePMCCode(registries, PMCcode);
         if (parsed.error().isPresent()) {
             LOGGER.error("Couldn't parse PMC code '{}': {}", PMCcode, parsed.error().get().message());
             return;
         }
 
         //noinspection OptionalGetWithoutIsPresent
-        Pair<DyeColor, List<Pair<Holder<BannerPattern>, DyeColor>>> result = parsed.result().get();
+        Pair<DyeColor, List<BannerPatternLayers.Layer>> result = parsed.result().get();
 
         boolean flipBackground = result.getFirst() != DyeColor.BLACK;
 
         List<CharDesignLayer> layers = result.getSecond().stream()
-                        .map(pair -> new CharDesignLayer(pair.getSecond() == DyeColor.BLACK, pair.getFirst()))
+                        .map(pair -> new CharDesignLayer(pair.color() == DyeColor.BLACK, pair.pattern()))
                         .toList();
 
         characters.put(character, new CharDesign(flipBackground, layers));

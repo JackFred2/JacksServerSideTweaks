@@ -59,10 +59,12 @@ public abstract class GuiEditor extends SimpleGuiExt implements Editor {
         this.resultConsumer.accept(Result.empty());
     }
 
-    @MustBeInvokedByOverriders
-    protected void reset() {
+    protected void onReset() {}
+
+    protected final void reset() {
         Sounds.UI.reset(this.session.getPlayer());
         this.stack = this.session.getStack();
+        this.onReset();
         this.refresh();
     }
 

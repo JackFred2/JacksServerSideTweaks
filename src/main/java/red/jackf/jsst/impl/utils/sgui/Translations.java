@@ -39,6 +39,14 @@ public interface Translations {
         return translatable("jsst.ui.delete");
     }
 
+    static MutableComponent imprt() {
+        return translatable("jsst.ui.import");
+    }
+
+    static MutableComponent export() {
+        return translatable("jsst.ui.export");
+    }
+
     static MutableComponent moveUp() {
         return translatable("jsst.ui.moveUp");
     }
