@@ -39,6 +39,7 @@ public class ItemEditor {
             EnchantmentEditor.TYPE,
             ArmourTrimEditor.TYPE,
             MapColourEditor.TYPE,
+            DyeColourEditor.TYPE,
             DecoratedPotEditor.TYPE,
             BannerEditor.TYPE,
             DurabiltyEditor.TYPE,

@@ -11,7 +11,6 @@ import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.feature.itemeditor.gui.menus.style.StyleInputMenu;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.CommonElements;
-import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
 
@@ -53,8 +52,7 @@ public class SimpleNameEditor extends GuiEditor {
         this.drawPreview(0);
 
         if (this.stack.has(DataComponents.CUSTOM_NAME)) {
-            this.setSlot(7, JSSTElementBuilder.from(Items.GRINDSTONE).ui()
-                    .leftClick(Translations.clear(), this::clearName));
+            this.setSlot(7, CommonElements.clear(this::clearName));
         } else {
             this.clearSlot(7);
         }

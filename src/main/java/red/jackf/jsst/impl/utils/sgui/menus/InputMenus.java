@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jackfredlib.api.colour.Colour;
+import red.jackf.jsst.impl.utils.ColourUtils;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.menus.selection.SelectionMenu;
 
@@ -85,6 +86,12 @@ public interface InputMenus {
 
     private static DataResult<Colour> tryParseColour(String str) {
         str = str.strip();
+        String condensed = str.toLowerCase().replace(" ", "");
+
+        // x11
+        if (ColourUtils.X11.containsKey(condensed)) {
+            return DataResult.success(Colour.fromInt(0xFF_000000 | ColourUtils.X11.get(condensed)));
+        }
 
         // #8bf
         Matcher smallHex = Pattern.compile("^#([0-9a-fA-F]{3})$").matcher(str);
@@ -126,6 +133,7 @@ public interface InputMenus {
                 .addLoreLine(Component.literal("- #§cR§aG§9B"))
                 .addLoreLine(Component.literal("- §c127§r, §a191, §9255"))
                 .addLoreLine(Component.literal("- 16777215"))
+                .addLoreLine(Component.literal("- X11 Colour Name"))
                 .build();
     }
 }

@@ -101,6 +101,8 @@
   "jsst.itemEditor.editor.banner.swapColour": "Swap Colour",
   "jsst.itemEditor.editor.banner.swapColour.from": "From: %s",
   "jsst.itemEditor.editor.banner.swapColour.to": "To: %s",
+  "jsst.itemEditor.editor.dyeColour": "Dye Colour Editor",
+  "jsst.itemEditor.editor.dyeColour.current": "Current Colour: %s",
   "jsst.itemEditor.editor.decoratedPot": "Decorated Pot Editor",
   "jsst.itemEditor.editor.decoratedPot.flip": "Flip",
   "jsst.itemEditor.editor.decoratedPot.rotateLeft": "Rotate Left",

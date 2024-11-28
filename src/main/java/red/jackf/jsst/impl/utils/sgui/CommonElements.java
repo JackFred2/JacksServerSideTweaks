@@ -66,4 +66,12 @@ public interface CommonElements {
                 .hideDefaultTooltip()
                 .build();
     }
+
+    static GuiElementInterface clear(Runnable onClick) {
+        return JSSTElementBuilder.from(Items.GRINDSTONE.getDefaultInstance())
+                .ui()
+                .leftClick(Translations.clear(), onClick)
+                .hideDefaultTooltip()
+                .build();
+    }
 }
