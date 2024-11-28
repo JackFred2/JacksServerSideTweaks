@@ -98,4 +98,8 @@ public interface Translations {
     static MutableComponent split(Component first, Component second) {
         return translatable("jsst.ui.split", first, second);
     }
+
+    static MutableComponent selected() {
+        return translatable("jsst.ui.selected");
+    }
 }

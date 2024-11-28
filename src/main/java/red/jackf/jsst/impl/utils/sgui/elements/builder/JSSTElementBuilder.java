@@ -63,6 +63,12 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         return this;
     }
 
+    public JSSTElementBuilder modifyName(UnaryOperator<Component> modifier) {
+        Component modded = modifier.apply(stack.getHoverName());
+        this.stack.set(DataComponents.CUSTOM_NAME, this.cleanText ? Component.empty().withStyle(Styles.CLEAN).append(modded) : modded);
+        return this;
+    }
+
     public JSSTElementBuilder setDamage(int damage) {
         this.stack.setDamageValue(damage);
         return this;
@@ -114,6 +120,12 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
 
     public JSSTElementBuilder addLoreLine(Component line) {
         this.stack.update(DataComponents.LORE, ItemLore.EMPTY, this.cleanText ? Component.empty().withStyle(Styles.CLEAN).append(line) : line, ItemLore::withLineAdded);
+        return this;
+    }
+
+    // begging for kotlin .also {}
+    public JSSTElementBuilder addLoreLine(boolean condition, Component line) {
+        if (condition) return addLoreLine(line);
         return this;
     }
 

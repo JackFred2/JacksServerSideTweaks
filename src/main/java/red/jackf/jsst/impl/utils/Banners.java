@@ -7,10 +7,12 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BannerBlock;
 import net.minecraft.world.level.block.WallBannerBlock;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -23,6 +25,18 @@ import java.util.*;
  * Working with banners, mainly parsing and loading PlanetMinecraft banner codes
  */
 public interface Banners {
+    static ItemStack create(Pair<DyeColor, List<BannerPatternLayers.Layer>> data) {
+        var stack = ByColour.ITEM.get(data.getFirst()).getDefaultInstance();
+
+        var builder = new BannerPatternLayers.Builder();
+        for (BannerPatternLayers.Layer layer : data.getSecond()) {
+            builder.add(layer);
+        }
+        stack.set(DataComponents.BANNER_PATTERNS, builder.build());
+
+        return stack;
+    }
+
     interface ByColour {
         Map<DyeColor, BannerBlock> FLOOR = new HashMap<>();
         Map<DyeColor, WallBannerBlock> WALL = new HashMap<>();
@@ -124,6 +138,32 @@ public interface Banners {
             }
 
             return DataResult.success(Pair.of(background, layers));
+        }
+
+        static DataResult<String> toPMCCode(Pair<DyeColor, List<BannerPatternLayers.Layer>> banner) {
+            StringBuilder code = new StringBuilder();
+
+            code.append(COLOURS.inverse().get(banner.getFirst()));
+
+            for (BannerPatternLayers.Layer layer : banner.getSecond()) {
+                code.append(COLOURS.inverse().get(layer.color()));
+
+                var key = layer.pattern().unwrapKey();
+
+                if (key.isPresent()) {
+                    Character pmcCode = PATTERNS.inverse().get(key.get());
+
+                    if (pmcCode != null) {
+                        code.append(pmcCode);
+                    } else {
+                        return DataResult.error(() -> "No PMC code for pattern " + key.get().location());
+                    }
+                } else {
+                    return DataResult.error(() -> "Unregistered pattern");
+                }
+            }
+
+            return DataResult.success(code.toString());
         }
     }
 }

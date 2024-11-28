@@ -25,7 +25,7 @@ import java.util.function.*;
 
 public class StringInputMenu<T> extends SimpleGuiExt {
     private final String initial;
-    private final Function<T, @Nullable GuiElementInterface> hintFactory;
+    private final HintFactory<T> hintFactory;
     private final Function<String, DataResult<T>> parser;
     private final Predicate<T> validator;
     private final OutputFactory<T> outputFunction;
@@ -36,7 +36,7 @@ public class StringInputMenu<T> extends SimpleGuiExt {
     public StringInputMenu(ServerPlayer player,
                            Component title,
                            String initial,
-                           Function<T, @Nullable GuiElementInterface> hintFactory,
+                           HintFactory<T> hintFactory,
                            Function<String, DataResult<T>> parser,
                            Predicate<T> validator,
                            OutputFactory<T> outputFunction,
@@ -73,16 +73,12 @@ public class StringInputMenu<T> extends SimpleGuiExt {
 
         DataResult<T> parsed = this.parser.apply(currentText);
 
-        parsed.ifSuccess(t -> {
-            //this.setTitle(this.titleFactory.apply(t));
-
-            GuiElementInterface hint = this.hintFactory.apply(t);
-            if (hint != null) {
-                this.setSlot(1, hint);
-            } else {
-                this.clearSlot(1);
-            }
-        });
+        GuiElementInterface hint = this.hintFactory.create(currentText, parsed.result());
+        if (hint != null) {
+            this.setSlot(1, hint);
+        } else {
+            this.clearSlot(1);
+        }
 
         this.updateOutput();
     }
@@ -152,7 +148,7 @@ public class StringInputMenu<T> extends SimpleGuiExt {
         private Component title;
         private String initial = "";
         private Predicate<T> validator = t -> true;
-        private Function<T, @Nullable GuiElementInterface> hintFactory = s -> null;
+        private HintFactory<T> hintFactory = (raw, t) -> null;
         private OutputFactory<T> outputFactory = Builder::defaultOutputFactory;
 
         protected Builder(ServerPlayer player, Function<String, DataResult<T>> parser) {
@@ -183,7 +179,7 @@ public class StringInputMenu<T> extends SimpleGuiExt {
             if (hintLines.isEmpty()) {
                 return hintElement(null);
             } else {
-                return hintFactory(s -> {
+                return hintFactory((raw, t) -> {
                     var builder = JSSTElementBuilder.from(Items.PAPER).ui().hideDefaultTooltip();
                     hintLines.forEach(builder::addLoreLine);
                     return builder.build();
@@ -192,10 +188,10 @@ public class StringInputMenu<T> extends SimpleGuiExt {
         }
 
         public Builder<T> hintElement(@Nullable GuiElementInterface guiElement) {
-            return hintFactory(s -> guiElement);
+            return hintFactory((raw, t) -> guiElement);
         }
 
-        public Builder<T> hintFactory(Function<T, @Nullable GuiElementInterface> hintFactory) {
+        public Builder<T> hintFactory(HintFactory<T> hintFactory) {
             this.hintFactory = hintFactory;
             return this;
         }
@@ -223,6 +219,10 @@ public class StringInputMenu<T> extends SimpleGuiExt {
             return JSSTElementBuilder.from(Items.LIME_CONCRETE).ui()
                     .setName(Component.literal(text));
         }
+    }
+
+    public interface HintFactory<T> {
+        @Nullable GuiElementInterface create(String rawText, Optional<T> value);
     }
 
     public interface OutputFactory<T> {
