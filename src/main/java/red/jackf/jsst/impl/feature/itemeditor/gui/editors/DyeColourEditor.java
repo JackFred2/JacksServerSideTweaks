@@ -65,9 +65,11 @@ public class DyeColourEditor extends GuiEditor {
                 .setName(Component.translatable("jsst.itemEditor.editor.dyeColour.current", asString))
                 .leftClick(Translations.change(), () -> {
                     Sounds.UI.click(player);
-
                     InputMenus.colour(player)
                             .initial("#" + asString)
+                            .outputFactory((rawText, value) -> JSSTElementBuilder.flatCopy(this.stack)
+                                    .setName(Component.literal(rawText).withColor(value.toARGB()))
+                                    .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(value.toARGB(), false)))
                             .start(opt -> {
                                 opt.ifPresent(col -> this.stack.set(DataComponents.DYED_COLOR, new DyedItemColor(col.toARGB(), true)));
 
