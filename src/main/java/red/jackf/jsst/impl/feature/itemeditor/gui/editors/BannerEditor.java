@@ -89,7 +89,7 @@ public class BannerEditor extends GuiEditor {
                     SelectionMenu.<Holder<BannerPattern>>builder(player)
                             .title(Component.translatable("jsst.itemEditor.editor.banner.setPattern"))
                             .labelStacks(LabelMaps.BANNER_PATTERN.apply(layer.color()))
-                            .options(this.lookupRegistry(Registries.BANNER_PATTERN).listElements().map(ref -> ref))
+                            .options(RegistryUtils.stream(this.lookupRegistry(Registries.BANNER_PATTERN)))
                             .start(opt -> {
                                 opt.ifPresent(bannerPatternHolder -> this.layers.set(index, new Layer(bannerPatternHolder, layer.color())));
 
