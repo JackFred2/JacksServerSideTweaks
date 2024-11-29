@@ -245,6 +245,7 @@ public class BannerEditor extends GuiEditor {
         private SwapColourMenu(Runnable callback) {
             super(MenuType.GENERIC_9x4, BannerEditor.this.player, false);
             this.callback = Callbacks.singleUse(callback);
+            this.setTitle(Component.translatable("jsst.itemEditor.editor.banner.swapColour"));
 
             this.drawStatic();
         }
