@@ -36,7 +36,8 @@ public interface InputMenus {
     static StringInputMenu.Builder<Colour> colour(ServerPlayer player) {
         return new StringInputMenu.Builder<>(player, InputMenus::tryParseColour)
                 .hintElement(getColourHint())
-                .appendOutput((str, colour, builder) -> builder.setName(Component.literal(str).withColor(colour.toARGB())))
+                .appendOutput((str, colour, builder) -> builder.setName(Component.literal(str).withColor(colour.toARGB()))
+                        .addLoreLine(Component.literal("#§c%02X§a%02X§9%02X".formatted(colour.r(), colour.g(), colour.b()))))
                 .initial("0");
     }
 
@@ -131,7 +132,7 @@ public interface InputMenus {
                 .setName(Component.translatable("jsst.itemEditor.validFormats"))
                 .addLoreLine(Component.literal("- #§cRR§aGG§9BB"))
                 .addLoreLine(Component.literal("- #§cR§aG§9B"))
-                .addLoreLine(Component.literal("- §c127§r, §a191, §9255"))
+                .addLoreLine(Component.literal("- §c127§r, §a191§r, §9255"))
                 .addLoreLine(Component.literal("- 16777215"))
                 .addLoreLine(Component.literal("- X11 Colour Name"))
                 .build();

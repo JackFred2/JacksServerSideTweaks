@@ -1,5 +1,6 @@
 package red.jackf.jsst.impl.utils.sgui.menus;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.ScreenProperty;
@@ -18,9 +19,7 @@ import red.jackf.jsst.impl.utils.sgui.Styles;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.*;
 
 public class StringInputMenu<T> extends SimpleGuiExt {
@@ -90,26 +89,20 @@ public class StringInputMenu<T> extends SimpleGuiExt {
     }
 
     private void updateOutput() {
-        if (this.currentText.equals(this.initial)) {
+        DataResult<T> parsed = this.parser.apply(this.currentText);
+
+        if (parsed.isError() || !this.validator.test(parsed.getOrThrow())) {
             this.setSlot(2, JSSTElementBuilder.from(Items.RED_CONCRETE).ui()
                     .setName(Component.literal(this.currentText))
-                    .addLoreLine(Component.translatable("jsst.itemEditor.stringInput.noChanges").setStyle(Styles.NEGATIVE)));
+                    .addLoreLine(Component.translatable("jsst.itemEditor.stringInput.invalid")
+                            .setStyle(Styles.NEGATIVE)));
         } else {
-            DataResult<T> parsed = this.parser.apply(this.currentText);
+            JSSTElementBuilder builder = this.outputFunction.create(this.currentText, parsed.getOrThrow());
 
-            if (parsed.isError() || !this.validator.test(parsed.getOrThrow())) {
-                this.setSlot(2, JSSTElementBuilder.from(Items.RED_CONCRETE).ui()
-                        .setName(Component.literal(this.currentText))
-                        .addLoreLine(Component.translatable("jsst.itemEditor.stringInput.invalid")
-                                .setStyle(Styles.NEGATIVE)));
-            } else {
-                JSSTElementBuilder builder = this.outputFunction.create(this.currentText, parsed.getOrThrow());
-
-                this.setSlot(2, builder.leftClick(Translations.confirm(), () -> {
-                    Sounds.UI.click(player);
-                    this.complete();
-                }));
-            }
+            this.setSlot(2, builder.leftClick(Translations.confirm(), () -> {
+                Sounds.UI.click(player);
+                this.complete();
+            }));
         }
 
         this.sendProperty(ScreenProperty.LEVEL_COST, 0);
@@ -149,6 +142,7 @@ public class StringInputMenu<T> extends SimpleGuiExt {
         private String initial = "";
         private Predicate<T> validator = t -> true;
         private HintFactory<T> hintFactory = (raw, t) -> null;
+        private final List<Pair<AppendPriority, OutputAppender<T>>> appenders = new ArrayList<>();
         private OutputFactory<T> outputFactory = Builder::defaultOutputFactory;
 
         protected Builder(ServerPlayer player, Function<String, DataResult<T>> parser) {
@@ -196,23 +190,38 @@ public class StringInputMenu<T> extends SimpleGuiExt {
             return this;
         }
 
-        public Builder<T> appendOutput(OutputAppender<T> appender) {
-            OutputFactory<T> oldFactory = this.outputFactory;
-            this.outputFactory = (str, t) -> {
-                JSSTElementBuilder builder = oldFactory.create(str, t);
-                appender.append(str, t, builder);
-                return builder;
-            };
+        public Builder<T> appendOutput(AppendPriority priority, OutputAppender<T> appender) {
+            this.appenders.add(Pair.of(priority, appender));
             return this;
+        }
+
+        public Builder<T> appendOutput(OutputAppender<T> appender) {
+            return appendOutput(AppendPriority.DEFAULT, appender);
         }
 
         public Builder<T> outputFactory(OutputFactory<T> factory) {
             this.outputFactory = factory;
+            this.appenders.clear();
             return this;
         }
 
         public void start(Consumer<Optional<T>> callback) {
-            new StringInputMenu<>(player, title, initial, hintFactory, parser, validator, outputFactory, callback).open();
+            final OutputFactory<T> initialFactory = this.outputFactory;
+
+            List<OutputAppender<T>> sorted = this.appenders.stream()
+                    .sorted(Comparator.comparingInt(pair -> pair.getFirst().ordinal()))
+                    .map(Pair::getSecond)
+                    .toList();
+
+            OutputFactory<T> factory = (rawText, value) -> {
+                var builder = initialFactory.create(rawText, value);
+                for (OutputAppender<T> appender : sorted) {
+                    appender.append(rawText, value, builder);
+                }
+                return builder;
+            };
+
+            new StringInputMenu<>(player, title, initial, hintFactory, parser, validator, factory, callback).open();
         }
 
         private static @NotNull <T> JSSTElementBuilder defaultOutputFactory(String text, T parsed) {
@@ -231,5 +240,11 @@ public class StringInputMenu<T> extends SimpleGuiExt {
 
     public interface OutputAppender<T> {
         void append(String rawText, T value, JSSTElementBuilder builder);
+    }
+
+    public enum AppendPriority {
+        HIGH,
+        DEFAULT,
+        LOW
     }
 }

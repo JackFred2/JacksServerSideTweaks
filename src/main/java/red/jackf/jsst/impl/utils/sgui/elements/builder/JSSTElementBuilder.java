@@ -21,7 +21,7 @@ import red.jackf.jsst.impl.utils.sgui.Styles;
 import java.util.function.UnaryOperator;
 
 public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElementBuilder> {
-    private final ItemStack stack;
+    private ItemStack stack;
 
     private boolean cleanText = true;
     private GuiElementInterface.ClickCallback callback = (a, b, c, d) -> {};
@@ -46,6 +46,16 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         return from(stack).ui()
                 .hideDefaultTooltip()
                 .removeComponent(DataComponents.LORE);
+    }
+
+    public JSSTElementBuilder setItem(ItemLike item) {
+        this.stack = this.stack.transmuteCopy(item);
+        return this;
+    }
+
+    public JSSTElementBuilder setItem(ItemStack stack) {
+        this.stack = stack.copy();
+        return this;
     }
 
     public JSSTElementBuilder ui() {

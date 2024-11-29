@@ -15,6 +15,7 @@ import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.AnimatedGuiElementBuilderExt;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
+import red.jackf.jsst.impl.utils.sgui.menus.StringInputMenu;
 
 import java.util.function.Consumer;
 
@@ -28,6 +29,11 @@ public class MapColourEditor implements Editor {
 
     private final EditSession session;
     private final Consumer<Result> resultConsumer;
+
+    public MapColourEditor(EditSession session, Consumer<Result> resultConsumer) {
+        this.session = session;
+        this.resultConsumer = resultConsumer;
+    }
 
     private static GuiElementInterface getIcon(EditSession session) {
         var builder = new AnimatedGuiElementBuilderExt();
@@ -46,18 +52,14 @@ public class MapColourEditor implements Editor {
         return builder.build();
     }
 
-    public MapColourEditor(EditSession session, Consumer<Result> resultConsumer) {
-        this.session = session;
-        this.resultConsumer = resultConsumer;
-    }
-
     @Override
     public void start() {
         Sounds.UI.click(this.session.getPlayer());
         InputMenus.colour(this.session.getPlayer())
-                .outputFactory((str, col) -> JSSTElementBuilder.from(this.session.getStack())
-                        .setComponent(DataComponents.MAP_COLOR, new MapItemColor(col.toARGB()))
-                        .setName(Component.literal(str)))
+                .appendOutput(StringInputMenu.AppendPriority.HIGH, (rawText, value, builder) ->
+                        builder.setItem(JSSTElementBuilder.flatCopy(this.session.getStack())
+                                .setComponent(DataComponents.MAP_COLOR, new MapItemColor(value.toARGB()))
+                                .asStack()))
                 .title(Component.translatable("jsst.itemEditor.editor.mapColour"))
                 .start(opt -> {
                     if (opt.isPresent()) {

@@ -5,7 +5,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.component.DyedItemColor;
 import red.jackf.jackfredlib.api.colour.Colour;
 import red.jackf.jsst.impl.JSST;
@@ -19,6 +18,7 @@ import red.jackf.jsst.impl.utils.sgui.elements.builder.AnimatedGuiElementBuilder
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.labels.LabelMaps;
 import red.jackf.jsst.impl.utils.sgui.menus.InputMenus;
+import red.jackf.jsst.impl.utils.sgui.menus.StringInputMenu;
 
 import java.util.function.Consumer;
 
@@ -31,8 +31,10 @@ public class DyeColourEditor extends GuiEditor {
             .build();
 
     private static GuiElementInterface getLabel(EditSession session) {
-        return AnimatedGuiElementBuilderExt.makeForEach(ColourUtils.COLOURFUL_DYE_ORDER, col -> JSSTElementBuilder.from(DyeItem.byColor(col)).ui()
+        return AnimatedGuiElementBuilderExt.makeForEach(ColourUtils.COLOURFUL_DYE_ORDER, col -> JSSTElementBuilder.flatCopy(session.getStack())
+                    .setCount(1)
                     .setName(Component.translatable("jsst.itemEditor.editor.dyeColour"))
+                    .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(col.getFireworkColor(), false))
                     .asStack())
                 .setInterval(4)
                 .build();
@@ -60,16 +62,17 @@ public class DyeColourEditor extends GuiEditor {
         this.drawPreview(0);
 
         int currentColour = DyedItemColor.getOrDefault(this.stack, DyedItemColor.LEATHER_COLOR) & 0xFFFFFF;
-        String asString = Integer.toHexString(currentColour).toUpperCase();
+        String asString = "#" + Integer.toHexString(currentColour).toUpperCase();
         this.setSlot(2, JSSTElementBuilder.from(LabelMaps.DYE_COLOR.apply(Colour.fromInt(currentColour).closestDyeColour())).ui()
-                .setName(Component.translatable("jsst.itemEditor.editor.dyeColour.current", asString))
+                .setName(Component.translatable("jsst.itemEditor.editor.dyeColour.current", Component.literal(asString).withColor(currentColour)))
                 .leftClick(Translations.change(), () -> {
                     Sounds.UI.click(player);
                     InputMenus.colour(player)
-                            .initial("#" + asString)
-                            .outputFactory((rawText, value) -> JSSTElementBuilder.flatCopy(this.stack)
-                                    .setName(Component.literal(rawText).withColor(value.toARGB()))
-                                    .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(value.toARGB(), false)))
+                            .initial(asString)
+                            .appendOutput(StringInputMenu.AppendPriority.HIGH, (rawText, value, builder) ->
+                                builder.setItem(JSSTElementBuilder.flatCopy(this.stack)
+                                        .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(value.toARGB(), false))
+                                        .asStack()))
                             .start(opt -> {
                                 opt.ifPresent(col -> this.stack.set(DataComponents.DYED_COLOR, new DyedItemColor(col.toARGB(), true)));
 
