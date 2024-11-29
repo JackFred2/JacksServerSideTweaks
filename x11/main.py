@@ -26,7 +26,7 @@ static Map<String, Integer> makeX11() {
     Map<String, Integer> map = new HashMap();
 """)
 
-        for name, col in cols.items():
+        for name, col in dict(sorted(cols.items())).items():
             hex_str = f"{col:06X}"
             f.write(f"    map.put(\"{name}\", 0x{hex_str});\n")
 
