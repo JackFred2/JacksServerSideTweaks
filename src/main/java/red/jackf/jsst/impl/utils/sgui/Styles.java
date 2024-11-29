@@ -1,7 +1,7 @@
 package red.jackf.jsst.impl.utils.sgui;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
 
 public interface Styles {
     Style CLEAN = Style.EMPTY.withItalic(false).withColor(ChatFormatting.WHITE);
@@ -14,4 +14,10 @@ public interface Styles {
 
     Style POSITIVE = CLEAN.withColor(ChatFormatting.GREEN);
     Style NEGATIVE = CLEAN.withColor(ChatFormatting.RED);
+
+    static MutableComponent clipboardCopy(String text) {
+        return Component.literal(text).withStyle(CLEAN
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.copy.click")))
+                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text)));
+    }
 }

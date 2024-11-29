@@ -3,10 +3,7 @@ package red.jackf.jsst.impl.feature.itemeditor.gui.editors;
 import com.mojang.serialization.JsonOps;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import red.jackf.jsst.impl.JSST;
@@ -14,6 +11,7 @@ import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.utils.ModCodecs;
 import red.jackf.jsst.impl.utils.Sounds;
+import red.jackf.jsst.impl.utils.sgui.Styles;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 import java.util.function.Consumer;
@@ -51,10 +49,7 @@ public class LabelMapExport implements Editor {
                 .ifSuccess(json -> {
                     String str = json.toString();
 
-                    Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.copy.click")))
-                            .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, str));
-
-                    this.session.getPlayer().sendSystemMessage(Component.literal(str).withStyle(style));
+                    this.session.getPlayer().sendSystemMessage(Styles.clipboardCopy(str));
                 });
 
         this.resultConsumer.accept(Result.empty());

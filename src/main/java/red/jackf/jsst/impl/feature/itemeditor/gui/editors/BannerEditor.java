@@ -6,10 +6,7 @@ import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.DyeColor;
@@ -190,9 +187,7 @@ public class BannerEditor extends GuiEditor {
                     Sounds.UI.click(player);
 
                     Banners.PMC.toPMCCode(Pair.of(this.baseColour, this.layers)).ifSuccess(code -> {
-                        player.sendSystemMessage(Component.literal(code).withStyle(Style.EMPTY
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.copy.click")))
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, code))));
+                        player.sendSystemMessage(Styles.clipboardCopy(code));
                     }).ifError(err -> {
                         player.sendSystemMessage(Component.translatable("jsst.itemEditor.editor.banner.exportPmcError", err.message()));
                     });

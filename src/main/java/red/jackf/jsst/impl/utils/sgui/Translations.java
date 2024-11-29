@@ -7,7 +7,7 @@ import net.minecraft.world.item.DyeColor;
 import static net.minecraft.network.chat.Component.translatable;
 
 public interface Translations {
-    static Component add() {
+    static MutableComponent add() {
         return translatable("jsst.ui.add");
     }
 
@@ -87,6 +87,10 @@ public interface Translations {
         return translatable("jsst.ui.select");
     }
 
+    static MutableComponent selected() {
+        return translatable("jsst.ui.selected");
+    }
+
     static MutableComponent toggle() {
         return translatable("jsst.ui.toggle");
     }
@@ -97,9 +101,5 @@ public interface Translations {
 
     static MutableComponent split(Component first, Component second) {
         return translatable("jsst.ui.split", first, second);
-    }
-
-    static MutableComponent selected() {
-        return translatable("jsst.ui.selected");
     }
 }
