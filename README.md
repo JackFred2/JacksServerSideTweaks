@@ -9,7 +9,6 @@
 - Advanced Name
 - Book Author
 - Book Degredation
-- Book unsealing
 - Item Model
 - Jukebox Song Items
 - Container Locks

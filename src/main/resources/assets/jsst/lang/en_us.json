@@ -110,6 +110,8 @@
   "jsst.itemEditor.editor.decoratedPot.left": "Left Face",
   "jsst.itemEditor.editor.decoratedPot.right": "Right Face",
   "jsst.itemEditor.editor.decoratedPot.back": "Back Face",
+  "jsst.itemEditor.editor.unsignBook": "Unsign Book",
+  "jsst.itemEditor.editor.unsignBook.warning": "This will remove all formatting.",
   "jsst.itemEditor.editor.glint": "Glint Override",
   "jsst.itemEditor.editor.glint.true": "Current: Always",
   "jsst.itemEditor.editor.glint.false": "Current: Never",

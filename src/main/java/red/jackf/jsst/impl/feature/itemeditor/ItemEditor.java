@@ -45,6 +45,7 @@ public class ItemEditor {
             DurabiltyEditor.TYPE,
             StackSizeEditor.TYPE,
             GlintEditor.TYPE,
+            BookUnsigner.TYPE,
             PlayerHeadNameEditor.TYPE,
             GiveCommandGenerator.TYPE,
             LabelMapExport.TYPE
