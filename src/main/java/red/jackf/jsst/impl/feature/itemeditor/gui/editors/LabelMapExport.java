@@ -12,6 +12,7 @@ import red.jackf.jsst.impl.feature.itemeditor.Result;
 import red.jackf.jsst.impl.utils.ModCodecs;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.Styles;
+import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 
 import java.util.function.Consumer;
@@ -20,6 +21,7 @@ public class LabelMapExport implements Editor {
     public static final Type<LabelMapExport> TYPE = Editor.<LabelMapExport>typeBuilder(JSST.id("label_map_export"))
             .factory(LabelMapExport::new)
             .labelFactory(LabelMapExport::getLabel)
+            .inputHint(Translations::export)
             .developer()
             .supportsCosmetic()
             .build();

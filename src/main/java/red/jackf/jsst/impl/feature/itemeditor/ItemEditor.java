@@ -46,6 +46,7 @@ public class ItemEditor {
             StackSizeEditor.TYPE,
             GlintEditor.TYPE,
             PlayerHeadNameEditor.TYPE,
+            GiveCommandGenerator.TYPE,
             LabelMapExport.TYPE
     );
 
