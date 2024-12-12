@@ -1,6 +1,13 @@
 # Jack's Server Side Tweaks
 
-## TODO Editors
+## TODO
+
+Icons for protection enchantments
+Icons for mob effects
+
+### Editors
+
+Not necessarily all, just chosen ones
 
 - Potion (3 types + arrow)
 - Suspicious Stew

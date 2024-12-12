@@ -180,7 +180,7 @@ public class BannerWriter {
         if (refreshData) {
             Scheduler.schedule(level, level.getGameTime() + 2, level2 -> {
                 level2.getBlockEntity(pos, BlockEntityType.BANNER).ifPresent(bbe -> {
-                    bbe.fromItem(letter, letterColour);
+                    bbe.applyComponentsFromItemStack(letter);
                     ClientboundBlockEntityDataPacket update = bbe.getUpdatePacket();
                     for (ServerPlayer watching : PlayerLookup.tracking(bbe)) {
                         watching.connection.send(update);
@@ -188,7 +188,7 @@ public class BannerWriter {
                 });
             });
         } else {
-            level.getBlockEntity(pos, BlockEntityType.BANNER).ifPresent(bbe -> bbe.fromItem(letter, letterColour));
+            level.getBlockEntity(pos, BlockEntityType.BANNER).ifPresent(bbe -> bbe.applyComponentsFromItemStack(letter));
         }
 
         session.refresh();
