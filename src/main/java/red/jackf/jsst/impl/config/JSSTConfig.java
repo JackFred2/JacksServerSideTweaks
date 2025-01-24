@@ -61,7 +61,7 @@ public class JSSTConfig {
     public ItemEditor itemEditor = new ItemEditor();
 
     public static class ItemEditor {
-        public boolean enabled = true;
+        public boolean enabled = false;
 
         public boolean nonOpsCanUseCosmeticMode = false;
 
