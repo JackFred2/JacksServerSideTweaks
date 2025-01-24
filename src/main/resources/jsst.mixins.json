@@ -10,7 +10,7 @@
     "beaconenhancement.BeaconBlockEntityMixin",
     "beaconenhancement.ConduitBlockEntityMixin",
     "campfiretimers.CampfireBlockEntityMixin",
-    "itemnudge.BlockMixin",
+    "miscellaneous.BlockMixin",
     "mapeditor.MapItemSavedDataAccessor",
     "mapeditor.MapItemSavedDataMixin",
     "mapeditor.ServerEntityMixin",

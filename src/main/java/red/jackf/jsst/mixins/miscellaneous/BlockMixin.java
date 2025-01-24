@@ -1,4 +1,4 @@
-package red.jackf.jsst.mixins.itemnudge;
+package red.jackf.jsst.mixins.miscellaneous;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -22,6 +22,9 @@ import red.jackf.jsst.impl.config.JSSTConfig;
 
 import java.util.List;
 
+/**
+ * Item Nudging
+ */
 @Mixin(Block.class)
 public abstract class BlockMixin {
     @Unique
