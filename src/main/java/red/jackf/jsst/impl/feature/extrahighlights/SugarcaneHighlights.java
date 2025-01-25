@@ -1,5 +1,7 @@
 package red.jackf.jsst.impl.feature.extrahighlights;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,7 +19,12 @@ public class SugarcaneHighlights {
     private static final Set<ItemEntity> hasHighlight = new HashSet<>();
 
     public static void setup() {
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> hasHighlight.clear());
 
+        ServerEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
+            if (entity instanceof ItemEntity && world instanceof ServerLevel)
+                hasHighlight.remove(entity);
+        });
     }
 
     public static void onSugarcaneItemTick(ServerLevel serverLevel, ItemEntity itemEntity) {
@@ -27,14 +34,12 @@ public class SugarcaneHighlights {
 
         var lie = EntityGlowLie.builder(itemEntity)
                 .colour(ChatFormatting.GOLD)
-                .onTick(SugarcaneHighlights::tick)
                 .createAndShow();
 
         hasHighlight.add(itemEntity);
 
-        // TODO add to jflib custom positions
         Tracker.builder(serverLevel)
-                .setFocus(itemEntity.position(), 16d)
+                .setAround(itemEntity, 16d)
                 .addPredicate(SugarcaneHighlights::holdingSugarcane)
                 .setUpdateInterval(10L)
                 .addLie(lie)
@@ -44,12 +49,5 @@ public class SugarcaneHighlights {
     private static boolean holdingSugarcane(ServerPlayer player) {
         return player.getItemInHand(InteractionHand.MAIN_HAND).is(Items.SUGAR_CANE) ||
                player.getItemInHand(InteractionHand.OFF_HAND).is(Items.SUGAR_CANE);
-    }
-
-    private static void tick(ServerPlayer player, EntityGlowLie<ItemEntity> lie) {
-        if (!lie.entity().isAlive()) {
-            lie.fade();
-            hasHighlight.remove(lie.entity());
-        }
     }
 }
