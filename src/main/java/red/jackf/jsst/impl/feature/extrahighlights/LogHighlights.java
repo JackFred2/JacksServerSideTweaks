@@ -8,7 +8,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+//? if >=1.21.4 {
 import net.minecraft.world.InteractionResult;
+//?} else {
+/*import net.minecraft.world.InteractionResultHolder;
+*///?}
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.joml.Vector3f;
 import red.jackf.jackfredlib.api.colour.Colour;
@@ -21,6 +26,7 @@ import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.utils.RegistryUtils;
 import red.jackf.jsst.impl.utils.Scheduler;
 import red.jackf.jsst.impl.utils.Sounds;
+import red.jackf.jsst.impl.utils.Versioned;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -38,20 +44,30 @@ public class LogHighlights {
 
                 if (config.treeLogsEnabled) {
                     var axesTag = RegistryUtils.parseTag(Registries.ITEM, config.axesTag);
-                    var handStack = player.getItemInHand(hand);
+                    ItemStack handStack = player.getItemInHand(hand);
 
-                    if (axesTag.isPresent() && handStack.is(axesTag.get()) && !player.getCooldowns().isOnCooldown(handStack)) {
-                        player.getCooldowns().addCooldown(handStack, config.highlightTime);
+                    //? if >=1.21.4 {
+                    //noinspection UnnecessaryLocalVariable
+                    var cooldownToken = handStack;
+                    //?} else {
+                    /*var cooldownToken = handStack.getItem();
+                    *///?}
+                    if (axesTag.isPresent() && handStack.is(axesTag.get()) && !player.getCooldowns().isOnCooldown(cooldownToken)) {
+                        player.getCooldowns().addCooldown(cooldownToken, config.highlightTime);
                         Sounds.Ding.ding(serverPlayer, 1.4f);
 
                         highlightNearbyLogs(serverPlayer);
 
+                        //? if >=1.21.4 {
                         return InteractionResult.SUCCESS_SERVER;
+                         //?} else {
+                        /*return InteractionResultHolder.sidedSuccess(ItemStack.EMPTY, false);
+                        *///?}
                     }
                 }
             }
 
-            return InteractionResult.PASS;
+            return Versioned.itemInteractPass();
         });
     }
 
