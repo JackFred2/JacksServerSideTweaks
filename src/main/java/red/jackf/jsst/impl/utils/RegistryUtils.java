@@ -65,10 +65,14 @@ public interface RegistryUtils {
         }
     }
 
+    static <T> Optional<TagKey<T>> parseTag(ResourceKey<Registry<T>> registryKey, String possibleTag) {
+        return ResourceLocation.read(possibleTag).result().map(resLoc -> TagKey.create(registryKey, resLoc));
+    }
+
     static <T> Stream<Holder<T>> streamTag(Registry<T> registry, TagKey<T> key) {
         //? if <=1.21.1 {
         /*var tag = registry.getTag(key);
-        *///?} else
+         *///?} else
         var tag = registry.get(key);
 
         return tag.map(HolderSet.ListBacked::stream).orElseGet(Stream::empty);

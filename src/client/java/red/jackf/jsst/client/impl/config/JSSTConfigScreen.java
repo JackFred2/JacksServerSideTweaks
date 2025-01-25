@@ -28,6 +28,7 @@ public interface JSSTConfigScreen {
                 createBannerWriter(JSSTConfig.INSTANCE),
                 createBeaconEnhancement(JSSTConfig.INSTANCE),
                 createCampfireTimers(JSSTConfig.INSTANCE),
+                createExtraHighlights(JSSTConfig.INSTANCE),
                 createItemEditor(JSSTConfig.INSTANCE),
                 createMapEditor(JSSTConfig.INSTANCE),
                 createPortableCrafting(JSSTConfig.INSTANCE),
@@ -193,6 +194,78 @@ public interface JSSTConfigScreen {
                                 .yesNoFormatter())
                         .build())
                 .build();
+    }
+
+    private static ConfigCategory createExtraHighlights(ConfigClassHandler<JSSTConfig> handler) {
+        return ConfigCategory.createBuilder()
+                .name(translatable("jsst.config.extraHighlights"))
+                .group(OptionGroup.createBuilder()
+                        .name(translatable("jsst.config.extraHighlights.treeLogs"))
+                        .description(OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.extraHighlights.treeLogs.description"))
+                                .image(JSST.id("textures/config/extra_highlights_tree_logs.png"), 320, 240)
+                                .build())
+                        .option(Option.<Boolean>createBuilder()
+                                .name(translatable("jsst.config.enabled"))
+                                .binding(handler.defaults().extraHighlights.treeLogsEnabled,
+                                        () -> handler.instance().extraHighlights.treeLogsEnabled,
+                                        b -> handler.instance().extraHighlights.treeLogsEnabled = b)
+                                .controller(opt -> BooleanControllerBuilder.create(opt)
+                                        .coloured(true)
+                                        .yesNoFormatter())
+                                .build())
+                        .option(Option.<Integer>createBuilder()
+                                .name(translatable("jsst.config.extraHighlights.highlightTime"))
+                                .description(OptionDescription.of(translatable("jsst.config.extraHighlights.highlightTime.description")))
+                                .binding(handler.defaults().extraHighlights.highlightTime,
+                                        () -> handler.instance().extraHighlights.highlightTime,
+                                        i -> handler.instance().extraHighlights.highlightTime = i)
+                                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                        .range(20 * 5, 20 * 15)
+                                        .step(1))
+                                .build())
+                        .option(Option.<Integer>createBuilder()
+                                .name(translatable("jsst.config.extraHighlights.treeLogsRange"))
+                                .description(OptionDescription.of(translatable("jsst.config.extraHighlights.treeLogsRange.description")))
+                                .binding(handler.defaults().extraHighlights.treeLogsRange,
+                                        () -> handler.instance().extraHighlights.treeLogsRange,
+                                        i -> handler.instance().extraHighlights.treeLogsRange = i)
+                                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                        .range(6, 16)
+                                        .step(1))
+                                .build())
+                        .option(Option.<String>createBuilder()
+                                .name(translatable("jsst.config.extraHighlights.logsTag"))
+                                .description(OptionDescription.of(translatable("jsst.config.extraHighlights.logsTag.description")))
+                                .binding(handler.defaults().extraHighlights.logsTag,
+                                        () -> handler.instance().extraHighlights.logsTag,
+                                        s -> handler.instance().extraHighlights.logsTag = s)
+                                .controller(opt -> FormattableStringController.create(opt)
+                                        .formatter(TextUtils::formatResloc))
+                                .build())
+                        .option(Option.<String>createBuilder()
+                                .name(translatable("jsst.config.extraHighlights.axesTag"))
+                                .description(OptionDescription.of(translatable("jsst.config.extraHighlights.axesTag.description")))
+                                .binding(handler.defaults().extraHighlights.axesTag,
+                                        () -> handler.instance().extraHighlights.axesTag,
+                                        s -> handler.instance().extraHighlights.axesTag = s)
+                                .controller(opt -> FormattableStringController.create(opt)
+                                        .formatter(TextUtils::formatResloc))
+                                .build())
+                        .build()
+                ).option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.extraHighlights.sugarcaneEnabled"))
+                        .description(OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.extraHighlights.sugarcaneEnabled.description"))
+                                .image(JSST.id("textures/config/extra_highlights_sugarcane.png"), 320, 240)
+                                .build())
+                        .binding(handler.defaults().extraHighlights.sugarcaneEnabled,
+                                () -> handler.instance().extraHighlights.sugarcaneEnabled,
+                                b -> handler.instance().extraHighlights.sugarcaneEnabled = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build()).build();
     }
 
     static ConfigCategory createItemEditor(ConfigClassHandler<JSSTConfig> handler) {

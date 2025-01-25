@@ -10,10 +10,11 @@
     "beaconenhancement.BeaconBlockEntityMixin",
     "beaconenhancement.ConduitBlockEntityMixin",
     "campfiretimers.CampfireBlockEntityMixin",
-    "miscellaneous.BlockMixin",
+    "extrahighlights.ItemEntityMixin",
     "mapeditor.MapItemSavedDataAccessor",
     "mapeditor.MapItemSavedDataMixin",
     "mapeditor.ServerEntityMixin",
+    "miscellaneous.BlockMixin",
     "portablecrafting.CraftingMenuMixin",
     "sgui.ServerGamePacketListenerImplMixin"
   ],

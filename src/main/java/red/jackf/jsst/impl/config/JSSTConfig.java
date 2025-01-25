@@ -58,6 +58,23 @@ public class JSSTConfig {
     }
 
     @SerialEntry
+    public ExtraHighlights extraHighlights = new ExtraHighlights();
+
+    public static class ExtraHighlights {
+        public boolean treeLogsEnabled = true;
+
+        public int highlightTime = 10 * 20;
+
+        public int treeLogsRange = 12;
+
+        public String logsTag = "minecraft:logs";
+
+        public String axesTag = "minecraft:axes";
+
+        public boolean sugarcaneEnabled = true;
+    }
+
+    @SerialEntry
     public ItemEditor itemEditor = new ItemEditor();
 
     public static class ItemEditor {
@@ -137,6 +154,18 @@ public class JSSTConfig {
         if (instance.miscellaneous.conduitRangeModifier != conduitRangeMod) {
             modified = true;
             instance.miscellaneous.conduitRangeModifier = conduitRangeMod;
+        }
+
+        int treeLogsRange = Mth.clamp(instance.extraHighlights.treeLogsRange, 6, 16);
+        if (instance.extraHighlights.treeLogsRange != treeLogsRange) {
+            modified = true;
+            instance.extraHighlights.treeLogsRange = treeLogsRange;
+        }
+
+        int highlightLifetime = Mth.clamp(instance.extraHighlights.highlightTime, 20 * 5, 20 * 15);
+        if (instance.extraHighlights.highlightTime != highlightLifetime) {
+            modified = true;
+            instance.extraHighlights.highlightTime = highlightLifetime;
         }
 
         if (modified) {

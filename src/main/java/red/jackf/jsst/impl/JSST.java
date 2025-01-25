@@ -9,6 +9,7 @@ import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.feature.bannerwriter.BannerWriter;
 import red.jackf.jsst.impl.feature.beaconenhancement.BeaconEnhancement;
 import red.jackf.jsst.impl.feature.campfiretimers.CampfireTimers;
+import red.jackf.jsst.impl.feature.extrahighlights.ExtraHighlights;
 import red.jackf.jsst.impl.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.impl.feature.mapeditor.MapEditor;
 import red.jackf.jsst.impl.feature.portablecrafting.PortableCrafting;
@@ -40,6 +41,7 @@ public class JSST implements ModInitializer {
 		BannerWriter.setup();
 		BeaconEnhancement.setup();
 		CampfireTimers.setup();
+		ExtraHighlights.setup();
 		ItemEditor.setup();
 		MapEditor.setup();
 		PortableCrafting.setup();
