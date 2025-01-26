@@ -92,9 +92,10 @@ public class LogHighlights {
             .toList();
 
             for (var entry : clusterPositions(player.serverLevel().random, logs).entrySet()) {
+                final BlockPos position = entry.getKey();
                 var entity = EntityBuilders.blockDisplay(player.serverLevel())
                         .state(Blocks.OAK_LOG.defaultBlockState())
-                        .positionCentered(entry.getKey())
+                        .positionCentered(position)
                         .glowing(true, entry.getValue())
                         .scaleAndCenter(START_SCALE)
                         .transformInterpolationDuration(config.highlightTime)
@@ -104,7 +105,13 @@ public class LogHighlights {
                     EntityUtils.setDisplayTranslation(entity, new Vector3f(END_SCALE).mul(-0.5f));
                     EntityUtils.startInterpolationIn(entity, 0);
                 });
-                var lie = EntityLie.builder(entity).createAndShow(player);
+                var lie = EntityLie.builder(entity)
+                        .onTick((_player, _lie) -> {
+                            if (!_lie.entity().level().getBlockState(position).is(logsTag.get())) {
+                                _lie.fade();
+                            }
+                        })
+                        .createAndShow(player);
 
 
                 Debris.INSTANCE.schedule(lie, config.highlightTime);
