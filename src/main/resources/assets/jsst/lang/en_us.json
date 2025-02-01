@@ -173,7 +173,7 @@
   "jsst.config.extraHighlights.treeLogs.description": "Players can sneak-right click with an axe in order to highlight nearby logs.",
   "jsst.config.extraHighlights.highlightTime": "Highlight Time",
   "jsst.config.extraHighlights.highlightTime.description": "Time that highlights stay active for.",
-  "jsst.config.extraHighlights.treeLogsRange": "Highlight Range.",
+  "jsst.config.extraHighlights.treeLogsRange": "Highlight Range",
   "jsst.config.extraHighlights.treeLogsRange.description": "Maximum distance from the player to search for logs.",
   "jsst.config.extraHighlights.axesTag": "Axes Tag",
   "jsst.config.extraHighlights.axesTag.description": "Item tag used to give the sneak-right click ability to.",
