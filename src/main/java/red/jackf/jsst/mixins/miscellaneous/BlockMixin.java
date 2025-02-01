@@ -49,7 +49,7 @@ public abstract class BlockMixin {
 
         if (DROPPED_PLAYER.hasValue()) {
             ServerPlayer source = DROPPED_PLAYER.pop();
-            if (JSSTConfig.INSTANCE.instance().miscellaneous.shiftItemsTowardsPlayer) {
+            if (JSSTConfig.INSTANCE.instance().itemNudging.shiftItemsTowardsPlayer) {
                 Vec3 offset = source.position().subtract(entity.position()).normalize().scale(0.15f);
 
                 entity.setDeltaMovement(offset.x, entity.getDeltaMovement().y, offset.z);
@@ -62,7 +62,7 @@ public abstract class BlockMixin {
     @WrapOperation(method = "popResource(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;nextDouble(Lnet/minecraft/util/RandomSource;DD)D", ordinal = 1))
     private static double changeMinimumHeight(RandomSource random, double minimum, double maximum, Operation<Double> original) {
-        if (NUDGE_UP_COUNT.hasValue() && NUDGE_UP_COUNT.pop() && JSSTConfig.INSTANCE.instance().miscellaneous.shiftItemsUp) {
+        if (NUDGE_UP_COUNT.hasValue() && NUDGE_UP_COUNT.pop() && JSSTConfig.INSTANCE.instance().itemNudging.shiftItemsUp) {
             minimum = 0.125;
         }
         return original.call(random, minimum, maximum);

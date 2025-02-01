@@ -39,7 +39,7 @@ public class BeaconBlockEntityMixin {
     @Expression("?.inflate(@(d))")
     @ModifyExpressionValue(method = "applyEffects", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
     private static double increaseBeaconRange(double original) {
-        var config = JSSTConfig.INSTANCE.instance().miscellaneous.beaconRangeModifier;
+        var config = JSSTConfig.INSTANCE.instance().effectorRanges.beaconRangeModifier;
         return config * original;
     }
 }

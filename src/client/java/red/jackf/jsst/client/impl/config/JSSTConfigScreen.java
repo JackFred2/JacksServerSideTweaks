@@ -356,9 +356,9 @@ public interface JSSTConfigScreen {
                         .option(Option.<Boolean>createBuilder()
                                 .name(translatable("jsst.config.miscellaneous.itemNudging.shiftUp"))
                                 .description(OptionDescription.of(translatable("jsst.config.miscellaneous.itemNudging.shiftItemsUp.description")))
-                                .binding(handler.defaults().miscellaneous.shiftItemsUp,
-                                        () -> handler.instance().miscellaneous.shiftItemsUp,
-                                        b -> handler.instance().miscellaneous.shiftItemsUp = b)
+                                .binding(handler.defaults().itemNudging.shiftItemsUp,
+                                        () -> handler.instance().itemNudging.shiftItemsUp,
+                                        b -> handler.instance().itemNudging.shiftItemsUp = b)
                                 .controller(opt -> BooleanControllerBuilder.create(opt)
                                         .coloured(true)
                                         .yesNoFormatter())
@@ -366,9 +366,9 @@ public interface JSSTConfigScreen {
                         .option(Option.<Boolean>createBuilder()
                                 .name(translatable("jsst.config.miscellaneous.itemNudging.shiftItemsTowardsPlayer"))
                                 .description(OptionDescription.of(translatable("jsst.config.miscellaneous.itemNudging.shiftItemsTowardsPlayer.description")))
-                                .binding(handler.defaults().miscellaneous.shiftItemsTowardsPlayer,
-                                        () -> handler.instance().miscellaneous.shiftItemsTowardsPlayer,
-                                        b -> handler.instance().miscellaneous.shiftItemsTowardsPlayer = b)
+                                .binding(handler.defaults().itemNudging.shiftItemsTowardsPlayer,
+                                        () -> handler.instance().itemNudging.shiftItemsTowardsPlayer,
+                                        b -> handler.instance().itemNudging.shiftItemsTowardsPlayer = b)
                                 .controller(opt -> BooleanControllerBuilder.create(opt)
                                         .coloured(true)
                                         .yesNoFormatter())
@@ -383,9 +383,9 @@ public interface JSSTConfigScreen {
                                         .text(Component.empty())
                                         .text(createBeaconRangeTable(modifier))
                                         .build())
-                                .binding(handler.defaults().miscellaneous.beaconRangeModifier,
-                                        () -> handler.instance().miscellaneous.beaconRangeModifier,
-                                        f -> handler.instance().miscellaneous.beaconRangeModifier = f)
+                                .binding(handler.defaults().effectorRanges.beaconRangeModifier,
+                                        () -> handler.instance().effectorRanges.beaconRangeModifier,
+                                        f -> handler.instance().effectorRanges.beaconRangeModifier = f)
                                 .controller(opt -> FloatSliderControllerBuilder.create(opt)
                                         .range(0.5f, 5f)
                                         .step(0.01f)
@@ -398,9 +398,9 @@ public interface JSSTConfigScreen {
                                         .text(Component.empty())
                                         .text(createConduitRangeTable(modifier))
                                         .build())
-                                .binding(handler.defaults().miscellaneous.conduitRangeModifier,
-                                        () -> handler.instance().miscellaneous.conduitRangeModifier,
-                                        f -> handler.instance().miscellaneous.conduitRangeModifier = f)
+                                .binding(handler.defaults().effectorRanges.conduitRangeModifier,
+                                        () -> handler.instance().effectorRanges.conduitRangeModifier,
+                                        f -> handler.instance().effectorRanges.conduitRangeModifier = f)
                                 .controller(opt -> FloatSliderControllerBuilder.create(opt)
                                         .range(0.5f, 5f)
                                         .step(0.01f)

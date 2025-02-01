@@ -14,7 +14,7 @@ public class ConduitBlockEntityMixin {
     @Expression("?.inflate(@((double) ?))")
     @ModifyExpressionValue(method = "applyEffects", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
     private static double increaseBeaconRangeWhenGrabbing(double original) {
-        var config = JSSTConfig.INSTANCE.instance().miscellaneous.conduitRangeModifier;
+        var config = JSSTConfig.INSTANCE.instance().effectorRanges.conduitRangeModifier;
         return config * original;
     }
 
@@ -22,7 +22,7 @@ public class ConduitBlockEntityMixin {
     @Expression("?.closerThan(?, @((double) ?))")
     @ModifyExpressionValue(method = "applyEffects", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
     private static double increaseBeaconRangeWhenChecking(double original) {
-        var config = JSSTConfig.INSTANCE.instance().miscellaneous.conduitRangeModifier;
+        var config = JSSTConfig.INSTANCE.instance().effectorRanges.conduitRangeModifier;
         return config * original;
     }
 }

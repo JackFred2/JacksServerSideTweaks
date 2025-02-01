@@ -37,7 +37,7 @@ public class JSSTConfig {
     public BeaconEnhancement beaconEnhancement = new BeaconEnhancement();
 
     public static class BeaconEnhancement {
-        public boolean enabled = true;
+        public boolean enabled = false;
 
         public int maxLevel = 6;
 
@@ -55,6 +55,15 @@ public class JSSTConfig {
 
     public static class CampfireTimers {
         public boolean enabled = true;
+    }
+
+    @SerialEntry
+    public EffectorRanges effectorRanges = new EffectorRanges();
+
+    public static class EffectorRanges {
+        public float beaconRangeModifier = 1.5f;
+
+        public float conduitRangeModifier = 1.5f;
     }
 
     @SerialEntry
@@ -86,6 +95,15 @@ public class JSSTConfig {
     }
 
     @SerialEntry
+    public ItemNudging itemNudging = new ItemNudging();
+
+    public static class ItemNudging {
+        public boolean shiftItemsUp = true;
+
+        public boolean shiftItemsTowardsPlayer = true;
+    }
+
+    @SerialEntry
     public MapEditor mapEditor = new MapEditor();
 
     public static class MapEditor {
@@ -96,19 +114,6 @@ public class JSSTConfig {
         public String tool = "minecraft:feather";
 
         public boolean disableSerialization = false;
-    }
-
-    @SerialEntry
-    public Miscellaneous miscellaneous = new Miscellaneous();
-
-    public static class Miscellaneous {
-        public boolean shiftItemsUp = true;
-
-        public boolean shiftItemsTowardsPlayer = true;
-
-        public float beaconRangeModifier = 1.5f;
-
-        public float conduitRangeModifier = 1.5f;
     }
 
     @SerialEntry
@@ -144,16 +149,16 @@ public class JSSTConfig {
             instance.beaconEnhancement.secondPowerMinLevel = beaconSecondPowerLevel;
         }
 
-        float beaconRangeMod = Mth.clamp(instance.miscellaneous.beaconRangeModifier, 0.5f, 5f);
-        if (instance.miscellaneous.beaconRangeModifier != beaconRangeMod) {
+        float beaconRangeMod = Mth.clamp(instance.effectorRanges.beaconRangeModifier, 0.5f, 5f);
+        if (instance.effectorRanges.beaconRangeModifier != beaconRangeMod) {
             modified = true;
-            instance.miscellaneous.beaconRangeModifier = beaconRangeMod;
+            instance.effectorRanges.beaconRangeModifier = beaconRangeMod;
         }
 
-        float conduitRangeMod = Mth.clamp(instance.miscellaneous.conduitRangeModifier, 0.5f, 5f);
-        if (instance.miscellaneous.conduitRangeModifier != conduitRangeMod) {
+        float conduitRangeMod = Mth.clamp(instance.effectorRanges.conduitRangeModifier, 0.5f, 5f);
+        if (instance.effectorRanges.conduitRangeModifier != conduitRangeMod) {
             modified = true;
-            instance.miscellaneous.conduitRangeModifier = conduitRangeMod;
+            instance.effectorRanges.conduitRangeModifier = conduitRangeMod;
         }
 
         int treeLogsRange = Mth.clamp(instance.extraHighlights.treeLogsRange, 6, 16);
