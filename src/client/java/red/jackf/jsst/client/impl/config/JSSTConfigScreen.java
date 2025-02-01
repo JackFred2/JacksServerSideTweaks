@@ -24,23 +24,31 @@ import static net.minecraft.network.chat.Component.translatable;
 
 public interface JSSTConfigScreen {
     static Screen create(Screen screen) {
+        ConfigClassHandler<JSSTConfig> handler = JSSTConfig.INSTANCE;
+
+        StateManager<Float> beaconRangeState = StateManager.createSimple(
+                handler.defaults().effectorRanges.beaconRangeModifier,
+                () -> handler.instance().effectorRanges.beaconRangeModifier,
+                f -> handler.instance().effectorRanges.beaconRangeModifier = f
+        );
+
         Collection<ConfigCategory> categories = List.of(
-                createBannerWriter(JSSTConfig.INSTANCE),
-                createItemEditor(JSSTConfig.INSTANCE),
-                createMapEditor(JSSTConfig.INSTANCE),
-                createBeaconEnhancement(JSSTConfig.INSTANCE),
-                createCampfireTimers(JSSTConfig.INSTANCE),
-                createEffectorRanges(JSSTConfig.INSTANCE),
-                createExtraHighlights(JSSTConfig.INSTANCE),
-                createItemNudging(JSSTConfig.INSTANCE),
-                createPortableCrafting(JSSTConfig.INSTANCE)
+                createBannerWriter(handler),
+                createItemEditor(handler),
+                createMapEditor(handler),
+                createBeaconEnhancement(handler, beaconRangeState),
+                createCampfireTimers(handler),
+                createEffectorRanges(handler, beaconRangeState),
+                createExtraHighlights(handler),
+                createItemNudging(handler),
+                createPortableCrafting(handler)
         );
 
         return YetAnotherConfigLib.createBuilder()
                 .title(translatable("jsst.title"))
                 .categories(categories)
                 .save(() -> {
-                    JSSTConfig.INSTANCE.save();
+                    handler.save();
                     onSave();
                 })
                 .build()
@@ -85,7 +93,7 @@ public interface JSSTConfigScreen {
                 .build();
     }
 
-    private static ConfigCategory createBeaconEnhancement(ConfigClassHandler<JSSTConfig> handler) {
+    private static ConfigCategory createBeaconEnhancement(ConfigClassHandler<JSSTConfig> handler, StateManager<Float> beaconRangeState) {
         Function<Integer, ListOption<String>> primaryLevelFactory = level -> ListOption.<String>createBuilder()
                 .name(translatable("jsst.beaconEnhancement.level", level))
                 .binding(handler.defaults().beaconEnhancement.primaryPowers.get(level),
@@ -122,6 +130,19 @@ public interface JSSTConfigScreen {
                         .controller(opt -> BooleanControllerBuilder.create(opt)
                                 .coloured(true)
                                 .yesNoFormatter())
+                        .build())
+                .option(Option.<Float>createBuilder()
+                        .name(translatable("jsst.config.effectorRange.beacon"))
+                        .description(modifier -> OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.effectorRange.beacon.description"))
+                                .text(Component.empty())
+                                .text(createBeaconRangeTable(modifier))
+                                .build())
+                        .stateManager(beaconRangeState)
+                        .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                                .range(0.5f, 5f)
+                                .step(0.01f)
+                                .formatValue(value -> literal("%.0f%%".formatted(value * 100))))
                         .build())
                 .option(Option.<Integer>createBuilder()
                         .name(translatable("jsst.config.beaconEnhancement.maxLevel"))
@@ -349,7 +370,7 @@ public interface JSSTConfigScreen {
         return list;
     }
 
-    private static ConfigCategory createEffectorRanges(ConfigClassHandler<JSSTConfig> handler) {
+    private static ConfigCategory createEffectorRanges(ConfigClassHandler<JSSTConfig> handler, StateManager<Float> beaconRangeState) {
         return ConfigCategory.createBuilder()
                 .name(translatable("jsst.config.effectorRange"))
                 .option(Option.<Float>createBuilder()
@@ -359,9 +380,7 @@ public interface JSSTConfigScreen {
                                 .text(Component.empty())
                                 .text(createBeaconRangeTable(modifier))
                                 .build())
-                        .binding(handler.defaults().effectorRanges.beaconRangeModifier,
-                                () -> handler.instance().effectorRanges.beaconRangeModifier,
-                                f -> handler.instance().effectorRanges.beaconRangeModifier = f)
+                        .stateManager(beaconRangeState)
                         .controller(opt -> FloatSliderControllerBuilder.create(opt)
                                 .range(0.5f, 5f)
                                 .step(0.01f)
