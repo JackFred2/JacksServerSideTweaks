@@ -6,7 +6,7 @@ icon: map
 
 **JSST** adds a survival-friendly map decoration editor, giving players the ability to mark maps with several icons, rotate them, and add labels.
 
-<figure><img src="../.gitbook/assets/map_editor.gif" alt=""><figcaption><p>A player editing a map in survival, adding, renaming and removing markers.</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/java_MzaHVZGN9l.gif" alt=""><figcaption><p>A player editing a map in survival, adding, renaming and removing markers.</p></figcaption></figure>
 
 ## Usage
 

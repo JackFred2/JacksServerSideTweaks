@@ -6,7 +6,7 @@ icon: lightbulb-on
 
 **JSST** allows you to fully customize a beacon's power set, secondary power threshold and maximum level up to 6.
 
-<figure><img src="../.gitbook/assets/beacon_enhancement_gui.png" alt=""><figcaption><p>Example of the custom GUI used to support this - all functionality is the same.</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption><p>Example of the custom GUI used to support this - all functionality is the same.</p></figcaption></figure>
 
 ## Configuration
 
