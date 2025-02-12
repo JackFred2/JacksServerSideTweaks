@@ -35,13 +35,6 @@ import red.jackf.jsst.mixins.beaconenhancement.BeaconBlockEntityAccessor;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-TODO
-- conduit range
-- cleanup
-
- */
-
 public class AltBeaconMenu extends SimpleGuiExt {
     private final BeaconBlockEntityAccessor bbeAccessor;
     private final ContainerLevelAccess levelAccess;
