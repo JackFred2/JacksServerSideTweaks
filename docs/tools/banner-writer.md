@@ -6,7 +6,7 @@ icon: font-case
 
 Adds a command to easily write text on banners, in a survival-friendly manner.
 
-<figure><img src="../.gitbook/assets/java_8ctNsCeBjT.gif" alt=""><figcaption><p>Writing text easily on banners.</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/banner_writer.gif" alt=""><figcaption><p>Writing text easily on banners.</p></figcaption></figure>
 
 ## Usage
 
