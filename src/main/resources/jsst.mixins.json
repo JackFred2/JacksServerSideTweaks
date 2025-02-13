@@ -16,6 +16,10 @@
     "mapeditor.ServerEntityMixin",
     "miscellaneous.BlockMixin",
     "portablecrafting.CraftingMenuMixin",
+    "saplingreplant.BushBlockAccessor",
+    "saplingreplant.ItemEntityMixin",
+    "saplingreplant.SaplingBlockAccessor",
+    "saplingreplant.TreeGrowerMixin",
     "sgui.ServerGamePacketListenerImplMixin"
   ],
   "injectors": {

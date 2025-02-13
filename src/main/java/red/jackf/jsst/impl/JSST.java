@@ -13,6 +13,7 @@ import red.jackf.jsst.impl.feature.extrahighlights.ExtraHighlights;
 import red.jackf.jsst.impl.feature.itemeditor.ItemEditor;
 import red.jackf.jsst.impl.feature.mapeditor.MapEditor;
 import red.jackf.jsst.impl.feature.portablecrafting.PortableCrafting;
+import red.jackf.jsst.impl.feature.saplingreplant.SaplingReplant;
 import red.jackf.jsst.impl.utils.Scheduler;
 import red.jackf.jsst.impl.utils.sgui.labels.LabelMaps;
 
@@ -45,5 +46,6 @@ public class JSST implements ModInitializer {
 		ItemEditor.setup();
 		MapEditor.setup();
 		PortableCrafting.setup();
+		SaplingReplant.setup();
 	}
 }

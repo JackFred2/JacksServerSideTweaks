@@ -8,7 +8,10 @@ import net.minecraft.resources.ResourceLocation;
 import red.jackf.jackfredlib.api.colour.Gradient;
 import red.jackf.jackfredlib.api.colour.GradientBuilder;
 
+import java.util.function.Function;
+
 import static net.minecraft.network.chat.Component.literal;
+import static net.minecraft.network.chat.Component.translatable;
 
 public interface TextUtils {
     static Component formatReslocOrTag(String input) {
@@ -63,4 +66,20 @@ public interface TextUtils {
             return literal(input).withStyle(ChatFormatting.RED);
         }
     }
+
+    Function<Integer, Component> BLOCK_FORMAT = i -> {
+        if (i == 1) {
+            return translatable("jsst.ui.format.block");
+        } else {
+            return translatable("jsst.ui.format.blocks", i);
+        }
+    };
+
+    Function<Integer, Component> TICK_FORMAT = i -> {
+        if (i == 1) {
+            return translatable("jsst.ui.format.tick");
+        } else {
+            return translatable("jsst.ui.format.ticks", i);
+        }
+    };
 }

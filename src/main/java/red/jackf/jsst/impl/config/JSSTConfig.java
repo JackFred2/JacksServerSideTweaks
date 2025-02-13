@@ -127,6 +127,23 @@ public class JSSTConfig {
         public String itemIdOrTag = "#jsst:portable_crafting";
     }
 
+    @SerialEntry
+    public SaplingReplant saplingReplant = new SaplingReplant();
+
+    public static class SaplingReplant {
+        public boolean enabled = true;
+
+        public String saplingTag = "minecraft:saplings";
+
+        public int searchRadiusBlocks = 2;
+
+        public int searchRadiusBlocks2x2 = 4;
+
+        public int minSpacing = 2;
+
+        public int maxPerStack = 4;
+    }
+
     public static void loadAndVerify() {
         INSTANCE.load();
 
@@ -171,6 +188,30 @@ public class JSSTConfig {
         if (instance.extraHighlights.highlightTime != highlightLifetime) {
             modified = true;
             instance.extraHighlights.highlightTime = highlightLifetime;
+        }
+
+        int saplingSearchRadius = Mth.clamp(instance.saplingReplant.searchRadiusBlocks, 0, 4);
+        if (instance.saplingReplant.searchRadiusBlocks != saplingSearchRadius) {
+            modified = true;
+            instance.saplingReplant.searchRadiusBlocks = saplingSearchRadius;
+        }
+
+        int saplingSearchRadius2x2 = Mth.clamp(instance.saplingReplant.searchRadiusBlocks2x2, 0, 6);
+        if (instance.saplingReplant.searchRadiusBlocks2x2 != saplingSearchRadius2x2) {
+            modified = true;
+            instance.saplingReplant.searchRadiusBlocks2x2 = saplingSearchRadius2x2;
+        }
+
+        int saplingMinSpacing = Mth.clamp(instance.saplingReplant.minSpacing, 0, 3);
+        if (instance.saplingReplant.minSpacing != saplingMinSpacing) {
+            modified = true;
+            instance.saplingReplant.minSpacing = saplingMinSpacing;
+        }
+
+        int saplingMaxPerStack = Mth.clamp(instance.saplingReplant.maxPerStack, 1, 16);
+        if (instance.saplingReplant.maxPerStack != saplingMaxPerStack) {
+            modified = true;
+            instance.saplingReplant.maxPerStack = saplingMaxPerStack;
         }
 
         if (modified) {

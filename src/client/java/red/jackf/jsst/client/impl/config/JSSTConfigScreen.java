@@ -41,7 +41,8 @@ public interface JSSTConfigScreen {
                 createEffectorRanges(handler, beaconRangeState),
                 createExtraHighlights(handler),
                 createItemNudging(handler),
-                createPortableCrafting(handler)
+                createPortableCrafting(handler),
+                createSaplingReplant(handler)
         );
 
         return YetAnotherConfigLib.createBuilder()
@@ -244,6 +245,7 @@ public interface JSSTConfigScreen {
                                         i -> handler.instance().extraHighlights.highlightTime = i)
                                 .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                                         .range(20 * 5, 20 * 15)
+                                        .formatValue(TextUtils.TICK_FORMAT::apply)
                                         .step(1))
                                 .build())
                         .option(Option.<Integer>createBuilder()
@@ -254,6 +256,7 @@ public interface JSSTConfigScreen {
                                         i -> handler.instance().extraHighlights.treeLogsRange = i)
                                 .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                                         .range(6, 16)
+                                        .formatValue(TextUtils.BLOCK_FORMAT::apply)
                                         .step(1))
                                 .build())
                         .option(Option.<String>createBuilder()
@@ -515,6 +518,74 @@ public interface JSSTConfigScreen {
                         .controller(opt -> BooleanControllerBuilder.create(opt)
                                 .coloured(true)
                                 .yesNoFormatter())
+                        .build())
+                .build();
+    }
+
+    static ConfigCategory createSaplingReplant(ConfigClassHandler<JSSTConfig> handler) {
+        return ConfigCategory.createBuilder()
+                .name(translatable("jsst.config.saplingReplant"))
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.enabled"))
+                        .description(OptionDescription.of(translatable("jsst.config.saplingReplant.description")))
+                        .binding(handler.defaults().saplingReplant.enabled,
+                                () -> handler.instance().saplingReplant.enabled,
+                                b -> handler.instance().saplingReplant.enabled = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .option(Option.<String>createBuilder()
+                        .name(translatable("jsst.config.saplingReplant.saplingTag"))
+                        .description(OptionDescription.of(translatable("jsst.config.saplingReplant.saplingTag.description")))
+                        .binding(handler.defaults().saplingReplant.saplingTag,
+                                () -> handler.instance().saplingReplant.saplingTag,
+                                s -> handler.instance().saplingReplant.saplingTag = s)
+                        .controller(opt -> FormattableStringController.create(opt)
+                                .formatter(TextUtils::formatResloc))
+                        .build())
+                .option(Option.<Integer>createBuilder()
+                        .name(translatable("jsst.config.saplingReplant.searchRadiusBlocks"))
+                        .description(OptionDescription.of(translatable("jsst.config.saplingReplant.searchRadiusBlocks.description")))
+                        .binding(handler.defaults().saplingReplant.searchRadiusBlocks,
+                                () -> handler.instance().saplingReplant.searchRadiusBlocks,
+                                i -> handler.instance().saplingReplant.searchRadiusBlocks = i)
+                        .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                .range(0, 4)
+                                .formatValue(TextUtils.BLOCK_FORMAT::apply)
+                                .step(1))
+                        .build())
+                .option(Option.<Integer>createBuilder()
+                        .name(translatable("jsst.config.saplingReplant.searchRadiusBlocks2x2"))
+                        .description(OptionDescription.of(translatable("jsst.config.saplingReplant.searchRadiusBlocks2x2.description")))
+                        .binding(handler.defaults().saplingReplant.searchRadiusBlocks2x2,
+                                () -> handler.instance().saplingReplant.searchRadiusBlocks2x2,
+                                i -> handler.instance().saplingReplant.searchRadiusBlocks2x2 = i)
+                        .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                .range(0, 6)
+                                .formatValue(TextUtils.BLOCK_FORMAT::apply)
+                                .step(1))
+                        .build())
+                .option(Option.<Integer>createBuilder()
+                        .name(translatable("jsst.config.saplingReplant.minSpacing"))
+                        .description(OptionDescription.of(translatable("jsst.config.saplingReplant.minSpacing.description")))
+                        .binding(handler.defaults().saplingReplant.minSpacing,
+                                () -> handler.instance().saplingReplant.minSpacing,
+                                i -> handler.instance().saplingReplant.minSpacing = i)
+                        .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                .range(0, 3)
+                                .formatValue(TextUtils.BLOCK_FORMAT::apply)
+                                .step(1))
+                        .build())
+                .option(Option.<Integer>createBuilder()
+                        .name(translatable("jsst.config.saplingReplant.maxPerStack"))
+                        .description(OptionDescription.of(translatable("jsst.config.saplingReplant.maxPerStack.description")))
+                        .binding(handler.defaults().saplingReplant.maxPerStack,
+                                () -> handler.instance().saplingReplant.maxPerStack,
+                                i -> handler.instance().saplingReplant.maxPerStack = i)
+                        .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                .range(1, 16)
+                                .step(1))
                         .build())
                 .build();
     }

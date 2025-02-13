@@ -3,7 +3,7 @@
 	"id": "jsst",
 	"version": "${version}",
 	"name": "Jack's Server Side Tweaks",
-	"description": "A collection of server-side, survival-friendly tweaks and tools.",
+	"description": "A collection of server-side quality of life tweaks and survival friendly tools.",
 	"authors": [
 		"JackFred"
 	],
