@@ -17,10 +17,34 @@ import red.jackf.jsst.mixins.saplingreplant.SaplingBlockAccessor;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-public class SaplingReplant {
-    public static void setup() {
+/**
+ * <pre>
+ * R = Search Radius
+ * Q = Search Radius (2x2)
+ * S = Minimum Spacing
+ *
+ * - If not on server or invalid sapling, return
+ * - Set 'map' to set of nearby existing saplings in world, 2 columns above or below, radius (R + S)
+ * - Loop min(stack size, max per stack): (place loop)
+ *   - If 2x2: // try complete existing
+ *     - Get positions within Q that could hold a 2x2, allowing for existing saplings
+ *     - For each: (2x2 loop)
+ *       - Check all positions in 2x2 aren't blocked by overcrowding, otherwise continue
+ *       - Find a position not taken by a sapling or was placed previously this loop, if none continue
+ *       - Place a sapling & break 2x2 loop
+ *   - If placed sapling above, continue to next place loop
+ *   - Find position within R that can support sapling & doesn't hold one already
+ *   - For each:
+ *     - Check position is plantable and not crowded, otherwise continue
+ *     - If 2x2:
+ *       - Check other  positions in possible 2x2 are plantable and not crowded, otherwise continue
+ *       - Place sapling, continue to next place loop
+*      
+ * </pre>
+ */
 
-    }
+public class SaplingReplant {
+    public static void setup() {}
 
     private static Set<Pair<Integer, Integer>> getSaplingMap(Level level, BlockPos root, SaplingBlock sapling, boolean is2x2) {
         var config = JSSTConfig.INSTANCE.instance().saplingReplant;
@@ -103,8 +127,8 @@ public class SaplingReplant {
 
                         List<BlockPos> toCheck = this2x2.stream().filter(pos -> !placed.contains(pos) && !saplingMap.contains(Pair.of(pos.getX(), pos.getZ()))).toList();
 
-                        for (var otherPosition : toCheck) {
-                            placeInWorld(level, otherPosition, saplingBlock, saplingMap, placed);
+                        if (!toCheck.isEmpty()) {
+                            placeInWorld(level, toCheck.getFirst(), saplingBlock, saplingMap, placed);
                             placedAndCompleted2x2 = true;
                             break check2x2;
                         }
