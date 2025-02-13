@@ -11,6 +11,7 @@
 * [Extra Highlights](tweaks/extra-highlights.md)
 * [Item Nudging](tweaks/item-nudging.md)
 * [Portable Crafting](tweaks/portable-crafting.md)
+* [Sapling Replant](tweaks/sapling-replant.md)
 
 ## Tools
 
