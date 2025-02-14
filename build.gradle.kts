@@ -151,6 +151,22 @@ publishing {
 
 	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
-		if (!System.getenv().containsKey("CI")) repositories.mavenLocal()
+		val env = System.getenv()
+
+		if (!env.containsKey("CI")) repositories.mavenLocal()
+
+		if (env.containsKey("JF_MAVEN_USER") && env.containsKey("JF_MAVEN_PASS")) {
+			maven {
+				name = "JackFredMaven"
+				url = uri("https://maven.jackf.red/releases")
+				content {
+					includeGroupAndSubgroups("red.jackf")
+				}
+				credentials {
+					username = env["JF_MAVEN_USER"]
+					password = env["JF_MAVEN_PASS"]
+				}
+			}
+		}
 	}
 }
