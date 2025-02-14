@@ -9,8 +9,8 @@
 	],
 	"contact": {
 		"homepage": "https://modrinth.com/mod/jsst/",
-		"issues": "https://github.com/JackFred2/JacksServerSideTweaks/issues",
-		"sources": "https://github.com/JackFred2/JacksServerSideTweaks/"
+		"issues": "${github_url}/issues",
+		"sources": "${github_url}"
 	},
 	"license": "ARR",
 	"icon": "assets/jsst/icon.png",
@@ -43,7 +43,7 @@
 		"modmenu": {
 			"links": {
 				"modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/jsst",
-				"modmenu.github_releases": "https://github.com/JackFred2/JacksServerSideTweaks/releases",
+				"modmenu.github_releases": "${github_url}/releases",
 				"modmenu.kofi": "https://ko-fi.com/jackfred",
 				"modmenu.wiki": "https://docs.jackf.red/jsst/"
 			}

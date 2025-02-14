@@ -1,9 +1,13 @@
+import me.modmuss50.mpp.ReleaseType
+
 plugins {
 	id("fabric-loom") version "1.10-SNAPSHOT"
 	id("maven-publish")
+	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
 
-version = "${properties["mod_version"]!!}+${stonecutter.current.version}"
+val rawVersion = properties["mod_version"]!!.toString()
+version = "$rawVersion+${stonecutter.current.version}"
 group = properties["maven_group"]!!
 
 // stonecutter constants
@@ -107,6 +111,7 @@ tasks.withType<ProcessResources>().configureEach {
 	inputs.property("version", project.version)
 	inputs.property("javaRequirement", javaRequirement)
 	inputs.property("mcVersion", mcVersion)
+	inputs.property("github_url", properties["project.github_url"]!!)
 
 	// server translations
 	from("../../src/main/resources/assets/jsst/lang") {
@@ -141,6 +146,57 @@ tasks.jar {
 	}
 }
 
+// configure mod publinsh
+publishMods {
+	file.set(tasks.remapJar.get().archiveFile)
+	modLoaders.add("fabric")
+	type.set(ReleaseType.STABLE)
+
+	changelog.set("Changelog not written yet")
+
+	dryRun.set(properties["project.dry_run"]!!.toString() == "true")
+
+	displayName.set("${properties["project.name"]} ${project.version}")
+
+	if (System.getenv().containsKey("CURSEFORGE_TOKEN") || dryRun.get()) {
+		curseforge {
+			accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
+
+			projectId.set(properties["project.curseforge_id"]!!.toString())
+			projectSlug.set(properties["project.curseforge_slug"]!!.toString())
+			minecraftVersions.addAll(properties["project.curseforge_versions"]!!.toString().split(","))
+
+			javaVersions.add(JavaVersion.VERSION_21)
+			serverRequired.set(true)
+
+			requires("fabric-api", "yacl")
+			optional("modmenu")
+			embeds("server-translation-api")
+		}
+	}
+
+	if (System.getenv().containsKey("MODRINTH_TOKEN") || dryRun.get()) {
+		modrinth {
+			accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
+
+			projectId.set(properties["project.modrinth_id"]!!.toString())
+			minecraftVersions.addAll(properties["project.modrinth_versions"]!!.toString().split(","))
+
+			requires("fabric-api", "yacl")
+			optional("modmenu")
+			embeds("server-translation-api")
+		}
+	}
+
+	github {
+		accessToken.set(providers.environmentVariable("GITHUB_TOKEN"))
+
+		additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
+
+		parent(rootProject.tasks.named("publishGithub"))
+	}
+}
+
 // configure the maven publication
 publishing {
 	publications {
@@ -151,11 +207,10 @@ publishing {
 
 	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
-		val env = System.getenv()
 
-		if (!env.containsKey("CI")) repositories.mavenLocal()
+		if (!System.getenv().containsKey("CI")) repositories.mavenLocal()
 
-		if (env.containsKey("JF_MAVEN_USER") && env.containsKey("JF_MAVEN_PASS")) {
+		if (System.getenv().containsKey("JF_MAVEN_USER") && System.getenv().containsKey("JF_MAVEN_PASS")) {
 			maven {
 				name = "JackFredMaven"
 				url = uri("https://maven.jackf.red/releases")
@@ -163,8 +218,8 @@ publishing {
 					includeGroupAndSubgroups("red.jackf")
 				}
 				credentials {
-					username = env["JF_MAVEN_USER"]
-					password = env["JF_MAVEN_PASS"]
+					username = System.getenv()["JF_MAVEN_USER"]
+					password = System.getenv()["JF_MAVEN_PASS"]
 				}
 			}
 		}
