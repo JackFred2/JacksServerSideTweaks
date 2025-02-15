@@ -1,0 +1,1 @@
+Feature media under 2MB for Modrinth & Curseforge
