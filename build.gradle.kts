@@ -194,7 +194,6 @@ publishMods {
 
 			requires("fabric-api", "yacl")
 			optional("modmenu")
-			embeds("server-translation-api")
 		}
 	}
 
