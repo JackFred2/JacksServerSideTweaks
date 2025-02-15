@@ -73,25 +73,25 @@ jobs:
 
       - name: Publish to JackFred Maven
         if: ${{ inputs.publishToMaven == true }}
-        run: ./gradlew chiseledPublish"
+        run: ./gradlew chiseledPublish
         env:
           JF_MAVEN_USER: ${{ secrets.JF_MAVEN_USER }}
           JF_MAVEN_PASS: ${{ secrets.JF_MAVEN_PASS }}
 
       - name: Publish as GitHub Release
         if: ${{ inputs.publishToGitHub == true }}
-        run: ./gradlew chiseledPublishGithub"
+        run: ./gradlew chiseledPublishGithub
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Curseforge
         if: ${{ inputs.publishToCurseforge == true }}
-        run: ./gradlew chiseledPublishCurseforge"
+        run: ./gradlew chiseledPublishCurseforge
         env:
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
 
       - name: Publish to Modrinth
         if: ${{ inputs.publishToModrinth == true }}
-        run: ./gradlew chiseledPublishModrinth"
+        run: ./gradlew chiseledPublishModrinth
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
