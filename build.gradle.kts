@@ -146,13 +146,23 @@ tasks.jar {
 	}
 }
 
+// TODO figure out how to share this
+val changelogProvider = rootProject.layout.projectDirectory.dir("changelogs").file("$version.md").let { file ->
+	if (file.asFile.exists()) {
+		return@let project.providers.fileContents(file).asText
+	} else {
+		return@let provider { "No changelog provided" }
+	}
+}
+
 // configure mod publinsh
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)
 	modLoaders.add("fabric")
 	type.set(ReleaseType.STABLE)
 
-	changelog.set("Changelog not written yet")
+	@Suppress("UNCHECKED_CAST")
+	changelog.set(changelogProvider)
 
 	dryRun.set(properties["project.dry_run"]!!.toString() == "true")
 
@@ -188,12 +198,14 @@ publishMods {
 		}
 	}
 
-	github {
-		accessToken.set(providers.environmentVariable("GITHUB_TOKEN"))
+	if (System.getenv().containsKey("GITHUB_TOKEN") || dryRun.get()) {
+		github {
+			accessToken.set(providers.environmentVariable("GITHUB_TOKEN"))
 
-		additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
+			additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
 
-		parent(rootProject.tasks.named("publishGithub"))
+			parent(rootProject.tasks.named("publishGithub"))
+		}
 	}
 }
 

@@ -1,0 +1,97 @@
+name: publish
+run-name: Publish JSST
+
+on:
+  workflow_dispatch:
+    inputs:
+      ignoreNoChangelog:
+        description: 'Allow no changelog'
+        default: false
+        required: true
+        type: boolean
+      publishToMaven:
+        description: 'Publish to Maven repository'
+        default: true
+        required: true
+        type: boolean
+      publishToGitHub:
+        description: 'Publish as a GitHub release'
+        default: true
+        required: true
+        type: boolean
+      publishToCurseforge:
+        description: 'Publish to CurseForge'
+        default: false
+        required: true
+        type: boolean
+      publishToModrinth:
+        description: 'Publish to Modrinth'
+        default: false
+        required: true
+        type: boolean
+
+jobs:
+  publish:
+    strategy:
+      matrix:
+        java: [21]
+        os: [ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Possibly check for changelog file
+        if: ${{ inputs.ignoreNoChangelog == false }}
+        run: |
+          version=$(grep 'mod_version=' gradle.properties | cut -d'=' -f2)
+          if [[ -z $version || ! -f "changelogs/${version}.md" ]]; then
+            exit 1
+          fi
+
+      - name: Setup JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'microsoft'
+
+      - name: Setup Gradle & Caching
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-includes: |
+            caches
+            notifications
+            loom-cache
+
+      - name: Make Gradle Wrapper Executable
+        if: ${{ runner.os != 'Windows' }}
+        run: chmod +x ./gradlew
+
+      - name: build
+        run: ./gradlew chiseledBuild
+
+      - name: Publish to JackFred Maven
+        if: ${{ inputs.publishToMaven == true }}
+        run: ./gradlew chiseledPublish"
+        env:
+          JF_MAVEN_USER: ${{ secrets.JF_MAVEN_USER }}
+          JF_MAVEN_PASS: ${{ secrets.JF_MAVEN_PASS }}
+
+      - name: Publish as GitHub Release
+        if: ${{ inputs.publishToGitHub == true }}
+        run: ./gradlew chiseledPublishGithub"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Curseforge
+        if: ${{ inputs.publishToCurseforge == true }}
+        run: ./gradlew chiseledPublishCurseforge"
+        env:
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish to Modrinth
+        if: ${{ inputs.publishToModrinth == true }}
+        run: ./gradlew chiseledPublishModrinth"
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
