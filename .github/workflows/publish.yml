@@ -9,6 +9,11 @@ on:
         default: false
         required: true
         type: boolean
+      createTag:
+        description: 'Create new tag'
+        default: true
+        required: true
+        type: boolean
       publishToMaven:
         description: 'Publish to Maven repository'
         default: true
@@ -44,12 +49,23 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+
+      - id: gradle-version-grabber
+        name: Grab version from gradle.properties
+        run: |
+          version=$(grep 'mod_version=' gradle.properties | cut -d'=' -f2)
+          if [[ -z $version ]]; then
+            exit 1
+          fi
+          
+          echo "mod_version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Possibly check for changelog file
         if: ${{ inputs.ignoreNoChangelog == false }}
         run: |
-          version=$(grep 'mod_version=' gradle.properties | cut -d'=' -f2)
-          if [[ -z $version || ! -f "changelogs/${version}.md" ]]; then
+          if [[ ! -f "changelogs/${{ steps.gradle-version-grabber.outputs.mod_version }}.md" ]]; then
             exit 1
           fi
 
@@ -73,6 +89,29 @@ jobs:
 
       - name: build
         run: ./gradlew chiseledBuild
+
+      - name: Check tag doesn't already exist
+        if: ${{ inputs.createTag == true }}
+        run: |
+          if git show-ref --tags --verify --quiet "refs/tags/${{ steps.gradle-version-grabber.outputs.mod_version }}"; then
+            echo "newTag already exists, failing"
+            exit 1
+          else
+            echo "newTag doesn't exist"
+            exit 0
+          fi
+
+      - name: Create new tag
+        if: ${{ inputs.createTag == true }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ steps.gradle-version-grabber.outputs.mod_version }}",
+              sha: context.sha
+            })
 
       - name: Publish to JackFred Maven
         if: ${{ inputs.publishToMaven == true }}
