@@ -209,10 +209,13 @@ publishMods {
 	}
 }
 
-// configure the maven publication
+// configure the maven publication q
 publishing {
 	publications {
 		create<MavenPublication>("mavenJava") {
+			groupId = "red.jackf"
+			artifactId = "jsst"
+
 			from(components["java"])
 		}
 	}
