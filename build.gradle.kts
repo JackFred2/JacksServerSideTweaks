@@ -147,7 +147,7 @@ tasks.jar {
 }
 
 // TODO figure out how to share this
-val changelogProvider = rootProject.layout.projectDirectory.dir("changelogs").file("v$version.md").let { file ->
+val changelogProvider = rootProject.layout.projectDirectory.dir("changelogs").file("v${properties["mod_version"]}.md").let { file ->
 	if (file.asFile.exists()) {
 		return@let project.providers.fileContents(file).asText
 	} else {
@@ -205,6 +205,8 @@ publishMods {
 			additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
 
 			parent(rootProject.tasks.named("publishGithub"))
+
+			print(tagName.get())
 		}
 	}
 }
