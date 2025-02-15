@@ -56,9 +56,7 @@ publishMods {
 
             repository.set(properties["project.github_repo"]!!.toString())
             commitish.set("v2/multiversion")
-            tagName.set("v$version")
-
-            print(tagName.get())
+            tagName.set("v${project.version}")
 
             displayName.set("${properties["project.name"]} ${project.version}")
 

@@ -205,8 +205,6 @@ publishMods {
 			additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
 
 			parent(rootProject.tasks.named("publishGithub"))
-
-			print(tagName.get())
 		}
 	}
 }
