@@ -58,7 +58,7 @@ publishMods {
             commitish.set("v2/multiversion")
             tagName.set("v${project.version}")
 
-            displayName.set("${properties["project.name"]} ${project.version}")
+            displayName.set("${properties["project.release_name"]} v${project.version}")
 
             file.set(null as RegularFile?)
 

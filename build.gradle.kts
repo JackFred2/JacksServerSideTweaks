@@ -166,7 +166,7 @@ publishMods {
 
 	dryRun.set(properties["project.dry_run"]!!.toString() == "true")
 
-	displayName.set("${properties["project.name"]} ${project.version}")
+	displayName.set("${properties["project.release_name"]} v${project.version}")
 
 	if (System.getenv().containsKey("CURSEFORGE_TOKEN") || dryRun.get()) {
 		curseforge {
