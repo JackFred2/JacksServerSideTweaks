@@ -30,6 +30,9 @@ on:
         required: true
         type: boolean
 
+permissions:
+  contents: write # for github release
+
 jobs:
   publish:
     strategy:
