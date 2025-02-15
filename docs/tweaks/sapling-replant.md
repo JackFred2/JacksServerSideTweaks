@@ -1,13 +1,13 @@
 ---
-description: No more empty forests
 icon: seedling
+description: No more empty forests
 ---
 
 # Sapling Replant
 
 **JSST** will cause decaying saplings try and replant themselves, giving each other space. This allows you to maintain forests easier, or plant your own by 'sprinkling' them about.
 
-<figure><img src="../.gitbook/assets/java_cI9eTVYpNI.gif" alt=""><figcaption><p>(Exaggerated Settings) Saplings replanting themselves after decay.</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/sapling_replant.gif" alt=""><figcaption><p>(Exaggerated Settings) Saplings replanting themselves after decay.</p></figcaption></figure>
 
 ## Configuration
 
