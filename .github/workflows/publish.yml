@@ -113,6 +113,10 @@ jobs:
               sha: context.sha
             })
 
+      - name: Refresh local tags if GitHub release
+        if: ${{ inputs.createTag && inputs.publishToGitHub }}
+        run: git fetch --tags
+
       - name: Publish to JackFred Maven
         if: ${{ inputs.publishToMaven == true }}
         run: ./gradlew chiseledPublish
