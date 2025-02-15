@@ -53,14 +53,14 @@ jobs:
           fetch-tags: true
 
       - id: gradle-version-grabber
-        name: Grab version from gradle.properties
+        name: Grab version from gradle.properties, prefix with 'v'
         run: |
           version=$(grep 'mod_version=' gradle.properties | cut -d'=' -f2)
           if [[ -z $version ]]; then
             exit 1
           fi
           
-          echo "mod_version=$version" >> "$GITHUB_OUTPUT"
+          echo "mod_version=v$version" >> "$GITHUB_OUTPUT"
 
       - name: Possibly check for changelog file
         if: ${{ inputs.ignoreNoChangelog == false }}

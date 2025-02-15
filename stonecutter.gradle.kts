@@ -37,7 +37,7 @@ stonecutter registerChiseled tasks.register("chiseledPublishModrinth", stonecutt
 version = properties["mod_version"]!!.toString()
 
 // TODO figure out how to share this
-val changelogProvider = rootProject.layout.projectDirectory.dir("changelogs").file("$version.md").let { file ->
+val changelogProvider = rootProject.layout.projectDirectory.dir("changelogs").file("v$version.md").let { file ->
     if (file.asFile.exists()) {
         return@let project.providers.fileContents(file).asText
     } else {
