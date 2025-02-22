@@ -480,6 +480,15 @@ public interface JSSTConfigScreen {
                                 .coloured(true)
                                 .yesNoFormatter())
                         .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.mapEditor.allowEditingLocked"))
+                        .binding(handler.defaults().mapEditor.allowEditingLocked,
+                                () -> handler.instance().mapEditor.allowEditingLocked,
+                                s -> handler.instance().mapEditor.allowEditingLocked = s)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
                 .build();
     }
 

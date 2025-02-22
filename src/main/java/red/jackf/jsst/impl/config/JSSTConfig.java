@@ -114,6 +114,8 @@ public class JSSTConfig {
         public String tool = "minecraft:feather";
 
         public boolean disableSerialization = false;
+
+        public boolean allowEditingLocked = false;
     }
 
     @SerialEntry

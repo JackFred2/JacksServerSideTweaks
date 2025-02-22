@@ -15,6 +15,7 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.maps.MapId;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import red.jackf.jsst.impl.config.JSSTConfig;
 import red.jackf.jsst.impl.utils.RegistryUtils;
 
@@ -30,11 +31,13 @@ public class MapEditor {
                     && JSSTConfig.INSTANCE.instance().mapEditor.enabled
                     && (!JSSTConfig.INSTANCE.instance().mapEditor.requiresOp || player.hasPermissions(4))
                     && hand == InteractionHand.MAIN_HAND // using main hand
-                    && hitResult != null // using the position-based callback not the positionless
                     && entity instanceof ItemFrame itemFrame
                     && itemFrame.getItem().has(DataComponents.MAP_ID) // item frame with map
                     && MapEditor.isValidTool(serverLevel.registryAccess(), player.getItemInHand(hand))) { // using feather
-                MapEditor.onInteract(serverPlayer, itemFrame);
+
+                if (hitResult != null) { // use the position based callback, here instead of the if statement so we can cancel on locked maps still
+                    MapEditor.onInteract(serverPlayer, itemFrame);
+                }
 
                 return InteractionResult.SUCCESS;
             }
@@ -73,11 +76,19 @@ public class MapEditor {
         if (existingSession != null && existingSession.entity() != frame) return;
 
         if (existingSession == null) {
-            if (existsSessionUsingFrame(frame) || existsSessionWithMapId(frame.getItem().get(DataComponents.MAP_ID))) {
+            MapId id = frame.getItem().get(DataComponents.MAP_ID);
+            if (existsSessionUsingFrame(frame) || existsSessionWithMapId(id)) {
                 player.sendSystemMessage(Component.translatable("jsst.mapEditor.alreadyBeingEdited"));
                 return;
             }
-            startSession(player, frame, frame.getItem().get(DataComponents.MAP_ID));
+            MapItemSavedData data = player.serverLevel().getMapData(id);
+            if (data != null) {
+                if (data.locked && !JSSTConfig.INSTANCE.instance().mapEditor.allowEditingLocked) {
+                    player.sendSystemMessage(Component.translatable("jsst.mapEditor.mapLocked"));
+                } else {
+                    startSession(player, frame, frame.getItem().get(DataComponents.MAP_ID));
+                }
+            }
         }
     }
 
