@@ -48,3 +48,10 @@ By default, Minecraft does not keep map markers on save / load. **JSST** slightl
 
 * Options: `true`, `false`
 * Default: `false`
+
+### Allow Editing Locked Maps
+
+JSST will by default not allow players to edit [locked](https://minecraft.wiki/w/Map#Locking) maps. This setting lets you edit them.
+
+* Options: `true`, `false`
+* Default: `false`
