@@ -14,7 +14,7 @@
     "mapeditor.MapItemSavedDataAccessor",
     "mapeditor.MapItemSavedDataMixin",
     "mapeditor.ServerEntityMixin",
-    "miscellaneous.BlockMixin",
+    "itemnudging.BlockMixin",
     "portablecrafting.CraftingMenuMixin",
     "saplingreplant.BushBlockAccessor",
     "saplingreplant.ItemEntityMixin",

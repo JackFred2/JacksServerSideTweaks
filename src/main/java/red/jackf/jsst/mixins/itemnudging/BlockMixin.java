@@ -1,4 +1,4 @@
-package red.jackf.jsst.mixins.miscellaneous;
+package red.jackf.jsst.mixins.itemnudging;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
