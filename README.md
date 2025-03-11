@@ -27,7 +27,7 @@ A command to generate text on banners. Works in survival, as long as you have en
 <details>
 <summary>👻 Concealable Item Frames</summary>
 
-![A picture of two item frames, one invisible.](https://i.imgur.com/hlzMuqH.gif)
+![A picture of two item frames, one invisible.](https://i.imgur.com/7839NPi.png)
 
 Players can now toggle the invisibility of item frames by sneak-right clicking with any invisibility potion. Shows particles when they're empty, so you don't lose them.
 
