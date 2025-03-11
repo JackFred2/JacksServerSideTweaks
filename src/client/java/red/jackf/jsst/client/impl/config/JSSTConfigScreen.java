@@ -236,6 +236,18 @@ public interface JSSTConfigScreen {
                                 .coloured(true)
                                 .yesNoFormatter())
                         .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.concealableFrames.showEmptyParticles"))
+                        .description(OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.concealableFrames.showEmptyParticles.description"))
+                                .build())
+                        .binding(handler.defaults().concealableFrames.showEmptyParticles,
+                                () -> handler.instance().concealableFrames.showEmptyParticles,
+                                b -> handler.instance().concealableFrames.showEmptyParticles = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
                 .build();
     }
 

@@ -62,6 +62,8 @@ public class JSSTConfig {
 
     public static class ConcealableFrames {
         public boolean enabled = true;
+
+        public boolean showEmptyParticles = true;
     }
 
     @SerialEntry

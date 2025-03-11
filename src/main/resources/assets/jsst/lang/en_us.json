@@ -175,6 +175,8 @@
   "jsst.config.campfireTimers.description": "Shows progress bars above items on a campfire.",
   "jsst.config.concealableFrames": "Concealable Frames",
   "jsst.config.concealableFrames.description": "Players can sneak-right click item frames to toggle invisibility.",
+  "jsst.config.concealableFrames.showEmptyParticles": "Show Empty Particles",
+  "jsst.config.concealableFrames.showEmptyParticles.description": "Whether to show particles on invisible and empty frames.",
   "jsst.config.extraHighlights": "Extra Highlights",
   "jsst.config.extraHighlights.treeLogs": "Tree Logs",
   "jsst.config.extraHighlights.treeLogs.description": "Players can sneak-right click with an axe in order to highlight nearby logs.",

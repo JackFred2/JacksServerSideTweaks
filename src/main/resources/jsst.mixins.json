@@ -11,6 +11,7 @@
     "beaconenhancement.ConduitBlockEntityMixin",
     "campfiretimers.CampfireBlockEntityMixin",
     "concealableframes.ItemFrameAccessor",
+    "concealableframes.ItemFrameMixin",
     "extrahighlights.ItemEntityMixin",
     "itemnudging.BlockMixin",
     "mapeditor.MapItemSavedDataAccessor",
