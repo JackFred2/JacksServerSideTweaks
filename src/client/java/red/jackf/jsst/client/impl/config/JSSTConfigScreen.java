@@ -34,6 +34,7 @@ public interface JSSTConfigScreen {
 
         Collection<ConfigCategory> categories = List.of(
                 createBannerWriter(handler),
+                createConcealableFrames(handler),
                 createItemEditor(handler),
                 createMapEditor(handler),
                 createBeaconEnhancement(handler, beaconRangeState),
@@ -212,6 +213,25 @@ public interface JSSTConfigScreen {
                         .binding(handler.defaults().campfireTimers.enabled,
                                 () -> handler.instance().campfireTimers.enabled,
                                 b -> handler.instance().campfireTimers.enabled = b)
+                        .controller(opt -> BooleanControllerBuilder.create(opt)
+                                .coloured(true)
+                                .yesNoFormatter())
+                        .build())
+                .build();
+    }
+
+    private static ConfigCategory createConcealableFrames(ConfigClassHandler<JSSTConfig> handler) {
+        return ConfigCategory.createBuilder()
+                .name(translatable("jsst.config.concealableFrames"))
+                .option(Option.<Boolean>createBuilder()
+                        .name(translatable("jsst.config.enabled"))
+                        .description(OptionDescription.createBuilder()
+                                .text(translatable("jsst.config.concealableFrames.description"))
+                                .image(JSST.id("textures/config/concealable_frames.png"), 320, 240)
+                                .build())
+                        .binding(handler.defaults().concealableFrames.enabled,
+                                () -> handler.instance().concealableFrames.enabled,
+                                b -> handler.instance().concealableFrames.enabled = b)
                         .controller(opt -> BooleanControllerBuilder.create(opt)
                                 .coloured(true)
                                 .yesNoFormatter())

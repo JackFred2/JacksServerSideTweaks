@@ -58,6 +58,13 @@ public class JSSTConfig {
     }
 
     @SerialEntry
+    public ConcealableFrames concealableFrames = new ConcealableFrames();
+
+    public static class ConcealableFrames {
+        public boolean enabled = true;
+    }
+
+    @SerialEntry
     public EffectorRanges effectorRanges = new EffectorRanges();
 
     public static class EffectorRanges {
