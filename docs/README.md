@@ -24,6 +24,7 @@ This documentation is for version 2 of JSST only.
 ## Tools
 
 * [banner-writer.md](tools/banner-writer.md "mention") - Easily write text on banners.
+* [concealable-item-frames.md](tools/concealable-item-frames.md "mention") - Toggle the invisibility of item frames.
 * [item-editor.md](tools/item-editor.md "mention") - Extensible item editing GUI with a survival-friendly mode for cosmetic changes.
 * [map-editor.md](tools/map-editor.md "mention") - Add icons, arrows and labels to maps using a feather.
 

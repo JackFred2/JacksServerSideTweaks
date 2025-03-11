@@ -16,5 +16,6 @@
 ## Tools
 
 * [Banner Writer](tools/banner-writer.md)
+* [Concealable Item Frames](tools/concealable-item-frames.md)
 * [Item Editor](tools/item-editor.md)
 * [Map Editor](tools/map-editor.md)
