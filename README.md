@@ -25,6 +25,15 @@ A command to generate text on banners. Works in survival, as long as you have en
 </details>
 
 <details>
+<summary>👻 Concealable Item Frames</summary>
+
+![A picture of two item frames, one invisible.](https://i.imgur.com/hlzMuqH.gif)
+
+Players can now toggle the invisibility of item frames by sneak-right clicking with any invisibility potion. Shows particles when they're empty, so you don't lose them.
+
+</details>
+
+<details>
 <summary>🚨 Beacon Enhancement</summary>
 
 ![An example of the remade beacon GUI, supporting a max tier of 6 and custom powers.](https://i.imgur.com/TjkA2vM.png)
