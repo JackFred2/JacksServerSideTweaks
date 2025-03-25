@@ -5,7 +5,7 @@ plugins {
     id("fabric-loom") version "1.10-SNAPSHOT" apply false
     id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
-stonecutter active "1.21.4" /* [SC] DO NOT EDIT */
+stonecutter active "1.21.5" /* [SC] DO NOT EDIT */
 
 stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
     group = "project"
