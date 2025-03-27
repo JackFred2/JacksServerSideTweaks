@@ -4,9 +4,11 @@ import com.google.common.collect.Streams;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Unit;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.Unbreakable;
+//? if <= 1.21.4
+/*import net.minecraft.world.item.component.Unbreakable;*/
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
@@ -66,7 +68,9 @@ public class DurabiltyEditor extends GuiEditor {
                     this.refresh();
                 }));
 
-        //noinspection DataFlowIssue
+        //? if <=1.21.4 {
+
+        /*//noinspection DataFlowIssue
         UnbreakableState currentUnbreakableState = this.stack.has(DataComponents.UNBREAKABLE) ? (this.stack.get(DataComponents.UNBREAKABLE).showInTooltip() ? UnbreakableState.YES_SHOWN : UnbreakableState.YES_HIDDEN) : UnbreakableState.NO;
 
         this.setSlot(1, 4, CycleButton.<UnbreakableState>builder(Component.translatable("jsst.itemEditor.editor.durability.unbreakable"))
@@ -89,6 +93,28 @@ public class DurabiltyEditor extends GuiEditor {
                     }
                     this.refresh();
                 }));
+
+        *///?} else {
+        boolean currentlyUnbreakable = this.stack.has(DataComponents.UNBREAKABLE);
+
+        this.setSlot(1, 4, CycleButton.<Boolean>builder(Component.translatable("jsst.itemEditor.editor.durability.unbreakable"))
+                .initial(currentlyUnbreakable)
+                .option(false, JSSTElementBuilder.from(Items.GLASS).ui()
+                        .setName(Component.translatable("jsst.itemEditor.editor.durability.unbreakable.no"))
+                        .build())
+                .option(true, JSSTElementBuilder.from(Items.NETHERITE_BLOCK).ui().glow()
+                        .setName(Component.translatable("jsst.itemEditor.editor.durability.unbreakable.yes"))
+                        .build())
+                .build(unbreakable -> {
+                    Sounds.UI.click(player);
+                    if (unbreakable) {
+                        this.stack.set(DataComponents.UNBREAKABLE, Unit.INSTANCE);
+                    } else {
+                        this.stack.remove(DataComponents.UNBREAKABLE);
+                    }
+                    this.refresh();
+                }));
+        //?}
 
         this.setSlot(0, 5, CommonElements.cancel(this::cancel));
     }
@@ -202,9 +228,11 @@ public class DurabiltyEditor extends GuiEditor {
         DURABILITY, MAX_DURABILITY
     }
 
-    private enum UnbreakableState {
+    //? if <=1.21.4 {
+    /*private enum UnbreakableState {
         NO,
         YES_SHOWN,
         YES_HIDDEN
     }
+    *///?}
 }

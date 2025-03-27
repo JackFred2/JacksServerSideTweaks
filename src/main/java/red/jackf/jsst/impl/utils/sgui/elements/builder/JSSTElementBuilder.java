@@ -3,15 +3,19 @@ package red.jackf.jsst.impl.utils.sgui.elements.builder;
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilderInterface;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
+import it.unimi.dsi.fastutil.objects.ReferenceSortedSets;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Unit;
+//? if <=1.21.4
+/*import net.minecraft.util.Unit;*/
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.ItemLore;
+//? if >=1.21.5
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 import red.jackf.jsst.impl.utils.sgui.Hints;
@@ -139,8 +143,18 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         return this;
     }
 
+    //? if >=1.21.5 {
+    public JSSTElementBuilder hideInTooltip(DataComponentType<?> type) {
+        this.stack.update(DataComponents.TOOLTIP_DISPLAY, TooltipDisplay.DEFAULT, display -> display.withHidden(type, true));
+        return this;
+    }
+    //?}
+
     public JSSTElementBuilder hideTooltip() {
-        this.stack.set(DataComponents.HIDE_TOOLTIP, Unit.INSTANCE);
+        //? if <=1.21.4 {
+        /*this.stack.set(DataComponents.HIDE_TOOLTIP, Unit.INSTANCE);
+        *///?} else
+        this.stack.set(DataComponents.TOOLTIP_DISPLAY, new TooltipDisplay(true, ReferenceSortedSets.emptySet()));
         return this;
     }
 
@@ -149,7 +163,8 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
     }
 
     public JSSTElementBuilder hideDefaultTooltip() {
-        ifNotNull(this.stack, DataComponents.TRIM, comp -> comp.withTooltip(false));
+        //? if <=1.21.4 {
+        /*ifNotNull(this.stack, DataComponents.TRIM, comp -> comp.withTooltip(false));
         ifNotNull(this.stack, DataComponents.UNBREAKABLE, comp -> comp.withTooltip(false));
         ifNotNull(this.stack, DataComponents.ENCHANTMENTS, comp -> comp.withTooltip(false));
         ifNotNull(this.stack, DataComponents.STORED_ENCHANTMENTS, comp -> comp.withTooltip(false));
@@ -158,6 +173,17 @@ public class JSSTElementBuilder implements GuiElementBuilderInterface<JSSTElemen
         ifNotNull(this.stack, DataComponents.CAN_BREAK, comp -> comp.withTooltip(false));
         ifNotNull(this.stack, DataComponents.CAN_PLACE_ON, comp -> comp.withTooltip(false));
         this.stack.set(DataComponents.HIDE_ADDITIONAL_TOOLTIP, Unit.INSTANCE);
+        *///?} else {
+        this.stack.update(DataComponents.TOOLTIP_DISPLAY, TooltipDisplay.DEFAULT, display -> {
+            for (var comp : this.stack.getComponents()) {
+                if (comp.type() != DataComponents.LORE) {
+                    display = display.withHidden(comp.type(), true);
+                }
+            }
+
+            return display;
+        });
+        //?}
         return this;
     }
 

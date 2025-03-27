@@ -6,14 +6,16 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.Unit;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 //? if <=1.21.1 {
 /*import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.minecraft.world.item.armortrim.TrimPattern;
 *///?} else {
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SmithingTrimRecipe;
 import net.minecraft.world.item.equipment.trim.ArmorTrim;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.minecraft.world.item.equipment.trim.TrimPattern;
@@ -21,12 +23,15 @@ import net.minecraft.world.item.equipment.trim.TrimPattern;
 import red.jackf.jsst.impl.JSST;
 import red.jackf.jsst.impl.feature.itemeditor.EditSession;
 import red.jackf.jsst.impl.feature.itemeditor.Result;
+import red.jackf.jsst.impl.utils.RegistryUtils;
 import red.jackf.jsst.impl.utils.Sounds;
 import red.jackf.jsst.impl.utils.sgui.CommonElements;
 import red.jackf.jsst.impl.utils.sgui.Translations;
 import red.jackf.jsst.impl.utils.sgui.region.UIRegion;
 import red.jackf.jsst.impl.utils.sgui.elements.builder.JSSTElementBuilder;
 import red.jackf.jsst.impl.utils.sgui.elements.pagination.GridPaginator;
+import red.jackf.jsst.mixins.itemeditor.RecipeManagerAccessor;
+import red.jackf.jsst.mixins.itemeditor.SmithingTrimRecipeAccessor;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -50,7 +55,7 @@ public class ArmourTrimEditor extends GuiEditor {
             .slots(UIRegion.playerRectangle(this, 0, 0, 3, 3))
             .fullButtons(this.getPlayerSlotFor(0, 3), this.getPlayerSlotFor(1, 3), this.getPlayerSlotFor(2, 3))
             .elements(this.lookupRegistry(Registries.TRIM_PATTERN).stream().toList())
-            .drawFunction((i, pattern) -> JSSTElementBuilder.from(pattern.templateItem().value())
+            .drawFunction((i, pattern) -> JSSTElementBuilder.from(getItemForPattern(pattern))
                     .setName(pattern.description())
                     .hideDefaultTooltip()
                     .leftClick(Translations.select(), () -> {
@@ -64,7 +69,7 @@ public class ArmourTrimEditor extends GuiEditor {
             .slots(UIRegion.playerRectangle(this, 4, 0, 7, 3))
             .fullButtons(this.getPlayerSlotFor(4, 3), this.getPlayerSlotFor(5, 3), this.getPlayerSlotFor(6, 3))
             .elements(this.lookupRegistry(Registries.TRIM_MATERIAL).stream().toList())
-            .drawFunction((i, material) -> JSSTElementBuilder.from(material.ingredient().value())
+            .drawFunction((i, material) -> JSSTElementBuilder.from(getItemFromMaterial(material))
                     .setName(material.description())
                     .leftClick(Translations.select(), () -> {
                         Sounds.UI.click(player);
@@ -85,9 +90,47 @@ public class ArmourTrimEditor extends GuiEditor {
         this.setSlot(1, JSSTElementBuilder.from(this.session.getStack()).ui()
                 .hideDefaultTooltip()
                 .removeComponent(DataComponents.TRIM)
-                .setComponent(DataComponents.HIDE_TOOLTIP, Unit.INSTANCE));
+                .hideTooltip());
 
         this.setPlayerSlot(8, 3, CommonElements.cancel(this::cancel));
+    }
+
+    private Item getItemForPattern(TrimPattern pattern) {
+        //? if <=1.21.4 {
+        /*return pattern.templateItem().value();
+        *///?} else {
+        var recipes = ((RecipeManagerAccessor) this.session.getPlayer().serverLevel().recipeAccess()).getRecipeMap();
+
+        return recipes.byType(RecipeType.SMITHING).stream()
+                .filter(holder -> holder.value() instanceof SmithingTrimRecipe)
+                .map(holder -> ((SmithingTrimRecipe) holder.value()))
+                .filter(recipe -> ((SmithingTrimRecipeAccessor) recipe).getPattern().value().equals(pattern))
+                .map(recipe ->
+                    recipe.templateIngredient()
+                            .flatMap(ingredient -> ingredient.items().findFirst())
+                            .map(Holder::value)
+                            .orElse(Items.PAPER))
+                .findFirst()
+                .orElse(Items.PAPER);
+        //?}
+    }
+
+    private Item getItemFromMaterial(TrimMaterial material) {
+        //? if <=1.21.4 {
+        /*return material.ingredient().value();
+        *///?} else {
+        return RegistryUtils.stream(RegistryUtils.lookup(this.session.registries(), Registries.ITEM))
+                .filter(item -> {
+                    var provides = item.value().getDefaultInstance().get(DataComponents.PROVIDES_TRIM_MATERIAL);
+
+                    if (provides == null) return false;
+
+                    return provides.unwrap(this.session.registries()).map(holder -> holder.value().equals(material)).orElse(false);
+
+                }).findFirst()
+                .map(Holder::value)
+                .orElse(Items.NETHER_STAR);
+        //?}
     }
 
     @Override
@@ -102,11 +145,11 @@ public class ArmourTrimEditor extends GuiEditor {
             this.materialPages.draw();
             this.patternPages.draw();
 
-            this.setSlot(0, JSSTElementBuilder.from(pattern.templateItem().value())
+            this.setSlot(0, JSSTElementBuilder.from(getItemForPattern(pattern))
                     .setName(pattern.description())
                     .hideDefaultTooltip());
 
-            this.setSlot(2, JSSTElementBuilder.from(material.ingredient().value())
+            this.setSlot(2, JSSTElementBuilder.from(getItemFromMaterial(material))
                     .setName(material.description())
                     .hideDefaultTooltip());
 

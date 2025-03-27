@@ -16,8 +16,14 @@ public interface Styles {
     Style NEGATIVE = CLEAN.withColor(ChatFormatting.RED);
 
     static MutableComponent clipboardCopy(String text) {
-        return Component.literal(text).withStyle(CLEAN
+        //? if <=1.21.4 {
+        /*return Component.literal(text).withStyle(CLEAN
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.copy.click")))
                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text)));
+        *///?} else {
+        return Component.literal(text).withStyle(CLEAN
+                .withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.copy.click")))
+                .withClickEvent(new ClickEvent.CopyToClipboard(text)));
+        //?}
     }
 }

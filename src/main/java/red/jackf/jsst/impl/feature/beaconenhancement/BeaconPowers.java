@@ -20,9 +20,15 @@ public record BeaconPowers(List<String> level1,
                            List<String> level5,
                            List<String> level6) {
     public static final BeaconPowers DEFAULT_PRIMARY = new BeaconPowers(
-            List.of(key(MobEffects.MOVEMENT_SPEED), key(MobEffects.DIG_SPEED)),
+            //? if <=1.21.4 {
+            /*List.of(key(MobEffects.MOVEMENT_SPEED), key(MobEffects.DIG_SPEED)),
             List.of(key(MobEffects.DAMAGE_RESISTANCE), key(MobEffects.JUMP)),
             List.of(key(MobEffects.DAMAGE_BOOST)),
+            *///?} else {
+            List.of(key(MobEffects.SPEED), key(MobEffects.HASTE)),
+            List.of(key(MobEffects.RESISTANCE), key(MobEffects.JUMP_BOOST)),
+            List.of(key(MobEffects.STRENGTH)),
+            //?}
             List.of(key(MobEffects.GLOWING)),
             List.of(),
             List.of());

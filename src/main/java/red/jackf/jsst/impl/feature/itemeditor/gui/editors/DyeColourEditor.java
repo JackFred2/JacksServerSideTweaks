@@ -34,7 +34,12 @@ public class DyeColourEditor extends GuiEditor {
         return AnimatedGuiElementBuilderExt.makeForEach(ColourUtils.COLOURFUL_DYE_ORDER, col -> JSSTElementBuilder.flatCopy(session.getStack())
                     .setCount(1)
                     .setName(Component.translatable("jsst.itemEditor.editor.dyeColour"))
-                    .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(col.getFireworkColor(), false))
+                    //? if <=1.21.4 {
+                    /*.setComponent(DataComponents.DYED_COLOR, new DyedItemColor(col.getFireworkColor(), false))
+                    *///?} else {
+                    .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(col.getFireworkColor()))
+                    .hideInTooltip(DataComponents.DYED_COLOR)
+                    //?}
                     .asStack())
                 .setInterval(4)
                 .build();
@@ -71,10 +76,20 @@ public class DyeColourEditor extends GuiEditor {
                             .initial(asString)
                             .appendOutput(StringInputMenu.AppendPriority.HIGH, (rawText, value, builder) ->
                                 builder.setItem(JSSTElementBuilder.flatCopy(this.stack)
-                                        .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(value.toARGB(), false))
+                                        //? if <=1.21.4 {
+                                        /*.setComponent(DataComponents.DYED_COLOR, new DyedItemColor(value.toARGB(), false))
+                                        *///?} else {
+                                        .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(value.toARGB()))
+                                        .hideInTooltip(DataComponents.DYED_COLOR)
+                                        //?}
                                         .asStack()))
                             .start(opt -> {
-                                opt.ifPresent(col -> this.stack.set(DataComponents.DYED_COLOR, new DyedItemColor(col.toARGB(), true)));
+                                opt.ifPresent(col -> {
+                                    //? if <=1.21.4 {
+                                    /*this.stack.set(DataComponents.DYED_COLOR, new DyedItemColor(col.toARGB(), true));
+                                    *///?} else
+                                    this.stack.set(DataComponents.DYED_COLOR, new DyedItemColor(col.toARGB()));
+                                });
 
                                 this.open();
                             });

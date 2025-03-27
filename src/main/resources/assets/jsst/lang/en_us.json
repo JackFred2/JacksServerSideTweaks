@@ -86,6 +86,7 @@
   "jsst.itemEditor.editor.durability.currentlyEditing.maxDurability": "Max Durability",
   "jsst.itemEditor.editor.durability.unbreakable": "Unbreakable:",
   "jsst.itemEditor.editor.durability.unbreakable.no": "No",
+  "jsst.itemEditor.editor.durability.unbreakable.yes": "Yes",
   "jsst.itemEditor.editor.durability.unbreakable.yesShown": "Yes (Shown in tooltip)",
   "jsst.itemEditor.editor.durability.unbreakable.yesHidden": "Yes (Hidden from tooltip)",
   "jsst.itemEditor.editor.durability.setCustom": "Set Custom",

@@ -49,6 +49,9 @@ public class StringInputMenu<T> extends SimpleGuiExt {
         this.callback = Callbacks.singleUse(callback);
         this.setTitle(title);
 
+        //? if >=1.21.5
+        this.properties.add(0);
+
         this.currentText = this.initial;
 
         this.drawStatic();

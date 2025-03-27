@@ -81,7 +81,10 @@ enum GradientSet {
                                 .hideDefaultTooltip()
                                 .setName(Component.literal("&" + format.getChar()).withStyle(format))
                                 .addLoreLine(Component.literal(format.getName()).withStyle(Styles.LABEL))
-                                .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(format.getColor(), false))
+                                //? if <=1.21.4 {
+                                /*.setComponent(DataComponents.DYED_COLOR, new DyedItemColor(format.getColor(), false))
+                                *///?} else
+                                .setComponent(DataComponents.DYED_COLOR, new DyedItemColor(format.getColor()))
                                 .asStack());
             }
         }

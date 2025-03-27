@@ -115,6 +115,10 @@ public class GiveCommandGenerator implements Editor {
 
     private <T> DataResult<String> makeForTypeValue(TypedDataComponent<T> typed) {
         RegistryOps<Tag> ops = this.session.registries().createSerializationContext(NbtOps.INSTANCE);
-        return typed.encodeValue(ops).map(Tag::getAsString);
+        //? if <=1.21.4 {
+        /*return typed.encodeValue(ops).map(Tag::getAsString);
+        *///?} else {
+        return typed.encodeValue(ops).map(Tag::toString);
+        //?}
     }
 }
