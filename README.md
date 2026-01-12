@@ -1,3 +1,7 @@
+# Archived
+
+JSST has been organised so I can stay focused on a smaller amount of mods for now. It was mainly just a sandbox-y type mod I could add random features for, but would require a rewrite to make it more maintainable in current versions.
+
 # ⚙️ Jack's Server Side Tweaks v2
 
 Provides a suite of server-side tweaks and survival-friendly tools to the game.
